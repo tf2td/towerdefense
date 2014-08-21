@@ -76,6 +76,7 @@ public Action:Timer_CreateBeam(Handle:hTimer, Handle:hPack) {
  * @noreturn
  */
 
+/*
 stock CreateBeamLine2(iClient, iIndex, Float:fStart[3], Float:fEnd[3], const iColors[]={255, 0, 0, 255}) {
 	new iColors2[4];
 	iColors2[0] = iColors[0];
@@ -106,7 +107,9 @@ stock CreateBeamLine2(iClient, iIndex, Float:fStart[3], Float:fEnd[3], const iCo
 
 	TE_SendToAll();
 }
+*/
 
+/*
 public Action:Timer_CreateBeam2(Handle:hTimer, Handle:hPack) {
 	new iClient, iIndex, Float:fStart[3], Float:fEnd[3], iColors[4];
 	
@@ -128,6 +131,7 @@ public Action:Timer_CreateBeam2(Handle:hTimer, Handle:hPack) {
 
 	return Plugin_Stop;
 }
+*/
 
 /**
  * Creates a beam box.
