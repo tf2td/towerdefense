@@ -1,3 +1,6 @@
-#pragma semicolon 1
+#define GAME_DESCRIPTION "Tower Defense"
 
-#include <sourcemod>
+#define PLAYERS_ALLOWED 4
+
+#define TEAM_DEFENDER 3
+#define TEAM_ATTACKER 2

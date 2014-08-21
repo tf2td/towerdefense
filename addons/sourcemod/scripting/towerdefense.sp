@@ -3,6 +3,7 @@
 #include <sourcemod>
 #include <sdktools>
 #include <steamtools>
+#include <tf2_stocks>
 
 /*=================================
 =            Constants            =
@@ -54,7 +55,7 @@ public Plugin:myinfo =
 public APLRes:AskPluginLoad2(Handle:hMyself, bool:bLate, String:sError[], iMaxLength) {
 	if (GetEngineVersion() != Engine_TF2) {
 		Format(sError, iMaxLength, "Cannot run on other mods than TF2.");
-		return APLRes_Failure; 
+		return APLRes_Failure;
 	}
 
 	MarkNativeAsOptional("Steam_SetGameDescription");
@@ -67,6 +68,7 @@ public OnPluginStart() {
 	Log_Initialize(TDLogLevel_Debug, TDLogType_Console);
 
 	LoadConVars();
+	HookEvents();
 }
 
 public OnPluginEnd() {
@@ -130,9 +132,60 @@ public OnClientPutInServer(iClient) {
 	
 }
 
+public OnClientPostAdminCheck(iClient) {
+	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
+		ChangeClientTeam(iClient, TEAM_DEFENDER);
+		TF2_SetPlayerClass(iClient, TFClass_Engineer, false, true);
+	}
+}
+
 /*=========================================
 =            Utility Functions            =
 =========================================*/
+
+/**
+ * Checks if a client is a valid client.
+ *
+ * @param iClient		The clients index.
+ * @return				True on success, false ontherwise.
+ */
+
+stock bool:IsValidClient(iClient) {
+	return (iClient > 0 && iClient <= MaxClients);
+}
+
+/**
+ * Checks if a client is a defender.
+ *
+ * @param iClient		The client.
+ * @return				True on success, false ontherwise.
+ */
+
+stock bool:IsDefender(iClient) {
+	return (IsValidClient(iClient) && IsClientConnected(iClient) && IsClientInGame(iClient) && !IsFakeClient(iClient) && GetClientTeam(iClient) == TEAM_DEFENDER);
+}
+
+/**
+ * Checks if a client is a tower.
+ *
+ * @param iClient		The client.
+ * @return				True on success, false ontherwise.
+ */
+
+stock bool:IsTower(iClient) {
+	return (IsValidClient(iClient) && IsClientConnected(iClient) && IsClientInGame(iClient) && IsFakeClient(iClient) && GetClientTeam(iClient) == TEAM_DEFENDER);
+}
+
+/**
+ * Checks if a client is an attacker.
+ *
+ * @param iClient		The client.
+ * @return				True on success, false ontherwise.
+ */
+
+stock bool:IsAttacker(iClient) {
+	return (IsValidClient(iClient) && IsClientConnected(iClient) && IsClientInGame(iClient) && IsFakeClient(iClient) && GetClientTeam(iClient) == TEAM_ATTACKER);
+}
 
 /**
  * Checks if the current map is a Tower Defense map, 
@@ -162,7 +215,7 @@ stock UpdateGameDescription() {
 	decl String:sGamemode[64];
 
 	if (g_bEnabled) {
-		Format(sGamemode, sizeof(sGamemode), "Tower Defense (%s)", PLUGIN_VERSION);
+		Format(sGamemode, sizeof(sGamemode), "%s (%s)", GAME_DESCRIPTION, PLUGIN_VERSION);
 	} else {
 		strcopy(sGamemode, sizeof(sGamemode), "Team Fortress");
 	}
