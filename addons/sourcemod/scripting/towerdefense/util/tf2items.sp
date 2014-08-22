@@ -45,7 +45,7 @@ public Action:GiveWeapon(Handle:hTimer, Handle:hPack) {
 	ReadPackString(hPack, sClassname, sizeof(sClassname));
 	ReadPackString(hPack, sAttributes, sizeof(sAttributes));
 
-	Log(TDLogLevel_Debug, "%d, %d, %d, %d, %d, %s, \"%s\", \"%s\"", iClient, iItemDefinitionIndex, iSlot, iLevel, iQuality, (bPreserveAttributes ? "true" : "false"), sClassname, sAttributes);
+	Log(TDLogLevel_Trace, "%d, %d, %d, %d, %d, %s, \"%s\", \"%s\"", iClient, iItemDefinitionIndex, iSlot, iLevel, iQuality, (bPreserveAttributes ? "true" : "false"), sClassname, sAttributes);
 
 	new Handle:hItem = TF2Items_CreateItem(OVERRIDE_ALL);
 	new iFlags = 0;
@@ -119,7 +119,7 @@ public Action:GiveWeapon(Handle:hTimer, Handle:hPack) {
 	if (IsValidEntity(iWeapon)) {
 		EquipPlayerWeapon(iClient, iWeapon);
 
-		Log(TDLogLevel_Debug, "Gave weapon (%d) to %N", iWeapon, iClient);
+		Log(TDLogLevel_Debug, "Gave weapon (%d) to %N", iItemDefinitionIndex, iClient);
 	}
 
 	return Plugin_Stop;

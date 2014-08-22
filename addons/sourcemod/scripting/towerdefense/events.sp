@@ -13,6 +13,7 @@ stock HookEvents() {
 	HookEvent("player_changeclass", Event_PlayerChangeClass);
 	HookEvent("player_team", Event_PlayerChangeTeam, EventHookMode_Pre);
 	HookEvent("player_connect", Event_PlayerConnect, EventHookMode_Pre);
+	HookEvent("post_inventory_application", Event_PostInventoryApplication);
 }
 
 public Event_PlayerChangeClass(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
@@ -51,6 +52,20 @@ public Action:Event_PlayerConnect(Handle:hEvent, const String:sName[], bool:bDon
 	SetEventBroadcast(hEvent, true); // Block the original chat output (Player ... has joined the game)
 	
 	return Plugin_Continue;
+}
+
+public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+
+	if (!IsDefender(iClient)) {
+		return;
+	}
+
+	ResetClientMetal(iClient);
 }
 
 /*=======================================
