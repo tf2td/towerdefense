@@ -38,14 +38,14 @@ public Plugin:myinfo =
 #include "towerdefense/info/variables.sp"
 #include "towerdefense/info/convars.sp"
 
-#include "towerdefense/handler/towers.sp"
-#include "towerdefense/handler/waves.sp"
-
 #include "towerdefense/util/log.sp"
 #include "towerdefense/util/md5.sp"
 #include "towerdefense/util/metal.sp"
 #include "towerdefense/util/tf2items.sp"
 #include "towerdefense/util/zones.sp"
+
+#include "towerdefense/handler/towers.sp"
+#include "towerdefense/handler/waves.sp"
 
 #include "towerdefense/commands.sp"
 #include "towerdefense/database.sp"
@@ -73,6 +73,13 @@ public OnPluginStart() {
 
 	LoadConVars();
 	HookEvents();
+
+	// Plugin late load, re-load
+	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+		if (IsClientInGame(iClient)) {
+			OnClientPutInServer(iClient);
+		}
+	}
 }
 
 public OnPluginEnd() {
@@ -145,7 +152,7 @@ public OnClientAuthorized(iClient, const String:sSteamID[]) {
 }
 
 public OnClientPutInServer(iClient) {
-	
+	g_iAttachedTower[iClient] = 0;
 }
 
 public OnClientPostAdminCheck(iClient) {
@@ -153,6 +160,28 @@ public OnClientPostAdminCheck(iClient) {
 		ChangeClientTeam(iClient, TEAM_DEFENDER);
 		TF2_SetPlayerClass(iClient, TFClass_Engineer, false, true);
 	}
+}
+
+public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], Float:fAngles[3], &iWeapon) {
+	// Attach/detach tower on right-click
+	if (IsButtonReleased(iClient, iButtons, IN_ATTACK2)) { 
+		new String:sActiveWeapon[64];
+		GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
+		
+		if (StrEqual(sActiveWeapon, "tf_weapon_wrench") ||
+			StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
+
+			if (IsTower(g_iAttachedTower[iClient])) {
+				DetachTower(iClient);
+			} else {
+				AttachTower(iClient);
+			}
+		}
+	}
+
+	g_iLastButtons[iClient] = iButtons;
+
+	return Plugin_Continue; 
 }
 
 /*=========================================
@@ -267,4 +296,41 @@ stock GetRealClientCount(bool:bInGameOnly = false) {
 	}
 
 	return iClients;
+}
+
+public bool:IsButtonPressed(iClient, iButtons, iButton) { 
+	return ((iButtons & iButton) == iButton && (g_iLastButtons[iClient] & iButton) != iButton); 
+}
+
+public bool:IsButtonReleased(iClient, iButtons, iButton) { 
+	return ((g_iLastButtons[iClient] & iButton) == iButton && (iButtons & iButton) != iButton); 
+}
+
+/**
+ * Get the target a client is aiming at.
+ *
+ * @param iClient		The clients index.
+ * @return				The targets index or -1 if no target is being aimed at.
+ */
+
+stock GetAimTarget(iClient) {
+	new Float:fLocation[3], Float:fAngles[3];
+	GetClientEyePosition(iClient, fLocation);
+	GetClientEyeAngles(iClient, fAngles);
+		
+	TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayPlayers, iClient);
+	
+	if (TR_DidHit()) {
+		new iEntity = TR_GetEntityIndex();
+		
+		if (IsValidEntity(iEntity) && IsValidClient(iEntity)) {
+			return iEntity;
+		}
+	}
+
+	return -1;
+}
+
+public bool:TraceRayPlayers(iEntity, iMask, any:iData) {
+	return (iEntity != iData);
 }

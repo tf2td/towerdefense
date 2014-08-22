@@ -21,3 +21,22 @@ new g_iHaloMaterial;
 new g_iLaserMaterial;
 
 /*==========  String  ==========*/
+
+
+
+/*========================================
+=            Client Variables            =
+========================================*/
+
+/*==========  Boolean  ==========*/
+
+/*==========  Handle  ==========*/
+
+/*==========  Float  ==========*/
+
+/*==========  Integer  ==========*/
+
+new g_iAttachedTower[MAXPLAYERS + 1];
+new g_iLastButtons[MAXPLAYERS + 1];
+
+/*==========  String  ==========*/
