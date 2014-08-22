@@ -47,6 +47,7 @@ public Plugin:myinfo =
 #include "towerdefense/commands.sp"
 #include "towerdefense/database.sp"
 #include "towerdefense/events.sp"
+#include "towerdefense/timers.sp"
 
 /*=======================================
 =            Public Forwards            =
@@ -107,7 +108,7 @@ public OnAllPluginsLoaded() {
 	if (g_bSteamTools) {
 		UpdateGameDescription();
 
-		Log(TDLogLevel_Info, "Found SteamTools on startup.");
+		Log(TDLogLevel_Info, "Found SteamTools on startup");
 	}
 }
 
@@ -116,7 +117,7 @@ public OnLibraryAdded(const String:sName[]) {
 		g_bSteamTools = true;
 		UpdateGameDescription();
 
-		Log(TDLogLevel_Info, "SteamTools loaded.");
+		Log(TDLogLevel_Info, "SteamTools loaded");
 	}
 }
 
@@ -124,7 +125,19 @@ public OnLibraryRemoved(const String:sName[]) {
 	if (StrEqual(sName, "SteamTools", false)) {
 		g_bSteamTools = false;
 
-		Log(TDLogLevel_Info, "SteamTools unloaded.");
+		Log(TDLogLevel_Info, "SteamTools unloaded");
+	}
+}
+
+public OnClientAuthorized(iClient, const String:sSteamID[]) {
+	if (IsValidClient(iClient) && !StrEqual(sSteamID, "BOT")) {
+		if (GetRealClientCount() > PLAYER_LIMIT) {
+			KickClient(iClient, "Maximum number of players has been reached (%d/%d)", GetRealClientCount() - 1, PLAYER_LIMIT);
+			Log(TDLogLevel_Info, "Kicked player (%N, %s) (Maximum players reached: %d/%d)", iClient, sSteamID, GetRealClientCount() - 1, PLAYER_LIMIT);
+			return;
+		}
+
+		Log(TDLogLevel_Info, "Connected clients: %d/%d", GetRealClientCount(), PLAYER_LIMIT);
 	}
 }
 
@@ -232,4 +245,23 @@ stock UpdateGameDescription() {
 stock PrecacheModels() {
 	g_iLaserMaterial = PrecacheModel("materials/sprites/laserbeam.vmt");
 	g_iHaloMaterial = PrecacheModel("materials/sprites/halo01.vmt");
+}
+
+/**
+ * Counts non-fake clients connected to the game.
+ *
+ * @param bInGameOnly	Only count clients which are in-game.
+ * @return				The client count.
+ */
+
+stock GetRealClientCount(bool:bInGameOnly = false) {
+	new iClients = 0;
+
+	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+		if (((bInGameOnly) ? IsClientInGame(iClient) : IsClientConnected(iClient)) && !IsFakeClient(iClient)) {
+			iClients++;
+		}
+	}
+
+	return iClients;
 }

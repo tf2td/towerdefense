@@ -17,7 +17,7 @@ new Handle:g_hEnabled;
 
 /*==========  Integer  ==========*/
 
-new g_iLaserMaterial;
 new g_iHaloMaterial;
+new g_iLaserMaterial;
 
 /*==========  String  ==========*/
