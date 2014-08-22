@@ -4,6 +4,7 @@
 #include <sdktools>
 #include <steamtools>
 #include <tf2_stocks>
+#include <tf2items>
 
 /*=================================
 =            Constants            =
@@ -42,6 +43,7 @@ public Plugin:myinfo =
 
 #include "towerdefense/util/log.sp"
 #include "towerdefense/util/md5.sp"
+#include "towerdefense/util/tf2items.sp"
 #include "towerdefense/util/zones.sp"
 
 #include "towerdefense/commands.sp"
