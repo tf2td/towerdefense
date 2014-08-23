@@ -75,6 +75,7 @@ public OnPluginStart() {
 
 	LoadConVars();
 	HookEvents();
+	RegisterCommands();
 
 	// Plugin late load, re-load
 	for (new iClient = 1; iClient <= MaxClients; iClient++) {
@@ -361,4 +362,68 @@ stock GetAimTarget(iClient) {
 
 public bool:TraceRayPlayers(iEntity, iMask, any:iData) {
 	return (iEntity != iData);
+}
+
+/**
+ * Gets a client by name.
+ *
+ * @param iClient		The executing clients index.
+ * @param sName			The clients name.
+ * @return				The clients client index, or -1 on error.
+ */
+
+public GetClientByName(iClient, String:sName[]) {
+	new String:sNameOfIndex[MAX_NAME_LENGTH + 1];
+	new iLen = strlen(sName);
+	
+	new iResults = 0;
+	new iTarget = 0;
+
+	for (new i = 1; i <= MaxClients; i++) {
+		if (IsClientInGame(i)) {
+			GetClientName(i, sNameOfIndex, sizeof(sNameOfIndex));
+			Substring(sNameOfIndex, sizeof(sNameOfIndex), sNameOfIndex, sizeof(sNameOfIndex), 0, iLen);
+			
+			if (StrEqual(sName, sNameOfIndex)) {
+				iResults++;
+				iTarget = i;
+			}
+		}
+	}
+
+	if (iResults == 1) {
+		return iTarget;
+	} else if (iResults == 0) {
+		if (IsDefender(iClient)) {
+			PrintToChat(iClient, "Couldn't find player %s.", sName);
+		}
+	} else {
+		if (IsDefender(iClient)) {
+			PrintToChat(iClient, "Be more specific.", sName);
+		}
+	}
+	
+	return -1;
+}
+
+/**
+ * Gets a substring of an string.
+ *
+ * @param sDest				The string to copy to.
+ * @param iDestLength		The length of the destination string.
+ * @param sSource			The string to copy from.
+ * @param iSourceLength		The length of the source string.
+ * @param iStart			The positon to start the copy from.
+ * @param iEnd				The postion to end the copy.
+ * @return					True on success, false ontherwise.
+ */
+
+public bool:Substring(String:sDest[], iDestLength, String:sSource[], iSourceLength, iStart, iEnd) {
+	if (iEnd < iStart || iEnd > (iSourceLength - 1)) {
+		strcopy(sDest, iDestLength, NULL_STRING);
+		return false;
+	} else {
+		strcopy(sDest, (iEnd - iStart + 1), sSource[iStart]);
+		return true;
+	}
 }
