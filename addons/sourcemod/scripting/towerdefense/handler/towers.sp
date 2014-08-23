@@ -18,6 +18,8 @@ stock AttachTower(iClient) {
 			return;
 		}
 
+		TF2Attrib_SetByName(iClient, "cannot pick up buildings", 1.0);
+
 		SetEntityMoveType(iTower, MOVETYPE_NOCLIP);
 
 		TeleportEntity(iTower, Float:{0.0, 0.0, -8192.0}, NULL_VECTOR, NULL_VECTOR); // Teleport out of the map
@@ -50,6 +52,8 @@ stock DetachTower(iClient) {
 
 	HideAnnotation(iClient);
 
+	TF2Attrib_RemoveByName(iClient, "cannot pick up buildings");
+
 	g_iAttachedTower[iClient] = 0;
 	Log(TDLogLevel_Debug, "%N dropped tower (%N)", iClient, iTower);
 }
@@ -78,7 +82,7 @@ stock UpgradeTower(iTower, iClient) {
 
 	HideAnnotation(iTower);
 	HideAdvancedAnnotation(iClient, iTower);
-	AttachAnnotation(iTower, 2.0, "Current Level: %d\n\rUpgrade Progress: %d/1000", g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower]);
+	AttachAnnotation(iTower, 2.0, "%N\n\rCurrent Level: %d\n\rUpgrade Progress: %d/1000", iTower, g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower]);
 }
 
 /**
@@ -92,7 +96,7 @@ stock ShowTowerInfo(iClient) {
 	new iTower = GetAimTarget(iClient);
 
 	if (IsTower(iTower)) {
-		AttachAdvancedAnnotation(iClient, iTower, 4.0, "Current Level: %d\n\rUpgrade Progress: %d/1000", g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower]);
+		AttachAdvancedAnnotation(iClient, iTower, 4.0, "%N\n\rCurrent Level: %d\n\rUpgrade Progress: %d/1000", iTower, g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower]);
 	}
 }
 

@@ -6,6 +6,7 @@
 #include <steamtools>
 #include <tf2_stocks>
 #include <tf2items>
+#include <tf2attributes>
 
 /*=================================
 =            Constants            =
@@ -347,8 +348,8 @@ public bool:IsButtonReleased(iClient, iButtons, iButton) {
 /**
  * Get the target a client is aiming at.
  *
- * @param iClient		The clients index.
- * @return				The targets index or -1 if no target is being aimed at.
+ * @param iClient		The client.
+ * @return				The targets or -1 if no target is being aimed at.
  */
 
 stock GetAimTarget(iClient) {
@@ -371,6 +372,35 @@ stock GetAimTarget(iClient) {
 
 public bool:TraceRayPlayers(iEntity, iMask, any:iData) {
 	return (iEntity != iData) && IsValidClient(iEntity);
+}
+
+/**
+ * Get the entity a client is aiming at.
+ *
+ * @param iClient		The client.
+ * @return				The entity or -1 if no entity is being aimed at.
+ */
+
+stock GetAimEntity(iClient) {
+	new Float:fLocation[3], Float:fAngles[3];
+	GetClientEyePosition(iClient, fLocation);
+	GetClientEyeAngles(iClient, fAngles);
+		
+	TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayEntities, iClient);
+	
+	if (TR_DidHit()) {
+		new iEntity = TR_GetEntityIndex();
+	
+		if (IsValidEntity(iEntity)) {
+			return iEntity;
+		}
+	}
+
+	return -1;
+}
+
+public bool:TraceRayEntities(iEntity, iMask, any:iData) {
+	return (iEntity != iData) && iEntity > MaxClients && IsValidEntity(iEntity);
 }
 
 /**
