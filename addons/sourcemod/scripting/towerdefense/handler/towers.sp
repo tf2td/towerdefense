@@ -73,11 +73,11 @@ stock AttachAnnotation(iEntity, String:sMessage[], any:...) {
 	SetEventInt(hEvent, "id", iEntity); 
 	SetEventFloat(hEvent, "lifetime", 86400.0);
 
-	new String:sFormattedMessage[256];
+	decl String:sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 3);
 	SetEventString(hEvent, "text", sFormattedMessage); 
 
-	FireEvent(hEvent); 
+	FireEvent(hEvent);
 }
 
 /**
@@ -87,7 +87,7 @@ stock AttachAnnotation(iEntity, String:sMessage[], any:...) {
  * @noreturn
  */
 
-stock HideAnnotation(iEntity)  { 
+stock HideAnnotation(iEntity) {
 	new Handle:hEvent = CreateEvent("hide_annotation"); 
 
 	if (hEvent == INVALID_HANDLE) {
@@ -113,4 +113,87 @@ stock bool:IsTowerAttached(iTower) {
 	}
 
 	return false;
+}
+
+/**
+ * Gets called when a tower is upgraded by a client.
+ *
+ * @param iTower		The tower.
+ * @param iClient		The client upgrading.
+ * @noreturn
+ */
+
+stock UpgradeTower(iTower, iClient) {
+	if (!AddClientMetal(iClient, -25)) {
+		return;
+	}
+
+	g_iUpgradeMetal[iTower] += 25;
+
+	if (g_iUpgradeMetal[iTower] >= 1000) {
+		// Upgrade tower to next level
+
+		g_iUpgradeMetal[iTower] = 0;
+		g_iUpgradeLevel[iTower]++;
+	}
+
+	HideAnnotation(iTower);
+	AttachAnnotation(iTower, "Current Level: %d\n\rUpgrade Progress: %d/1000", g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower]);
+}
+
+/**
+ * Spawns a tower.
+ *
+ * @param iTowerID		The towers id.
+ * @return				True on success, false ontherwise.
+ */
+
+stock bool:SpawnTower(iTowerId) {
+	if (IsTower(GetTower(iTowerId))) { // Tower already spawned
+		return false;
+	}
+
+	// Remove sv_cheats flags from bot command
+	new iFlags;
+	iFlags = GetCommandFlags("bot");
+	iFlags &= ~FCVAR_CHEAT;
+	iFlags &= ~FCVAR_SPONLY;
+	SetCommandFlags("bot", iFlags);
+
+	ServerCommand("bot -team blue -class %s -name %s", g_sTowerData[iTowerId][TOWER_DATA_CLASS], g_sTowerData[iTowerId][TOWER_DATA_NAME]);
+
+	// Re-add sv_cheats flags to bot command
+	iFlags &= FCVAR_CHEAT;
+	iFlags &= FCVAR_SPONLY;
+	SetCommandFlags("bot", iFlags);
+
+	Log(TDLogLevel_Info, "Tower (%N) spawned", g_sTowerData[iTowerId][TOWER_DATA_NAME]);
+	return true;
+}
+
+/*=========================================
+=            Utility Functions            =
+=========================================*/
+
+/**
+ * Gets a towers client index.
+ *
+ * @param iTowerId		The towers id.
+ * @return				The towers client index, or -1 on failure.
+ */
+
+stock GetTower(iTowerId) {
+	decl String:sName[MAX_NAME_LENGTH];
+	
+	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+		if (IsTower(iClient)) {
+			GetClientName(iClient, sName, sizeof(sName));
+			
+			if (StrEqual(sName, g_sTowerData[iTowerId][TOWER_DATA_NAME])) {
+				return iClient;
+			}
+		}
+	}
+	
+	return -1;
 }

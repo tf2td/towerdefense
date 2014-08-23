@@ -1,3 +1,11 @@
+/*======================================
+=            Data Variables            =
+======================================*/
+
+new String:g_sTowerData[TDTowerId][TDTowerData][96];
+
+
+
 /*=========================================
 =            Generic Variables            =
 =========================================*/
@@ -38,5 +46,24 @@ new g_iLaserMaterial;
 
 new g_iAttachedTower[MAXPLAYERS + 1];
 new g_iLastButtons[MAXPLAYERS + 1];
+
+/*==========  String  ==========*/
+
+
+
+/*=======================================
+=            Tower Variables            =
+=======================================*/
+
+/*==========  Boolean  ==========*/
+
+/*==========  Handle  ==========*/
+
+/*==========  Float  ==========*/
+
+/*==========  Integer  ==========*/
+
+new g_iUpgradeLevel[MAXPLAYERS + 1];
+new g_iUpgradeMetal[MAXPLAYERS + 1];
 
 /*==========  String  ==========*/

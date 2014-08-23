@@ -1,6 +1,7 @@
 #pragma semicolon 1
 
 #include <sourcemod>
+#include <sdkhooks>
 #include <sdktools>
 #include <steamtools>
 #include <tf2_stocks>
@@ -35,6 +36,7 @@ public Plugin:myinfo =
 =======================================*/
 
 #include "towerdefense/info/constants.sp"
+#include "towerdefense/info/enums.sp"
 #include "towerdefense/info/variables.sp"
 #include "towerdefense/info/convars.sp"
 
@@ -152,7 +154,12 @@ public OnClientAuthorized(iClient, const String:sSteamID[]) {
 }
 
 public OnClientPutInServer(iClient) {
+	SDKHook(iClient, SDKHook_OnTakeDamage, OnTakeDamage);
+
 	g_iAttachedTower[iClient] = 0;
+
+	g_iUpgradeMetal[iClient] = 0;
+	g_iUpgradeLevel[iClient] = 1;
 }
 
 public OnClientPostAdminCheck(iClient) {
@@ -165,11 +172,10 @@ public OnClientPostAdminCheck(iClient) {
 public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], Float:fAngles[3], &iWeapon) {
 	// Attach/detach tower on right-click
 	if (IsButtonReleased(iClient, iButtons, IN_ATTACK2)) { 
-		new String:sActiveWeapon[64];
+		decl String:sActiveWeapon[64];
 		GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
 		
-		if (StrEqual(sActiveWeapon, "tf_weapon_wrench") ||
-			StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
+		if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
 
 			if (IsTower(g_iAttachedTower[iClient])) {
 				DetachTower(iClient);
@@ -181,7 +187,29 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 
 	g_iLastButtons[iClient] = iButtons;
 
-	return Plugin_Continue; 
+	return Plugin_Continue;
+}
+
+public Action:OnTakeDamage(iClient, &iAttacker, &iInflictor, &Float:fDamage, &iDamageType, &iWeapon, Float:fDamageForce[3], Float:fDamagePosition[3]) {
+	if (IsDefender(iAttacker) && IsTower(iClient)) {
+		decl String:sActiveWeapon[64];
+		GetClientWeapon(iAttacker, sActiveWeapon, sizeof(sActiveWeapon));
+		
+		if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
+			UpgradeTower(iClient, iAttacker);
+			return Plugin_Handled;
+		}
+	}
+
+	if (IsValidClient(iAttacker) && GetClientTeam(iClient) == GetClientTeam(iAttacker)) {
+		return Plugin_Handled;
+	}
+
+	if (IsTower(iClient)) {
+		return Plugin_Handled;
+	}
+
+	return Plugin_Continue;
 }
 
 /*=========================================

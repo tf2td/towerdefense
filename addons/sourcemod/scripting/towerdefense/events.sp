@@ -61,11 +61,12 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 
 	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
 
-	if (!IsDefender(iClient)) {
-		return;
+	if (IsDefender(iClient)) {
+		ResetClientMetal(iClient);
+		SetEntProp(iClient, Prop_Data, "m_bloodColor", DONT_BLEED);
+	} else if (IsTower(iClient)) {
+		SetEntProp(iClient, Prop_Data, "m_bloodColor", DONT_BLEED);
 	}
-
-	ResetClientMetal(iClient);
 }
 
 /*=======================================
