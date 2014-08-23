@@ -38,6 +38,8 @@ new g_iLaserMaterial;
 
 /*==========  Boolean  ==========*/
 
+new bool:g_bReplaceWeapon[MAXPLAYERS + 1][3];
+
 /*==========  Handle  ==========*/
 
 /*==========  Float  ==========*/

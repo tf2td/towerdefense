@@ -18,33 +18,6 @@
  */
 
 stock TF2Items_GiveWeapon(iClient, iItemDefinitionIndex, iSlot, iLevel, iQuality, bool:bPreserveAttributes, String:sClassname[], String:sAttributes[]) {
-	new Handle:hPack;
-	CreateDataTimer(0.0, GiveWeapon, hPack, TIMER_FLAG_NO_MAPCHANGE); // Process next frame
-
-	WritePackCell(hPack, iClient);
-	WritePackCell(hPack, iItemDefinitionIndex);
-	WritePackCell(hPack, iSlot);
-	WritePackCell(hPack, iLevel);
-	WritePackCell(hPack, iQuality);
-	WritePackCell(hPack, bPreserveAttributes ? 1 : 0);
-	WritePackString(hPack, sClassname);
-	WritePackString(hPack, sAttributes);
-}
-
-public Action:GiveWeapon(Handle:hTimer, Handle:hPack) {
-	ResetPack(hPack);
-
-	new iClient = ReadPackCell(hPack);
-	new iItemDefinitionIndex = ReadPackCell(hPack);
-	new iSlot = ReadPackCell(hPack);
-	new iLevel = ReadPackCell(hPack);
-	new iQuality = ReadPackCell(hPack);
-	new bool:bPreserveAttributes = ReadPackCell(hPack) == 1;
-
-	decl String:sClassname[128], String:sAttributes[256];
-	ReadPackString(hPack, sClassname, sizeof(sClassname));
-	ReadPackString(hPack, sAttributes, sizeof(sAttributes));
-
 	Log(TDLogLevel_Trace, "%d, %d, %d, %d, %d, %s, \"%s\", \"%s\"", iClient, iItemDefinitionIndex, iSlot, iLevel, iQuality, (bPreserveAttributes ? "true" : "false"), sClassname, sAttributes);
 
 	new Handle:hItem = TF2Items_CreateItem(OVERRIDE_ALL);
@@ -81,7 +54,7 @@ public Action:GiveWeapon(Handle:hTimer, Handle:hPack) {
 				iAttributeIndex = StringToInt(sAttribute[0]);
 				fAttributeValue = StringToFloat(sAttribute[1]);
 
-				// PrintToServer("Attribute: %d, Value: %f", iAttributeIndex, fAttributeValue);
+				PrintToServer("Attribute: %d, Value: %f", iAttributeIndex, fAttributeValue);
 
 				TF2Items_SetAttribute(hItem, i, iAttributeIndex, fAttributeValue);
 
@@ -96,7 +69,7 @@ public Action:GiveWeapon(Handle:hTimer, Handle:hPack) {
 			iAttributeIndex = StringToInt(sAttribute[0]);
 			fAttributeValue = StringToFloat(sAttribute[1]);
 
-			// PrintToServer("Attribute: %d, Value: %f", iAttributeIndex, fAttributeValue);
+			PrintToServer("Attribute: %d, Value: %f", iAttributeIndex, fAttributeValue);
 
 			TF2Items_SetAttribute(hItem, 0, iAttributeIndex, fAttributeValue);
 
@@ -109,18 +82,18 @@ public Action:GiveWeapon(Handle:hTimer, Handle:hPack) {
 		iFlags |= OVERRIDE_ATTRIBUTES;
 	}
 
-	TF2Items_SetFlags(hItem, iFlags);
+	// TF2Items_SetFlags(hItem, iFlags);
 
 	TF2Items_SetClassname(hItem, sClassname);
 
 	TF2_RemoveWeaponSlot(iClient, iSlot);
 	new iWeapon = TF2Items_GiveNamedItem(iClient, hItem);
-
+			
 	if (IsValidEntity(iWeapon)) {
 		EquipPlayerWeapon(iClient, iWeapon);
 
 		Log(TDLogLevel_Debug, "Gave weapon (%d) to %N", iItemDefinitionIndex, iClient);
 	}
 
-	return Plugin_Stop;
+	CloseHandle(hItem);
 }

@@ -13,7 +13,7 @@ stock HookEvents() {
 	HookEvent("player_changeclass", Event_PlayerChangeClass);
 	HookEvent("player_team", Event_PlayerChangeTeam, EventHookMode_Pre);
 	HookEvent("player_connect", Event_PlayerConnect, EventHookMode_Pre);
-	HookEvent("post_inventory_application", Event_PostInventoryApplication);
+	HookEvent("post_inventory_application", Event_PostInventoryApplication, EventHookMode_Post);
 }
 
 public Event_PlayerChangeClass(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
@@ -64,6 +64,18 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 	if (IsDefender(iClient)) {
 		ResetClientMetal(iClient);
 		SetEntProp(iClient, Prop_Data, "m_bloodColor", DONT_BLEED);
+
+		if (g_bReplaceWeapon[iClient][TFWeaponSlot_Primary]) {
+			TF2Items_GiveWeapon(iClient, 9, TFWeaponSlot_Primary, 5, 1, true, "tf_weapon_shotgun_primary", "");
+			
+			g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
+		}
+
+		if (g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary]) {
+			TF2Items_GiveWeapon(iClient, 22, TFWeaponSlot_Secondary, 5, 1, true, "tf_weapon_pistol", "");
+			
+			g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
+		}
 	} else if (IsTower(iClient)) {
 		SetEntProp(iClient, Prop_Data, "m_bloodColor", DONT_BLEED);
 	}
@@ -88,16 +100,15 @@ public TF2Items_OnGiveNamedItem_Post(iClient, String:sClassname[], iItemDefiniti
 		return;
 	}
 
-	switch (iItemDefinitionIndex) {
-		case 141, 527, 588, 997, 1004 : {
-			// Engineers primaries => Engineer's Shotgun
+	if (iItemDefinitionIndex != 9 || iItemDefinitionIndex != 199) {
+		// Engineers primaries => Engineer's Shotgun
 
-			TF2Items_GiveWeapon(iClient, 9, TFWeaponSlot_Primary, 5, 1, false, "tf_weapon_shotgun_primary", "");
-		}
-		case 140, 528, 1086 : {
-			// Engineers secondaries => Engineer's Pistol 
+		g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = true;
+	}
 
-			TF2Items_GiveWeapon(iClient, 22, TFWeaponSlot_Secondary, 5, 1, false, "tf_weapon_pistol", "");
-		}
+	if (iItemDefinitionIndex != 22 || iItemDefinitionIndex != 209 || iItemDefinitionIndex != 160 || iItemDefinitionIndex != 294) {
+		// Engineers secondaries => Engineer's Pistol 
+		
+		g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = true;
 	}
 }
