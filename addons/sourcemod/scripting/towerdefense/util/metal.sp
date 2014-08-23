@@ -65,3 +65,86 @@ stock bool:AddClientMetal(iClient, iMetal) {
 	SetClientMetal(iClient, GetClientMetal(iClient) + iMetal);
 	return true;
 }
+
+/**
+ * Spawns a metal pack.
+ *
+ * @param iMetalPackType	The metal pack type.
+ * @param fLocation			The location it should spawn at.
+ * @param iMetal			The amount of metal it should spawn with.
+ * @return					A TDMetalPackReturn value.
+ */
+
+stock TDMetalPackReturn:SpawnMetalPack(TDMetalPackType:iMetalPackType, Float:fLocation[3], iMetal) {
+	if (iMetal <= 0) {
+		return TDMetalPack_InvalidMetal;
+	}
+
+	if (g_iMetalPackCount >= METALPACK_LIMIT) {
+		return TDMetalPack_LimitReached;
+	}
+
+	decl String:sModelPath[PLATFORM_MAX_PATH];
+
+	switch (iMetalPackType) {
+		case TDMetalPack_Small: {
+			strcopy(sModelPath, sizeof(sModelPath), "models/items/ammopack_small.mdl");
+		}
+		case TDMetalPack_Medium: {
+			strcopy(sModelPath, sizeof(sModelPath), "models/items/ammopack_medium.mdl");
+		}
+		case TDMetalPack_Large: {
+			strcopy(sModelPath, sizeof(sModelPath), "models/items/ammopack_large.mdl");
+		}
+		default: {
+			return TDMetalPack_InvalidType;
+		}
+	}
+
+	new iMetalPack = CreateEntityByName("prop_dynamic");
+
+	DispatchKeyValue(iMetalPack, "model", sModelPath);
+
+	decl String:sMetal[32];
+	IntToString(iMetal, sMetal, sizeof(sMetal));
+
+	DispatchKeyValue(iMetalPack, "targetname", sMetal);
+
+	if (DispatchSpawn(iMetalPack)) {
+		// Make it not solid, but still "collideable"
+		SetEntProp(iMetalPack, Prop_Send, "m_usSolidFlags", 0x0008|0x0010); // FSOLID_TRIGGER|FSOLID_NOT_STANDABLE
+		SetEntProp(iMetalPack, Prop_Data, "m_nSolidType", 6); // SOLID_VPHYSICS
+		SetEntProp(iMetalPack, Prop_Data, "m_CollisionGroup", 2); // COLLISION_GROUP_DEBRIS_TRIGGER
+
+		SetVariantString("idle");
+		AcceptEntityInput(iMetalPack, "SetAnimation");
+		
+		TeleportEntity(iMetalPack, fLocation, NULL_VECTOR, NULL_VECTOR);
+
+		SDKHook(iMetalPack, SDKHook_Touch, OnMetalPackPickup);
+
+		g_iMetalPackCount++;
+	}
+
+	Log(TDLogLevel_Debug, "Spawned metal pack (%d, Metal: %d)", iMetalPack, iMetal);
+
+	return TDMetalPack_SpawnedPack;
+}
+
+public OnMetalPackPickup(iMetalPack, iClient) {
+	if (!IsDefender(iClient) || !IsValidEntity(iMetalPack)) {
+		return;
+	}
+
+	decl String:sMetal[32];
+	GetEntPropString(iMetalPack, Prop_Data, "m_iName", sMetal, sizeof(sMetal));
+
+	new iMetal = StringToInt(sMetal);
+
+	AddClientMetal(iClient, iMetal);
+	EmitSoundToClient(iClient, "items/gunpickup2.wav");
+
+	AcceptEntityInput(iMetalPack, "Kill");
+
+	g_iMetalPackCount--;
+}

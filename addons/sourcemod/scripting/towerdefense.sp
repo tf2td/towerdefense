@@ -96,6 +96,7 @@ public OnMapStart() {
 	g_bTowerDefenseMap = IsTowerDefenseMap();
 
 	PrecacheModels();
+	PrecacheSounds();
 }
 
 public OnMapEnd() {
@@ -314,8 +315,28 @@ stock UpdateGameDescription() {
  */
 
 stock PrecacheModels() {
+	PrecacheModel("models/items/ammopack_large.mdl");
+	PrecacheModel("models/items/ammopack_medium.mdl");
+	PrecacheModel("models/items/ammopack_small.mdl");
+	
 	g_iLaserMaterial = PrecacheModel("materials/sprites/laserbeam.vmt");
 	g_iHaloMaterial = PrecacheModel("materials/sprites/halo01.vmt");
+}
+
+/**
+ * Precaches needed sounds.
+ *
+ * @noreturn
+ */
+
+stock PrecacheSounds() {
+	new String:sRoboPath[64];
+	for (new i = 1; i <= 18; i++) {
+		Format(sRoboPath, sizeof(sRoboPath), "mvm/player/footsteps/robostep_%s%i.wav", (i < 10) ? "0" : "", i);
+		PrecacheSound(sRoboPath);
+	}
+	
+	PrecacheSound("items/gunpickup2.wav");
 }
 
 /**
@@ -465,4 +486,46 @@ public bool:Substring(String:sDest[], iDestLength, String:sSource[], iSourceLeng
 		strcopy(sDest, (iEnd - iStart + 1), sSource[iStart]);
 		return true;
 	}
+}
+
+/**
+ * Checks if a string is numeric.
+ *
+ * @param sText			The string which should be checked.
+ * @return				True if number, false ontherwise.
+ */
+
+public bool:IsStringNumeric(String:sText[]) {
+	for (new iChar = 0; iChar < strlen(sText); iChar++) {
+		if (!IsCharNumeric(sText[iChar])) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/**
+ * Gets the distance between a location and the ground.
+ *
+ * @param fLocation		The location vector.
+ * @return				Distance to the ground.
+ */
+
+public Float:GetDistanceToGround(Float:fLocation[3]) {	
+	new Float:fGround[3];
+
+	TR_TraceRayFilter(fLocation, Float:{90.0, 0.0, 0.0}, MASK_PLAYERSOLID, RayType_Infinite, TraceRayNoPlayers, 0);
+	
+	if (TR_DidHit()) {
+		TR_GetEndPosition(fGround);
+
+		return GetVectorDistance(fLocation, fGround);
+	}
+
+	return 0.0;
+}
+
+public bool:TraceRayNoPlayers(iEntity, iMask, any:iData) {
+	return !(iEntity == iData || IsValidClient(iEntity));
 }

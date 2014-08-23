@@ -27,6 +27,7 @@ new Handle:g_hEnabled;
 
 new g_iHaloMaterial;
 new g_iLaserMaterial;
+new g_iMetalPackCount;
 
 /*==========  String  ==========*/
 

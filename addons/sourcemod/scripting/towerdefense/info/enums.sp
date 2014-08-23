@@ -7,6 +7,21 @@ enum _:BloodColor
 	BLOOD_COLOR_MECH
 };
 
+enum TDMetalPackType
+{
+	TDMetalPack_Small,
+	TDMetalPack_Medium,
+	TDMetalPack_Large
+}
+
+enum TDMetalPackReturn
+{
+	TDMetalPack_InvalidMetal,
+	TDMetalPack_LimitReached,
+	TDMetalPack_InvalidType,
+	TDMetalPack_SpawnedPack
+}
+
 enum _:TDTowerId
 {
 	TOWER_ENGINEER				=  0,
