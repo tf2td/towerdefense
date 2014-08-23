@@ -177,12 +177,21 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 		GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
 		
 		if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
-
 			if (IsTower(g_iAttachedTower[iClient])) {
 				DetachTower(iClient);
 			} else {
 				AttachTower(iClient);
 			}
+		}
+	}
+
+	// Show tower info on left-click
+	if (IsButtonReleased(iClient, iButtons, IN_ATTACK)) { 
+		decl String:sActiveWeapon[64];
+		GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
+		
+		if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
+			ShowTowerInfo(iClient);
 		}
 	}
 
@@ -351,7 +360,7 @@ stock GetAimTarget(iClient) {
 	
 	if (TR_DidHit()) {
 		new iEntity = TR_GetEntityIndex();
-		
+	
 		if (IsValidEntity(iEntity) && IsValidClient(iEntity)) {
 			return iEntity;
 		}
@@ -361,7 +370,7 @@ stock GetAimTarget(iClient) {
 }
 
 public bool:TraceRayPlayers(iEntity, iMask, any:iData) {
-	return (iEntity != iData);
+	return (iEntity != iData) && IsValidClient(iEntity);
 }
 
 /**

@@ -22,7 +22,8 @@ stock AttachTower(iClient) {
 
 		TeleportEntity(iTower, Float:{0.0, 0.0, -8192.0}, NULL_VECTOR, NULL_VECTOR); // Teleport out of the map
 
-		AttachAnnotation(iClient, "Moving: %N", iTower);
+		HideAnnotation(iTower);
+		AttachAnnotation(iClient, 86400.0, "Moving: %N", iTower);
 
 		g_iAttachedTower[iClient] = iTower;
 		Log(TDLogLevel_Debug, "%N picked up tower (%N)", iClient, iTower);
@@ -54,68 +55,6 @@ stock DetachTower(iClient) {
 }
 
 /**
- * Attaches a annotation to an entity.
- *
- * @param iEntity		The entity.
- * @param sMessage		The message to show.
- * @param ...			Message formatting parameters.
- * @noreturn
- */
-
-stock AttachAnnotation(iEntity, String:sMessage[], any:...) {
-	new Handle:hEvent = CreateEvent("show_annotation");
-
-	if (hEvent == INVALID_HANDLE) {
-		return;
-	}
-	
-	SetEventInt(hEvent, "follow_entindex", iEntity); 
-	SetEventInt(hEvent, "id", iEntity); 
-	SetEventFloat(hEvent, "lifetime", 86400.0);
-
-	decl String:sFormattedMessage[256];
-	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 3);
-	SetEventString(hEvent, "text", sFormattedMessage); 
-
-	FireEvent(hEvent);
-}
-
-/**
- * Hides the annotation which is attached to an entity.
- *
- * @param iEntity		The entity.
- * @noreturn
- */
-
-stock HideAnnotation(iEntity) {
-	new Handle:hEvent = CreateEvent("hide_annotation"); 
-
-	if (hEvent == INVALID_HANDLE) {
-		return;
-	}
-
-	SetEventInt(hEvent, "id", iEntity); 
-	FireEvent(hEvent); 
-}
-
-/**
- * Checks if a tower is attached to a client.
- *
- * @param iTower		The tower.
- * @return				True if tower is attached, false ontherwise.
- */
-
-stock bool:IsTowerAttached(iTower) {
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
-		if (g_iAttachedTower[iClient] == iTower) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
  * Gets called when a tower is upgraded by a client.
  *
  * @param iTower		The tower.
@@ -138,7 +77,23 @@ stock UpgradeTower(iTower, iClient) {
 	}
 
 	HideAnnotation(iTower);
-	AttachAnnotation(iTower, "Current Level: %d\n\rUpgrade Progress: %d/1000", g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower]);
+	HideAdvancedAnnotation(iClient, iTower);
+	AttachAnnotation(iTower, 2.0, "Current Level: %d\n\rUpgrade Progress: %d/1000", g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower]);
+}
+
+/**
+ * Shows tower info to a client.
+ *
+ * @param iClient		The client.
+ * @noreturn
+ */
+
+stock ShowTowerInfo(iClient) {
+	new iTower = GetAimTarget(iClient);
+
+	if (IsTower(iTower)) {
+		AttachAdvancedAnnotation(iClient, iTower, 4.0, "Current Level: %d\n\rUpgrade Progress: %d/1000", g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower]);
+	}
 }
 
 /**
@@ -176,6 +131,40 @@ stock bool:SpawnTower(iTowerId) {
 =========================================*/
 
 /**
+ * Gets a visibility bitfield which determines if a player should see an annotation.
+ *
+ * @param iClient		The client who should see it.
+ * @return				The bitfield.
+ */
+
+public GetVisibilityBitfield(iClient) {
+	if (!IsDefender(iClient)) {
+		return 1;
+	}
+
+	new iBitField = 1;
+	iBitField |= RoundFloat(Pow(2.0, float(iClient)));
+	return iBitField;
+}
+
+/**
+ * Checks if a tower is attached to a client.
+ *
+ * @param iTower		The tower.
+ * @return				True if tower is attached, false ontherwise.
+ */
+
+stock bool:IsTowerAttached(iTower) {
+	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+		if (g_iAttachedTower[iClient] == iTower) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Gets a towers client index.
  *
  * @param iTowerId		The towers id.
@@ -196,4 +185,102 @@ stock GetTower(iTowerId) {
 	}
 	
 	return -1;
+}
+
+/**
+ * Attaches a annotation to an entity.
+ *
+ * @param iEntity		The entity.
+ * @param fLifetime		The lifetime of the annotation.
+ * @param sMessage		The message to show.
+ * @param ...			Message formatting parameters.
+ * @noreturn
+ */
+
+stock AttachAnnotation(iEntity, Float:fLifetime, String:sMessage[], any:...) {
+	new Handle:hEvent = CreateEvent("show_annotation");
+
+	if (hEvent == INVALID_HANDLE) {
+		return;
+	}
+	
+	SetEventInt(hEvent, "follow_entindex", iEntity); 
+	SetEventInt(hEvent, "id", iEntity); 
+	SetEventFloat(hEvent, "lifetime", fLifetime);
+	SetEventString(hEvent, "play_sound", "misc/null.wav");
+
+	decl String:sFormattedMessage[256];
+	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
+	SetEventString(hEvent, "text", sFormattedMessage);
+
+	FireEvent(hEvent);
+}
+
+/**
+ * Attaches a annotation to an entity.
+ *
+ * @param iClient		The client.
+ * @param iEntity		The entity.
+ * @param fLifetime		The lifetime of the annotation.
+ * @param sMessage		The message to show.
+ * @param ...			Message formatting parameters.
+ * @noreturn
+ */
+
+stock AttachAdvancedAnnotation(iClient, iEntity, Float:fLifetime, String:sMessage[], any:...) {
+	new Handle:hEvent = CreateEvent("show_annotation");
+
+	if (hEvent == INVALID_HANDLE) {
+		return;
+	}
+	
+	SetEventInt(hEvent, "follow_entindex", iEntity);
+	SetEventInt(hEvent, "id", iClient * iEntity);
+	SetEventFloat(hEvent, "lifetime", fLifetime);
+	SetEventString(hEvent, "play_sound", "misc/null.wav");
+
+	decl String:sFormattedMessage[256];
+	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 5);
+	SetEventString(hEvent, "text", sFormattedMessage);
+	
+	SetEventInt(hEvent, "visibilityBitfield", GetVisibilityBitfield(iClient));
+
+	FireEvent(hEvent);
+}
+
+/**
+ * Hides the annotation which is attached to an entity.
+ *
+ * @param iEntity		The entity.
+ * @noreturn
+ */
+
+stock HideAnnotation(iEntity) {
+	new Handle:hEvent = CreateEvent("hide_annotation"); 
+
+	if (hEvent == INVALID_HANDLE) {
+		return;
+	}
+
+	SetEventInt(hEvent, "id", iEntity); 
+	FireEvent(hEvent);
+}
+
+/**
+ * Hides the annotation which is attached to an entity.
+ *
+ * @param iEntity		The client.
+ * @param iEntity		The entity.
+ * @noreturn
+ */
+
+stock HideAdvancedAnnotation(iClient, iEntity) {
+	new Handle:hEvent = CreateEvent("hide_annotation"); 
+
+	if (hEvent == INVALID_HANDLE) {
+		return;
+	}
+
+	SetEventInt(hEvent, "id", iClient * iEntity); 
+	FireEvent(hEvent);
 }
