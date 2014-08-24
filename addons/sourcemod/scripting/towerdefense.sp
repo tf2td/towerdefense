@@ -359,6 +359,16 @@ stock UpdateGameDescription() {
  */
 
 stock PrecacheModels() {
+	PrecacheModel("models/bots/scout/bot_scout.mdl");
+	PrecacheModel("models/bots/sniper/bot_sniper.mdl");
+	PrecacheModel("models/bots/soldier/bot_soldier.mdl");
+	PrecacheModel("models/bots/demo/bot_demo.mdl");
+	PrecacheModel("models/bots/medic/bot_medic.mdl");
+	PrecacheModel("models/bots/heavy/bot_heavy.mdl");
+	PrecacheModel("models/bots/pyro/bot_pyro.mdl");
+	PrecacheModel("models/bots/spy/bot_spy.mdl");
+	PrecacheModel("models/bots/engineer/bot_engineer.mdl");
+
 	PrecacheModel("models/items/ammopack_large.mdl");
 	PrecacheModel("models/items/ammopack_medium.mdl");
 	PrecacheModel("models/items/ammopack_small.mdl");
@@ -590,4 +600,54 @@ stock Float:GetDistanceToGround(Float:fLocation[3]) {
 
 public bool:TraceRayNoPlayers(iEntity, iMask, any:iData) {
 	return !(iEntity == iData || IsValidClient(iEntity));
+}
+
+/**
+ * Sets the model of a client to the robot model.
+ *
+ * @param iClient		The clients client index.
+ * @noreturn
+ */
+
+public SetRobotModel(iClient) {
+	decl String:sClass[16], String:sModelPath[PLATFORM_MAX_PATH];
+
+	GetClientClassName(iClient, sClass, sizeof(sClass));
+	Format(sModelPath, sizeof(sModelPath), "models/bots/%s/bot_%s.mdl", sClass, sClass);
+	SetVariantString(sModelPath);
+	AcceptEntityInput(iClient, "SetCustomModel");
+	SetEntProp(iClient, Prop_Send, "m_bUseClassAnimations", 1);
+}
+
+/**
+ * Gets the name of the class a client is playing by using its client index.
+ *
+ * @param iClient 		The players index.
+ * @param sBuffer		The Destination string buffer.
+ * @param iMaxLength	The maximum length of the output string buffer
+ * @noreturn
+ */
+
+public GetClientClassName(iClient, String:sBuffer[], iMaxLength) {
+	switch (TF2_GetPlayerClass(iClient)) {
+		case TFClass_Scout: {
+			Format(sBuffer, iMaxLength, "scout");
+		} case TFClass_Sniper: {
+			Format(sBuffer, iMaxLength, "sniper");
+		} case TFClass_Soldier: {
+			Format(sBuffer, iMaxLength, "soldier");
+		} case TFClass_DemoMan: {
+			Format(sBuffer, iMaxLength, "demo");
+		} case TFClass_Medic: {
+			Format(sBuffer, iMaxLength, "medic");
+		} case TFClass_Heavy: {
+			Format(sBuffer, iMaxLength, "heavy");
+		} case TFClass_Pyro: {
+			Format(sBuffer, iMaxLength, "pyro");
+		} case TFClass_Spy: {
+			Format(sBuffer, iMaxLength, "spy");
+		} case TFClass_Engineer: {
+			Format(sBuffer, iMaxLength, "engineer");
+		}
+	}
 }

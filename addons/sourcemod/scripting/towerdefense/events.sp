@@ -78,6 +78,7 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 		}
 	} else if (IsTower(iClient)) {
 		SetEntProp(iClient, Prop_Data, "m_bloodColor", DONT_BLEED);
+		SetRobotModel(iClient);
 	}
 }
 
