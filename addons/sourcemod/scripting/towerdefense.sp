@@ -609,7 +609,7 @@ public bool:TraceRayNoPlayers(iEntity, iMask, any:iData) {
  * @noreturn
  */
 
-public SetRobotModel(iClient) {
+stock SetRobotModel(iClient) {
 	decl String:sClass[16], String:sModelPath[PLATFORM_MAX_PATH];
 
 	GetClientClassName(iClient, sClass, sizeof(sClass));
@@ -628,7 +628,7 @@ public SetRobotModel(iClient) {
  * @noreturn
  */
 
-public GetClientClassName(iClient, String:sBuffer[], iMaxLength) {
+stock GetClientClassName(iClient, String:sBuffer[], iMaxLength) {
 	switch (TF2_GetPlayerClass(iClient)) {
 		case TFClass_Scout: {
 			Format(sBuffer, iMaxLength, "scout");
