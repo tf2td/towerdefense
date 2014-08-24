@@ -2,7 +2,7 @@
 =            Data Variables            =
 ======================================*/
 
-new String:g_sTowerData[TDTowerId][TDTowerData][96];
+new Handle:g_hMapTowers;
 
 
 

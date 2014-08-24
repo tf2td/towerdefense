@@ -75,6 +75,15 @@ public OnPluginStart() {
 
 	Log_Initialize(TDLogLevel_Debug, TDLogType_Console);
 
+	g_hMapTowers = INVALID_HANDLE;
+
+	if (g_hMapTowers != INVALID_HANDLE) {
+		CloseHandle(g_hMapTowers);
+		g_hMapTowers = INVALID_HANDLE;
+	}
+
+	g_hMapTowers = CreateTrie();
+
 	LoadConVars();
 	HookEvents();
 	RegisterCommands();
@@ -224,27 +233,34 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 		return Plugin_Continue;
 	}
 
-	// Attach/detach tower on right-click
-	if (IsButtonReleased(iClient, iButtons, IN_ATTACK2)) { 
-		decl String:sActiveWeapon[64];
-		GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
-		
-		if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
-			if (IsTower(g_iAttachedTower[iClient])) {
-				DetachTower(iClient);
-			} else {
-				AttachTower(iClient);
-			}
-		}
+	// Force towers to shoot
+	if (IsTower(iClient)) {
+		iButtons |= IN_ATTACK;
 	}
 
-	// Show tower info on left-click
-	if (IsButtonReleased(iClient, iButtons, IN_ATTACK)) { 
-		decl String:sActiveWeapon[64];
-		GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
-		
-		if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
-			ShowTowerInfo(iClient);
+	if (IsDefender(iClient)) {
+		// Attach/detach tower on right-click
+		if (IsButtonReleased(iClient, iButtons, IN_ATTACK2)) { 
+			decl String:sActiveWeapon[64];
+			GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
+			
+			if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
+				if (IsTower(g_iAttachedTower[iClient])) {
+					DetachTower(iClient);
+				} else {
+					AttachTower(iClient);
+				}
+			}
+		}
+
+		// Show tower info on left-click
+		if (IsButtonReleased(iClient, iButtons, IN_ATTACK)) { 
+			decl String:sActiveWeapon[64];
+			GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
+			
+			if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
+				ShowTowerInfo(iClient);
+			}
 		}
 	}
 
