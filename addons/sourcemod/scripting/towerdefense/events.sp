@@ -16,6 +16,9 @@ stock HookEvents() {
 	HookEvent("player_connect", Event_PlayerConnect, EventHookMode_Pre);
 	HookEvent("player_dropobject", Event_PlayerDropObject);
 	HookEvent("post_inventory_application", Event_PostInventoryApplication, EventHookMode_Post);
+
+	// User Messages
+	HookUserMessage(GetUserMessageId("VGUIMenu"), Event_PlayerVGUIMenu, true);
 }
 
 public Event_PlayerCarryObject(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
@@ -110,6 +113,80 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 		SetEntProp(iClient, Prop_Data, "m_bloodColor", DONT_BLEED);
 		SetRobotModel(iClient);
 	}
+}
+
+/*====================================
+=            Usermessages            =
+====================================*/
+
+public Action:Event_PlayerVGUIMenu(UserMsg:iMessageId, Handle:hBitBuffer, const iPlayers[], iPlayersNum, bool:bReliable, bool:bInit) {
+	decl String:sBuffer1[64];
+	decl String:sBuffer2[256];
+
+	// check menu name
+	BfReadString(hBitBuffer, sBuffer1, sizeof(sBuffer1));
+	if (strcmp(sBuffer1, "info") != 0) {
+		return Plugin_Continue;
+	}
+
+	// Skip hidden motd
+	if (BfReadByte(hBitBuffer) != 1) {
+		return Plugin_Continue;
+	}
+	
+	new iCount = BfReadByte(hBitBuffer);
+
+	if (iCount == 0) {
+		return Plugin_Continue;
+	}
+
+	new Handle:hKeyValues = CreateKeyValues("data");
+
+	for (new i = 0; i < iCount; i++) {
+		BfReadString(hBitBuffer, sBuffer1, sizeof(sBuffer1));
+		BfReadString(hBitBuffer, sBuffer2, sizeof(sBuffer2));
+		
+		if (StrEqual(sBuffer1, "customsvr") || (StrEqual(sBuffer1, "msg") && !StrEqual(sBuffer2, "motd"))) {
+			CloseHandle(hKeyValues);
+			return Plugin_Continue;
+		}
+		
+		KvSetString(hKeyValues, sBuffer1, sBuffer2);
+	}
+
+	new Handle:hPack;
+
+	CreateDataTimer(0.0, ShowMotd, hPack, TIMER_FLAG_NO_MAPCHANGE);
+
+	WritePackCell(hPack, GetClientUserId(iPlayers[0]));
+	WritePackCell(hPack, _:hKeyValues);
+	
+	return Plugin_Handled;
+}
+
+public Action:ShowMotd(Handle:hTimer, Handle:hPack) {
+	ResetPack(hPack);
+
+	new iClient = GetClientOfUserId(ReadPackCell(hPack));
+	new Handle:hKeyValues = Handle:ReadPackCell(hPack);
+	
+	if (!IsValidClient(iClient)) {
+		CloseHandle(hKeyValues);
+		return Plugin_Stop;
+	}
+
+	KvSetNum(hKeyValues, "customsvr", 1);
+	KvSetNum(hKeyValues, "cmd", 5); // closed_htmlpage
+	KvSetNum(hKeyValues, "type", MOTDPANEL_TYPE_URL);
+
+	KvSetString(hKeyValues, "title", "Welcome to TF2 Tower Defense!");
+	KvSetString(hKeyValues, "msg", "http://www.tf2td.net/");
+
+	ShowVGUIPanel(iClient, "info", hKeyValues, true);
+
+	CloseHandle(hKeyValues);
+
+	return Plugin_Stop;
 }
 
 /*==================================

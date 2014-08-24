@@ -14,6 +14,7 @@ stock RegisterCommands() {
 
 	// Command Listeners
 	AddCommandListener(CommandListener_Build, "build");
+	AddCommandListener(CommandListener_ClosedMotd, "closed_htmlpage");
 }
 
 /*=====================================
@@ -170,6 +171,17 @@ public Action:CommandListener_Build(iClient, const String:sCommand[], iArgs) {
 			}
 		}
 	}
+
+	return Plugin_Continue;
+}
+
+public Action:CommandListener_ClosedMotd(iClient, const String:sCommand[], iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+
+	SetClientMetal(iClient, 1); // for resetting HUD
+	ResetClientMetal(iClient);
 
 	return Plugin_Continue;
 }
