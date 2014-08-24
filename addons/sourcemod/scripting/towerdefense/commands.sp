@@ -9,7 +9,13 @@ stock RegisterCommands() {
 	// Client Commands
 	RegConsoleCmd("sm_d", Command_Drop);
 	RegConsoleCmd("sm_drop", Command_Drop);
+	RegConsoleCmd("sm_m", Command_ShowMetal);
+	RegConsoleCmd("sm_metal", Command_ShowMetal);
 }
+
+/*=====================================
+=            Test Commands            =
+=====================================*/
 
 public Action:Command_GiveMetal(iClient, iArgs) {
 	new String:sTarget[MAX_NAME_LENGTH], String:sMetal[16];
@@ -41,6 +47,10 @@ public Action:Command_GiveMetal(iClient, iArgs) {
 
 	return Plugin_Handled;
 }
+
+/*=======================================
+=            Client Commands            =
+=======================================*/
 
 public Action:Command_Drop(iClient, iArgs) {
 	decl String:sCommandName[32];
@@ -105,6 +115,18 @@ public Action:Command_Drop(iClient, iArgs) {
 		}
 		case TDMetalPack_SpawnedPack: {
 			AddClientMetal(iClient, -iMetal);
+		}
+	}
+	
+	return Plugin_Handled;
+}
+
+public Action:Command_ShowMetal(iClient, iArgs) {
+	PrintToChatAll("\x04Metal stats:");
+	
+	for (new i = 1; i <= MaxClients; i++) {
+		if (IsDefender(i)) {
+			PrintToChatAll("\x04%N - %d metal", i, GetClientMetal(i));
 		}
 	}
 	

@@ -111,7 +111,7 @@ stock TDMetalPackReturn:SpawnMetalPack(TDMetalPackType:iMetalPackType, Float:fLo
 	DispatchKeyValue(iMetalPack, "targetname", sMetal);
 
 	if (DispatchSpawn(iMetalPack)) {
-		// Make it not solid, but still "collideable"
+		// Make it not solid, but still "collidable"
 		SetEntProp(iMetalPack, Prop_Send, "m_usSolidFlags", 0x0008|0x0010); // FSOLID_TRIGGER|FSOLID_NOT_STANDABLE
 		SetEntProp(iMetalPack, Prop_Data, "m_nSolidType", 6); // SOLID_VPHYSICS
 		SetEntProp(iMetalPack, Prop_Data, "m_CollisionGroup", 2); // COLLISION_GROUP_DEBRIS_TRIGGER

@@ -358,11 +358,29 @@ stock GetRealClientCount(bool:bInGameOnly = false) {
 	return iClients;
 }
 
-public bool:IsButtonPressed(iClient, iButtons, iButton) { 
+/**
+ * Checks if a button is being pressed/was pressed.
+ *
+ * @param iClient		The client.
+ * @param iButtons		The clients current buttons.
+ * @param iButton		The button to check for.
+ * @return				True if pressed, false ontherwise.
+ */
+
+stock bool:IsButtonPressed(iClient, iButtons, iButton) { 
 	return ((iButtons & iButton) == iButton && (g_iLastButtons[iClient] & iButton) != iButton); 
 }
 
-public bool:IsButtonReleased(iClient, iButtons, iButton) { 
+/**
+ * Checks if a button is being released/was released.
+ *
+ * @param iClient		The client.
+ * @param iButtons		The clients current buttons.
+ * @param iButton		The button to check for.
+ * @return				True if released, false ontherwise.
+ */
+
+stock bool:IsButtonReleased(iClient, iButtons, iButton) { 
 	return ((g_iLastButtons[iClient] & iButton) == iButton && (iButtons & iButton) != iButton); 
 }
 
@@ -432,7 +450,7 @@ public bool:TraceRayEntities(iEntity, iMask, any:iData) {
  * @return				The clients client index, or -1 on error.
  */
 
-public GetClientByName(iClient, String:sName[]) {
+stock GetClientByName(iClient, String:sName[]) {
 	new String:sNameOfIndex[MAX_NAME_LENGTH + 1];
 	new iLen = strlen(sName);
 	
@@ -478,7 +496,7 @@ public GetClientByName(iClient, String:sName[]) {
  * @return					True on success, false ontherwise.
  */
 
-public bool:Substring(String:sDest[], iDestLength, String:sSource[], iSourceLength, iStart, iEnd) {
+stock bool:Substring(String:sDest[], iDestLength, String:sSource[], iSourceLength, iStart, iEnd) {
 	if (iEnd < iStart || iEnd > (iSourceLength - 1)) {
 		strcopy(sDest, iDestLength, NULL_STRING);
 		return false;
@@ -495,7 +513,7 @@ public bool:Substring(String:sDest[], iDestLength, String:sSource[], iSourceLeng
  * @return				True if number, false ontherwise.
  */
 
-public bool:IsStringNumeric(String:sText[]) {
+stock bool:IsStringNumeric(String:sText[]) {
 	for (new iChar = 0; iChar < strlen(sText); iChar++) {
 		if (!IsCharNumeric(sText[iChar])) {
 			return false;
@@ -512,7 +530,7 @@ public bool:IsStringNumeric(String:sText[]) {
  * @return				Distance to the ground.
  */
 
-public Float:GetDistanceToGround(Float:fLocation[3]) {	
+stock Float:GetDistanceToGround(Float:fLocation[3]) {	
 	new Float:fGround[3];
 
 	TR_TraceRayFilter(fLocation, Float:{90.0, 0.0, 0.0}, MASK_PLAYERSOLID, RayType_Infinite, TraceRayNoPlayers, 0);

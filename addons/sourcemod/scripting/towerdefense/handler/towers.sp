@@ -141,7 +141,7 @@ stock bool:SpawnTower(iTowerId) {
  * @return				The bitfield.
  */
 
-public GetVisibilityBitfield(iClient) {
+stock GetVisibilityBitfield(iClient) {
 	if (!IsDefender(iClient)) {
 		return 1;
 	}
