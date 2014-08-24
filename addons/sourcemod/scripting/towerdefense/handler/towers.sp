@@ -49,6 +49,11 @@ stock DetachTower(iClient) {
 		return;
 	}
 
+	if (g_bInsideNobuild[iClient]) {
+		Forbid(iClient, true, "Towers aren't meant to be placed on the path!");
+		return;
+	}
+
 	new iTower = g_iAttachedTower[iClient];
 	new Float:fLocation[3], Float:fAngles[3];
 
@@ -63,6 +68,7 @@ stock DetachTower(iClient) {
 
 	TF2Attrib_RemoveByName(iClient, "cannot pick up buildings");
 
+	g_iLastMover[iTower] = iClient;
 	g_bCarryingObject[iClient] = false;
 	g_iAttachedTower[iClient] = 0;
 	Log(TDLogLevel_Debug, "%N dropped tower (%N)", iClient, iTower);
@@ -121,11 +127,11 @@ stock ShowTowerInfo(iClient) {
 /**
  * Spawns a tower.
  *
- * @param iTowerID		The towers id.
+ * @param iTowerId		The towers id.
  * @return				True on success, false ontherwise.
  */
 
-stock bool:SpawnTower(iTowerId) {
+stock bool:SpawnTower(TDTowerId:iTowerId) {
 	if (!g_bEnabled) {
 		return false;
 	}
@@ -141,14 +147,74 @@ stock bool:SpawnTower(iTowerId) {
 	iFlags &= ~FCVAR_SPONLY;
 	SetCommandFlags("bot", iFlags);
 
-	ServerCommand("bot -team blue -class %s -name %s", g_sTowerData[iTowerId][TOWER_DATA_CLASS], g_sTowerData[iTowerId][TOWER_DATA_NAME]);
+	decl String:sName[MAX_NAME_LENGTH], String:sClass[32];
+
+	if (!Tower_GetName(iTowerId, sName, sizeof(sName))) {
+		// Re-add sv_cheats flags to bot command
+		iFlags &= FCVAR_CHEAT;
+		iFlags &= FCVAR_SPONLY;
+		SetCommandFlags("bot", iFlags);
+
+		return false;
+	}
+
+	if (!Tower_GetClassString(iTowerId, sClass, sizeof(sClass))) {
+		// Re-add sv_cheats flags to bot command
+		iFlags &= FCVAR_CHEAT;
+		iFlags &= FCVAR_SPONLY;
+		SetCommandFlags("bot", iFlags);
+
+		return false;
+	}
+
+	ServerCommand("bot -team blue -class %s -name %s", sClass, sName);
 
 	// Re-add sv_cheats flags to bot command
 	iFlags &= FCVAR_CHEAT;
 	iFlags &= FCVAR_SPONLY;
 	SetCommandFlags("bot", iFlags);
 
-	Log(TDLogLevel_Info, "Tower (%N) spawned", g_sTowerData[iTowerId][TOWER_DATA_NAME]);
+	Log(TDLogLevel_Info, "Tower (%N) spawned", sName);
+	return true;
+}
+
+/**
+ * Teleports a tower to his spawn location.
+ *
+ * @param iTower		The tower.
+ * @return				True on success, false ontherwise.
+ */
+
+stock TeleportTower(iTower) {
+	if (!g_bEnabled) {
+		return false;
+	}
+
+	new TDTowerId:iTowerId = GetTowerId(iTower);
+
+	if (iTowerId == TDTower_Invalid) {
+		return false;
+	}
+
+	new Float:fLocation[3], Float:fAngles[3];
+
+	if (!Tower_GetLocation(iTowerId, fLocation)) {
+		return false;
+	}
+
+	if (!Tower_GetAngles(iTowerId, fAngles)) {
+		return false;
+	}
+
+	TeleportEntity(iTower, fLocation, fAngles, NULL_VECTOR);
+
+	decl String:sName[MAX_NAME_LENGTH];
+
+	if (!Tower_GetName(iTowerId, sName, sizeof(sName))) {
+		return false;
+	}
+
+	Log(TDLogLevel_Debug, "Tower (%N) teleported", sName);
 	return true;
 }
 
@@ -197,20 +263,51 @@ stock bool:IsTowerAttached(iTower) {
  * @return				The towers client index, or -1 on failure.
  */
 
-stock GetTower(iTowerId) {
-	decl String:sName[MAX_NAME_LENGTH];
+stock GetTower(TDTowerId:iTowerId) {
+	decl String:sName[MAX_NAME_LENGTH], String:sName2[MAX_NAME_LENGTH];
 	
 	for (new iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsTower(iClient)) {
 			GetClientName(iClient, sName, sizeof(sName));
-			
-			if (StrEqual(sName, g_sTowerData[iTowerId][TOWER_DATA_NAME])) {
+			Tower_GetName(iTowerId, sName2, sizeof(sName2));
+
+			if (StrEqual(sName, sName2)) {
 				return iClient;
 			}
 		}
 	}
 	
 	return -1;
+}
+
+/**
+ * Gets the towers id.
+ *
+ * @param iTower		The tower.
+ * @return				The towers id, or -1 on error.
+ */
+
+stock TDTowerId:GetTowerId(iTower) {
+	if (IsValidClient(iTower)) {
+		decl String:sName[MAX_NAME_LENGTH], String:sName2[MAX_NAME_LENGTH];
+		GetClientName(iTower, sName, sizeof(sName));
+
+		new iClient, iTowerId;
+
+		for (iClient = 1; iClient <= MaxClients; iClient++) {
+			if (IsClientInGame(iClient)) {
+				for (iTowerId = 0; iTowerId < _:TDTower_Quantity; iTowerId++) {
+					Tower_GetName(TDTowerId:iTowerId, sName2, sizeof(sName2));
+
+					if (StrEqual(sName, sName2)) {
+						return TDTowerId:iTowerId;
+					}
+				}
+			}
+		}
+	}
+
+	return TDTower_Invalid;
 }
 
 /**

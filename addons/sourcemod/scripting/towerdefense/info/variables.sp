@@ -42,6 +42,7 @@ new g_iMetalPackCount;
 /*==========  Boolean  ==========*/
 
 new bool:g_bCarryingObject[MAXPLAYERS + 1];
+new bool:g_bInsideNobuild[MAXPLAYERS + 1];
 new bool:g_bReplaceWeapon[MAXPLAYERS + 1][3];
 
 /*==========  Handle  ==========*/
@@ -69,6 +70,7 @@ new g_iLastButtons[MAXPLAYERS + 1];
 
 /*==========  Integer  ==========*/
 
+new g_iLastMover[MAXPLAYERS + 1];
 new g_iUpgradeLevel[MAXPLAYERS + 1];
 new g_iUpgradeMetal[MAXPLAYERS + 1];
 

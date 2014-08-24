@@ -1,10 +1,10 @@
-enum _:BloodColor
+enum TDBloodColor
 {
-	DONT_BLEED = -1,
-	BLOOD_COLOR_RED = 0,
-	BLOOD_COLOR_YELLOW,
-	BLOOD_COLOR_GREEN,
-	BLOOD_COLOR_MECH
+	TDBlood_None = -1,
+	TDBlood_Color_Red = 0,
+	TDBlood_Color_Yellow,
+	TDBlood_Color_Green,
+	TDBlood_Color_Mech
 };
 
 enum TDMetalPackType
@@ -12,7 +12,7 @@ enum TDMetalPackType
 	TDMetalPack_Small = 0,
 	TDMetalPack_Medium,
 	TDMetalPack_Large
-}
+};
 
 enum TDMetalPackReturn
 {
@@ -20,7 +20,7 @@ enum TDMetalPackReturn
 	TDMetalPack_LimitReached,
 	TDMetalPack_InvalidType,
 	TDMetalPack_SpawnedPack
-}
+};
 
 enum TDBuildingType
 {
@@ -28,47 +28,37 @@ enum TDBuildingType
 	TDBuilding_TeleporterEntry,
 	TDBuilding_Sentry,
 	TDBuilding_TeleporterExit
-}
-
-enum _:TDTowerId
-{
-	TOWER_ENGINEER				=  0,
-	TOWER_SNIPER				=  1,
-	TOWER_MEDIC					=  2,
-	TOWER_GRENADE				=  3,
-	TOWER_PYRO					=  4,
-	TOWER_JARATE				=  5,
-	TOWER_AAROCKET				=  6,
-	TOWER_AAFLARE				=  7,
-	TOWER_CROSSBOW				=  8,
-	TOWER_FLARE					=  9,
-	TOWER_HEAVY					= 10,
-	TOWER_SHOTGUN				= 11,
-	TOWER_KNOCKBACK				= 12,
-	TOWER_ROCKET				= 13,
-	TOWER_RAPIDFLARE			= 14,
-	TOWER_BACKBURNER_PYRO		= 15,
-	TOWER_LOCHNLOAD_DEMOMAN		= 16,
-	TOWER_MACHINA_SNIPER		= 17,
-	TOWER_LIBERTY_SOLDIER		= 18,
-	TOWER_JUGGLE_SOLDIER		= 19,
-	TOWER_BUSHWACKA_SNIPER		= 20,
-	TOWER_NATASCHA_HEAVY		= 21,
-	TOWER_GUILLOTINE_SCOUT		= 22,
-	TOWER_HOMEWRECKER_PYRO		= 23,
-	TOWER_AIRBLAST_PYRO			= 24,
-	TOWER_AOE_ENGINEER			= 25,
-	TOWER_KRITZ_MEDIC			= 26
 };
 
-enum _:TDTowerData
+enum TDTowerId
 {
-	TOWER_DATA_NAME = 0,
-	TOWER_DATA_CLASS,
-	TOWER_DATA_PRICE,
-	TOWER_DATA_SLOT,
-	TOWER_DATA_WEAPON,
-	TOWER_DATA_ATTACK_PRIMARY,
-	TOWER_DATA_ATTACK_SECONDARY,
-	TOWER_DATA_LOCATION
+	TDTower_Invalid				= -1,
+	TDTower_Engineer			=  0,
+	TDTower_Sniper				=  1,
+	TDTower_Medic				=  2,
+	TDTower_Grenade				=  3,
+	TDTower_Pyro				=  4,
+	TDTower_Jarate				=  5,
+	TDTower_AnitAir_Rocket		=  6,
+	TDTower_AntiAir_Flare		=  7,
+	TDTower_Crossbow			=  8,
+	TDTower_Flare				=  9,
+	TDTower_Heavy				= 10,
+	TDTower_Shotgun				= 11,
+	TDTower_Knockback			= 12,
+	TDTower_Rocket				= 13,
+	TDTower_Rapidflare			= 14,
+	TDTower_Backburner_Pyro		= 15,
+	TDTower_Lochnload_Demoman	= 16,
+	TDTower_Machina_Sniper		= 17,
+	TDTower_Liberty_Soldier		= 18,
+	TDTower_Juggle_Soldier		= 19,
+	TDTower_Bushwacka_Sniper	= 20,
+	TDTower_Natascha_Heavy		= 21,
+	TDTower_Guillotine_Scout	= 22,
+	TDTower_Homewrecker_Pyro	= 23,
+	TDTower_Airblast_Pyro		= 24,
+	TDTower_AoE_Engineer		= 25,
+	TDTower_Kritz_Medic			= 26,
+	TDTower_Quantity
 };

@@ -96,7 +96,7 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 
 	if (IsDefender(iClient)) {
 		ResetClientMetal(iClient);
-		SetEntProp(iClient, Prop_Data, "m_bloodColor", DONT_BLEED);
+		SetEntProp(iClient, Prop_Data, "m_bloodColor", _:TDBlood_None);
 
 		if (g_bReplaceWeapon[iClient][TFWeaponSlot_Primary]) {
 			TF2Items_GiveWeapon(iClient, 9, TFWeaponSlot_Primary, 5, 1, true, "tf_weapon_shotgun_primary", "");
@@ -110,7 +110,7 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 			g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
 		}
 	} else if (IsTower(iClient)) {
-		SetEntProp(iClient, Prop_Data, "m_bloodColor", DONT_BLEED);
+		SetEntProp(iClient, Prop_Data, "m_bloodColor", _:TDBlood_None);
 		SetRobotModel(iClient);
 	}
 }

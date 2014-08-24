@@ -136,6 +136,13 @@ public OnConfigsExecuted() {
 		return;
 	}
 
+	// Hook func_nobuild events
+	new iEntity = -1;
+	while ((iEntity = FindEntityByClassname(iEntity, "func_nobuild")) != -1) {
+		SDKHook(iEntity, SDKHook_StartTouch, OnNobuildEnter);
+		SDKHook(iEntity, SDKHook_EndTouch, OnNobuildExit);
+	}
+
 	g_iBuildingLimit[TDBuilding_Sentry] = 1;
 	g_iBuildingLimit[TDBuilding_Dispenser] = 0;
 	g_iBuildingLimit[TDBuilding_TeleporterEntry] = 1;
@@ -213,6 +220,7 @@ public OnClientPutInServer(iClient) {
 
 	g_iAttachedTower[iClient] = 0;
 
+	g_iLastMover[iClient] = 0;
 	g_iUpgradeMetal[iClient] = 0;
 	g_iUpgradeLevel[iClient] = 1;
 }
@@ -294,6 +302,27 @@ public Action:OnTouchWeapon(iEntity, iClient) {
 	}
 
 	return Plugin_Handled;
+}
+
+public Action:OnNobuildEnter(iEntity, iClient) {
+	if (IsDefender(iClient)) {
+		g_bInsideNobuild[iClient] = true;
+	} else if (IsTower(iClient)) {
+		if (IsDefender(g_iLastMover[iClient])) {
+			Forbid(g_iLastMover[iClient], true, "Don't you dare to place towers on the path again! Did you think you can trick me?");
+			TeleportTower(iClient);
+		}
+	}
+
+	return Plugin_Continue;
+}
+
+public Action:OnNobuildExit(iEntity, iClient) {
+	if (IsDefender(iClient)) {
+		g_bInsideNobuild[iClient] = false;
+	}
+
+	return Plugin_Continue;
 }
 
 /*=========================================
