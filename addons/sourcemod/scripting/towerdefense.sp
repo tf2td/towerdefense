@@ -605,7 +605,7 @@ public bool:TraceRayNoPlayers(iEntity, iMask, any:iData) {
 /**
  * Sets the model of a client to the robot model.
  *
- * @param iClient		The clients client index.
+ * @param iClient		The client.
  * @noreturn
  */
 
@@ -620,34 +620,34 @@ stock SetRobotModel(iClient) {
 }
 
 /**
- * Gets the name of the class a client is playing by using its client index.
+ * Gets the name of the class a client is playing.
  *
- * @param iClient 		The players index.
- * @param sBuffer		The Destination string buffer.
- * @param iMaxLength	The maximum length of the output string buffer
+ * @param iClient 		The client.
+ * @param sBuffer		The destination string buffer.
+ * @param iMaxLength	The maximum length of the output string buffer.
  * @noreturn
  */
 
 stock GetClientClassName(iClient, String:sBuffer[], iMaxLength) {
 	switch (TF2_GetPlayerClass(iClient)) {
 		case TFClass_Scout: {
-			Format(sBuffer, iMaxLength, "scout");
+			strcopy(sBuffer, iMaxLength, "scout");
 		} case TFClass_Sniper: {
-			Format(sBuffer, iMaxLength, "sniper");
+			strcopy(sBuffer, iMaxLength, "sniper");
 		} case TFClass_Soldier: {
-			Format(sBuffer, iMaxLength, "soldier");
+			strcopy(sBuffer, iMaxLength, "soldier");
 		} case TFClass_DemoMan: {
-			Format(sBuffer, iMaxLength, "demo");
+			strcopy(sBuffer, iMaxLength, "demo");
 		} case TFClass_Medic: {
-			Format(sBuffer, iMaxLength, "medic");
+			strcopy(sBuffer, iMaxLength, "medic");
 		} case TFClass_Heavy: {
-			Format(sBuffer, iMaxLength, "heavy");
+			strcopy(sBuffer, iMaxLength, "heavy");
 		} case TFClass_Pyro: {
-			Format(sBuffer, iMaxLength, "pyro");
+			strcopy(sBuffer, iMaxLength, "pyro");
 		} case TFClass_Spy: {
-			Format(sBuffer, iMaxLength, "spy");
+			strcopy(sBuffer, iMaxLength, "spy");
 		} case TFClass_Engineer: {
-			Format(sBuffer, iMaxLength, "engineer");
+			strcopy(sBuffer, iMaxLength, "engineer");
 		}
 	}
 }
