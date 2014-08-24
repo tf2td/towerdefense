@@ -31,6 +31,7 @@ stock AttachTower(iClient) {
 		HideAnnotation(iTower);
 		AttachAnnotation(iClient, 86400.0, "Moving: %N", iTower);
 
+		g_bCarryingObject[iClient] = true;
 		g_iAttachedTower[iClient] = iTower;
 		Log(TDLogLevel_Debug, "%N picked up tower (%N)", iClient, iTower);
 	}
@@ -62,6 +63,7 @@ stock DetachTower(iClient) {
 
 	TF2Attrib_RemoveByName(iClient, "cannot pick up buildings");
 
+	g_bCarryingObject[iClient] = false;
 	g_iAttachedTower[iClient] = 0;
 	Log(TDLogLevel_Debug, "%N dropped tower (%N)", iClient, iTower);
 }

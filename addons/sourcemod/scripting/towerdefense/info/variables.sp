@@ -26,6 +26,7 @@ new Handle:g_hEnabled;
 
 /*==========  Integer  ==========*/
 
+new g_iBuildingLimit[TDBuildingType];
 new g_iHaloMaterial;
 new g_iLaserMaterial;
 new g_iMetalPackCount;
@@ -40,6 +41,7 @@ new g_iMetalPackCount;
 
 /*==========  Boolean  ==========*/
 
+new bool:g_bCarryingObject[MAXPLAYERS + 1];
 new bool:g_bReplaceWeapon[MAXPLAYERS + 1][3];
 
 /*==========  Handle  ==========*/

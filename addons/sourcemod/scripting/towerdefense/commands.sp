@@ -11,6 +11,9 @@ stock RegisterCommands() {
 	RegConsoleCmd("sm_drop", Command_Drop);
 	RegConsoleCmd("sm_m", Command_ShowMetal);
 	RegConsoleCmd("sm_metal", Command_ShowMetal);
+
+	// Command Listeners
+	AddCommandListener(CommandListener_Build, "build");
 }
 
 /*=====================================
@@ -130,7 +133,7 @@ public Action:Command_ShowMetal(iClient, iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
-	
+
 	PrintToChatAll("\x04Metal stats:");
 	
 	for (new i = 1; i <= MaxClients; i++) {
@@ -140,4 +143,33 @@ public Action:Command_ShowMetal(iClient, iArgs) {
 	}
 	
 	return Plugin_Handled;
+}
+
+/*=========================================
+=            Command Listeners            =
+=========================================*/
+
+public Action:CommandListener_Build(iClient, const String:sCommand[], iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+
+	decl String:sBuildingType[4];
+	GetCmdArg(1, sBuildingType, sizeof(sBuildingType));
+	new TDBuildingType:iBuildingType = TDBuildingType:StringToInt(sBuildingType);
+
+	switch (iBuildingType) {
+		case TDBuilding_Sentry: {
+			PrintToChat(iClient, "\x04Use \x01!s \x04or \x01!sentry \x04to build a Sentry!");
+
+			return Plugin_Handled;
+		}
+		case TDBuilding_Dispenser: {
+			if (!CanClientBuild(iClient, TDBuilding_Dispenser)) {
+				return Plugin_Handled;
+			}
+		}
+	}
+
+	return Plugin_Continue;
 }

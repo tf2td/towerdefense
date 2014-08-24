@@ -9,17 +9,25 @@ enum _:BloodColor
 
 enum TDMetalPackType
 {
-	TDMetalPack_Small,
+	TDMetalPack_Small = 0,
 	TDMetalPack_Medium,
 	TDMetalPack_Large
 }
 
 enum TDMetalPackReturn
 {
-	TDMetalPack_InvalidMetal,
+	TDMetalPack_InvalidMetal = 0,
 	TDMetalPack_LimitReached,
 	TDMetalPack_InvalidType,
 	TDMetalPack_SpawnedPack
+}
+
+enum TDBuildingType
+{
+	TDBuilding_Dispenser = 0,
+	TDBuilding_TeleporterEntry,
+	TDBuilding_Sentry,
+	TDBuilding_TeleporterExit
 }
 
 enum _:TDTowerId

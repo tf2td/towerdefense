@@ -123,7 +123,14 @@ public OnConfigsExecuted() {
 		} else {
 			Log(TDLogLevel_Info, "Plugin is disabled.");
 		}
+
+		return;
 	}
+
+	g_iBuildingLimit[TDBuilding_Sentry] = 1;
+	g_iBuildingLimit[TDBuilding_Dispenser] = 0;
+	g_iBuildingLimit[TDBuilding_TeleporterEntry] = 1;
+	g_iBuildingLimit[TDBuilding_TeleporterExit] = 1;
 }
 
 public OnAllPluginsLoaded() {
@@ -189,6 +196,11 @@ public OnClientPutInServer(iClient) {
 	}
 
 	SDKHook(iClient, SDKHook_OnTakeDamage, OnTakeDamage);
+
+	g_bCarryingObject[iClient] = false;
+	g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
+	g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
+	g_bReplaceWeapon[iClient][TFWeaponSlot_Melee] = false;
 
 	g_iAttachedTower[iClient] = 0;
 
@@ -650,4 +662,89 @@ stock GetClientClassName(iClient, String:sBuffer[], iMaxLength) {
 			strcopy(sBuffer, iMaxLength, "engineer");
 		}
 	}
+}
+
+/**
+ * Check if a client is allowed to build an object.
+ *
+ * @param iClient 		The client.
+ * @param iType			The building type.
+ * @return				True if allowed, false otherwise.
+ */
+
+public bool:CanClientBuild(iClient, TDBuildingType:iType) {
+	if (!IsValidClient(iClient)) {
+		return false;
+	}
+
+	if (TF2_IsPlayerInCondition(iClient, TFCond_Taunting)) {
+		PrintToChat(iClient, "\x07FF0000You can't build while taunting!");
+		return false;
+	}
+
+	if (g_bCarryingObject[iClient]) {
+		PrintToChat(iClient, "\x07FF0000You can not build while carrying another building or a tower!");
+		return false;
+	}
+
+	switch (iType) {
+		case TDBuilding_Sentry: {
+			if (GetClientMetal(iClient) < 130) {
+				PrintToChat(iClient, "\x07FF0000You need at least 130 metal!");
+				return false;
+			}
+
+			new iEntity = -1, iCount = 0, iOwner = -1;
+
+			while ((iEntity = FindEntityByClassname(iEntity, "obj_sentrygun")) != -1) {
+				iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hBuilder");
+
+				if (iOwner == iClient) {
+					iCount++;
+				}
+
+				if (iCount > g_iBuildingLimit[TDBuilding_Sentry]) {
+					AcceptEntityInput(iEntity, "Kill");
+				}
+			}
+
+			// Client can build Sentry
+			if (iCount < g_iBuildingLimit[TDBuilding_Sentry]) {
+				return true;
+			} else {
+				PrintToChat(iClient, "\x07FF0000Sentry limit reached! (Limit: %d)", g_iBuildingLimit[TDBuilding_Sentry]);
+				return false;
+			}
+		}
+		case TDBuilding_Dispenser: {
+			if (GetClientMetal(iClient) < 100) {
+				PrintToChat(iClient, "\x07FF0000You need at least 100 metal!");
+				return false;
+			}
+
+			new iEntity = -1, iCount = 0, iOwner = -1;
+
+			while ((iEntity = FindEntityByClassname(iEntity, "obj_dispenser")) != -1) {
+				iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hBuilder");
+
+				if (iOwner == iClient) {
+					iCount++;
+				}
+
+				if (iCount > g_iBuildingLimit[TDBuilding_Dispenser]) {
+					AcceptEntityInput(iEntity, "Kill");
+				}
+			}
+
+			// Client can build Sentry
+			if (iCount < g_iBuildingLimit[TDBuilding_Dispenser]) {
+				return true;
+			} else {
+				PrintToChat(iClient, "\x07FF0000Dispenser limit reached! (Limit: %d)", g_iBuildingLimit[TDBuilding_Dispenser]);
+				return false;
+			}
+		}
+	}
+
+	return false;
 }

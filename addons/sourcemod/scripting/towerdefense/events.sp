@@ -10,10 +10,26 @@
  */
 
 stock HookEvents() {
+	HookEvent("player_carryobject", Event_PlayerCarryObject);
 	HookEvent("player_changeclass", Event_PlayerChangeClass);
 	HookEvent("player_team", Event_PlayerChangeTeam, EventHookMode_Pre);
 	HookEvent("player_connect", Event_PlayerConnect, EventHookMode_Pre);
+	HookEvent("player_dropobject", Event_PlayerDropObject);
 	HookEvent("post_inventory_application", Event_PostInventoryApplication, EventHookMode_Post);
+}
+
+public Event_PlayerCarryObject(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+	
+	if (IsDefender(iClient)) {
+		g_bCarryingObject[iClient] = true;
+	}
+
+	return;
 }
 
 public Event_PlayerChangeClass(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
@@ -52,6 +68,20 @@ public Action:Event_PlayerConnect(Handle:hEvent, const String:sName[], bool:bDon
 	SetEventBroadcast(hEvent, true); // Block the original chat output (Player ... has joined the game)
 	
 	return Plugin_Continue;
+}
+
+public Event_PlayerDropObject(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+
+	if (IsDefender(iClient)) {
+		g_bCarryingObject[iClient] = false;
+	}
+
+	return;
 }
 
 public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
@@ -93,6 +123,10 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
  */
 
 public Action:TF2_CalcIsAttackCritical(iClient, iWeapon, String:sClassname[], &bool:bResult) {
+	if (!g_bEnabled) {
+		return Plugin_Handled;
+	}
+
 	if (StrEqual(sClassname, "tf_weapon_wrench") || StrEqual(sClassname, "tf_weapon_robot_arm")) {
 		new Float:fLocation[3], Float:fAngles[3];
 
