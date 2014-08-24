@@ -77,29 +77,29 @@ public Action:Command_Drop(iClient, iArgs) {
 	new iMetal;
 
 	if (!IsStringNumeric(sMetal)) {
-		PrintToChat(iClient, "\x07FF0000Drop letters? Ahhh... nope.");
+		Forbid(iClient, true, "Drop letters? Ahhh... nope.");
 		return Plugin_Handled;
 	} else {
 		iMetal = StringToInt(sMetal);
 	}
 
 	if (iMetal <= 0) {
-		PrintToChat(iClient, "\x07FF0000Drop at least 1 metal, ok?");
+		Forbid(iClient, true, "Drop at least 1 metal, ok?");
 		return Plugin_Handled;
 	}
 
 	if (iMetal > GetClientMetal(iClient)) {
-		PrintToChat(iClient, "\x07FF0000You can't drop more metal than you have!");
+		Forbid(iClient, true, "You can't drop more metal than you have!");
 		return Plugin_Handled;
 	}
 
 	if (!IsPlayerAlive(iClient)) {
-		PrintToChat(iClient, "\x07FF0000You're dead, you can't drop anything now!");
+		Forbid(iClient, true, "You're dead, you can't drop anything now!");
 		return Plugin_Handled;
 	}
 
 	if (!(GetEntityFlags(iClient) & FL_ONGROUND)) {
-		PrintToChat(iClient, "\x07FF0000Drop something in midair? Nope.");
+		Forbid(iClient, true, "Drop something in midair? Nope.");
 		return Plugin_Handled;
 	}
 
@@ -114,13 +114,13 @@ public Action:Command_Drop(iClient, iArgs) {
 
 	switch (SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal)) {
 		case TDMetalPack_InvalidMetal: {
-			PrintToChat(iClient, "\x07FF0000Drop at least 1 metal, ok?");
+			Forbid(iClient, true, "Drop at least 1 metal, ok?");
 		}
 		case TDMetalPack_LimitReached: {
-			PrintToChat(iClient, "\x07FF0000Metalpack limit reached, pick some metalpacks up!");
+			Forbid(iClient, true, "Metalpack limit reached, pick some metalpacks up!");
 		}
 		case TDMetalPack_InvalidType: {
-			PrintToChat(iClient, "\x07FF0000Couldn't drop metal.");
+			Forbid(iClient, true, "Couldn't drop metal.");
 		}
 		case TDMetalPack_SpawnedPack: {
 			AddClientMetal(iClient, -iMetal);

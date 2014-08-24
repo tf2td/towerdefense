@@ -18,7 +18,7 @@ stock AttachTower(iClient) {
 
 	if (IsTower(iTower)) {
 		if (IsTowerAttached(iTower)) {
-			PrintToChat(iClient, "\x07FF0000%N is already being moved by someone!", iTower);
+			Forbid(iClient, true, "%N is already being moved by someone!", iTower);
 			return;
 		}
 

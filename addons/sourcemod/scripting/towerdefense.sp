@@ -419,6 +419,7 @@ stock PrecacheSounds() {
 	}
 	
 	PrecacheSound("items/gunpickup2.wav");
+	PrecacheSound("vo/engineer_no03.wav");
 }
 
 /**
@@ -555,11 +556,11 @@ stock GetClientByName(iClient, String:sName[]) {
 		return iTarget;
 	} else if (iResults == 0) {
 		if (IsDefender(iClient)) {
-			PrintToChat(iClient, "Couldn't find player %s.", sName);
+			Forbid(iClient, true, "Couldn't find player %s.", sName);
 		}
 	} else {
 		if (IsDefender(iClient)) {
-			PrintToChat(iClient, "Be more specific.", sName);
+			Forbid(iClient, true, "Be more specific.", sName);
 		}
 	}
 	
@@ -694,19 +695,19 @@ public bool:CanClientBuild(iClient, TDBuildingType:iType) {
 	}
 
 	if (TF2_IsPlayerInCondition(iClient, TFCond_Taunting)) {
-		PrintToChat(iClient, "\x07FF0000You can't build while taunting!");
+		Forbid(iClient, true, "You can't build while taunting!");
 		return false;
 	}
 
 	if (g_bCarryingObject[iClient]) {
-		PrintToChat(iClient, "\x07FF0000You can not build while carrying another building or a tower!");
+		Forbid(iClient, true, "You can not build while carrying another building or a tower!");
 		return false;
 	}
 
 	switch (iType) {
 		case TDBuilding_Sentry: {
 			if (GetClientMetal(iClient) < 130) {
-				PrintToChat(iClient, "\x07FF0000You need at least 130 metal!");
+				Forbid(iClient, true, "You need at least 130 metal!");
 				return false;
 			}
 
@@ -728,13 +729,13 @@ public bool:CanClientBuild(iClient, TDBuildingType:iType) {
 			if (iCount < g_iBuildingLimit[TDBuilding_Sentry]) {
 				return true;
 			} else {
-				PrintToChat(iClient, "\x07FF0000Sentry limit reached! (Limit: %d)", g_iBuildingLimit[TDBuilding_Sentry]);
+				Forbid(iClient, true, "Sentry limit reached! (Limit: %d)", g_iBuildingLimit[TDBuilding_Sentry]);
 				return false;
 			}
 		}
 		case TDBuilding_Dispenser: {
 			if (GetClientMetal(iClient) < 100) {
-				PrintToChat(iClient, "\x07FF0000You need at least 100 metal!");
+				Forbid(iClient, true, "You need at least 100 metal!");
 				return false;
 			}
 
@@ -756,11 +757,32 @@ public bool:CanClientBuild(iClient, TDBuildingType:iType) {
 			if (iCount < g_iBuildingLimit[TDBuilding_Dispenser]) {
 				return true;
 			} else {
-				PrintToChat(iClient, "\x07FF0000Dispenser limit reached! (Limit: %d)", g_iBuildingLimit[TDBuilding_Dispenser]);
+				Forbid(iClient, true, "Dispenser limit reached! (Limit: %d)", g_iBuildingLimit[TDBuilding_Dispenser]);
 				return false;
 			}
 		}
 	}
 
 	return false;
+}
+
+/**
+ * Prints a red forbid message to a client and plays a sound.
+ *
+ * @param iClient 		The client.
+ * @param bPlaySound	Play the sound or not.
+ * @param sMessage		The message.
+ * @param ...			Message formatting parameters.
+ * @noreturn
+ */
+
+stock Forbid(iClient, bool:bPlaySound, const String:sMessage[], any:...) {
+	decl String:sFormattedMessage[512];
+	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
+
+	PrintToChat(iClient, "\x07FF0000%s", sFormattedMessage);
+
+	if (bPlaySound) {
+		EmitSoundToClient(iClient, "vo/engineer_no03.wav");
+	}
 }
