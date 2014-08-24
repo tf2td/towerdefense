@@ -266,6 +266,20 @@ public Action:OnTakeDamage(iClient, &iAttacker, &iInflictor, &Float:fDamage, &iD
 	return Plugin_Continue;
 }
 
+public OnEntityCreated(iEntity, const String:sClassname[]) {
+	if (StrEqual(sClassname, "tf_ammo_pack")) {
+		SDKHook(iEntity, SDKHook_Touch, OnTouchWeapon);
+	}
+}
+
+public Action:OnTouchWeapon(iEntity, iClient) {
+	if (IsDefender(iClient)) {
+		return Plugin_Continue;
+	}
+
+	return Plugin_Handled;
+}
+
 /*=========================================
 =            Utility Functions            =
 =========================================*/
