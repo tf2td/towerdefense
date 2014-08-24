@@ -107,7 +107,7 @@ public Action:TF2_CalcIsAttackCritical(iClient, iWeapon, String:sClassname[], &b
 				new Float:fHitLocation[3];
 				TR_GetEndPosition(fHitLocation);
 
-				if (GetVectorDistance(fLocation, fHitLocation) <= 90.0) {
+				if (GetVectorDistance(fLocation, fHitLocation) <= 70.0) {
 					UpgradeTower(iTower, iClient);
 				}
 			}
