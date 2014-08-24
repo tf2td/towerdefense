@@ -15,6 +15,7 @@ new String:g_sTowerData[TDTowerId][TDTowerData][96];
 new bool:g_bEnabled;
 new bool:g_bMapRunning;
 new bool:g_bSteamTools;
+new bool:g_bTF2Attributes;
 new bool:g_bTowerDefenseMap;
 
 /*==========  Handle  ==========*/

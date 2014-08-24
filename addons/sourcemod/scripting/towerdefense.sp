@@ -111,10 +111,18 @@ public OnMapEnd() {
 }
 
 public OnConfigsExecuted() {
-	g_bEnabled = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap;
+	g_bEnabled = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap && g_bSteamTools && g_bTF2Attributes;
 	g_bMapRunning = true;
 
 	UpdateGameDescription();
+
+	if (!g_bEnabled) {
+		if (!g_bTowerDefenseMap) {
+			Log(TDLogLevel_Info, "This map is not a valid map, thus Tower Defense has been temporarily disabled.");
+		} else {
+			Log(TDLogLevel_Info, "Plugin is disabled.");
+		}
+	}
 }
 
 public OnAllPluginsLoaded() {
@@ -125,6 +133,12 @@ public OnAllPluginsLoaded() {
 
 		Log(TDLogLevel_Info, "Found SteamTools on startup");
 	}
+
+	g_bTF2Attributes = LibraryExists("tf2attributes");
+
+	if (g_bTF2Attributes) {
+		Log(TDLogLevel_Info, "Found TF2Attributes on startup");
+	}
 }
 
 public OnLibraryAdded(const String:sName[]) {
@@ -133,6 +147,10 @@ public OnLibraryAdded(const String:sName[]) {
 		UpdateGameDescription();
 
 		Log(TDLogLevel_Info, "SteamTools loaded");
+	} else if (StrEqual(sName, "tf2attributes", false)) {
+		g_bTF2Attributes = true;
+
+		Log(TDLogLevel_Info, "TF2Attributes loaded");
 	}
 }
 
@@ -141,10 +159,18 @@ public OnLibraryRemoved(const String:sName[]) {
 		g_bSteamTools = false;
 
 		Log(TDLogLevel_Info, "SteamTools unloaded");
+	} else if (StrEqual(sName, "tf2attributes", false)) {
+		g_bTF2Attributes = false;
+
+		Log(TDLogLevel_Info, "TF2Attributes unloaded");
 	}
 }
 
 public OnClientAuthorized(iClient, const String:sSteamID[]) {
+	if (!g_bEnabled) {
+		return;
+	}
+
 	if (IsValidClient(iClient) && !StrEqual(sSteamID, "BOT")) {
 		if (GetRealClientCount() > PLAYER_LIMIT) {
 			KickClient(iClient, "Maximum number of players has been reached (%d/%d)", GetRealClientCount() - 1, PLAYER_LIMIT);
@@ -157,6 +183,10 @@ public OnClientAuthorized(iClient, const String:sSteamID[]) {
 }
 
 public OnClientPutInServer(iClient) {
+	if (!g_bEnabled) {
+		return;
+	}
+
 	SDKHook(iClient, SDKHook_OnTakeDamage, OnTakeDamage);
 
 	g_iAttachedTower[iClient] = 0;
@@ -166,6 +196,10 @@ public OnClientPutInServer(iClient) {
 }
 
 public OnClientPostAdminCheck(iClient) {
+	if (!g_bEnabled) {
+		return;
+	}
+
 	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
 		ChangeClientTeam(iClient, TEAM_DEFENDER);
 		TF2_SetPlayerClass(iClient, TFClass_Engineer, false, true);
@@ -173,6 +207,10 @@ public OnClientPostAdminCheck(iClient) {
 }
 
 public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], Float:fAngles[3], &iWeapon) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+
 	// Attach/detach tower on right-click
 	if (IsButtonReleased(iClient, iButtons, IN_ATTACK2)) { 
 		decl String:sActiveWeapon[64];
@@ -203,6 +241,10 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 }
 
 public Action:OnTakeDamage(iClient, &iAttacker, &iInflictor, &Float:fDamage, &iDamageType, &iWeapon, Float:fDamageForce[3], Float:fDamagePosition[3]) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+
 	if (IsDefender(iAttacker) && IsTower(iClient)) {
 		decl String:sActiveWeapon[64];
 		GetClientWeapon(iAttacker, sActiveWeapon, sizeof(sActiveWeapon));

@@ -18,6 +18,10 @@ stock RegisterCommands() {
 =====================================*/
 
 public Action:Command_GiveMetal(iClient, iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Handled;
+	}
+
 	new String:sTarget[MAX_NAME_LENGTH], String:sMetal[16];
 	
 	if (iArgs != 2) {
@@ -53,11 +57,12 @@ public Action:Command_GiveMetal(iClient, iArgs) {
 =======================================*/
 
 public Action:Command_Drop(iClient, iArgs) {
-	decl String:sCommandName[32];
-	GetCmdArg(0, sCommandName, sizeof(sCommandName));
+	if (!g_bEnabled) {
+		return Plugin_Handled;
+	}
 
 	if (iArgs != 1) {
-		PrintToChat(iClient, "\x04Usage: !%s <amount>", sCommandName);
+		PrintToChat(iClient, "\x04Usage: !d <amount>");
 		
 		return Plugin_Handled;
 	}
@@ -122,6 +127,10 @@ public Action:Command_Drop(iClient, iArgs) {
 }
 
 public Action:Command_ShowMetal(iClient, iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Handled;
+	}
+	
 	PrintToChatAll("\x04Metal stats:");
 	
 	for (new i = 1; i <= MaxClients; i++) {

@@ -10,6 +10,10 @@
  */
 
 stock AttachTower(iClient) {
+	if (!g_bEnabled) {
+		return;
+	}
+
 	new iTower = GetAimTarget(iClient);
 
 	if (IsTower(iTower)) {
@@ -40,6 +44,10 @@ stock AttachTower(iClient) {
  */
 
 stock DetachTower(iClient) {
+	if (!g_bEnabled) {
+		return;
+	}
+
 	new iTower = g_iAttachedTower[iClient];
 	new Float:fLocation[3], Float:fAngles[3];
 
@@ -67,6 +75,10 @@ stock DetachTower(iClient) {
  */
 
 stock UpgradeTower(iTower, iClient) {
+	if (!g_bEnabled) {
+		return;
+	}
+
 	if (!AddClientMetal(iClient, -25)) {
 		return;
 	}
@@ -93,6 +105,10 @@ stock UpgradeTower(iTower, iClient) {
  */
 
 stock ShowTowerInfo(iClient) {
+	if (!g_bEnabled) {
+		return;
+	}
+
 	new iTower = GetAimTarget(iClient);
 
 	if (IsTower(iTower)) {
@@ -108,6 +124,10 @@ stock ShowTowerInfo(iClient) {
  */
 
 stock bool:SpawnTower(iTowerId) {
+	if (!g_bEnabled) {
+		return false;
+	}
+
 	if (IsTower(GetTower(iTowerId))) { // Tower already spawned
 		return false;
 	}
