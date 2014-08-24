@@ -4,6 +4,7 @@
 #include <sdkhooks>
 #include <sdktools>
 #include <steamtools>
+#include <tf2>
 #include <tf2_stocks>
 #include <tf2items>
 #include <tf2attributes>
@@ -245,20 +246,7 @@ public Action:OnTakeDamage(iClient, &iAttacker, &iInflictor, &Float:fDamage, &iD
 		return Plugin_Continue;
 	}
 
-	if (IsDefender(iAttacker) && IsTower(iClient)) {
-		decl String:sActiveWeapon[64];
-		GetClientWeapon(iAttacker, sActiveWeapon, sizeof(sActiveWeapon));
-		
-		if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
-			UpgradeTower(iClient, iAttacker);
-			return Plugin_Handled;
-		}
-	}
-
-	if (IsValidClient(iAttacker) && GetClientTeam(iClient) == GetClientTeam(iAttacker)) {
-		return Plugin_Handled;
-	}
-
+	// Block tower taking damage
 	if (IsTower(iClient)) {
 		return Plugin_Handled;
 	}

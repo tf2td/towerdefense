@@ -81,6 +81,42 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 	}
 }
 
+/*==================================
+=            TF2 Events            =
+==================================*/
+
+/**
+ * Called on weapon fire to decide if the current shot should be critical.
+ *
+ * @noreturn
+ */
+
+public Action:TF2_CalcIsAttackCritical(iClient, iWeapon, String:sClassname[], &bool:bResult) {
+	if (StrEqual(sClassname, "tf_weapon_wrench") || StrEqual(sClassname, "tf_weapon_robot_arm")) {
+		new Float:fLocation[3], Float:fAngles[3];
+
+		GetClientEyePosition(iClient, fLocation);
+		GetClientEyeAngles(iClient, fAngles);
+			
+		TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayPlayers, iClient);
+		
+		if (TR_DidHit()) {
+			new iTower = TR_GetEntityIndex();
+		
+			if (IsTower(iTower)) {
+				new Float:fHitLocation[3];
+				TR_GetEndPosition(fHitLocation);
+
+				if (GetVectorDistance(fLocation, fHitLocation) <= 90.0) {
+					UpgradeTower(iTower, iClient);
+				}
+			}
+		}
+	}
+
+	return Plugin_Handled;
+}
+
 /*=======================================
 =            TF2Items Events            =
 =======================================*/
