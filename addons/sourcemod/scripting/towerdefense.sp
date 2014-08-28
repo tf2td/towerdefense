@@ -815,3 +815,16 @@ stock Forbid(iClient, bool:bPlaySound, const String:sMessage[], any:...) {
 		EmitSoundToClient(iClient, "vo/engineer_no03.wav");
 	}
 }
+
+/**
+ * Reloads the current map.
+ *
+ * @noreturn
+ */
+
+stock ReloadMap() {
+	new String:sCurrentMap[PLATFORM_MAX_PATH];
+	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
+
+	ServerCommand("changelevel %s", sCurrentMap);
+}

@@ -5,6 +5,7 @@
 stock RegisterCommands() {
 	// Commands for testing purposes
 	RegAdminCmd("sm_gm", Command_GiveMetal, ADMFLAG_ROOT);
+	RegAdminCmd("sm_r", Command_ReloadMap, ADMFLAG_ROOT);
 
 	// Client Commands
 	RegConsoleCmd("sm_d", Command_Drop);
@@ -52,6 +53,12 @@ public Action:Command_GiveMetal(iClient, iArgs) {
 			AddClientMetal(iTarget, StringToInt(sMetal));
 		}
 	}
+
+	return Plugin_Handled;
+}
+
+public Action:Command_ReloadMap(iClient, iArgs) {
+	ReloadMap();
 
 	return Plugin_Handled;
 }
