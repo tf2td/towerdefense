@@ -36,10 +36,10 @@ stock Log(TDLogLevel:iLogLevel, const String:sMessage[], any:...) {
 			case TDLogType_File: {
 				switch (iLogLevel) {
 					case TDLogLevel_Error: {
-						LogMessage("[TF2TD > Error] %s", sFormattedMessage);
+						LogError("[TF2TD > Error] %s", sFormattedMessage);
 					}
 					case TDLogLevel_Warning: {
-						LogMessage("[TF2TD > Warning] %s", sFormattedMessage);
+						LogError("[TF2TD > Warning] %s", sFormattedMessage);
 					}
 					case TDLogLevel_Info: {
 						LogMessage("[TF2TD > Info] %s", sFormattedMessage);
@@ -74,11 +74,11 @@ stock Log(TDLogLevel:iLogLevel, const String:sMessage[], any:...) {
 			case TDLogType_FileAndConsole: {
 				switch (iLogLevel) {
 					case TDLogLevel_Error: {
-						LogMessage("[TF2TD > Error] %s", sFormattedMessage);
+						LogError("[TF2TD > Error] %s", sFormattedMessage);
 						PrintToServer("[TF2TD > Error] %s", sFormattedMessage);
 					}
 					case TDLogLevel_Warning: {
-						LogMessage("[TF2TD > Warning] %s", sFormattedMessage);
+						LogError("[TF2TD > Warning] %s", sFormattedMessage);
 						PrintToServer("[TF2TD > Warning] %s", sFormattedMessage);
 					}
 					case TDLogLevel_Info: {
@@ -108,10 +108,10 @@ stock LogType(TDLogLevel:iLogLevel, TDLogType:iLogType, const String:sMessage[],
 			case TDLogType_File: {
 				switch (iLogLevel) {
 					case TDLogLevel_Error: {
-						LogMessage("[TF2TD > Error] %s", sFormattedMessage);
+						LogError("[TF2TD > Error] %s", sFormattedMessage);
 					}
 					case TDLogLevel_Warning: {
-						LogMessage("[TF2TD > Warning] %s", sFormattedMessage);
+						LogError("[TF2TD > Warning] %s", sFormattedMessage);
 					}
 					case TDLogLevel_Info: {
 						LogMessage("[TF2TD > Info] %s", sFormattedMessage);
@@ -146,11 +146,11 @@ stock LogType(TDLogLevel:iLogLevel, TDLogType:iLogType, const String:sMessage[],
 			case TDLogType_FileAndConsole: {
 				switch (iLogLevel) {
 					case TDLogLevel_Error: {
-						LogMessage("[TF2TD > Error] %s", sFormattedMessage);
+						LogError("[TF2TD > Error] %s", sFormattedMessage);
 						PrintToServer("[TF2TD > Error] %s", sFormattedMessage);
 					}
 					case TDLogLevel_Warning: {
-						LogMessage("[TF2TD > Warning] %s", sFormattedMessage);
+						LogError("[TF2TD > Warning] %s", sFormattedMessage);
 						PrintToServer("[TF2TD > Warning] %s", sFormattedMessage);
 					}
 					case TDLogLevel_Info: {
