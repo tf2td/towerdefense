@@ -13,6 +13,8 @@
 =            Constants            =
 =================================*/
 
+#define PLUGIN_HOST 	"Styria Games"
+
 #define PLUGIN_NAME		"TF2 Tower Defense"
 #define PLUGIN_AUTHOR	"floube"
 #define PLUGIN_DESC		"Stop enemies from crossing a map by buying towers and building up defenses."
@@ -45,6 +47,7 @@ public Plugin:myinfo =
 #include "towerdefense/util/log.sp"
 #include "towerdefense/util/md5.sp"
 #include "towerdefense/util/metal.sp"
+#include "towerdefense/util/steamid.sp"
 #include "towerdefense/util/tf2items.sp"
 #include "towerdefense/util/zones.sp"
 
@@ -190,19 +193,24 @@ public OnLibraryRemoved(const String:sName[]) {
 	}
 }
 
-public OnClientAuthorized(iClient, const String:sSteamID[]) {
+public OnClientAuthorized(iClient, const String:sSteamId[]) {
 	if (!g_bEnabled) {
 		return;
 	}
 
-	if (IsValidClient(iClient) && !StrEqual(sSteamID, "BOT")) {
+	if (IsValidClient(iClient) && !StrEqual(sSteamId, "BOT")) {
 		if (GetRealClientCount() > PLAYER_LIMIT) {
 			KickClient(iClient, "Maximum number of players has been reached (%d/%d)", GetRealClientCount() - 1, PLAYER_LIMIT);
-			Log(TDLogLevel_Info, "Kicked player (%N, %s) (Maximum players reached: %d/%d)", iClient, sSteamID, GetRealClientCount() - 1, PLAYER_LIMIT);
+			Log(TDLogLevel_Info, "Kicked player (%N, %s) (Maximum players reached: %d/%d)", iClient, sSteamId, GetRealClientCount() - 1, PLAYER_LIMIT);
 			return;
 		}
 
 		Log(TDLogLevel_Info, "Connected clients: %d/%d", GetRealClientCount(), PLAYER_LIMIT);
+	}
+
+	decl String:sCommunityId[32];
+	if (GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId))) {
+		PrintToServer("%N = %s", iClient, sCommunityId);
 	}
 }
 
