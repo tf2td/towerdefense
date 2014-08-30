@@ -1,3 +1,7 @@
+#pragma semicolon 1
+
+#include <sourcemod>
+
 /**
  * Gets a clients steam community id.
  *

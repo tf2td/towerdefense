@@ -58,6 +58,7 @@ public Plugin:myinfo =
 #include "towerdefense/database.sp"
 #include "towerdefense/events.sp"
 #include "towerdefense/timers.sp"
+#include "towerdefense/updater.sp"
 
 /*=======================================
 =            Public Forwards            =
