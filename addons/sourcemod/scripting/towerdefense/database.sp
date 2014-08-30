@@ -74,7 +74,11 @@ stock Database_Connect() {
 stock Database_CheckServer() {
 	decl String:sQuery[512];
 
-	Format(sQuery, sizeof(sQuery), "SELECT `id` FROM `server` WHERE `ip` = '%s' AND `port` = %d", m_sServerIp, m_iServerPort);
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `server_id` \
+		FROM `server` \
+		WHERE `ip` = '%s' AND `port` = %d",
+	m_sServerIp, m_iServerPort);
 
 	SQL_TQuery(m_hDatabase, Database_OnCheckServer, sQuery);
 }
@@ -91,7 +95,7 @@ public Database_OnCheckServer(Handle:hDriver, Handle:hResult, const String:sErro
 
 		m_iServerId = SQL_FetchInt(hResult, 0);
 
-		Database_RefreshServer();
+		// Database_RefreshServer();
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -109,18 +113,51 @@ public Database_OnCheckServer(Handle:hDriver, Handle:hResult, const String:sErro
 stock Database_AddServer() {
 	decl String:sQuery[512];
 
-	Format(sQuery, sizeof(sQuery), "INSERT INTO `server` (`ip`, `port`) VALUES ('%s', %d)", m_sServerIp, m_iServerPort);
+	Format(sQuery, sizeof(sQuery), "\
+		INSERT INTO `server` (`ip`, `port`) \
+		VALUES ('%s', %d)",
+	m_sServerIp, m_iServerPort);
 
-	SQL_TQuery(m_hDatabase, Database_OnAddServer, sQuery);
+	SQL_TQuery(m_hDatabase, Database_OnAddServer, sQuery, 0);
 }
 
 public Database_OnAddServer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_AddServer > Error: %s", sError);
 	} else {
-		Log(TDLogLevel_Info, "Added server to database (%s:%d)", m_sServerIp, m_iServerPort);
+		decl String:sQuery[512];
 
-		Database_CheckServer();
+		if (iData == 0) {
+			Format(sQuery, sizeof(sQuery), "\
+				SELECT `server_id` \
+				FROM `server` \
+				WHERE `ip` = '%s' AND `port` = %d",
+			m_sServerIp, m_iServerPort);
+
+			SQL_TQuery(m_hDatabase, Database_OnAddServer, sQuery, 1);
+		} else if (iData == 1) {
+			SQL_FetchRow(hResult);
+
+			m_iServerId = SQL_FetchInt(hResult, 0);
+
+			Format(sQuery, sizeof(sQuery), "\
+				INSERT INTO `server_stats` (`server_id`) \
+				VALUES (%d)",
+			m_iServerId);
+
+			SQL_TQuery(m_hDatabase, Database_OnAddServer, sQuery, 2);
+		} else if (iData == 2) {
+			Format(sQuery, sizeof(sQuery), "\
+				INSERT INTO `server_config` (`server_id`) \
+				VALUES (%d)",
+			m_iServerId);
+
+			SQL_TQuery(m_hDatabase, Database_OnAddServer, sQuery, 3);
+		} else if (iData == 3) {
+			Log(TDLogLevel_Info, "Added server to database (%s:%d)", m_sServerIp, m_iServerPort);
+
+			// Database_RefreshServer();
+		}
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -150,7 +187,22 @@ stock Database_RefreshServer() {
 	GetConVarString(FindConVar("sv_password"), sPassword, sizeof(sPassword));
 	SQL_EscapeString(m_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
 
-	Format(sQuery, sizeof(sQuery), "UPDATE `server` SET `name` = '%s', `host` = (SELECT `id` FROM `host` WHERE `name` = '%s'), `version` = '%s', `password` = '%s', `clients` = %d, `clients_allowed` = %d, `map` = (SELECT `id` FROM `map` WHERE `name` = '%s') WHERE `ip` = '%s' AND `port` = %d", sServerNameSave, PLUGIN_HOST, PLUGIN_VERSION, sPasswordSave, GetRealClientCount(), PLAYER_LIMIT, sCurrentMap, m_sServerIp, m_iServerPort);
+	Format(sQuery, sizeof(sQuery), "\
+		UPDATE `server` \
+		SET `name` = '%s', \
+			`host_id` = ( \
+				SELECT `host_id` \
+				FROM `host` \
+				WHERE `name` = '%s'), \
+			`version` = '%s', \
+			`password` = '%s', \
+			`players` = %d, \
+			`map_id` = ( \
+				SELECT `id` \
+				FROM `map` \
+				WHERE `name` = '%s') \
+		WHERE `ip` = '%s' AND `port` = %d", 
+	sServerNameSave, PLUGIN_HOST, PLUGIN_VERSION, sPasswordSave, GetRealClientCount(), PLAYER_LIMIT, sCurrentMap, m_sServerIp, m_iServerPort);
 
 	SQL_TQuery(m_hDatabase, Database_OnRefreshServer, sQuery);
 }
