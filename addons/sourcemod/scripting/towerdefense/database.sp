@@ -95,7 +95,7 @@ public Database_OnCheckServer(Handle:hDriver, Handle:hResult, const String:sErro
 
 		m_iServerId = SQL_FetchInt(hResult, 0);
 
-		// Database_RefreshServer();
+		Database_RefreshServer();
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -156,7 +156,7 @@ public Database_OnAddServer(Handle:hDriver, Handle:hResult, const String:sError[
 		} else if (iData == 3) {
 			Log(TDLogLevel_Info, "Added server to database (%s:%d)", m_sServerIp, m_iServerPort);
 
-			// Database_RefreshServer();
+			Database_RefreshServer();
 		}
 	}
 
@@ -180,9 +180,6 @@ stock Database_RefreshServer() {
 	GetConVarString(FindConVar("hostname"), sServerName, sizeof(sServerName));
 	SQL_EscapeString(m_hDatabase, sServerName, sServerNameSave, sizeof(sServerNameSave));
 
-	decl String:sCurrentMap[PLATFORM_MAX_PATH];
-	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
-
 	decl String:sPassword[32], String:sPasswordSave[64];
 	GetConVarString(FindConVar("sv_password"), sPassword, sizeof(sPassword));
 	SQL_EscapeString(m_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
@@ -196,53 +193,58 @@ stock Database_RefreshServer() {
 				WHERE `name` = '%s'), \
 			`version` = '%s', \
 			`password` = '%s', \
-			`players` = %d, \
-			`map_id` = ( \
-				SELECT `id` \
-				FROM `map` \
-				WHERE `name` = '%s') \
+			`players` = %d \
 		WHERE `ip` = '%s' AND `port` = %d", 
-	sServerNameSave, PLUGIN_HOST, PLUGIN_VERSION, sPasswordSave, GetRealClientCount(), PLAYER_LIMIT, sCurrentMap, m_sServerIp, m_iServerPort);
+	sServerNameSave, PLUGIN_HOST, PLUGIN_VERSION, sPasswordSave, GetRealClientCount(), m_sServerIp, m_iServerPort);
 
-	SQL_TQuery(m_hDatabase, Database_OnRefreshServer, sQuery);
+	SQL_TQuery(m_hDatabase, Database_OnRefreshServer, sQuery, 0);
 }
 
 public Database_OnRefreshServer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_RefreshServer > Error: %s", sError);
 	} else {
-		Log(TDLogLevel_Info, "Refreshed server in database (%s:%d)", m_sServerIp, m_iServerPort);
+		decl String:sQuery[512];
+		decl String:sCurrentMap[PLATFORM_MAX_PATH];
+		GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
-		Database_GetServerMap();
-	}
+		if (iData == 0) {
+			Format(sQuery, sizeof(sQuery), "\
+				SELECT `map_id` \
+				FROM `map` \
+				WHERE `name` = '%s'",
+			sCurrentMap);
 
-	if (hResult != INVALID_HANDLE) {
-		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
-	}
-}
+			SQL_TQuery(m_hDatabase, Database_OnRefreshServer, sQuery, 1);
+		} else if (iData == 1) {
+			if (SQL_GetRowCount(hResult) == 0) {
+				LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Map \"%s\" is not supported, thus Tower Defense has been disabled.", sCurrentMap);
+				
+				g_bEnabled = false;
+				UpdateGameDescription();
 
-/**
- * Gets the servers map.
- *
- * @noreturn
- */
+				if (hResult != INVALID_HANDLE) {
+					CloseHandle(hResult);
+					hResult = INVALID_HANDLE;
+				}
 
-stock Database_GetServerMap() {
-	new String:sQuery[512];
+				return;
+			}
 
-	Format(sQuery, sizeof(sQuery), "SELECT `map_id` FROM `server` WHERE `ip` = '%s' AND `port` = %d", m_sServerIp, m_iServerPort);
+			SQL_FetchRow(hResult);
 
-	SQL_TQuery(m_hDatabase, Database_OnGetServerMap, sQuery);
-}
+			m_iServerMap = SQL_FetchInt(hResult, 0);
 
-public Database_OnGetServerMap(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
-	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_GetServerMap > Error: %s", sError);
-	} else {
-		SQL_FetchRow(hResult);
+			Format(sQuery, sizeof(sQuery), "\
+				UPDATE `server` \
+				SET `map_id` = %d \
+				WHERE `ip` = '%s' AND `port` = %d", 
+			m_iServerMap, m_sServerIp, m_iServerPort);
 
-		m_iServerMap = SQL_FetchInt(hResult, 0);
+			SQL_TQuery(m_hDatabase, Database_OnRefreshServer, sQuery, 2);
+		} else if (iData == 2) {
+			Log(TDLogLevel_Info, "Refreshed server in database (%s:%d)", m_sServerIp, m_iServerPort);
+		}
 	}
 
 	if (hResult != INVALID_HANDLE) {

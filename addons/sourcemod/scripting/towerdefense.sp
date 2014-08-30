@@ -132,9 +132,12 @@ public OnConfigsExecuted() {
 
 	if (!g_bEnabled) {
 		if (!g_bTowerDefenseMap) {
-			Log(TDLogLevel_Info, "This map is not a valid map, thus Tower Defense has been temporarily disabled.");
+			decl String:sCurrentMap[PLATFORM_MAX_PATH];
+			GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
+
+			Log(TDLogLevel_Info, "Map \"%s\" is not supported, thus Tower Defense has been disabled.", sCurrentMap);
 		} else {
-			Log(TDLogLevel_Info, "Plugin is disabled.");
+			Log(TDLogLevel_Info, "Tower Defense is disabled.");
 		}
 
 		return;
