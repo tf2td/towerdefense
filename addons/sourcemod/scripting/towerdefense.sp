@@ -240,10 +240,6 @@ public OnClientPutInServer(iClient) {
 	g_bReplaceWeapon[iClient][TFWeaponSlot_Melee] = false;
 
 	g_iAttachedTower[iClient] = 0;
-
-	g_iLastMover[iClient] = 0;
-	g_iUpgradeMetal[iClient] = 0;
-	g_iUpgradeLevel[iClient] = 1;
 }
 
 public OnClientPostAdminCheck(iClient) {

@@ -82,8 +82,18 @@ stock Tower_OnSpawn(iTower, TDTowerId:iTowerId) {
 		return;
 	}
 
+	g_iUpgradeMetal[iTower] = 0;
+	g_iUpgradeLevel[iTower] = 1;
+	g_iLastMover[iTower] = 0;
+
 	SetEntProp(iTower, Prop_Data, "m_bloodColor", _:TDBlood_None);
 	SetRobotModel(iTower);
+
+	// Set level attributes
+	TF2Attrib_SetByDefIndex(iTower, 2, Tower_GetDamageScale(iTowerId));
+	TF2Attrib_SetByDefIndex(iTower, 6, 1.0 / Tower_GetAttackspeedScale(iTowerId));
+
+	// Teleport
 	Tower_TeleportToSpawn(iTower);
 }
 
