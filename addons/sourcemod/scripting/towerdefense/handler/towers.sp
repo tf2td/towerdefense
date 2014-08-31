@@ -559,23 +559,14 @@ stock bool:Tower_GetAngles(TDTowerId:iTowerId, Float:fAngles[3]) {
 	
 	decl String:sAngles[64];
 	if (GetTrieString(g_hMapTowers, sKey, sAngles, sizeof(sAngles))) {
-		new iTower = GetTower(iTowerId);
+		decl String:sAnglesParts[6][16];
+		ExplodeString(sAngles, " ", sAnglesParts, sizeof(sAnglesParts), sizeof(sAnglesParts[]));
 
-		if (IsTower(iTower)) {
-			Format(sKey, sizeof(sKey), "%d_%d_pitch", _:iTowerId, g_iUpgradeLevel[iTower]);
+		fAngles[0] = Tower_Pitch(iTowerId);
+		fAngles[1] = StringToFloat(sAnglesParts[4]);
+		fAngles[2] = StringToFloat(sAnglesParts[5]);
 
-			new iPitch = 0;
-			if (GetTrieValue(g_hMapTowers, sKey, iPitch)) {
-				decl String:sAnglesParts[6][16];
-				ExplodeString(sAngles, " ", sAnglesParts, sizeof(sAnglesParts), sizeof(sAnglesParts[]));
-
-				fAngles[0] = float(iPitch);
-				fAngles[1] = StringToFloat(sAnglesParts[4]);
-				fAngles[2] = StringToFloat(sAnglesParts[5]);
-
-				return true;
-			}
-		}
+		return true;
 	}
 
 	return false;
@@ -717,6 +708,31 @@ stock bool:Tower_Rotate(TDTowerId:iTowerId) {
 	}
 
 	return false;
+}
+
+/**
+ * Gets the towers pitch.
+ *
+ * @param iTowerId 		The towers id.
+ * @return				The pitch, or 10.0 on failure.
+ */
+
+stock Float:Tower_Pitch(TDTowerId:iTowerId) {
+	new iTower = GetTower(iTowerId);
+
+	if (IsTower(iTower)) {
+		decl String:sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_pitch", _:iTowerId, g_iUpgradeLevel[iTower]);
+
+		new iPitch = 0;
+		if (!GetTrieValue(g_hMapTowers, sKey, iPitch)) {
+			return 0.0;
+		}
+
+		return float(iPitch);
+	}
+
+	return 0.0;
 }
 
 /**
