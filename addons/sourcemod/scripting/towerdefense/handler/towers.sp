@@ -3,6 +3,30 @@
 #include <sourcemod>
 
 /**
+ * Called when a buy-tower button is being shot.
+ *
+ * @param iTowerId		The tower id.
+ * @param iActivator	The activator entity.
+ * @noreturn
+ */
+
+stock Tower_OnButtonBuy(TDTowerId:iTowerId, iActivator) {
+	
+}
+
+/**
+ * Called when a teleport-tower button is being shot.
+ *
+ * @param iTowerId		The tower id.
+ * @param iActivator	The activator entity.
+ * @noreturn
+ */
+
+stock Tower_OnButtonTeleport(TDTowerId:iTowerId, iActivator) {
+	
+}
+
+/**
  * Attaches a tower to a client.
  *
  * @param iClient		The client.

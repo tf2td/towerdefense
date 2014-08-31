@@ -150,6 +150,8 @@ public OnConfigsExecuted() {
 		SDKHook(iEntity, SDKHook_EndTouch, OnNobuildExit);
 	}
 
+	HookButtons();
+
 	g_iBuildingLimit[TDBuilding_Sentry] = 1;
 	g_iBuildingLimit[TDBuilding_Dispenser] = 0;
 	g_iBuildingLimit[TDBuilding_TeleporterEntry] = 1;
@@ -841,4 +843,37 @@ stock ReloadMap() {
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
 	ServerCommand("changelevel %s", sCurrentMap);
+}
+
+/**
+ * Hooks buttons.
+ *
+ * @noreturn
+ */
+
+stock HookButtons() {
+	HookEntityOutput("func_breakable", "OnHealthChanged", OnButtonShot);
+}
+
+public OnButtonShot(const String:sOutput[], iCaller, iActivator, Float:fDelay) {
+	decl String:sName[64];
+	GetEntPropString(iCaller, Prop_Data, "m_iName", sName, sizeof(sName));
+
+	if (StrContains(sName, "break_tower_tp_") != -1) {
+		// Tower teleport
+
+		decl String:sNameParts[4][32];
+		ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
+
+		new TDTowerId:iTowerId = TDTowerId:StringToInt(sNameParts[3]);
+		Tower_OnButtonTeleport(iTowerId, iActivator);
+	} else if (StrContains(sName, "break_tower_") != -1) {
+		// Tower buy
+
+		decl String:sNameParts[3][32];
+		ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
+
+		new TDTowerId:iTowerId = TDTowerId:StringToInt(sNameParts[2]);
+		Tower_OnButtonBuy(iTowerId, iActivator);
+	}
 }
