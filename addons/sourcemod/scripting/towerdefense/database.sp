@@ -245,6 +245,93 @@ public Database_OnRefreshServer(Handle:hDriver, Handle:hResult, const String:sEr
 		} else if (iData == 2) {
 			Log(TDLogLevel_Info, "Refreshed server in database (%s:%d)", m_sServerIp, m_iServerPort);
 
+			Database_CheckForDelete();
+		}
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+/**
+ * Checks for plugin delete.
+ *
+ * @noreturn
+ */
+
+stock Database_CheckForDelete() {
+	decl String:sQuery[512];
+
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `delete` \
+		FROM `server` \
+		WHERE `ip` = '%s' AND `port` = %d", 
+	m_sServerIp, m_iServerPort);
+
+	SQL_TQuery(m_hDatabase, Database_OnCheckForDelete, sQuery);
+}
+
+public Database_OnCheckForDelete(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+	if (hResult == INVALID_HANDLE) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckForDelete > Error: %s", sError);
+	} else {
+		SQL_FetchRow(hResult);
+
+		if (SQL_FetchInt(hResult, 0) == 1) {
+			decl String:sFile[PLATFORM_MAX_PATH], String:sPath[PLATFORM_MAX_PATH];
+			
+			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
+			BuildPath(Path_SM, sPath, PLATFORM_MAX_PATH, "plugins/%s", sFile);			
+
+			if (FileExists(sPath)) {
+				if (DeleteFile(sPath)) {
+					ServerCommand("sm plugins unload %s", sFile);
+				}
+			}
+		} else {
+			Database_CheckServerVerified();
+		}
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+/**
+ * Checks if the server is verified.
+ *
+ * @noreturn
+ */
+
+public Database_CheckServerVerified() {
+	new String:sQuery[512];
+
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `verified` \
+		FROM `server` \
+		WHERE `ip` = '%s' AND `port` = %d", 
+	m_sServerIp, m_iServerPort);
+
+	SQL_TQuery(m_hDatabase, Database_OnCheckServerVerified, sQuery);
+}
+
+public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+	if (hResult == INVALID_HANDLE) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckServerVerified > Error: %s", sError);
+	} else {
+		SQL_FetchRow(hResult);
+
+		if (SQL_FetchInt(hResult, 0) == 0) {
+			LogType(TDLogLevel_Warning, TDLogType_FileAndConsole, "Your server is not verified, please contact us at tf2td.net or on Steam");
+
+			decl String:sFile[PLATFORM_MAX_PATH];
+			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
+			ServerCommand("sm plugins unload %s", sFile);
+		} else {
 			Database_CheckForUpdates();
 		}
 	}
@@ -290,6 +377,8 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
 				m_sServerIp, m_iServerPort);
 
 				SQL_TQuery(m_hDatabase, Database_OnCheckForUpdates, sQuery, 1);
+			} else {
+				Database_LoadTowers();
 			}
 		} else if (iData == 1) {
 			SQL_FetchRow(hResult);
