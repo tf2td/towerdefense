@@ -100,8 +100,51 @@ stock Tower_OnTouchNobuild(iTower) {
 		return;
 	}
 
-	Forbid(g_iLastMover[iClient], true, "Don't you dare to place towers on the path again! Did you think you can trick me?");
-	Tower_TeleportToSpawn(iClient);
+	Forbid(g_iLastMover[iTower], true, "Don't you dare to place towers on the path again! Did you think you can trick me?");
+	Tower_TeleportToSpawn(iTower);
+}
+
+/**
+ * Called when a tower is upgraded by a client.
+ *
+ * @param iTower		The tower.
+ * @param iClient		The client upgrading.
+ * @noreturn
+ */
+
+stock Tower_OnUpgrade(iTower, iClient) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	new TDTowerId:iTowerId = GetTowerId(iTower);
+	new iMaxLevel = Tower_GetMaxLevel(iTowerId);
+
+	if (g_iUpgradeLevel[iTower] < iMaxLevel) {
+		if (!AddClientMetal(iClient, -50)) {
+			return;
+		}
+
+		g_iUpgradeMetal[iTower] += 50;
+
+		if (g_iUpgradeMetal[iTower] >= Tower_GetMetal(iTowerId)) {
+			g_iUpgradeMetal[iTower] = 0;
+			g_iUpgradeLevel[iTower]++;
+
+			// Upgrade tower to next level
+			TF2Attrib_SetByDefIndex(iTower, 2, Tower_GetDamageScale(iTowerId));
+			TF2Attrib_SetByDefIndex(iTower, 6, 1.0 / Tower_GetAttackspeedScale(iTowerId));
+		}
+	}
+
+	HideAnnotation(iTower);
+	HideAdvancedAnnotation(iClient, iTower);
+
+	if (g_iUpgradeLevel[iTower] == iMaxLevel) {
+		AttachAnnotation(iTower, 2.0, "%N\nCurrent Level: %d\nMax. Level Reached", iTower, g_iUpgradeLevel[iTower]);
+	} else {
+		AttachAnnotation(iTower, 2.0, "%N\nCurrent Level: %d\nUpgrade Progress: %d/%d", iTower, g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower], Tower_GetMetal(iTowerId));
+	}
 }
 
 /**
@@ -173,7 +216,7 @@ stock bool:Tower_TeleportToSpawn(iTower) {
  * @noreturn
  */
 
-stock AttachTower(iClient) {
+stock Tower_Pickup(iClient) {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -208,7 +251,7 @@ stock AttachTower(iClient) {
  * @noreturn
  */
 
-stock DetachTower(iClient) {
+stock Tower_Drop(iClient) {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -241,56 +284,13 @@ stock DetachTower(iClient) {
 }
 
 /**
- * Gets called when a tower is upgraded by a client.
- *
- * @param iTower		The tower.
- * @param iClient		The client upgrading.
- * @noreturn
- */
-
-stock UpgradeTower(iTower, iClient) {
-	if (!g_bEnabled) {
-		return;
-	}
-
-	new TDTowerId:iTowerId = GetTowerId(iTower);
-	new iMaxLevel = Tower_GetMaxLevel(iTowerId);
-
-	if (g_iUpgradeLevel[iTower] < iMaxLevel) {
-		if (!AddClientMetal(iClient, -50)) {
-			return;
-		}
-
-		g_iUpgradeMetal[iTower] += 50;
-
-		if (g_iUpgradeMetal[iTower] >= Tower_GetMetal(iTowerId)) {
-			g_iUpgradeMetal[iTower] = 0;
-			g_iUpgradeLevel[iTower]++;
-
-			// Upgrade tower to next level
-			TF2Attrib_SetByDefIndex(iTower, 2, Tower_GetDamageScale(iTowerId));
-			TF2Attrib_SetByDefIndex(iTower, 6, 1.0 / Tower_GetAttackspeedScale(iTowerId));
-		}
-	}
-
-	HideAnnotation(iTower);
-	HideAdvancedAnnotation(iClient, iTower);
-
-	if (g_iUpgradeLevel[iTower] == iMaxLevel) {
-		AttachAnnotation(iTower, 2.0, "%N\nCurrent Level: %d\nMax. Level Reached", iTower, g_iUpgradeLevel[iTower]);
-	} else {
-		AttachAnnotation(iTower, 2.0, "%N\nCurrent Level: %d\nUpgrade Progress: %d/%d", iTower, g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower], Tower_GetMetal(iTowerId));
-	}
-}
-
-/**
  * Shows tower info to a client.
  *
  * @param iClient		The client.
  * @noreturn
  */
 
-stock ShowTowerInfo(iClient) {
+stock Tower_ShowInfo(iClient) {
 	if (!g_bEnabled) {
 		return;
 	}

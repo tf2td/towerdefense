@@ -275,9 +275,9 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 			
 			if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
 				if (IsTower(g_iAttachedTower[iClient])) {
-					DetachTower(iClient);
+					Tower_Drop(iClient);
 				} else {
-					AttachTower(iClient);
+					Tower_Pickup(iClient);
 				}
 			}
 		}
@@ -288,7 +288,7 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 			GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
 			
 			if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
-				ShowTowerInfo(iClient);
+				Tower_ShowInfo(iClient);
 			}
 		}
 	}
