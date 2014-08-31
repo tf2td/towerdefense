@@ -104,6 +104,8 @@ public OnPluginEnd() {
 	if (g_bSteamTools) {
 		Steam_SetGameDescription("Team Fortress");
 	}
+
+	SetConVarInt(FindConVar("sv_cheats"), 0, true, false);
 }
 
 public OnMapStart() {
@@ -122,6 +124,11 @@ public OnMapEnd() {
 	if (bWasEnabled) {
 		UpdateGameDescription();
 	}
+
+	AddConVarFlag("sv_cheats", FCVAR_NOTIFY);
+	AddConVarFlag("sv_tags", FCVAR_NOTIFY);
+	AddConVarFlag("tf_bot_count", FCVAR_NOTIFY);
+	AddConVarFlag("sv_password", FCVAR_NOTIFY);
 }
 
 public OnConfigsExecuted() {
@@ -142,6 +149,11 @@ public OnConfigsExecuted() {
 
 		return;
 	}
+
+	StripConVarFlag("sv_cheats", FCVAR_NOTIFY);
+	StripConVarFlag("sv_tags", FCVAR_NOTIFY);
+	StripConVarFlag("tf_bot_count", FCVAR_NOTIFY);
+	StripConVarFlag("sv_password", FCVAR_NOTIFY);
 
 	// Hook func_nobuild events
 	new iEntity = -1;
@@ -866,7 +878,7 @@ public OnButtonShot(const String:sOutput[], iCaller, iActivator, Float:fDelay) {
 		ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
 
 		new TDTowerId:iTowerId = TDTowerId:StringToInt(sNameParts[3]);
-		Tower_OnButtonTeleport(iTowerId, iActivator);
+		Tower_OnButtonTeleport(iTowerId, iCaller, iActivator);
 	} else if (StrContains(sName, "break_tower_") != -1) {
 		// Tower buy
 
@@ -874,6 +886,70 @@ public OnButtonShot(const String:sOutput[], iCaller, iActivator, Float:fDelay) {
 		ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
 
 		new TDTowerId:iTowerId = TDTowerId:StringToInt(sNameParts[2]);
-		Tower_OnButtonBuy(iTowerId, iActivator);
+		Tower_OnButtonBuy(iTowerId, iCaller, iActivator);
 	}
+}
+
+/**
+ * Checks if all clients have enough metal to pay a price.
+ *
+ * @param iPrice		The price to pay.
+ * @return				True if affordable, false ontherwise.
+ */
+
+stock bool:CanAfford(iPrice) {
+	new bool:bResult = true;
+	new iClients = GetRealClientCount(true);
+
+	if (iClients <= 0) {
+		iClients = 1;
+	}
+
+	iPrice /= iClients;
+
+	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+		if (IsDefender(iClient)) {
+			if (GetClientMetal(iClient) < iPrice) {
+				PrintToChatAll("\x07FF0000%N needs %d metal", iClient, iPrice - GetClientMetal(iClient));
+				
+				bResult = false;
+			}
+		}
+	}
+
+	return bResult;
+}
+
+/**
+ * Removes a flag from a cvar.
+ *
+ * @param sCvar		The cvar which is affected.
+ * @param iFlag		The flag to remove.
+ * @noreturn
+ */
+
+stock StripConVarFlag(String:sCvar[], iFlag) {
+	new Handle:hCvar, iFlags;
+
+	hCvar = FindConVar(sCvar);
+	iFlags = GetConVarFlags(hCvar);
+	iFlags &= ~iFlag;
+	SetConVarFlags(hCvar, iFlags);
+}
+
+/**
+ * Adds a flag to a cvar.
+ *
+ * @param sCvar		The cvar which is affected.
+ * @param iFlag		The flag to add.
+ * @noreturn
+ */
+
+stock AddConVarFlag(String:sCvar[], iFlag) {
+	new Handle:hCvar, iFlags;
+
+	hCvar = FindConVar(sCvar);
+	iFlags = GetConVarFlags(hCvar);
+	iFlags &= iFlag;
+	SetConVarFlags(hCvar, iFlags);
 }

@@ -6,24 +6,77 @@
  * Called when a buy-tower button is being shot.
  *
  * @param iTowerId		The tower id.
+ * @param iButton		The button entity.
  * @param iActivator	The activator entity.
  * @noreturn
  */
 
-stock Tower_OnButtonBuy(TDTowerId:iTowerId, iActivator) {
-	
+stock Tower_OnButtonBuy(TDTowerId:iTowerId, iButton, iActivator) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	if (!IsDefender(iActivator)) {
+		return;
+	}
+
+	if (!g_bTowerBought[_:iTowerId]) {
+		new iPrice = Tower_GetPrice(iTowerId);
+		decl String:sName[MAX_NAME_LENGTH];
+		Tower_GetName(iTowerId, sName, sizeof(sName));
+
+		PrintToChatAll("\x04Buying \x01%s\x04 (Total price: \x01%d metal\x04)", sName, iPrice);
+
+		if (CanAfford(iPrice)) {
+			Tower_Spawn(iTowerId);
+
+			PrintToChatAll("\x04%N bought \x01%s", iActivator, sName);
+
+			g_bTowerBought[_:iTowerId] = true;
+			AcceptEntityInput(iButton, "Break");
+		}
+	}
 }
 
 /**
  * Called when a teleport-tower button is being shot.
  *
  * @param iTowerId		The tower id.
+ * @param iButton		The button entity.
  * @param iActivator	The activator entity.
  * @noreturn
  */
 
-stock Tower_OnButtonTeleport(TDTowerId:iTowerId, iActivator) {
-	
+stock Tower_OnButtonTeleport(TDTowerId:iTowerId, iButton, iActivator) {
+	if (!g_bEnabled) {
+		return;
+	}
+}
+
+/**
+ * Spawns a tower.
+ *
+ * @param iTowerId		The towers id.
+ * @return				True on success, false ontherwise.
+ */
+
+stock bool:Tower_Spawn(TDTowerId:iTowerId) {
+	if (!g_bEnabled) {
+		return false;
+	}
+
+	decl String:sName[MAX_NAME_LENGTH], String:sClass[32];
+
+	if (Tower_GetName(iTowerId, sName, sizeof(sName))) {
+		if (Tower_GetClassString(iTowerId, sClass, sizeof(sClass))) {
+			ServerCommand("bot -team blue -class %s -name %s", sClass, sName);
+
+			Log(TDLogLevel_Info, "Tower (%s) spawned", sName);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /**
@@ -146,60 +199,6 @@ stock ShowTowerInfo(iClient) {
 	if (IsTower(iTower)) {
 		AttachAdvancedAnnotation(iClient, iTower, 4.0, "%N\n\rCurrent Level: %d\n\rUpgrade Progress: %d/1000", iTower, g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower]);
 	}
-}
-
-/**
- * Spawns a tower.
- *
- * @param iTowerId		The towers id.
- * @return				True on success, false ontherwise.
- */
-
-stock bool:SpawnTower(TDTowerId:iTowerId) {
-	if (!g_bEnabled) {
-		return false;
-	}
-
-	if (IsTower(GetTower(iTowerId))) { // Tower already spawned
-		return false;
-	}
-
-	// Remove sv_cheats flags from bot command
-	new iFlags;
-	iFlags = GetCommandFlags("bot");
-	iFlags &= ~FCVAR_CHEAT;
-	iFlags &= ~FCVAR_SPONLY;
-	SetCommandFlags("bot", iFlags);
-
-	decl String:sName[MAX_NAME_LENGTH], String:sClass[32];
-
-	if (!Tower_GetName(iTowerId, sName, sizeof(sName))) {
-		// Re-add sv_cheats flags to bot command
-		iFlags &= FCVAR_CHEAT;
-		iFlags &= FCVAR_SPONLY;
-		SetCommandFlags("bot", iFlags);
-
-		return false;
-	}
-
-	if (!Tower_GetClassString(iTowerId, sClass, sizeof(sClass))) {
-		// Re-add sv_cheats flags to bot command
-		iFlags &= FCVAR_CHEAT;
-		iFlags &= FCVAR_SPONLY;
-		SetCommandFlags("bot", iFlags);
-
-		return false;
-	}
-
-	ServerCommand("bot -team blue -class %s -name %s", sClass, sName);
-
-	// Re-add sv_cheats flags to bot command
-	iFlags &= FCVAR_CHEAT;
-	iFlags &= FCVAR_SPONLY;
-	SetCommandFlags("bot", iFlags);
-
-	Log(TDLogLevel_Info, "Tower (%N) spawned", sName);
-	return true;
 }
 
 /**

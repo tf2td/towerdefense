@@ -64,6 +64,8 @@ new g_iLastButtons[MAXPLAYERS + 1];
 
 /*==========  Boolean  ==========*/
 
+new g_bTowerBought[TDTowerId];
+
 /*==========  Handle  ==========*/
 
 /*==========  Float  ==========*/
