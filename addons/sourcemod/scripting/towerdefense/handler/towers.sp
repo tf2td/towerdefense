@@ -155,7 +155,7 @@ stock DetachTower(iClient) {
 	GetClientAbsOrigin(iClient, fLocation);
 	GetClientAbsAngles(iClient, fAngles);
 
-	fAngles[0] = Tower_Pitch(GetTowerId(iTower));
+	fAngles[0] = Tower_GetPitch(GetTowerId(iTower));
 
 	TeleportEntity(iTower, fLocation, fAngles, NULL_VECTOR);
 
@@ -182,22 +182,34 @@ stock UpgradeTower(iTower, iClient) {
 		return;
 	}
 
-	if (!AddClientMetal(iClient, -25)) {
-		return;
-	}
+	new TDTowerId:iTowerId = GetTowerId(iTower);
+	new iMaxLevel = Tower_GetMaxLevel(iTowerId);
 
-	g_iUpgradeMetal[iTower] += 25;
+	if (g_iUpgradeLevel[iTower] < iMaxLevel) {
+		if (!AddClientMetal(iClient, -50)) {
+			return;
+		}
 
-	if (g_iUpgradeMetal[iTower] >= 1000) {
-		// Upgrade tower to next level
+		g_iUpgradeMetal[iTower] += 50;
 
-		g_iUpgradeMetal[iTower] = 0;
-		g_iUpgradeLevel[iTower]++;
+		if (g_iUpgradeMetal[iTower] >= Tower_GetMetal(iTowerId)) {
+			g_iUpgradeMetal[iTower] = 0;
+			g_iUpgradeLevel[iTower]++;
+
+			// Upgrade tower to next level
+			TF2Attrib_SetByDefIndex(iTower, 2, Tower_GetDamageScale(iTowerId));
+			TF2Attrib_SetByDefIndex(iTower, 6, 1.0 / Tower_GetAttackspeedScale(iTowerId));
+		}
 	}
 
 	HideAnnotation(iTower);
 	HideAdvancedAnnotation(iClient, iTower);
-	AttachAnnotation(iTower, 2.0, "%N\n\rCurrent Level: %d\n\rUpgrade Progress: %d/1000", iTower, g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower]);
+
+	if (g_iUpgradeLevel[iTower] == iMaxLevel) {
+		AttachAnnotation(iTower, 2.0, "%N\nCurrent Level: %d\nMax. Level Reached", iTower, g_iUpgradeLevel[iTower]);
+	} else {
+		AttachAnnotation(iTower, 2.0, "%N\nCurrent Level: %d\nUpgrade Progress: %d/%d", iTower, g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower], Tower_GetMetal(iTowerId));
+	}
 }
 
 /**
@@ -215,7 +227,13 @@ stock ShowTowerInfo(iClient) {
 	new iTower = GetAimTarget(iClient);
 
 	if (IsTower(iTower)) {
-		AttachAdvancedAnnotation(iClient, iTower, 4.0, "%N\n\rCurrent Level: %d\n\rUpgrade Progress: %d/1000", iTower, g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower]);
+		new TDTowerId:iTowerId = GetTowerId(iTower);
+
+		if (g_iUpgradeLevel[iTower] == Tower_GetMaxLevel(iTowerId)) {
+			AttachAdvancedAnnotation(iClient, iTower, 4.0, "%N\nCurrent Level: %d\nMax. Level Reached", iTower, g_iUpgradeLevel[iTower]);
+		} else {
+			AttachAdvancedAnnotation(iClient, iTower, 4.0, "%N\nCurrent Level: %d\nUpgrade Progress: %d/%d", iTower, g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower], Tower_GetMetal(iTowerId));
+		}
 	}
 }
 
@@ -580,7 +598,7 @@ stock bool:Tower_GetAngles(TDTowerId:iTowerId, Float:fAngles[3]) {
 		decl String:sAnglesParts[6][16];
 		ExplodeString(sAngles, " ", sAnglesParts, sizeof(sAnglesParts), sizeof(sAnglesParts[]));
 
-		fAngles[0] = Tower_Pitch(iTowerId);
+		fAngles[0] = Tower_GetPitch(iTowerId);
 		fAngles[1] = StringToFloat(sAnglesParts[4]);
 		fAngles[2] = StringToFloat(sAnglesParts[5]);
 
@@ -588,6 +606,31 @@ stock bool:Tower_GetAngles(TDTowerId:iTowerId, Float:fAngles[3]) {
 	}
 
 	return false;
+}
+
+/**
+ * Gets the metal to upgrade the tower to the next level.
+ *
+ * @param iTowerId 		The towers id.
+ * @return				The towers upgrade metal, or -1 on failure.
+ */
+
+stock Tower_GetMetal(TDTowerId:iTowerId) {
+	new iTower = GetTower(iTowerId);
+
+	if (IsTower(iTower)) {
+		decl String:sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_metal", _:iTowerId, g_iUpgradeLevel[iTower]);
+
+		new iMetal = 0;
+		if (!GetTrieValue(g_hMapTowers, sKey, iMetal)) {
+			return -1;
+		}
+
+		return iMetal;
+	}
+
+	return -1;
 }
 
 /**
@@ -660,7 +703,7 @@ stock Tower_GetWeaponAttributes(TDTowerId:iTowerId, iAttributes[16], Float:iValu
  * @return				True if should attack, false otherwise.
  */
 
-stock bool:Tower_AttackPrimary(TDTowerId:iTowerId) {
+stock bool:Tower_GetAttackPrimary(TDTowerId:iTowerId) {
 	new iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
@@ -685,7 +728,7 @@ stock bool:Tower_AttackPrimary(TDTowerId:iTowerId) {
  * @return				True if should attack, false otherwise.
  */
 
-stock bool:Tower_AttackSecondary(TDTowerId:iTowerId) {
+stock bool:Tower_GetAttackSecondary(TDTowerId:iTowerId) {
 	new iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
@@ -710,7 +753,7 @@ stock bool:Tower_AttackSecondary(TDTowerId:iTowerId) {
  * @return				True if should rotate, false otherwise.
  */
 
-stock bool:Tower_Rotate(TDTowerId:iTowerId) {
+stock bool:Tower_GetRotate(TDTowerId:iTowerId) {
 	new iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
@@ -735,7 +778,7 @@ stock bool:Tower_Rotate(TDTowerId:iTowerId) {
  * @return				The pitch, or 10.0 on failure.
  */
 
-stock Float:Tower_Pitch(TDTowerId:iTowerId) {
+stock Float:Tower_GetPitch(TDTowerId:iTowerId) {
 	new iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
@@ -760,7 +803,7 @@ stock Float:Tower_Pitch(TDTowerId:iTowerId) {
  * @return				The damage scale, or 1.0 on failure.
  */
 
-stock Float:Tower_DamageScale(TDTowerId:iTowerId) {
+stock Float:Tower_GetDamageScale(TDTowerId:iTowerId) {
 	new iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
@@ -785,7 +828,7 @@ stock Float:Tower_DamageScale(TDTowerId:iTowerId) {
  * @return				The attackspeed scale, or 1.0 on failure.
  */
 
-stock Float:Tower_AttackspeedScale(TDTowerId:iTowerId) {
+stock Float:Tower_GetAttackspeedScale(TDTowerId:iTowerId) {
 	new iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
@@ -810,7 +853,7 @@ stock Float:Tower_AttackspeedScale(TDTowerId:iTowerId) {
  * @return				The area scale, or 1.0 on failure.
  */
 
-stock Float:Tower_AreaScale(TDTowerId:iTowerId) {
+stock Float:Tower_GetAreaScale(TDTowerId:iTowerId) {
 	new iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
@@ -826,4 +869,30 @@ stock Float:Tower_AreaScale(TDTowerId:iTowerId) {
 	}
 
 	return 1.0;
+}
+
+/**
+ * Gets the towers max level.
+ *
+ * @param iTowerId 		The towers id.
+ * @return				The max level, or 1 on failure.
+ */
+
+stock Tower_GetMaxLevel(TDTowerId:iTowerId) {
+	new iTower = GetTower(iTowerId);
+
+	if (IsTower(iTower)) {
+		decl String:sKey[32];
+		Format(sKey, sizeof(sKey), "%d_1_metal", _:iTowerId);
+
+		new iLevel = 1, iMetal = 0;
+		while (GetTrieValue(g_hMapTowers, sKey, iMetal)) {
+			iLevel++;
+			Format(sKey, sizeof(sKey), "%d_%d_metal", _:iTowerId, iLevel);
+		}
+
+		return iLevel - 1;
+	}
+
+	return 1;
 }
