@@ -27,8 +27,24 @@ stock Tower_OnButtonBuy(TDTowerId:iTowerId, iButton, iActivator) {
 
 		PrintToChatAll("\x04Buying \x01%s\x04 (Total price: \x01%d metal\x04)", sName, iPrice);
 
+		new iClients = GetRealClientCount(true);
+
+		if (iClients <= 0) {
+			iClients = 1;
+		}
+
+		iPrice /= iClients;
+
 		if (CanAfford(iPrice)) {
 			Tower_Spawn(iTowerId);
+
+			for (new iClient = 1; iClient <= MaxClients; iClient++) {
+				if (IsDefender(iClient)) {
+					AddClientMetal(iClient, -iPrice);
+
+					// tdSQL_RefreshPlayerStats_TowersBought(iClient);
+				}
+			}
 
 			PrintToChatAll("\x04%N bought \x01%s", iActivator, sName);
 
@@ -138,6 +154,8 @@ stock DetachTower(iClient) {
 
 	GetClientAbsOrigin(iClient, fLocation);
 	GetClientAbsAngles(iClient, fAngles);
+
+	fAngles[0] = Tower_Pitch(GetTowerId(iTower));
 
 	TeleportEntity(iTower, fLocation, fAngles, NULL_VECTOR);
 

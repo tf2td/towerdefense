@@ -892,14 +892,7 @@ public OnButtonShot(const String:sOutput[], iCaller, iActivator, Float:fDelay) {
 
 stock bool:CanAfford(iPrice) {
 	new bool:bResult = true;
-	new iClients = GetRealClientCount(true);
-
-	if (iClients <= 0) {
-		iClients = 1;
-	}
-
-	iPrice /= iClients;
-
+	
 	for (new iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsDefender(iClient)) {
 			if (GetClientMetal(iClient) < iPrice) {
