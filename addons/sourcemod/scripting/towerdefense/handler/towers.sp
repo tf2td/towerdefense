@@ -221,24 +221,18 @@ stock TeleportTower(iTower) {
 
 	new Float:fLocation[3], Float:fAngles[3];
 
-	if (!Tower_GetLocation(iTowerId, fLocation)) {
-		return false;
+	if (Tower_GetLocation(iTowerId, fLocation)) {
+		if (Tower_GetAngles(iTowerId, fAngles)) {
+			TeleportEntity(iTower, fLocation, fAngles, Float:{0.0, 0.0, 0.0});
+
+			decl String:sName[MAX_NAME_LENGTH];
+			if (!Tower_GetName(iTowerId, sName, sizeof(sName))) {
+				Log(TDLogLevel_Debug, "Tower (%N) teleported", sName);
+			}
+		}
 	}
-
-	if (!Tower_GetAngles(iTowerId, fAngles)) {
-		return false;
-	}
-
-	TeleportEntity(iTower, fLocation, fAngles, NULL_VECTOR);
-
-	decl String:sName[MAX_NAME_LENGTH];
-
-	if (!Tower_GetName(iTowerId, sName, sizeof(sName))) {
-		return false;
-	}
-
-	Log(TDLogLevel_Debug, "Tower (%N) teleported", sName);
-	return true;
+	
+	return false;
 }
 
 /*=========================================
@@ -575,8 +569,8 @@ stock bool:Tower_GetAngles(TDTowerId:iTowerId, Float:fAngles[3]) {
 				decl String:sAnglesParts[6][16];
 				ExplodeString(sAngles, " ", sAnglesParts, sizeof(sAnglesParts), sizeof(sAnglesParts[]));
 
-				fAngles[0] = StringToFloat(sAnglesParts[3]);
-				fAngles[1] = float(iPitch);
+				fAngles[0] = float(iPitch);
+				fAngles[1] = StringToFloat(sAnglesParts[4]);
 				fAngles[2] = StringToFloat(sAnglesParts[5]);
 
 				return true;

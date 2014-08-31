@@ -7,6 +7,9 @@ stock RegisterCommands() {
 	RegAdminCmd("sm_gm", Command_GiveMetal, ADMFLAG_ROOT);
 	RegAdminCmd("sm_r", Command_ReloadMap, ADMFLAG_ROOT);
 
+	// Start Round
+	RegAdminCmd("sm_pregame", Command_PreGame, ADMFLAG_ROOT);
+
 	// Client Commands
 	RegConsoleCmd("sm_d", Command_Drop);
 	RegConsoleCmd("sm_drop", Command_Drop);
@@ -60,6 +63,28 @@ public Action:Command_GiveMetal(iClient, iArgs) {
 public Action:Command_ReloadMap(iClient, iArgs) {
 	ReloadMap();
 
+	return Plugin_Handled;
+}
+
+/*===================================
+=            Start Round            =
+===================================*/
+
+public Action:Command_PreGame(iClient, iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Handled;
+	}
+
+	PrintToChatAll("\x04Have fun playing!");
+	PrintToChatAll("\x04Don't forget to pick up dropped weapons!");
+
+	// Hook func_nobuild events
+	new iEntity = -1;
+	while ((iEntity = FindEntityByClassname(iEntity, "func_nobuild")) != -1) {
+		SDKHook(iEntity, SDKHook_StartTouch, OnNobuildEnter);
+		SDKHook(iEntity, SDKHook_EndTouch, OnNobuildExit);
+	}
+	
 	return Plugin_Handled;
 }
 

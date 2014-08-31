@@ -155,13 +155,6 @@ public OnConfigsExecuted() {
 	StripConVarFlag("tf_bot_count", FCVAR_NOTIFY);
 	StripConVarFlag("sv_password", FCVAR_NOTIFY);
 
-	// Hook func_nobuild events
-	new iEntity = -1;
-	while ((iEntity = FindEntityByClassname(iEntity, "func_nobuild")) != -1) {
-		SDKHook(iEntity, SDKHook_StartTouch, OnNobuildEnter);
-		SDKHook(iEntity, SDKHook_EndTouch, OnNobuildExit);
-	}
-
 	HookButtons();
 
 	g_iBuildingLimit[TDBuilding_Sentry] = 1;
