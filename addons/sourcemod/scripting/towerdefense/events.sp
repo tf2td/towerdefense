@@ -110,8 +110,7 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 			g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
 		}
 	} else if (IsTower(iClient)) {
-		SetEntProp(iClient, Prop_Data, "m_bloodColor", _:TDBlood_None);
-		SetRobotModel(iClient);
+		Tower_OnSpawn(iClient, GetTowerId(iClient));
 	}
 }
 

@@ -330,8 +330,7 @@ public Action:OnNobuildEnter(iEntity, iClient) {
 		g_bInsideNobuild[iClient] = true;
 	} else if (IsTower(iClient)) {
 		if (IsDefender(g_iLastMover[iClient])) {
-			Forbid(g_iLastMover[iClient], true, "Don't you dare to place towers on the path again! Did you think you can trick me?");
-			TeleportTower(iClient);
+			Tower_OnTouchNobuild(iClient);
 		}
 	}
 
@@ -892,7 +891,7 @@ public OnButtonShot(const String:sOutput[], iCaller, iActivator, Float:fDelay) {
 
 stock bool:CanAfford(iPrice) {
 	new bool:bResult = true;
-	
+
 	for (new iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsDefender(iClient)) {
 			if (GetClientMetal(iClient) < iPrice) {

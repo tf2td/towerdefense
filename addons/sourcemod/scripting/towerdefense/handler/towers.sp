@@ -70,6 +70,41 @@ stock Tower_OnButtonTeleport(TDTowerId:iTowerId, iButton, iActivator) {
 }
 
 /**
+ * Called when a tower spawned.
+ *
+ * @param iTower		The tower.
+ * @param iTowerId		The tower id.
+ * @noreturn
+ */
+
+stock Tower_OnSpawn(iTower, TDTowerId:iTowerId) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	SetEntProp(iTower, Prop_Data, "m_bloodColor", _:TDBlood_None);
+	SetRobotModel(iTower);
+	Tower_TeleportToSpawn(iTower);
+}
+
+/**
+ * Called when a tower touches a func_nobuild brush.
+ *
+ * @param iTower		The tower.
+ * @param iTowerId		The tower id.
+ * @noreturn
+ */
+
+stock Tower_OnTouchNobuild(iTower) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	Forbid(g_iLastMover[iClient], true, "Don't you dare to place towers on the path again! Did you think you can trick me?");
+	Tower_TeleportToSpawn(iClient);
+}
+
+/**
  * Spawns a tower.
  *
  * @param iTowerId		The towers id.
@@ -92,6 +127,42 @@ stock bool:Tower_Spawn(TDTowerId:iTowerId) {
 		}
 	}
 
+	return false;
+}
+
+/**
+ * Teleports a tower to his spawn location.
+ *
+ * @param iTower		The tower.
+ * @return				True on success, false ontherwise.
+ */
+
+stock bool:Tower_TeleportToSpawn(iTower) {
+	if (!g_bEnabled) {
+		return false;
+	}
+
+	new TDTowerId:iTowerId = GetTowerId(iTower);
+
+	if (iTowerId == TDTower_Invalid) {
+		return false;
+	}
+
+	new Float:fLocation[3], Float:fAngles[3];
+
+	if (Tower_GetLocation(iTowerId, fLocation)) {
+		if (Tower_GetAngles(iTowerId, fAngles)) {
+			TeleportEntity(iTower, fLocation, fAngles, Float:{0.0, 0.0, 0.0});
+
+			decl String:sName[MAX_NAME_LENGTH];
+			if (Tower_GetName(iTowerId, sName, sizeof(sName))) {
+				Log(TDLogLevel_Debug, "Tower (%N) teleported", sName);
+			}
+
+			return true;
+		}
+	}
+	
 	return false;
 }
 
@@ -235,40 +306,6 @@ stock ShowTowerInfo(iClient) {
 			AttachAdvancedAnnotation(iClient, iTower, 4.0, "%N\nCurrent Level: %d\nUpgrade Progress: %d/%d", iTower, g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower], Tower_GetMetal(iTowerId));
 		}
 	}
-}
-
-/**
- * Teleports a tower to his spawn location.
- *
- * @param iTower		The tower.
- * @return				True on success, false ontherwise.
- */
-
-stock TeleportTower(iTower) {
-	if (!g_bEnabled) {
-		return false;
-	}
-
-	new TDTowerId:iTowerId = GetTowerId(iTower);
-
-	if (iTowerId == TDTower_Invalid) {
-		return false;
-	}
-
-	new Float:fLocation[3], Float:fAngles[3];
-
-	if (Tower_GetLocation(iTowerId, fLocation)) {
-		if (Tower_GetAngles(iTowerId, fAngles)) {
-			TeleportEntity(iTower, fLocation, fAngles, Float:{0.0, 0.0, 0.0});
-
-			decl String:sName[MAX_NAME_LENGTH];
-			if (!Tower_GetName(iTowerId, sName, sizeof(sName))) {
-				Log(TDLogLevel_Debug, "Tower (%N) teleported", sName);
-			}
-		}
-	}
-	
-	return false;
 }
 
 /*=========================================
