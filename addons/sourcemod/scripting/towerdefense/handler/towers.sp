@@ -485,7 +485,7 @@ stock TFClassType:Tower_GetClass(TDTowerId:iTowerId) {
  * Gets the price of a tower.
  *
  * @param iTowerId 		The towers id.
- * @return				The towers price.
+ * @return				The towers price, or -1 on failure.
  */
 
 stock Tower_GetPrice(TDTowerId:iTowerId) {
@@ -493,7 +493,9 @@ stock Tower_GetPrice(TDTowerId:iTowerId) {
 	Format(sKey, sizeof(sKey), "%d_price", _:iTowerId);
 	
 	new iPrice = 0;
-	GetTrieValue(g_hMapTowers, sKey, iPrice);
+	if (!GetTrieValue(g_hMapTowers, sKey, iPrice)) {
+		return -1;
+	}
 
 	return iPrice;
 }
@@ -529,6 +531,7 @@ stock bool:Tower_GetLocation(TDTowerId:iTowerId, Float:fLocation[3]) {
  * Gets the angles of a tower.
  *
  * @param iTowerId 		The towers id.
+ * @param iTowerLevel 	The towers level.
  * @param fAngles 		The angles vector.
  * @return				True on success, false if tower was not found.
  */
@@ -539,14 +542,23 @@ stock bool:Tower_GetAngles(TDTowerId:iTowerId, Float:fAngles[3]) {
 	
 	decl String:sAngles[64];
 	if (GetTrieString(g_hMapTowers, sKey, sAngles, sizeof(sAngles))) {
-		decl String:sAnglesParts[6][16];
-		ExplodeString(sAngles, " ", sAnglesParts, sizeof(sAnglesParts), sizeof(sAnglesParts[]));
+		new iTower = GetTower(iTowerId);
 
-		fAngles[0] = StringToFloat(sAnglesParts[3]);
-		fAngles[1] = StringToFloat(sAnglesParts[4]);
-		fAngles[2] = StringToFloat(sAnglesParts[5]);
+		if (IsTower(iTower)) {
+			Format(sKey, sizeof(sKey), "%d_%d_pitch", _:iTowerId, g_iUpgradeLevel[iTower]);
 
-		return true;
+			new iPitch = 0;
+			if (GetTrieValue(g_hMapTowers, sKey, iPitch)) {
+				decl String:sAnglesParts[6][16];
+				ExplodeString(sAngles, " ", sAnglesParts, sizeof(sAnglesParts), sizeof(sAnglesParts[]));
+
+				fAngles[0] = StringToFloat(sAnglesParts[3]);
+				fAngles[1] = float(iPitch);
+				fAngles[2] = StringToFloat(sAnglesParts[5]);
+
+				return true;
+			}
+		}
 	}
 
 	return false;
@@ -556,17 +568,25 @@ stock bool:Tower_GetAngles(TDTowerId:iTowerId, Float:fAngles[3]) {
  * Gets the weapon of a tower.
  *
  * @param iTowerId 		The towers id.
- * @return				The towers weapon index.
+ * @return				The towers weapon id, or -1 on failure.
  */
 
 stock Tower_GetWeapon(TDTowerId:iTowerId) {
-	decl String:sKey[32];
-	Format(sKey, sizeof(sKey), "%d_weapon", _:iTowerId);
+	new iTower = GetTower(iTowerId);
 
-	new iWeapon = 0;
-	GetTrieValue(g_hMapTowers, sKey, iWeapon);
+	if (IsTower(iTower)) {
+		decl String:sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_weapon", _:iTowerId, g_iUpgradeLevel[iTower]);
 
-	return iWeapon;
+		new iWeapon = 0;
+		if (!GetTrieValue(g_hMapTowers, sKey, iWeapon)) {
+			return -1;
+		}
+
+		return iWeapon;
+	}
+
+	return -1;
 }
 
 /**
@@ -614,14 +634,22 @@ stock Tower_GetWeaponAttributes(TDTowerId:iTowerId, iAttributes[16], Float:iValu
  * @return				True if should attack, false otherwise.
  */
 
-stock bool:Tower_ShouldAttackPrimary(TDTowerId:iTowerId) {
-	decl String:sKey[32];
-	Format(sKey, sizeof(sKey), "%d_attack_primary", _:iTowerId);
+stock bool:Tower_AttackPrimary(TDTowerId:iTowerId) {
+	new iTower = GetTower(iTowerId);
 
-	new iAttack = 0;
-	GetTrieValue(g_hMapTowers, sKey, iAttack);
+	if (IsTower(iTower)) {
+		decl String:sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_attack_primary", _:iTowerId, g_iUpgradeLevel[iTower]);
 
-	return (iAttack != 0);
+		new iAttack = 0;
+		if (!GetTrieValue(g_hMapTowers, sKey, iAttack)) {
+			return false;
+		}
+
+		return (iAttack != 0);
+	}
+
+	return false;
 }
 
 /**
@@ -631,12 +659,120 @@ stock bool:Tower_ShouldAttackPrimary(TDTowerId:iTowerId) {
  * @return				True if should attack, false otherwise.
  */
 
-stock bool:Tower_ShouldAttackSecondary(TDTowerId:iTowerId) {
-	decl String:sKey[32];
-	Format(sKey, sizeof(sKey), "%d_attack_secondary", _:iTowerId);
+stock bool:Tower_AttackSecondary(TDTowerId:iTowerId) {
+	new iTower = GetTower(iTowerId);
 
-	new iAttack = 0;
-	GetTrieValue(g_hMapTowers, sKey, iAttack);
+	if (IsTower(iTower)) {
+		decl String:sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_attack_secondary", _:iTowerId, g_iUpgradeLevel[iTower]);
 
-	return (iAttack != 0);
+		new iAttack = 0;
+		if (!GetTrieValue(g_hMapTowers, sKey, iAttack)) {
+			return false;
+		}
+
+		return (iAttack != 0);
+	}
+
+	return false;
+}
+
+/**
+ * Checks if a tower should rotate towards enemies.
+ *
+ * @param iTowerId 		The towers id.
+ * @return				True if should rotate, false otherwise.
+ */
+
+stock bool:Tower_Rotate(TDTowerId:iTowerId) {
+	new iTower = GetTower(iTowerId);
+
+	if (IsTower(iTower)) {
+		decl String:sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_rotate", _:iTowerId, g_iUpgradeLevel[iTower]);
+
+		new iRotate = 0;
+		if (!GetTrieValue(g_hMapTowers, sKey, iRotate)) {
+			return false;
+		}
+
+		return (iRotate != 0);
+	}
+
+	return false;
+}
+
+/**
+ * Gets the towers damage scale.
+ *
+ * @param iTowerId 		The towers id.
+ * @return				The damage scale, or 1.0 on failure.
+ */
+
+stock Float:Tower_DamageScale(TDTowerId:iTowerId) {
+	new iTower = GetTower(iTowerId);
+
+	if (IsTower(iTower)) {
+		decl String:sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_damage", _:iTowerId, g_iUpgradeLevel[iTower]);
+
+		new Float:fDamage = 1.0;
+		if (!GetTrieValue(g_hMapTowers, sKey, fDamage)) {
+			return 1.0;
+		}
+
+		return fDamage;
+	}
+
+	return 1.0;
+}
+
+/**
+ * Gets the towers attackspeed scale.
+ *
+ * @param iTowerId 		The towers id.
+ * @return				The attackspeed scale, or 1.0 on failure.
+ */
+
+stock Float:Tower_AttackspeedScale(TDTowerId:iTowerId) {
+	new iTower = GetTower(iTowerId);
+
+	if (IsTower(iTower)) {
+		decl String:sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_attackspeed", _:iTowerId, g_iUpgradeLevel[iTower]);
+
+		new Float:fAttackspeed = 1.0;
+		if (!GetTrieValue(g_hMapTowers, sKey, fAttackspeed)) {
+			return 1.0;
+		}
+
+		return fAttackspeed;
+	}
+
+	return 1.0;
+}
+
+/**
+ * Gets the towers area scale.
+ *
+ * @param iTowerId 		The towers id.
+ * @return				The area scale, or 1.0 on failure.
+ */
+
+stock Float:Tower_AreaScale(TDTowerId:iTowerId) {
+	new iTower = GetTower(iTowerId);
+
+	if (IsTower(iTower)) {
+		decl String:sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_area", _:iTowerId, g_iUpgradeLevel[iTower]);
+
+		new Float:fArea = 1.0;
+		if (!GetTrieValue(g_hMapTowers, sKey, fArea)) {
+			return 1.0;
+		}
+
+		return fArea;
+	}
+
+	return 1.0;
 }
