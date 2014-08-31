@@ -46,11 +46,11 @@ public OnSteamHTTPComplete(HTTPRequestHandle:HTTPRequest, bool:bRequestSuccessfu
 
 stock Updater_DownloadEnded(bool:bSuccessful, const String:sError[] = "") {
 	if (bSuccessful) {
-		Log(TDLogLevel_Info, "Successfully updated");
+		Log(TDLogLevel_Info, "Successfully updated plugin");
 
-		decl String:sFilename[PLATFORM_MAX_PATH];
-		GetPluginFilename(INVALID_HANDLE, sFilename, sizeof(sFilename));
-		ServerCommand("sm plugins reload %s", sFilename);
+		decl String:sFile[PLATFORM_MAX_PATH];
+		GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
+		ServerCommand("sm plugins reload %s", sFile);
 	} else {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to update: %s", sError);
 	}

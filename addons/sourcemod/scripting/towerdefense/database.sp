@@ -244,6 +244,73 @@ public Database_OnRefreshServer(Handle:hDriver, Handle:hResult, const String:sEr
 			SQL_TQuery(m_hDatabase, Database_OnRefreshServer, sQuery, 2);
 		} else if (iData == 2) {
 			Log(TDLogLevel_Info, "Refreshed server in database (%s:%d)", m_sServerIp, m_iServerPort);
+
+			Database_CheckForUpdates();
+		}
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+/**
+ * Checks for plugin updates.
+ *
+ * @noreturn
+ */
+
+stock Database_CheckForUpdates() {
+	decl String:sQuery[512];
+
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `update` \
+		FROM `server` \
+		WHERE `ip` = '%s' AND `port` = %d", 
+	m_sServerIp, m_iServerPort);
+
+	SQL_TQuery(m_hDatabase, Database_OnCheckForUpdates, sQuery, 0);
+}
+
+public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+	if (hResult == INVALID_HANDLE) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckForUpdates > Error: %s", sError);
+	} else {
+		if (iData == 0) {
+			SQL_FetchRow(hResult);
+
+			if (SQL_FetchInt(hResult, 0) == 1) {
+				decl String:sQuery[512];
+
+				Format(sQuery, sizeof(sQuery), "\
+					SELECT `update_url` \
+					FROM `server` \
+					WHERE `ip` = '%s' AND `port` = %d", 
+				m_sServerIp, m_iServerPort);
+
+				SQL_TQuery(m_hDatabase, Database_OnCheckForUpdates, sQuery, 1);
+			}
+		} else if (iData == 1) {
+			SQL_FetchRow(hResult);
+
+			if (!SQL_IsFieldNull(hResult, 0)) {
+				decl String:sUrl[256];
+				SQL_FetchString(hResult, 0, sUrl, sizeof(sUrl));
+
+				Log(TDLogLevel_Info, "Plugin update pending. Updating now ...");
+
+				decl String:sFile[PLATFORM_MAX_PATH];
+				GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
+
+				decl String:sPath[PLATFORM_MAX_PATH];
+				Format(sPath, sizeof(sPath), "addons/sourcemod/plugins/%s", sFile);
+
+				PrintToServer("Url: %s", sUrl);
+				PrintToServer("Dest: %s", sPath);
+
+				Updater_Download(sUrl, sPath);
+			}
 		}
 	}
 
