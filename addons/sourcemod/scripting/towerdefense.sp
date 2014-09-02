@@ -53,6 +53,7 @@ public Plugin:myinfo =
 
 #include "towerdefense/handler/towers.sp"
 #include "towerdefense/handler/waves.sp"
+#include "towerdefense/handler/weapons.sp"
 
 #include "towerdefense/commands.sp"
 #include "towerdefense/database.sp"
