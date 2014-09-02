@@ -19,6 +19,8 @@ stock HookEvents() {
 
 	// User Messages
 	HookUserMessage(GetUserMessageId("VGUIMenu"), Event_PlayerVGUIMenu, true);
+
+	AddNormalSoundHook(Event_Sound);
 }
 
 public Event_PlayerCarryObject(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
@@ -112,6 +114,18 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 	} else if (IsTower(iClient)) {
 		Tower_OnSpawn(iClient, GetTowerId(iClient));
 	}
+}
+
+public Action:Event_Sound(iClients[64], &iNumClients, String:sSample[PLATFORM_MAX_PATH], &iEntity, &iChannel, &Float:fVolume, &iLevel, &iPitch, &iFlags) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+
+	if (IsValidEntity(iEntity) && IsTower(iEntity)) {
+		return Plugin_Stop;
+	}
+
+	return Plugin_Continue;
 }
 
 /*====================================
