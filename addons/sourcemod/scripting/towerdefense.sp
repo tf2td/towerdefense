@@ -80,13 +80,18 @@ public OnPluginStart() {
 	Log_Initialize(TDLogLevel_Debug, TDLogType_Console);
 
 	g_hMapTowers = INVALID_HANDLE;
-
 	if (g_hMapTowers != INVALID_HANDLE) {
 		CloseHandle(g_hMapTowers);
 		g_hMapTowers = INVALID_HANDLE;
 	}
-
 	g_hMapTowers = CreateTrie();
+
+	g_hMapWeapons = INVALID_HANDLE;
+	if (g_hMapWeapons != INVALID_HANDLE) {
+		CloseHandle(g_hMapWeapons);
+		g_hMapWeapons = INVALID_HANDLE;
+	}
+	g_hMapWeapons = CreateTrie();
 
 	LoadConVars();
 	HookEvents();

@@ -379,6 +379,7 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
 				SQL_TQuery(m_hDatabase, Database_OnCheckForUpdates, sQuery, 1);
 			} else {
 				Database_LoadTowers();
+				Database_LoadWeapons();
 			}
 		} else if (iData == 1) {
 			SQL_FetchRow(hResult);
@@ -536,6 +537,94 @@ public Database_OnLoadTowers(Handle:hDriver, Handle:hResult, const String:sError
 			SetTrieValue(g_hMapTowers, sKey, SQL_FetchFloat(hResult, 14));
 
 			// PrintToServer("%s => %f", sKey, SQL_FetchFloat(hResult, 14));
+		}
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+/**
+ * Loads weapons to its map.
+ *
+ * @noreturn
+ */
+
+stock Database_LoadWeapons() {
+	decl String:sQuery[512];
+	
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `name`, `index`, `slot`, `level`, `quality`, `classname`, `attributes`, `preserve_attributes` \
+		FROM `weapon` \
+ 		ORDER BY `weapon_id` ASC"
+ 	);
+	
+	SQL_TQuery(m_hDatabase, Database_OnLoadWeapons, sQuery);
+}
+
+public Database_OnLoadWeapons(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+	if (hResult == INVALID_HANDLE) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_LoadWeapons > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
+		new iWeaponId = 1;
+		decl String:sKey[64], String:sBuffer[128];
+
+		// Name   Index Slot Level Quality Classname        Attributes Preserve
+		// Wrench 7     2    1     0       tf_weapon_wrench            1
+
+		while (SQL_FetchRow(hResult)) {
+			// Save weapon name
+			Format(sKey, sizeof(sKey), "%d_name", iWeaponId);
+			SQL_FetchString(hResult, 0, sBuffer, sizeof(sBuffer));
+			SetTrieString(g_hMapWeapons, sKey, sBuffer);
+
+			// PrintToServer("%s => %s", sKey, sBuffer);
+
+			// Save weapon index
+			Format(sKey, sizeof(sKey), "%d_index", iWeaponId);
+			SetTrieValue(g_hMapWeapons, sKey, SQL_FetchInt(hResult, 1));
+
+			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 1));
+
+			// Save weapon slot
+			Format(sKey, sizeof(sKey), "%d_slot", iWeaponId);
+			SetTrieValue(g_hMapWeapons, sKey, SQL_FetchInt(hResult, 2));
+
+			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 2));
+
+			// Save weapon level
+			Format(sKey, sizeof(sKey), "%d_level", iWeaponId);
+			SetTrieValue(g_hMapWeapons, sKey, SQL_FetchInt(hResult, 3));
+
+			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 3));
+
+			// Save weapon quality
+			Format(sKey, sizeof(sKey), "%d_quality", iWeaponId);
+			SetTrieValue(g_hMapWeapons, sKey, SQL_FetchInt(hResult, 4));
+
+			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 4));
+
+			// Save weapon classname
+			Format(sKey, sizeof(sKey), "%d_classname", iWeaponId);
+			SQL_FetchString(hResult, 5, sBuffer, sizeof(sBuffer));
+			SetTrieString(g_hMapWeapons, sKey, sBuffer);
+
+			// PrintToServer("%s => %s", sKey, sBuffer);
+
+			// Save weapon attributes
+			Format(sKey, sizeof(sKey), "%d_attributes", iWeaponId);
+			SQL_FetchString(hResult, 6, sBuffer, sizeof(sBuffer));
+			SetTrieString(g_hMapWeapons, sKey, sBuffer);
+
+			// PrintToServer("%s => %s", sKey, sBuffer);
+
+			// Save weapon preserve attributes
+			Format(sKey, sizeof(sKey), "%d_preserve_attributes", iWeaponId);
+			SetTrieValue(g_hMapWeapons, sKey, SQL_FetchInt(hResult, 7));
+
+			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 7));
 		}
 	}
 
