@@ -188,6 +188,32 @@ stock Tower_OnWeaponChanged(iTower, TDTowerId:iTowerId, iItemDefinitionIndex, iS
 }
 
 /**
+ * Called when a carrier of a tower disconnects or has a timeout.
+ *
+ * @param iTower		The tower.
+ * @param iCarrier		The carrier.
+ * @noreturn
+ */
+
+stock Tower_OnCarrierDisconnected(iTower, iCarrier) {
+	Tower_Drop(iCarrier);
+	Tower_TeleportToSpawn(iTower);
+}
+
+/**
+ * Called when a carrier of a tower dies.
+ *
+ * @param iTower		The tower.
+ * @param iCarrier		The carrier.
+ * @noreturn
+ */
+
+stock Tower_OnCarrierDeath(iTower, iCarrier) {
+	Tower_Drop(iCarrier);
+	Tower_TeleportToSpawn(iTower);
+}
+
+/**
  * Spawns a tower.
  *
  * @param iTowerId		The towers id.

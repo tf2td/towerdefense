@@ -14,6 +14,7 @@ stock HookEvents() {
 	HookEvent("player_changeclass", Event_PlayerChangeClass);
 	HookEvent("player_team", Event_PlayerChangeTeam, EventHookMode_Pre);
 	HookEvent("player_connect", Event_PlayerConnect, EventHookMode_Pre);
+	HookEvent("player_death", Event_PlayerDeath);
 	HookEvent("player_dropobject", Event_PlayerDropObject);
 	HookEvent("post_inventory_application", Event_PostInventoryApplication, EventHookMode_Post);
 
@@ -75,6 +76,20 @@ public Action:Event_PlayerConnect(Handle:hEvent, const String:sName[], bool:bDon
 	return Plugin_Continue;
 }
 
+public Event_PlayerDeath(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+
+	if (IsDefender(iClient)) {
+		if (IsTower(g_iAttachedTower[iClient])) {
+			Tower_OnCarrierDeath(g_iAttachedTower[iClient], iClient);
+		}
+	}
+}
+
 public Event_PlayerDropObject(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
 	if (!g_bEnabled) {
 		return;
@@ -85,8 +100,6 @@ public Event_PlayerDropObject(Handle:hEvent, const String:sName[], bool:bDontBro
 	if (IsDefender(iClient)) {
 		g_bCarryingObject[iClient] = false;
 	}
-
-	return;
 }
 
 public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {

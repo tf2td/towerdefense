@@ -259,6 +259,16 @@ public OnClientPostAdminCheck(iClient) {
 	}
 }
 
+public OnClientDisconnect(iClient) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	if (IsTower(g_iAttachedTower[iClient])) {
+		Tower_OnCarrierDisconnected(g_iAttachedTower[iClient], iClient);
+	}
+}
+
 public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], Float:fAngles[3], &iWeapon) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
