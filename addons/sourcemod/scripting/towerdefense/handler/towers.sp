@@ -67,6 +67,16 @@ stock Tower_OnButtonTeleport(TDTowerId:iTowerId, iButton, iActivator) {
 	if (!g_bEnabled) {
 		return;
 	}
+
+	new iTower = GetTower(iTowerId);
+
+	if (!IsTower(iTower)) {
+		return;
+	}
+
+	if (!IsTowerAttached(iTower)) {
+		Tower_TeleportToSpawn(iTower);
+	}
 }
 
 /**
