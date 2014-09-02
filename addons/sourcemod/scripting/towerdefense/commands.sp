@@ -212,8 +212,10 @@ public Action:CommandListener_ClosedMotd(iClient, const String:sCommand[], iArgs
 		return Plugin_Continue;
 	}
 
-	SetClientMetal(iClient, 1); // for resetting HUD
-	ResetClientMetal(iClient);
+	if (GetClientMetal(iClient) <= 0) {
+		SetClientMetal(iClient, 1); // for resetting HUD
+		ResetClientMetal(iClient);
+	}
 
 	return Plugin_Continue;
 }
