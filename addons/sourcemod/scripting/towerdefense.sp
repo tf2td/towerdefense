@@ -331,7 +331,9 @@ public OnEntityCreated(iEntity, const String:sClassname[]) {
 
 public Action:OnTouchWeapon(iEntity, iClient) {
 	if (IsDefender(iClient)) {
-		return Plugin_Continue;
+		AcceptEntityInput(iEntity, "Kill");
+		AddClientMetal(iClient, 100);
+		EmitSoundToAll("items/ammo_pickup.wav");
 	}
 
 	return Plugin_Handled;
@@ -479,6 +481,7 @@ stock PrecacheSounds() {
 		PrecacheSound(sRoboPath);
 	}
 	
+	PrecacheSound("items/ammo_pickup.wav");
 	PrecacheSound("items/gunpickup2.wav");
 	PrecacheSound("vo/engineer_no03.wav");
 }
