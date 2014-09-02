@@ -160,7 +160,7 @@ stock bool:Weapon_GetPreserveAttributes(iWeaponId) {
 	Format(sKey, sizeof(sKey), "%d_preserve_attributes", iWeaponId);
 
 	new iPreserve = 0;
-	if (!GetTrieValue(g_hMapTowers, sKey, iPreserve)) {
+	if (!GetTrieValue(g_hMapWeapons, sKey, iPreserve)) {
 		return false;
 	}
 
