@@ -93,6 +93,9 @@ stock Tower_OnSpawn(iTower, TDTowerId:iTowerId) {
 	TF2Attrib_SetByDefIndex(iTower, 2, Tower_GetDamageScale(iTowerId));
 	TF2Attrib_SetByDefIndex(iTower, 6, 1.0 / Tower_GetAttackspeedScale(iTowerId));
 
+	// Change weapon
+	Tower_ChangeWeapon(iTower, Tower_GetWeapon(iTowerId));
+
 	// Teleport
 	Tower_TeleportToSpawn(iTower);
 }
@@ -209,13 +212,53 @@ stock bool:Tower_TeleportToSpawn(iTower) {
 
 			decl String:sName[MAX_NAME_LENGTH];
 			if (Tower_GetName(iTowerId, sName, sizeof(sName))) {
-				Log(TDLogLevel_Debug, "Tower (%N) teleported", sName);
+				Log(TDLogLevel_Debug, "Tower (%s) teleported", sName);
 			}
 
 			return true;
 		}
 	}
 	
+	return false;
+}
+
+/**
+ * Changes a towers weapon.
+ *
+ * @param iTower		The tower.
+ * @param iWeaponId		The weapons id.
+ * @return				True on success, false ontherwise.
+ */
+
+stock bool:Tower_ChangeWeapon(iTower, iWeaponId) {
+	if (!g_bEnabled) {
+		return false;
+	}
+
+	if (IsTower(iTower)) {
+		new iIndex = -1;
+		if ((iIndex = Weapon_GetIndex(iWeaponId)) != -1) {
+			new iSlot = -1;
+			if ((iSlot = Weapon_GetSlot(iWeaponId)) != -1) {
+				new iLevel = -1;
+				if ((iLevel = Weapon_GetLevel(iWeaponId)) != -1) {
+					new iQuality = -1;
+					if ((iQuality = Weapon_GetQuality(iWeaponId)) != -1) {
+						decl String:sClassname[64];
+						if (Weapon_GetClassname(iWeaponId, sClassname, sizeof(sClassname))) {
+							new bool:bPreserveAttributes = Weapon_GetPreserveAttributes(iWeaponId);
+
+							TF2_RemoveAllWeapons(iTower);
+							TF2Items_GiveWeapon(iTower, iIndex, iSlot, iLevel, iQuality, bPreserveAttributes, sClassname, "");
+
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	return false;
 }
 
