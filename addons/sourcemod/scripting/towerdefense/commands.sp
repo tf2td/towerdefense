@@ -75,8 +75,8 @@ public Action:Command_PreGame(iClient, iArgs) {
 		return Plugin_Handled;
 	}
 
-	PrintToChatAll("\x04Have fun playing!");
-	PrintToChatAll("\x04Don't forget to pick up dropped weapons!");
+	PrintToChatAll("\x0704B404Have fun playing!");
+	PrintToChatAll("\x0704B404Don't forget to pick up dropped weapons!");
 
 	// Hook func_nobuild events
 	new iEntity = -1;
@@ -98,7 +98,7 @@ public Action:Command_Drop(iClient, iArgs) {
 	}
 
 	if (iArgs != 1) {
-		PrintToChat(iClient, "\x04Usage: !d <amount>");
+		PrintToChat(iClient, "\x0704B404Usage: !d <amount>");
 		
 		return Plugin_Handled;
 	}
@@ -167,7 +167,7 @@ public Action:Command_ShowMetal(iClient, iArgs) {
 		return Plugin_Handled;
 	}
 
-	PrintToChatAll("\x04Metal stats:");
+	PrintToChatAll("\x0704B404Metal stats:");
 	
 	for (new i = 1; i <= MaxClients; i++) {
 		if (IsDefender(i)) {
@@ -193,7 +193,7 @@ public Action:CommandListener_Build(iClient, const String:sCommand[], iArgs) {
 
 	switch (iBuildingType) {
 		case TDBuilding_Sentry: {
-			PrintToChat(iClient, "\x04Use \x01!s \x04or \x01!sentry \x04to build a Sentry!");
+			PrintToChat(iClient, "\x0704B404Use \x04!s \x0704B404or \x04!sentry \x0704B404to build a Sentry!");
 
 			return Plugin_Handled;
 		}

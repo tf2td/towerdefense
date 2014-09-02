@@ -25,7 +25,7 @@ stock Tower_OnButtonBuy(TDTowerId:iTowerId, iButton, iActivator) {
 		decl String:sName[MAX_NAME_LENGTH];
 		Tower_GetName(iTowerId, sName, sizeof(sName));
 
-		PrintToChatAll("\x04Buying \x01%s\x04 (Total price: \x01%d metal\x04)", sName, iPrice);
+		PrintToChatAll("\x0704B404Buying \x04%s\x0704B404 (Total price: \x04%d metal\x0704B404)", sName, iPrice);
 
 		new iClients = GetRealClientCount(true);
 
@@ -46,7 +46,7 @@ stock Tower_OnButtonBuy(TDTowerId:iTowerId, iButton, iActivator) {
 				}
 			}
 
-			PrintToChatAll("\x04%N bought \x01%s", iActivator, sName);
+			PrintToChatAll("\x0704B404%N bought \x04%s", iActivator, sName);
 
 			g_bTowerBought[_:iTowerId] = true;
 			AcceptEntityInput(iButton, "Break");
@@ -158,16 +158,16 @@ stock Tower_OnUpgrade(iTower, iClient) {
 				Tower_SetLevelAttributes(iTower, iTowerId);
 			}
 
-			PrintToChatAll("\x01%N\x04 reached level \x01%d", iTower, g_iUpgradeLevel[iTower]);
+			PrintToChatAll("\x04%N\x0704B404 reached level \x04%d", iTower, g_iUpgradeLevel[iTower]);
 
 			new Float:fDamageScale = Tower_GetDamageScale(iTowerId);
 			if (fDamageScale != 1.0) {
-				PrintToChatAll("\x01%N:\x04 Gained \x01%d%% damage bonus", iTower, RoundFloat(fDamageScale * 100 - 100));
+				PrintToChatAll("\x04%N\x0704B404 gained \x04%d%% damage bonus", iTower, RoundFloat(fDamageScale * 100 - 100));
 			}
 
 			new Float:fAttackspeedScale = Tower_GetAttackspeedScale(iTowerId);
 			if (fAttackspeedScale != 1.0) {
-				PrintToChatAll("\x01%N:\x04 Gained \x01%d%% attackspeed", iTower, RoundFloat(fAttackspeedScale * 100 - 100));
+				PrintToChatAll("\x04%N\x0704B404 gained \x04%d%% attackspeed", iTower, RoundFloat(fAttackspeedScale * 100 - 100));
 			}
 		}
 	}
@@ -237,7 +237,7 @@ stock Tower_OnCarrierDeath(iTower, iCarrier) {
 	g_iAttachedTower[iCarrier] = 0;
 
 	Log(TDLogLevel_Debug, "%N dropped tower (%N)", iCarrier, iTower);
-	
+
 	Tower_TeleportToSpawn(iTower);
 }
 
@@ -400,7 +400,7 @@ stock Tower_Pickup(iClient) {
 		g_bCarryingObject[iClient] = true;
 		g_iAttachedTower[iClient] = iTower;
 
-		PrintToChat(iClient, "\x04You picked up \x01%N", iTower);
+		PrintToChat(iClient, "\x0704B404You picked up \x04%N", iTower);
 		Log(TDLogLevel_Debug, "%N picked up tower (%N)", iClient, iTower);
 	}
 }
