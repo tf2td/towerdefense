@@ -95,5 +95,10 @@ stock TF2Items_GiveWeapon(iClient, iItemDefinitionIndex, iSlot, iLevel, iQuality
 		Log(TDLogLevel_Debug, "Gave weapon (%d) to %N", iItemDefinitionIndex, iClient);
 	}
 
+	if (IsTower(iClient)) {
+		new TDTowerId:iTowerId = GetTowerId(iClient);
+		Tower_OnWeaponChanged(iClient, iTowerId, iItemDefinitionIndex, iSlot, iWeapon);
+	}
+
 	CloseHandle(hItem);
 }

@@ -89,10 +89,6 @@ stock Tower_OnSpawn(iTower, TDTowerId:iTowerId) {
 	SetEntProp(iTower, Prop_Data, "m_bloodColor", _:TDBlood_None);
 	SetRobotModel(iTower);
 
-	// Set level attributes
-	TF2Attrib_SetByDefIndex(iTower, 2, Tower_GetDamageScale(iTowerId));
-	TF2Attrib_SetByDefIndex(iTower, 6, 1.0 / Tower_GetAttackspeedScale(iTowerId));
-
 	// Change weapon
 	Tower_ChangeWeapon(iTower, Tower_GetWeapon(iTowerId));
 
@@ -141,12 +137,16 @@ stock Tower_OnUpgrade(iTower, iClient) {
 		g_iUpgradeMetal[iTower] += 50;
 
 		if (g_iUpgradeMetal[iTower] >= Tower_GetMetal(iTowerId)) {
+			new iWeapon = Tower_GetWeapon(iTowerId);
+
 			g_iUpgradeMetal[iTower] = 0;
 			g_iUpgradeLevel[iTower]++;
 
-			// Upgrade tower to next level
-			TF2Attrib_SetByDefIndex(iTower, 2, Tower_GetDamageScale(iTowerId));
-			TF2Attrib_SetByDefIndex(iTower, 6, 1.0 / Tower_GetAttackspeedScale(iTowerId));
+			if (iWeapon != Tower_GetWeapon(iTowerId)) {
+				Tower_ChangeWeapon(iTower, Tower_GetWeapon(iTowerId));
+			} else {
+				Tower_SetLevelAttributes(iTower, iTowerId);
+			}
 		}
 	}
 
@@ -158,6 +158,23 @@ stock Tower_OnUpgrade(iTower, iClient) {
 	} else {
 		AttachAnnotation(iTower, 2.0, "%N\nCurrent Level: %d\nUpgrade Progress: %d/%d", iTower, g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower], Tower_GetMetal(iTowerId));
 	}
+}
+
+/**
+ * Called when a tower changes weapons.
+ *
+ * @param iTower					The tower.
+ * @param iTowerId					The tower id.
+ * @param iItemDefinitionIndex		The items index.
+ * @param iSlot						The weapons slot.
+ * @param iWeapon					The weapon entity.
+ * @noreturn
+ */
+
+stock Tower_OnWeaponChanged(iTower, TDTowerId:iTowerId, iItemDefinitionIndex, iSlot, iWeapon) {
+	SetEntPropEnt(iTower, Prop_Send, "m_hActiveWeapon", GetPlayerWeaponSlot(iTower, iSlot));
+
+	Tower_SetLevelAttributes(iTower, iTowerId);
 }
 
 /**
@@ -248,7 +265,12 @@ stock bool:Tower_ChangeWeapon(iTower, iWeaponId) {
 						if (Weapon_GetClassname(iWeaponId, sClassname, sizeof(sClassname))) {
 							new bool:bPreserveAttributes = Weapon_GetPreserveAttributes(iWeaponId);
 
-							TF2_RemoveAllWeapons(iTower);
+							for (new i = 0; i < 3; i++) {
+								if (i != iSlot) {
+									TF2_RemoveWeaponSlot(iTower, i);
+								}
+							}
+
 							TF2Items_GiveWeapon(iTower, iIndex, iSlot, iLevel, iQuality, bPreserveAttributes, sClassname, "");
 
 							return true;
@@ -260,6 +282,26 @@ stock bool:Tower_ChangeWeapon(iTower, iWeaponId) {
 	}
 
 	return false;
+}
+
+/**
+ * Sets a towers level attributes.
+ *
+ * @param iTower		The tower.
+ * @param iTowerId		The towers id.
+ * @noreturn
+ */
+
+stock Tower_SetLevelAttributes(iTower, TDTowerId:iTowerId) {
+	new iWeapon = GetEntPropEnt(iTower, Prop_Send, "m_hActiveWeapon");
+
+	if (TF2Attrib_SetByDefIndex(iWeapon, 2, Tower_GetDamageScale(iTowerId))) {
+		Log(TDLogLevel_Trace, "Successfully set attribute %d on %N to %f", 2, iTower, Tower_GetDamageScale(iTowerId));
+	}
+
+	if (TF2Attrib_SetByDefIndex(iTower, 6, 1.0 / Tower_GetAttackspeedScale(iTowerId))) {
+		Log(TDLogLevel_Trace, "Successfully set attribute %d on %N to %f", 6, iTower, 1.0 / Tower_GetAttackspeedScale(iTowerId));
+	}
 }
 
 /**
