@@ -706,44 +706,6 @@ stock Tower_GetWeapon(TDTowerId:iTowerId) {
 }
 
 /**
- * Gets the weapon attributes of a tower.
- *
- * @param iTowerId 		The towers id.
- * @param iAttributes 	The attribute id array.
- * @param iTowerId 		The attribute value array.
- * @return				The attribute count.
- */
-
-stock Tower_GetWeaponAttributes(TDTowerId:iTowerId, iAttributes[16], Float:iValues[16]) {
-	decl String:sKey[32];
-	Format(sKey, sizeof(sKey), "%d_weapon_attributes", _:iTowerId);
-
-	decl String:sAttributes[256];
-	if (GetTrieString(g_hMapTowers, sKey, sAttributes, sizeof(sAttributes))) {
-		decl String:sAttributeParts[32][6];
-		new iCount = ExplodeString(sAttributes, ";", sAttributeParts, sizeof(sAttributeParts), sizeof(sAttributeParts[]));
-
-		if (iCount % 2 != 0) {
-			Log(TDLogLevel_Error, "Failed to parse weapon attributes for tower id %d (some attribute has no value)", _:iTowerId);
-			return 0;
-		}
-
-		new iAttributeCount = 0;
-
-		for (new i = 0; i < iCount && iAttributeCount < 16; i += 2){
-			iAttributes[iAttributeCount] = StringToInt(sAttributeParts[i]);
-			iValues[iAttributeCount] = StringToFloat(sAttributeParts[i + 1]);
-
-			iAttributeCount++;
-		}
-
-		return iAttributeCount;
-	}
-	
-	return 0;
-}
-
-/**
  * Checks if a tower should do primary attacks.
  *
  * @param iTowerId 		The towers id.
