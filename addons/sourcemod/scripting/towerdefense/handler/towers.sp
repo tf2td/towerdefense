@@ -157,6 +157,18 @@ stock Tower_OnUpgrade(iTower, iClient) {
 			} else {
 				Tower_SetLevelAttributes(iTower, iTowerId);
 			}
+
+			PrintToChatAll("\x01%N\x04 reached level \x01%d", iTower, g_iUpgradeLevel[iTower]);
+
+			new Float:fDamageScale = Tower_GetDamageScale(iTowerId);
+			if (fDamageScale != 1.0) {
+				PrintToChatAll("\x01%N:\x04 Gained \x01%d%% damage bonus", iTower, RoundFloat(fDamageScale * 100 - 100));
+			}
+
+			new Float:fAttackspeedScale = Tower_GetAttackspeedScale(iTowerId);
+			if (fAttackspeedScale != 1.0) {
+				PrintToChatAll("\x01%N:\x04 Gained \x01%d%% attackspeed", iTower, RoundFloat(fAttackspeedScale * 100 - 100));
+			}
 		}
 	}
 
@@ -196,7 +208,15 @@ stock Tower_OnWeaponChanged(iTower, TDTowerId:iTowerId, iItemDefinitionIndex, iS
  */
 
 stock Tower_OnCarrierDisconnected(iTower, iCarrier) {
-	Tower_Drop(iCarrier);
+	SetEntityMoveType(iTower, MOVETYPE_WALK);
+	HideAnnotation(iCarrier);
+
+	g_iLastMover[iTower] = iCarrier;
+	g_bCarryingObject[iCarrier] = false;
+	g_iAttachedTower[iCarrier] = 0;
+
+	Log(TDLogLevel_Debug, "%N dropped tower (%N)", iCarrier, iTower);
+	
 	Tower_TeleportToSpawn(iTower);
 }
 
@@ -209,7 +229,15 @@ stock Tower_OnCarrierDisconnected(iTower, iCarrier) {
  */
 
 stock Tower_OnCarrierDeath(iTower, iCarrier) {
-	Tower_Drop(iCarrier);
+	SetEntityMoveType(iTower, MOVETYPE_WALK);
+	HideAnnotation(iCarrier);
+	
+	g_iLastMover[iTower] = iCarrier;
+	g_bCarryingObject[iCarrier] = false;
+	g_iAttachedTower[iCarrier] = 0;
+
+	Log(TDLogLevel_Debug, "%N dropped tower (%N)", iCarrier, iTower);
+	
 	Tower_TeleportToSpawn(iTower);
 }
 
@@ -371,6 +399,8 @@ stock Tower_Pickup(iClient) {
 
 		g_bCarryingObject[iClient] = true;
 		g_iAttachedTower[iClient] = iTower;
+
+		PrintToChat(iClient, "\x04You picked up \x01%N", iTower);
 		Log(TDLogLevel_Debug, "%N picked up tower (%N)", iClient, iTower);
 	}
 }
