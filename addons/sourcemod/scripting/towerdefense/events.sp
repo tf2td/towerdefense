@@ -135,6 +135,11 @@ public Action:Event_Sound(iClients[64], &iNumClients, String:sSample[PLATFORM_MA
 	}
 
 	if (IsValidEntity(iEntity) && IsTower(iEntity)) {
+		// Allow engineer hitting building sounds
+		if (StrContains(sSample, "wrench_hit_build_") != -1 || StrContains(sSample, "wrench_swing") != -1) {
+			return Plugin_Continue;
+		}
+
 		return Plugin_Stop;
 	}
 
