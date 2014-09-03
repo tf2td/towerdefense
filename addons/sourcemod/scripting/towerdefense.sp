@@ -305,6 +305,11 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 		}
 	}
 
+	if (g_bPickupSentry[iClient]) {
+		iButtons |= IN_ATTACK2;
+		g_bPickupSentry[iClient] = false;
+	}
+
 	g_iLastButtons[iClient] = iButtons;
 
 	return Plugin_Continue;

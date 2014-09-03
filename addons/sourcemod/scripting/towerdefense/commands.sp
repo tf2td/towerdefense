@@ -11,6 +11,8 @@ stock RegisterCommands() {
 	RegAdminCmd("sm_pregame", Command_PreGame, ADMFLAG_ROOT);
 
 	// Client Commands
+	RegConsoleCmd("sm_s", Command_BuildSentry);
+	RegConsoleCmd("sm_sentry", Command_BuildSentry);
 	RegConsoleCmd("sm_d", Command_Drop);
 	RegConsoleCmd("sm_drop", Command_Drop);
 	RegConsoleCmd("sm_m", Command_ShowMetal);
@@ -91,6 +93,44 @@ public Action:Command_PreGame(iClient, iArgs) {
 /*=======================================
 =            Client Commands            =
 =======================================*/
+
+public Action:Command_BuildSentry(iClient, iArgs) {
+	if (!CanClientBuild(iClient, TDBuilding_Sentry)) {
+		return Plugin_Handled;
+	}
+
+	new iSentry = CreateEntityByName("obj_sentrygun");
+
+	if (DispatchSpawn(iSentry)) {
+		AcceptEntityInput(iSentry, "SetBuilder", iClient);
+
+		SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", 150);
+		SetEntProp(iSentry, Prop_Send, "m_iHealth", 150);
+
+		DispatchKeyValue(iSentry, "angles", "0 0 0");
+		DispatchKeyValue(iSentry, "defaultupgrade", "0");
+		DispatchKeyValue(iSentry, "TeamNum", "3");
+		DispatchKeyValue(iSentry, "spawnflags", "0");
+
+		new Float:fLocation[3], Float:fAngles[3];
+
+		GetClientAbsOrigin(iClient, fLocation);
+		GetClientEyeAngles(iClient, fAngles);
+
+		fLocation[2] += 30;
+
+		fAngles[0] = 0.0;
+		fAngles[2] = 0.0;
+
+		TeleportEntity(iSentry, fLocation, fAngles, NULL_VECTOR);
+
+		AddClientMetal(iClient, -130);
+
+		g_bPickupSentry[iClient] = true;
+	}
+
+	return Plugin_Handled;
+}
 
 public Action:Command_Drop(iClient, iArgs) {
 	if (!g_bEnabled) {

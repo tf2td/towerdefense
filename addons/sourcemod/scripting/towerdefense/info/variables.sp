@@ -43,6 +43,7 @@ new g_iMetalPackCount;
 
 new bool:g_bCarryingObject[MAXPLAYERS + 1];
 new bool:g_bInsideNobuild[MAXPLAYERS + 1];
+new bool:g_bPickupSentry[MAXPLAYERS + 1];
 new bool:g_bReplaceWeapon[MAXPLAYERS + 1][3];
 
 /*==========  Handle  ==========*/
