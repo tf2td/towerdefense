@@ -13,8 +13,8 @@ stock RegisterCommands() {
 	// Client Commands
 	RegConsoleCmd("sm_s", Command_BuildSentry);
 	RegConsoleCmd("sm_sentry", Command_BuildSentry);
-	RegConsoleCmd("sm_d", Command_Drop);
-	RegConsoleCmd("sm_drop", Command_Drop);
+	RegConsoleCmd("sm_d", Command_DropMetal);
+	RegConsoleCmd("sm_drop", Command_DropMetal);
 	RegConsoleCmd("sm_m", Command_ShowMetal);
 	RegConsoleCmd("sm_metal", Command_ShowMetal);
 
@@ -134,7 +134,7 @@ public Action:Command_BuildSentry(iClient, iArgs) {
 	return Plugin_Handled;
 }
 
-public Action:Command_Drop(iClient, iArgs) {
+public Action:Command_DropMetal(iClient, iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
