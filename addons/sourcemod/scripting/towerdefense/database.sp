@@ -424,7 +424,7 @@ stock Database_LoadTowers() {
 	decl String:sQuery[512];
 	
 	Format(sQuery, sizeof(sQuery), "\
-		SELECT `tower`.`tower_id`, `level`, `tower`.`name`, `type`, `price`, `teleport_tower`, `metal`, `weapon_id`, `attack_primary`, `attack_secondary`, `rotate`, `pitch`, `damage`, `attackspeed`, `area` \
+		SELECT `tower`.`tower_id`, `level`, `tower`.`name`, `type`, `price`, `teleport_tower`, `damagetype`, `description`, `metal`, `weapon_id`, `attack_primary`, `attack_secondary`, `rotate`, `pitch`, `damage`, `attackspeed`, `area` \
 		FROM `tower` \
 		INNER JOIN `classtype` \
 			ON (`tower`.`classtype_id` = `classtype`.`classtype_id`) \
@@ -445,8 +445,8 @@ public Database_OnLoadTowers(Handle:hDriver, Handle:hResult, const String:sError
 		new iTowerId = 0, iTowerLevel = 0;
 		decl String:sKey[64], String:sBuffer[128];
 
-		// Level Name          Class    Price Location          Metal WeaponId AttackPrimary AttackSecondary Rotate Pitch Damage Attackspeed Area
-		// 1     EngineerTower Engineer 500   666 -626 -2 0 0 0 1000  1        1             0               0      45    1.0    1.0         1.0
+		// Level Name          Class    Price Location          Damagetype Description Metal WeaponId AttackPrimary AttackSecondary Rotate Pitch Damage Attackspeed Area
+		// 1     EngineerTower Engineer 500   666 -626 -2 0 0 0 Melee      ...         1000  1        1             0               0      45    1.0    1.0         1.0
 
 		while (SQL_FetchRow(hResult)) {
 			iTowerId = SQL_FetchInt(hResult, 0) - 1;
@@ -480,63 +480,77 @@ public Database_OnLoadTowers(Handle:hDriver, Handle:hResult, const String:sError
 				SetTrieString(g_hMapTowers, sKey, sBuffer);
 
 				// PrintToServer("%s => %s", sKey, sBuffer);
+
+				// Save tower damagetype
+				Format(sKey, sizeof(sKey), "%d_damagetype", iTowerId);
+				SQL_FetchString(hResult, 6, sBuffer, sizeof(sBuffer));
+				SetTrieString(g_hMapTowers, sKey, sBuffer);
+
+				// PrintToServer("%s => %s", sKey, sBuffer);
+
+				// Save tower description
+				Format(sKey, sizeof(sKey), "%d_description", iTowerId);
+				SQL_FetchString(hResult, 7, sBuffer, sizeof(sBuffer));
+				SetTrieString(g_hMapTowers, sKey, sBuffer);
+
+				// PrintToServer("%s => %s", sKey, sBuffer);
 			}
 			
 			// PrintToServer("Level %d:", iTowerLevel);
 
 			// Save tower level metal
 			Format(sKey, sizeof(sKey), "%d_%d_metal", iTowerId, iTowerLevel);
-			SetTrieValue(g_hMapTowers, sKey, SQL_FetchInt(hResult, 6));
-
-			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 6));
-
-			// Save tower level weapon index
-			Format(sKey, sizeof(sKey), "%d_%d_weapon", iTowerId, iTowerLevel);
-			SetTrieValue(g_hMapTowers, sKey, SQL_FetchInt(hResult, 7));
-
-			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 7));
-
-			// Save tower level attack primary
-			Format(sKey, sizeof(sKey), "%d_%d_attack_primary", iTowerId, iTowerLevel);
 			SetTrieValue(g_hMapTowers, sKey, SQL_FetchInt(hResult, 8));
 
 			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 8));
 
-			// Save tower level attack secondary
-			Format(sKey, sizeof(sKey), "%d_%d_attack_secondary", iTowerId, iTowerLevel);
+			// Save tower level weapon index
+			Format(sKey, sizeof(sKey), "%d_%d_weapon", iTowerId, iTowerLevel);
 			SetTrieValue(g_hMapTowers, sKey, SQL_FetchInt(hResult, 9));
 
 			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 9));
 
-			// Save tower level rotate
-			Format(sKey, sizeof(sKey), "%d_%d_rotate", iTowerId, iTowerLevel);
+			// Save tower level attack primary
+			Format(sKey, sizeof(sKey), "%d_%d_attack_primary", iTowerId, iTowerLevel);
 			SetTrieValue(g_hMapTowers, sKey, SQL_FetchInt(hResult, 10));
 
 			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 10));
 
-			// Save tower level pitch
-			Format(sKey, sizeof(sKey), "%d_%d_pitch", iTowerId, iTowerLevel);
+			// Save tower level attack secondary
+			Format(sKey, sizeof(sKey), "%d_%d_attack_secondary", iTowerId, iTowerLevel);
 			SetTrieValue(g_hMapTowers, sKey, SQL_FetchInt(hResult, 11));
 
 			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 11));
 
+			// Save tower level rotate
+			Format(sKey, sizeof(sKey), "%d_%d_rotate", iTowerId, iTowerLevel);
+			SetTrieValue(g_hMapTowers, sKey, SQL_FetchInt(hResult, 12));
+
+			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 12));
+
+			// Save tower level pitch
+			Format(sKey, sizeof(sKey), "%d_%d_pitch", iTowerId, iTowerLevel);
+			SetTrieValue(g_hMapTowers, sKey, SQL_FetchInt(hResult, 13));
+
+			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 13));
+
 			// Save tower level damage
 			Format(sKey, sizeof(sKey), "%d_%d_damage", iTowerId, iTowerLevel);
-			SetTrieValue(g_hMapTowers, sKey, SQL_FetchFloat(hResult, 12));
-
-			// PrintToServer("%s => %f", sKey, SQL_FetchFloat(hResult, 12));
-
-			// Save tower level attackspeed
-			Format(sKey, sizeof(sKey), "%d_%d_attackspeed", iTowerId, iTowerLevel);
-			SetTrieValue(g_hMapTowers, sKey, SQL_FetchFloat(hResult, 13));
-
-			// PrintToServer("%s => %f", sKey, SQL_FetchFloat(hResult, 13));
-
-			// Save tower level area
-			Format(sKey, sizeof(sKey), "%d_%d_area", iTowerId, iTowerLevel);
 			SetTrieValue(g_hMapTowers, sKey, SQL_FetchFloat(hResult, 14));
 
 			// PrintToServer("%s => %f", sKey, SQL_FetchFloat(hResult, 14));
+
+			// Save tower level attackspeed
+			Format(sKey, sizeof(sKey), "%d_%d_attackspeed", iTowerId, iTowerLevel);
+			SetTrieValue(g_hMapTowers, sKey, SQL_FetchFloat(hResult, 15));
+
+			// PrintToServer("%s => %f", sKey, SQL_FetchFloat(hResult, 15));
+
+			// Save tower level area
+			Format(sKey, sizeof(sKey), "%d_%d_area", iTowerId, iTowerLevel);
+			SetTrieValue(g_hMapTowers, sKey, SQL_FetchFloat(hResult, 16));
+
+			// PrintToServer("%s => %f", sKey, SQL_FetchFloat(hResult, 16));
 		}
 	}
 
