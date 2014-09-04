@@ -257,6 +257,14 @@ public Action:TF2_CalcIsAttackCritical(iClient, iWeapon, String:sClassname[], &b
 		}
 	}
 
+	// Unlimted ammo/metal for towers
+	if (IsTower(iClient)) {
+		SetEntData(iWeapon, FindSendPropInfo("CTFWeaponBase", "m_iClip1"), 2, _, true);
+		SetEntData(iClient, FindSendPropInfo("CTFPlayer", "m_iAmmo") + 4, 1);
+		SetEntData(iClient, FindSendPropInfo("CTFPlayer", "m_iAmmo") + 8, 0);
+		SetEntData(iClient, FindDataMapOffs(iClient, "m_iAmmo") + (3 * 4), 100);
+	}
+
 	return Plugin_Handled;
 }
 
