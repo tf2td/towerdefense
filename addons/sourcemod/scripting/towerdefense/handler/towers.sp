@@ -1056,3 +1056,35 @@ stock Tower_GetMaxLevel(TDTowerId:iTowerId) {
 
 	return 1;
 }
+
+/**
+ * Gets the description of a tower.
+ *
+ * @param iTowerId 		The towers id.
+ * @param sBuffer		The destination string buffer.
+ * @param iMaxLength	The maximum length of the output string buffer.
+ * @return				True on success, false if tower was not found.
+ */
+
+stock bool:Tower_GetDescription(TDTowerId:iTowerId, String:sBuffer[], iMaxLength) {
+	decl String:sKey[32];
+	Format(sKey, sizeof(sKey), "%d_description", _:iTowerId);
+
+	return GetTrieString(g_hMapTowers, sKey, sBuffer, iMaxLength);
+}
+
+/**
+ * Gets the damagetype of a tower.
+ *
+ * @param iTowerId 		The towers id.
+ * @param sBuffer		The destination string buffer.
+ * @param iMaxLength	The maximum length of the output string buffer.
+ * @return				True on success, false if tower was not found.
+ */
+
+stock bool:Tower_GetDamagetype(TDTowerId:iTowerId, String:sBuffer[], iMaxLength) {
+	decl String:sKey[32];
+	Format(sKey, sizeof(sKey), "%d_damagetype", _:iTowerId);
+
+	return GetTrieString(g_hMapTowers, sKey, sBuffer, iMaxLength);
+}

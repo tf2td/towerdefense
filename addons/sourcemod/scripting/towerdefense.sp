@@ -343,15 +343,21 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 
 						new TDTowerId:iTowerId = TDTowerId:StringToInt(sNameParts[2]);
 						Tower_GetName(iTowerId, sName, sizeof(sName));
-						
-						PrintToHud(iClient, "\
-							%s \n\
-							--------------- \n\
-							Damagetype: %s \n\
-							Number of Levels: %d \n\
-							--------------- \n\
-							This tower shoots faster than you could ever imagine!", 
-						sName, "Fire", Tower_GetMaxLevel(iTowerId));
+
+						decl String:sDescription[1024];
+						if (Tower_GetDescription(iTowerId, sDescription, sizeof(sDescription))) {
+							decl String:sDamagetype[64];
+							if (Tower_GetDamagetype(iTowerId, sDamagetype, sizeof(sDamagetype))) {
+								PrintToHud(iClient, "\
+									%s \n\
+									--------------- \n\
+									Damagetype: %s \n\
+									Number of Levels: %d \n\
+									--------------- \n\
+									%s", 
+								sName, sDamagetype, Tower_GetMaxLevel(iTowerId), sDescription);
+							}
+						}
 					}
 				}
 			}
