@@ -278,6 +278,14 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 	if (IsTower(iClient)) {
 		new TDTowerId:iTowerId = GetTowerId(iClient);
 
+		// Refill ammo for airblast tower
+		if (iTowerId == TDTower_Airblast_Pyro) {
+			new iOffset = FindSendPropInfo("CTFPlayer", "m_iAmmo");
+			if (GetEntData(iClient, iOffset + 4) <= 0) {
+				SetEntData(iClient, iOffset + 4, 100);
+			}
+		}
+
 		if (Tower_GetAttackPrimary(iTowerId)) {
 			iButtons |= IN_ATTACK;
 		}
