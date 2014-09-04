@@ -84,6 +84,11 @@ public Event_PlayerDeath(Handle:hEvent, const String:sName[], bool:bDontBroadcas
 	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
 
 	if (IsDefender(iClient)) {
+		g_bCarryingObject[iClient] = false;
+		g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
+		g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
+		g_bReplaceWeapon[iClient][TFWeaponSlot_Melee] = false;
+
 		if (IsTower(g_iAttachedTower[iClient])) {
 			Tower_OnCarrierDeath(g_iAttachedTower[iClient], iClient);
 		}
