@@ -276,7 +276,15 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 
 	// Force towers to shoot
 	if (IsTower(iClient)) {
-		iButtons |= IN_ATTACK;
+		new TDTowerId:iTowerId = GetTowerId(iClient);
+
+		if (Tower_GetAttackPrimary(iTowerId)) {
+			iButtons |= IN_ATTACK;
+		}
+
+		if (Tower_GetAttackSecondary(iTowerId)) {
+			iButtons |= IN_ATTACK2;
+		}
 	}
 
 	if (IsDefender(iClient)) {

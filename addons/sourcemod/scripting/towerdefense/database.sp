@@ -625,6 +625,8 @@ public Database_OnLoadWeapons(Handle:hDriver, Handle:hResult, const String:sErro
 			SetTrieValue(g_hMapWeapons, sKey, SQL_FetchInt(hResult, 7));
 
 			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 7));
+
+			iWeaponId++;
 		}
 	}
 
