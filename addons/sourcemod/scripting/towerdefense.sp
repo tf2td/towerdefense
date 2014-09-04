@@ -319,6 +319,43 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 				Tower_ShowInfo(iClient);
 			}
 		}
+
+		new Float:fLocation[3], Float:fViewAngles[3];
+		GetClientEyePosition(iClient, fLocation);
+		GetClientEyeAngles(iClient, fViewAngles);
+			
+		TR_TraceRayFilter(fLocation, fViewAngles, MASK_VISIBLE, RayType_Infinite, TraceRayEntities, iClient);
+		
+		if (TR_DidHit()) {
+			new iAimEntity = TR_GetEntityIndex();
+		
+			if (IsValidEntity(iAimEntity)) {
+				decl String:sClassname[64];
+				GetEntityClassname(iAimEntity, sClassname, sizeof(sClassname));
+
+				if (StrEqual(sClassname, "func_breakable")) {
+					decl String:sName[64];
+					GetEntPropString(iAimEntity, Prop_Data, "m_iName", sName, sizeof(sName));
+
+					if (StrContains(sName, "break_tower_") != -1) {
+						decl String:sNameParts[3][32];
+						ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
+
+						new TDTowerId:iTowerId = TDTowerId:StringToInt(sNameParts[2]);
+						Tower_GetName(iTowerId, sName, sizeof(sName));
+						
+						PrintToHud(iClient, "\
+							%s \n\
+							--------------- \n\
+							Damagetype: %s \n\
+							Number of Levels: %d \n\
+							--------------- \n\
+							This tower shoots faster than you could ever imagine!", 
+						sName, "Fire", Tower_GetMaxLevel(iTowerId));
+					}
+				}
+			}
+		}
 	}
 
 	if (g_bPickupSentry[iClient]) {
@@ -993,4 +1030,65 @@ stock bool:IsInsideClient(iClient) {
 	TR_TraceHullFilter(fLocation, fLocation, fMinBounds, fMaxBounds, MASK_SOLID, TraceRayPlayers, iClient);
 
 	return TR_DidHit();
+}
+
+/**
+ * Shows a custom HUD message to a client.
+ *
+ * @param iClient		The client.
+ * @param sMessage		The message to show.
+ * @param ...			Message formatting parameters.
+ * @noreturn
+ */
+
+stock PrintToHud(iClient, const String:sMessage[], any:...) {
+	if (!IsValidClient(iClient) || !IsClientInGame(iClient)) {
+		return;
+	}
+	
+	/*
+	decl String:sBuffer[256];
+	
+	SetGlobalTransTarget(iClient);
+	VFormat(sBuffer, sizeof(sBuffer), sMessage, 3);
+	ReplaceString(sBuffer, sizeof(sBuffer), "\"", "“");
+	
+	decl iParams[] = {0x76, 0x6F, 0x69, 0x63, 0x65, 0x5F, 0x73, 0x65, 0x6C, 0x66, 0x00, 0x00};
+	new Handle:hMessage = StartMessageOne("HudNotifyCustom", iClient);
+	BfWriteString(hMessage, sBuffer);
+	
+	for (new i = 0; i < sizeof(iParams); i++) {
+		BfWriteByte(hMessage, iParams[i]);
+	}
+	
+	EndMessage();
+	*/
+
+	decl String:sFormattedMessage[256];
+	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 3);
+
+	new Handle:hBuffer = StartMessageOne("KeyHintText", iClient);
+
+	BfWriteByte(hBuffer, 1);
+	BfWriteString(hBuffer, sFormattedMessage);
+	EndMessage();
+}
+
+/**
+ * Shows a custom HUD message to all clients.
+ *
+ * @param sMessage		The message to show.
+ * @param ...			Message formatting parameters.
+ * @noreturn
+ */
+
+stock PrintToHudAll(const String:sMessage[], any:...) {
+	decl String:sFormattedMessage[256];
+	
+	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+		if (IsClientInGame(iClient) && !IsFakeClient(iClient)) {
+			VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 2);
+			PrintToHud(iClient, sBuffer);
+		}
+	}
 }
