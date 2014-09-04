@@ -127,6 +127,8 @@ public Action:Command_BuildSentry(iClient, iArgs) {
 		AddClientMetal(iClient, -130);
 
 		g_bPickupSentry[iClient] = true;
+
+		PrintToChat(iClient, "\x0704B404Sentries need \x041000 metal to upgrade!");
 	}
 
 	return Plugin_Handled;
