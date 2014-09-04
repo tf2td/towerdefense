@@ -54,7 +54,7 @@ stock Database_Connect() {
 			m_iServerPort = StringToInt(sServerPort);
 
 			if (StrEqual(m_sServerIp, "0.0.0.0")) {
-				LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Server has been restarted completely, reloading map for initializing");
+				Log(TDLogLevel_Info, "Server has been restarted completely, reloading map for initializing");
 				ReloadMap();
 			} else {
 				Database_CheckServer();
