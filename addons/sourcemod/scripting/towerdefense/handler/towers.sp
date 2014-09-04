@@ -25,7 +25,7 @@ stock Tower_OnButtonBuy(TDTowerId:iTowerId, iButton, iActivator) {
 		decl String:sName[MAX_NAME_LENGTH];
 		Tower_GetName(iTowerId, sName, sizeof(sName));
 
-		PrintToChatAll("\x0704B404Buying \x04%s\x0704B404 (Total price: \x04%d metal\x0704B404)", sName, iPrice);
+		PrintToChatAll("\x01Buying \x04%s\x01 (Total price: \x04%d metal\x01)", sName, iPrice);
 
 		new iClients = GetRealClientCount(true);
 
@@ -46,7 +46,7 @@ stock Tower_OnButtonBuy(TDTowerId:iTowerId, iButton, iActivator) {
 				}
 			}
 
-			PrintToChatAll("\x0704B404%N bought \x04%s", iActivator, sName);
+			PrintToChatAll("\x01%N bought \x04%s", iActivator, sName);
 
 			g_bTowerBought[_:iTowerId] = true;
 			AcceptEntityInput(iButton, "Break");
@@ -158,16 +158,16 @@ stock Tower_OnUpgrade(iTower, iClient) {
 				Tower_SetLevelAttributes(iTower, iTowerId);
 			}
 
-			PrintToChatAll("\x04%N\x0704B404 reached level \x04%d", iTower, g_iUpgradeLevel[iTower]);
+			PrintToChatAll("\x04%N\x01 reached level \x04%d", iTower, g_iUpgradeLevel[iTower]);
 
 			new Float:fDamageScale = Tower_GetDamageScale(iTowerId);
 			if (fDamageScale != 1.0) {
-				PrintToChatAll("\x04%N\x0704B404 gained \x04%d%% damage bonus", iTower, RoundFloat(fDamageScale * 100 - 100));
+				PrintToChatAll("\x04%N\x01 gained \x04%d%% damage bonus", iTower, RoundFloat(fDamageScale * 100 - 100));
 			}
 
 			new Float:fAttackspeedScale = Tower_GetAttackspeedScale(iTowerId);
 			if (fAttackspeedScale != 1.0) {
-				PrintToChatAll("\x04%N\x0704B404 gained \x04%d%% attackspeed", iTower, RoundFloat(fAttackspeedScale * 100 - 100));
+				PrintToChatAll("\x04%N\x01 gained \x04%d%% attackspeed", iTower, RoundFloat(fAttackspeedScale * 100 - 100));
 			}
 		}
 	}
@@ -400,7 +400,7 @@ stock Tower_Pickup(iClient) {
 		g_bCarryingObject[iClient] = true;
 		g_iAttachedTower[iClient] = iTower;
 
-		PrintToChat(iClient, "\x0704B404You picked up \x04%N", iTower);
+		PrintToChat(iClient, "\x01You picked up \x04%N", iTower);
 		Log(TDLogLevel_Debug, "%N picked up tower (%N)", iClient, iTower);
 	}
 }

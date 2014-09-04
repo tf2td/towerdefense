@@ -77,8 +77,8 @@ public Action:Command_PreGame(iClient, iArgs) {
 		return Plugin_Handled;
 	}
 
-	PrintToChatAll("\x0704B404Have fun playing!");
-	PrintToChatAll("\x0704B404Don't forget to pick up dropped weapons!");
+	PrintToChatAll("\x01Have fun playing!");
+	PrintToChatAll("\x01Don't forget to pick up dropped weapons!");
 
 	// Hook func_nobuild events
 	new iEntity = -1;
@@ -128,7 +128,7 @@ public Action:Command_BuildSentry(iClient, iArgs) {
 
 		g_bPickupSentry[iClient] = true;
 
-		PrintToChat(iClient, "\x0704B404Sentries need \x041000 metal to upgrade!");
+		PrintToChat(iClient, "\x01Sentries need \x041000 metal\x01 to upgrade!");
 	}
 
 	return Plugin_Handled;
@@ -140,7 +140,7 @@ public Action:Command_Drop(iClient, iArgs) {
 	}
 
 	if (iArgs != 1) {
-		PrintToChat(iClient, "\x0704B404Usage: !d <amount>");
+		PrintToChat(iClient, "\x01Usage: !d <amount>");
 		
 		return Plugin_Handled;
 	}
@@ -209,7 +209,7 @@ public Action:Command_ShowMetal(iClient, iArgs) {
 		return Plugin_Handled;
 	}
 
-	PrintToChatAll("\x0704B404Metal stats:");
+	PrintToChatAll("\x01Metal stats:");
 	
 	for (new i = 1; i <= MaxClients; i++) {
 		if (IsDefender(i)) {
@@ -235,7 +235,7 @@ public Action:CommandListener_Build(iClient, const String:sCommand[], iArgs) {
 
 	switch (iBuildingType) {
 		case TDBuilding_Sentry: {
-			PrintToChat(iClient, "\x0704B404Use \x04!s \x0704B404or \x04!sentry \x0704B404to build a Sentry!");
+			PrintToChat(iClient, "\x01Use \x04!s \x01or \x04!sentry \x01to build a Sentry!");
 
 			return Plugin_Handled;
 		}
