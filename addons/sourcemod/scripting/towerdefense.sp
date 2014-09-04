@@ -958,3 +958,23 @@ stock AddConVarFlag(String:sCvar[], iFlag) {
 	iFlags &= iFlag;
 	SetConVarFlags(hCvar, iFlags);
 }
+
+/**
+ * Checks if a client inside another client.
+ *
+ * @param iClient		The client to check.
+ * @return				True if inside, false otherwise.
+ */
+
+stock bool:IsInsideClient(iClient) {
+	new Float:fMinBounds[3], Float:fMaxBounds[3], Float:fLocation[3];
+
+	GetClientMins(iClient, fMinBounds);
+	GetClientMaxs(iClient, fMaxBounds);
+
+	GetClientAbsOrigin(iClient, fLocation);
+
+	TR_TraceHullFilter(fLocation, fLocation, fMinBounds, fMaxBounds, MASK_SOLID, TraceRayPlayers, iClient);
+
+	return TR_DidHit();
+}

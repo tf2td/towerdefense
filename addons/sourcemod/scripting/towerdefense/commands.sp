@@ -99,6 +99,11 @@ public Action:Command_BuildSentry(iClient, iArgs) {
 		return Plugin_Handled;
 	}
 
+	if (IsInsideClient(iClient)) {
+		Forbid(iClient, true, "You can not build while standing inside a other player!");
+		return Plugin_Handled;
+	}
+
 	new iSentry = CreateEntityByName("obj_sentrygun");
 
 	if (DispatchSpawn(iSentry)) {
