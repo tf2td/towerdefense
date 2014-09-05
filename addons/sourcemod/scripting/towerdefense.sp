@@ -338,25 +338,40 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 					GetEntPropString(iAimEntity, Prop_Data, "m_iName", sName, sizeof(sName));
 
 					if (StrContains(sName, "break_tower_") != -1) {
-						decl String:sNameParts[3][32];
-						ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
+						new Float:fEntityLocation[3];
+						GetEntPropVector(iAimEntity, Prop_Send, "m_vecOrigin", fEntityLocation);
 
-						new TDTowerId:iTowerId = TDTowerId:StringToInt(sNameParts[2]);
-						Tower_GetName(iTowerId, sName, sizeof(sName));
+						if (GetVectorDistance(fLocation, fEntityLocation) <= 512.0) {
+							new TDTowerId:iTowerId;
 
-						decl String:sDescription[1024];
-						if (Tower_GetDescription(iTowerId, sDescription, sizeof(sDescription))) {
-							decl String:sDamagetype[64];
-							if (Tower_GetDamagetype(iTowerId, sDamagetype, sizeof(sDamagetype))) {
-								PrintToHud(iClient, "\
-									%s \n\
-									--------------- \n\
-									Price: %d metal (%d metal/player)\n\
-									Damagetype: %s \n\
-									Number of Levels: %d \n\
-									--------------- \n\
-									%s", 
-								sName, Tower_GetPrice(iTowerId), Tower_GetPrice(iTowerId) / GetRealClientCount(true), sDamagetype, Tower_GetMaxLevel(iTowerId), sDescription);
+							if (StrContains(sName, "break_tower_tp_") != -1) {
+								decl String:sNameParts[4][32];
+								ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
+
+								iTowerId = TDTowerId:StringToInt(sNameParts[3]);
+								Tower_GetName(iTowerId, sName, sizeof(sName));
+							} else {
+								decl String:sNameParts[3][32];
+								ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
+
+								iTowerId = TDTowerId:StringToInt(sNameParts[2]);
+								Tower_GetName(iTowerId, sName, sizeof(sName));
+							}
+
+							decl String:sDescription[1024];
+							if (Tower_GetDescription(iTowerId, sDescription, sizeof(sDescription))) {
+								decl String:sDamagetype[64];
+								if (Tower_GetDamagetype(iTowerId, sDamagetype, sizeof(sDamagetype))) {
+									PrintToHud(iClient, "\
+										%s \n\
+										--------------- \n\
+										Price: %d metal (%d metal/player)\n\
+										Damagetype: %s \n\
+										Number of Levels: %d \n\
+										--------------- \n\
+										%s", 
+									sName, Tower_GetPrice(iTowerId), Tower_GetPrice(iTowerId) / GetRealClientCount(true), sDamagetype, Tower_GetMaxLevel(iTowerId), sDescription);
+								}
 							}
 						}
 					}
