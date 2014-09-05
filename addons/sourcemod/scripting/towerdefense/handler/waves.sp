@@ -30,6 +30,17 @@ stock Wave_OnDeath(iAttacker) {
 	}
 
 	CreateTimer(1.0, Delay_KickAttacker, iAttacker, TIMER_FLAG_NO_MAPCHANGE);
+
+	if (GetAliveAttackerCount() <= 1) {
+		g_iCurrentWave++;
+
+		CreateTimer(float(g_iRespawnWaveTime), Delay_SpawnNextWave, _, TIMER_FLAG_NO_MAPCHANGE);
+
+		PrintToChatAll("\x04*** Passed wave %d ***", g_iCurrentWave);
+		PrintToChatAll("\x01You have \x04%d seconds\x01 to prepare for the next wave!", g_iRespawnWaveTime);
+
+		Log(TDLogLevel_Info, "Passed wave %d", g_iCurrentWave);
+	}
 }
 
 /**
@@ -74,7 +85,7 @@ stock Wave_TeleportToSpawn() {
 
 public Action:TeleportWaveDelay(Handle:hTimer, any:iNumber) {
 	if (iNumber > Wave_GetQuantity(g_iCurrentWave)) {
-		Log(TDLogLevel_Info, "Teleported wave %d (%d attackers)", g_iCurrentWave + 1, Wave_GetQuantity(g_iCurrentWave));
+		Log(TDLogLevel_Debug, "Teleported wave %d (%d attackers)", g_iCurrentWave + 1, Wave_GetQuantity(g_iCurrentWave));
 		return Plugin_Stop;
 	}
 
@@ -119,6 +130,30 @@ public Action:Delay_KickAttacker(Handle:hTimer, any:iAttacker) {
 	}
 
 	return Plugin_Stop;
+}
+
+public Action:Delay_SpawnNextWave(Handle:hTimer) {
+	Wave_Spawn();
+
+	return Plugin_Stop;
+}
+
+/**
+ * Gets the count of alive attackers.
+ *
+ * @return				Count of alive attackers.
+ */
+
+stock GetAliveAttackerCount() {
+	new iAttackers = 0;
+
+	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+		if (IsAttacker(iClient) && IsPlayerAlive(iClient)) {
+			iAttackers++;
+		}
+	}
+
+	return iAttackers;
 }
 
 /*======================================

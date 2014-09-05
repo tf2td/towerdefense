@@ -210,7 +210,7 @@ public Database_OnRefreshServer(Handle:hDriver, Handle:hResult, const String:sEr
 
 		if (iData == 0) {
 			Format(sQuery, sizeof(sQuery), "\
-				SELECT `map_id` \
+				SELECT `map_id`, `respawn_wave_time` \
 				FROM `map` \
 				WHERE `name` = '%s'",
 			sCurrentMap);
@@ -234,6 +234,7 @@ public Database_OnRefreshServer(Handle:hDriver, Handle:hResult, const String:sEr
 			SQL_FetchRow(hResult);
 
 			m_iServerMap = SQL_FetchInt(hResult, 0);
+			g_iRespawnWaveTime = SQL_FetchInt(hResult, 1);
 
 			Format(sQuery, sizeof(sQuery), "\
 				UPDATE `server` \

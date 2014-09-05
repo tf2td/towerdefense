@@ -94,5 +94,6 @@ new g_iUpgradeMetal[MAXPLAYERS + 1];
 /*==========  Integer  ==========*/
 
 new g_iCurrentWave;
+new g_iRespawnWaveTime;
 
 /*==========  String  ==========*/
