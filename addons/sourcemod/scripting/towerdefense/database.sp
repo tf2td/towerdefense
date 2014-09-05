@@ -380,6 +380,7 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
 			} else {
 				Database_LoadTowers();
 				Database_LoadWeapons();
+				Database_LoadWaves();
 			}
 		} else if (iData == 1) {
 			SQL_FetchRow(hResult);
@@ -641,6 +642,92 @@ public Database_OnLoadWeapons(Handle:hDriver, Handle:hResult, const String:sErro
 			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 7));
 
 			iWeaponId++;
+		}
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+/**
+ * Loads waves to its map.
+ *
+ * @noreturn
+ */
+
+stock Database_LoadWaves() {
+	decl String:sQuery[512];
+	
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `wavetype`.`type`, `wave`.`name`, `classtype`.`type`, `quantity`, `health`, IF(`wavetype`.`type` = 'air', `teleport_air`, `teleport_ground`) \
+		FROM `wave` \
+		INNER JOIN `wavetype` \
+			ON (`wave`.`wavetype_id` = `wavetype`.`wavetype_id`) \
+		INNER JOIN `classtype` \
+			ON (`wave`.`classtype_id` = `classtype`.`classtype_id`) \
+		INNER JOIN `map` \
+			ON (`map`.`map_id` = %d) \
+ 		WHERE `wave_id` >= `wave_start` AND `wave_id` <= `wave_end` \
+ 		ORDER BY `wave_id` ASC",
+ 	m_iServerMap);
+	
+	SQL_TQuery(m_hDatabase, Database_OnLoadWaves, sQuery);
+}
+
+public Database_OnLoadWaves(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+	if (hResult == INVALID_HANDLE) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_LoadWaves > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
+		new iWaveId = 0;
+		decl String:sKey[64], String:sBuffer[128];
+
+		// Type Name      Class Quantiy Health Location
+		// none WeakScout Scout 4       125    560 -1795 -78 0 90 0
+
+		while (SQL_FetchRow(hResult)) {
+			// Save wave type
+			Format(sKey, sizeof(sKey), "%d_type", iWaveId);
+			SQL_FetchString(hResult, 0, sBuffer, sizeof(sBuffer));
+			SetTrieString(g_hMapWaves, sKey, sBuffer);
+
+			// PrintToServer("%s => %s", sKey, sBuffer);
+
+			// Save wave name
+			Format(sKey, sizeof(sKey), "%d_name", iWaveId);
+			SQL_FetchString(hResult, 1, sBuffer, sizeof(sBuffer));
+			SetTrieString(g_hMapWaves, sKey, sBuffer);
+
+			// PrintToServer("%s => %s", sKey, sBuffer);
+
+			// Save wave class
+			Format(sKey, sizeof(sKey), "%d_class", iWaveId);
+			SQL_FetchString(hResult, 2, sBuffer, sizeof(sBuffer));
+			SetTrieString(g_hMapWaves, sKey, sBuffer);
+
+			// PrintToServer("%s => %s", sKey, sBuffer);
+
+			// Save wave quantity
+			Format(sKey, sizeof(sKey), "%d_quantity", iWaveId);
+			SetTrieValue(g_hMapWaves, sKey, SQL_FetchInt(hResult, 3));
+
+			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 3));
+
+			// Save wave health
+			Format(sKey, sizeof(sKey), "%d_health", iWaveId);
+			SetTrieValue(g_hMapWaves, sKey, SQL_FetchInt(hResult, 4));
+
+			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 4));
+
+			// Save wave location
+			Format(sKey, sizeof(sKey), "%d_location", iWaveId);
+			SQL_FetchString(hResult, 5, sBuffer, sizeof(sBuffer));
+			SetTrieString(g_hMapWaves, sKey, sBuffer);
+
+			// PrintToServer("%s => %s", sKey, sBuffer);
+
+			iWaveId++;
 		}
 	}
 

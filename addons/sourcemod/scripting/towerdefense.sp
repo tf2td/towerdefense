@@ -94,6 +94,13 @@ public OnPluginStart() {
 	}
 	g_hMapWeapons = CreateTrie();
 
+	g_hMapWaves = INVALID_HANDLE;
+	if (g_hMapWaves != INVALID_HANDLE) {
+		CloseHandle(g_hMapWaves);
+		g_hMapWaves = INVALID_HANDLE;
+	}
+	g_hMapWaves = CreateTrie();
+
 	LoadConVars();
 	HookEvents();
 	RegisterCommands();

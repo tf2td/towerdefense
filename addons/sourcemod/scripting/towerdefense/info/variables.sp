@@ -4,6 +4,7 @@
 
 new Handle:g_hMapTowers;
 new Handle:g_hMapWeapons;
+new Handle:g_hMapWaves;
 
 
 /*=========================================
