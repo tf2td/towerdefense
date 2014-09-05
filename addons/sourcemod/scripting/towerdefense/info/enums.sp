@@ -62,3 +62,14 @@ enum TDTowerId
 	TDTower_Kritz_Medic			= 26,
 	TDTower_Quantity
 };
+
+enum TDWaveType
+{
+	TDWaveType_None = 0,
+	TDWaveType_Boss,
+	TDWaveType_Rapid,
+	TDWaveType_Regen,
+	TDWaveType_KnockbackImmune,
+	TDWaveType_Air,
+	TDWaveType_JarateImmune
+};
