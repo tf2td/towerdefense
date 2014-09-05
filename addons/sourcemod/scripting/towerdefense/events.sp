@@ -15,6 +15,7 @@ stock HookEvents() {
 	HookEvent("player_team", Event_PlayerChangeTeam, EventHookMode_Pre);
 	HookEvent("player_connect", Event_PlayerConnect, EventHookMode_Pre);
 	HookEvent("player_death", Event_PlayerDeath);
+	HookEvent("player_disconnect", Event_PlayerDisconnect, EventHookMode_Pre);
 	HookEvent("player_dropobject", Event_PlayerDropObject);
 	HookEvent("post_inventory_application", Event_PostInventoryApplication, EventHookMode_Post);
 
@@ -95,6 +96,16 @@ public Event_PlayerDeath(Handle:hEvent, const String:sName[], bool:bDontBroadcas
 	} else if (IsAttacker(iClient)) {
 		Wave_OnDeath(iClient);
 	}
+}
+
+public Action:Event_PlayerDisconnect(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+
+	if (!IsDefender(iClient)) {
+		return Plugin_Handled;
+	}
+
+	return Plugin_Continue;
 }
 
 public Event_PlayerDropObject(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
