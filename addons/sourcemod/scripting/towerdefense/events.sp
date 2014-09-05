@@ -92,6 +92,8 @@ public Event_PlayerDeath(Handle:hEvent, const String:sName[], bool:bDontBroadcas
 		if (IsTower(g_iAttachedTower[iClient])) {
 			Tower_OnCarrierDeath(g_iAttachedTower[iClient], iClient);
 		}
+	} else if (IsAttacker(iClient)) {
+		Wave_OnDeath(iClient);
 	}
 }
 
@@ -131,6 +133,8 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 		}
 	} else if (IsTower(iClient)) {
 		Tower_OnSpawn(iClient, GetTowerId(iClient));
+	} else if (IsAttacker(iClient)) {
+		Wave_OnSpawn(iClient);
 	}
 }
 

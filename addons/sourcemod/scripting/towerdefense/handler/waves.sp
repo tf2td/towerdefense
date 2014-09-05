@@ -3,6 +3,36 @@
 #include <sourcemod>
 
 /**
+ * Called when an attacker spawned.
+ *
+ * @param iAttacker		The attacker.
+ * @noreturn
+ */
+
+stock Wave_OnSpawn(iAttacker) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	SetRobotModel(iAttacker);
+}
+
+/**
+ * Called when an attacker dies.
+ *
+ * @param iAttacker		The attacker.
+ * @noreturn
+ */
+
+stock Wave_OnDeath(iAttacker) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	CreateTimer(1.0, Delay_KickAttacker, iAttacker, TIMER_FLAG_NO_MAPCHANGE);
+}
+
+/**
  * Spawns a wave.
  *
  * @noreturn
@@ -27,10 +57,16 @@ stock Wave_Spawn() {
 		ServerCommand("bot -team red -class %s -name %s%d", sClass, sName, i);
 	}
 
-	Wave_Teleport();
+	Wave_TeleportToSpawn();
 }
 
-stock Wave_Teleport() {
+/**
+ * Starts to teleport all wave attackers.
+ *
+ * @noreturn
+ */
+
+stock Wave_TeleportToSpawn() {
 	Log(TDLogLevel_Info, "Spawned wave %d (%d attackers)", g_iCurrentWave + 1, Wave_GetQuantity(g_iCurrentWave));
 
 	CreateTimer(1.0, TeleportWaveDelay, 1, TIMER_FLAG_NO_MAPCHANGE);
@@ -70,6 +106,18 @@ public Action:TeleportWaveDelay(Handle:hTimer, any:iNumber) {
 		CreateTimer(1.0, TeleportWaveDelay, iNumber + 1, TIMER_FLAG_NO_MAPCHANGE);
 	}
 	
+	return Plugin_Stop;
+}
+
+/*=========================================
+=            Utility Functions            =
+=========================================*/
+
+public Action:Delay_KickAttacker(Handle:hTimer, any:iAttacker) {
+	if (IsAttacker(iAttacker)) {
+		KickClient(iAttacker);
+	}
+
 	return Plugin_Stop;
 }
 

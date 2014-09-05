@@ -92,6 +92,10 @@ public Action:Command_PreGame(iClient, iArgs) {
 }
 
 public Action:Command_Start(iClient, iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Handled;
+	}
+
 	Wave_Spawn();
 
 	return Plugin_Handled;
