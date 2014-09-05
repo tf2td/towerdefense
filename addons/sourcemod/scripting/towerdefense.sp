@@ -351,11 +351,12 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 								PrintToHud(iClient, "\
 									%s \n\
 									--------------- \n\
+									Price: %d metal (%d metal/player)\n\
 									Damagetype: %s \n\
 									Number of Levels: %d \n\
 									--------------- \n\
 									%s", 
-								sName, sDamagetype, Tower_GetMaxLevel(iTowerId), sDescription);
+								sName, Tower_GetPrice(iTowerId), Tower_GetPrice(iTowerId) / GetRealClientCount(true), sDamagetype, Tower_GetMaxLevel(iTowerId), sDescription);
 							}
 						}
 					}
