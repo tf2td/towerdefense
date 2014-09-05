@@ -1121,3 +1121,26 @@ stock PrintToHudAll(const String:sMessage[], any:...) {
 		}
 	}
 }
+
+/**
+ * Gets a client by name.
+ *
+ * @param sName			The clients name.
+ * @return				The client, or -1 on error.
+ */
+
+stock GetClientByNameExact(String:sName[]) {
+	new String:sClientName[MAX_NAME_LENGTH];
+	
+	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+		if (IsClientInGame(iClient)) {
+			GetClientName(iClient, sClientName, sizeof(sClientName));
+			
+			if (StrEqual(sName, sClientName)) {
+				return iClient;
+			}
+		}
+	}
+	
+	return -1;
+}

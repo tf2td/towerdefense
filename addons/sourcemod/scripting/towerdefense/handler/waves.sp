@@ -2,6 +2,77 @@
 
 #include <sourcemod>
 
+/**
+ * Spawns a wave.
+ *
+ * @noreturn
+ */
+
+stock Wave_Spawn() {
+	PrintToChatAll("\x04Spawned Wave %d!", g_iCurrentWave + 1);
+
+	decl String:sName[MAX_NAME_LENGTH];
+	if (!Wave_GetName(g_iCurrentWave, sName, sizeof(sName))) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to spawn wave %d, could not read name!", g_iCurrentWave);
+		return;
+	}
+
+	decl String:sClass[32];
+	if (!Wave_GetClassString(g_iCurrentWave, sClass, sizeof(sClass))) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to spawn wave %d, could not read class!", g_iCurrentWave);
+		return;
+	}
+
+	for (new i = 1; i <= Wave_GetQuantity(g_iCurrentWave); i++) {
+		ServerCommand("bot -team red -class %s -name %s%d", sClass, sName, i);
+	}
+
+	Wave_Teleport();
+}
+
+stock Wave_Teleport() {
+	Log(TDLogLevel_Info, "Spawned wave %d (%d attackers)", g_iCurrentWave + 1, Wave_GetQuantity(g_iCurrentWave));
+
+	CreateTimer(1.0, TeleportWaveDelay, 1, TIMER_FLAG_NO_MAPCHANGE);
+}
+
+public Action:TeleportWaveDelay(Handle:hTimer, any:iNumber) {
+	if (iNumber > Wave_GetQuantity(g_iCurrentWave)) {
+		Log(TDLogLevel_Info, "Teleported wave %d (%d attackers)", g_iCurrentWave + 1, Wave_GetQuantity(g_iCurrentWave));
+		return Plugin_Stop;
+	}
+
+	decl String:sName[MAX_NAME_LENGTH];
+	if (!Wave_GetName(g_iCurrentWave, sName, sizeof(sName))) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to teleport wave %d, could not read name!", g_iCurrentWave);
+		return Plugin_Stop;
+	}
+
+	Format(sName, sizeof(sName), "%s%d", sName, iNumber);
+
+	new iAttacker = GetClientByNameExact(sName);
+
+	if (IsAttacker(iAttacker)) {
+		new Float:fLocation[3];
+		if (!Wave_GetLocation(g_iCurrentWave, fLocation)) {
+			LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to teleport wave %d, could not read location!", g_iCurrentWave);
+			return Plugin_Stop;
+		}
+
+		new Float:fAngles[3];
+		if (!Wave_GetAngles(g_iCurrentWave, fAngles)) {
+			LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to teleport wave %d, could not read angles!", g_iCurrentWave);
+			return Plugin_Stop;
+		}
+
+		TeleportEntity(iAttacker, fLocation, fAngles, Float:{0.0, 0.0, 0.0});
+
+		CreateTimer(1.0, TeleportWaveDelay, iNumber + 1, TIMER_FLAG_NO_MAPCHANGE);
+	}
+	
+	return Plugin_Stop;
+}
+
 /*======================================
 =            Data Functions            =
 ======================================*/

@@ -79,3 +79,20 @@ new g_iUpgradeLevel[MAXPLAYERS + 1];
 new g_iUpgradeMetal[MAXPLAYERS + 1];
 
 /*==========  String  ==========*/
+
+
+/*======================================
+=            Wave Variables            =
+======================================*/
+
+/*==========  Boolean  ==========*/
+
+/*==========  Handle  ==========*/
+
+/*==========  Float  ==========*/
+
+/*==========  Integer  ==========*/
+
+new g_iCurrentWave;
+
+/*==========  String  ==========*/
