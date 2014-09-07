@@ -986,6 +986,17 @@ public OnButtonShot(const String:sOutput[], iCaller, iActivator, Float:fDelay) {
 
 		new TDTowerId:iTowerId = TDTowerId:StringToInt(sNameParts[2]);
 		Tower_OnButtonBuy(iTowerId, iCaller, iActivator);
+	} else if (StrContains(sName, "wave_start") != -1) {
+		// Wave start
+
+		if (StrEqual(sName, "wave_start")) {
+			Wave_OnButtonStart(0, iCaller, iActivator);
+		} else {
+			decl String:sNameParts[3][32];
+			ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
+
+			Wave_OnButtonStart(StringToInt(sNameParts[2]), iCaller, iActivator);
+		}
 	}
 }
 
