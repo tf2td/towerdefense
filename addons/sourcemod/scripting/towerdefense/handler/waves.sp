@@ -3,6 +3,40 @@
 #include <sourcemod>
 
 /**
+ * Called when the start button is being shot.
+ *
+ * @param iWave			The incoming wave.
+ * @param iButton		The button entity.
+ * @param iActivator	The activator entity.
+ * @noreturn
+ */
+
+stock Wave_OnButtonStart(iWave, iButton, iActivator) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	if (!IsDefender(iActivator)) {
+		return;
+	}
+
+	decl String:sName[64];
+	Format(sName, sizeof(sName), "wave_start_%d", iWave + 1);
+	DispatchKeyValue(iButton, "targetname", sName);
+
+	TeleportEntity(iButton, Float:{0.0, 0.0, -9192.0}, NULL_VECTOR, Float:{0.0, 0.0, 0.0});
+
+	PrintToChatAll("%N started \x04Wave %d", iActivator, iWave + 1);
+
+	if (iWave == 0) {
+		Timer_NextWaveCountdown(INVALID_HANDLE, 5);
+	} else {
+		g_bStartWaveEarly = true;
+		Wave_Spawn();
+	}
+}
+
+/**
  * Called when an attacker spawned.
  *
  * @param iAttacker		The attacker.
@@ -32,16 +66,29 @@ stock Wave_OnDeath(iAttacker) {
 	CreateTimer(1.0, Delay_KickAttacker, iAttacker, TIMER_FLAG_NO_MAPCHANGE);
 
 	if (GetAliveAttackerCount() <= 1) {
-		g_iCurrentWave++;
-
-		CreateTimer(float(g_iRespawnWaveTime + 1), Delay_SpawnNextWave, _, TIMER_FLAG_NO_MAPCHANGE);
-		CreateTimer(1.0, Timer_NextWaveCountdown, g_iRespawnWaveTime - 1, TIMER_FLAG_NO_MAPCHANGE);
-
-		PrintToChatAll("\x04*** Passed wave %d ***", g_iCurrentWave);
-		PrintToChatAll("\x01You have \x04%d seconds\x01 to prepare for the next wave!", g_iRespawnWaveTime);
-
-		Log(TDLogLevel_Info, "Passed wave %d", g_iCurrentWave);
+		Wave_OnDeathAll();
 	}
+}
+
+/**
+ * Called when all attackers died.
+ *
+ * @noreturn
+ */
+
+stock Wave_OnDeathAll() {
+	g_bStartWaveEarly = false;
+
+	g_iCurrentWave++;
+
+	TeleportEntity(g_iWaveStartButton, g_fWaveStartButtonLocation, NULL_VECTOR, Float:{0.0, 0.0, 0.0});
+
+	Timer_NextWaveCountdown(INVALID_HANDLE, g_iRespawnWaveTime);
+
+	PrintToChatAll("\x04*** Passed wave %d ***", g_iCurrentWave);
+	PrintToChatAll("\x01You have \x04%d seconds\x01 to prepare for the next wave!", g_iRespawnWaveTime);
+
+	Log(TDLogLevel_Info, "Passed wave %d", g_iCurrentWave);
 }
 
 /**
@@ -133,14 +180,15 @@ public Action:Delay_KickAttacker(Handle:hTimer, any:iAttacker) {
 	return Plugin_Stop;
 }
 
-public Action:Delay_SpawnNextWave(Handle:hTimer) {
-	Wave_Spawn();
-
-	return Plugin_Stop;
-}
-
 public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
-	if (iTime <= 0) {
+	if (g_bStartWaveEarly) {
+		for (new iClient = 1; iClient <= MaxClients; iClient++) {
+			if (IsDefender(iClient)) {
+				PrintToChat(iClient, "\x04All of you received %d metal for starting %d seconds earlier!", (iTime + 1) * 10, iTime + 1);
+				AddClientMetal(iClient, (iTime + 1) * 10);
+			}
+		}
+
 		return Plugin_Stop;
 	}
 
@@ -167,24 +215,21 @@ public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
 		}
 		case 1: {
 			EmitSoundToAll("vo/announcer_begins_1sec.wav");
+
+			TeleportEntity(g_iWaveStartButton, Float:{0.0, 0.0, -9192.0}, NULL_VECTOR, Float:{0.0, 0.0, 0.0});
+		}
+		case 0: {
+			Wave_Spawn();
+
+			return Plugin_Stop;
 		}
 	}
 
-	static bool:bFirstCall = true;
-	static iFirstTime = 0;
+	SetHudTextParams(-1.0, 0.85, 1.1, 255, 255, 255, 255);
 
-	if (bFirstCall) {
-		iFirstTime = iTime;
-		bFirstCall = false;
-	}
-
-	if (iFirstTime > 5) {
-		SetHudTextParams(-1.0, 0.85, 1.1, 255, 255, 255, 255);
-
-		for (new iClient = 1; iClient <= MaxClients; iClient++) {
-			if (IsDefender(iClient)) {
-				ShowHudText(iClient, -1, "Next wave in: %02d", iTime);
-			}
+	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+		if (IsDefender(iClient)) {
+			ShowHudText(iClient, -1, "Next wave in: %02d", iTime);
 		}
 	}
 

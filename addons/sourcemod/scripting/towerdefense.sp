@@ -413,6 +413,8 @@ public Action:OnTakeDamage(iClient, &iAttacker, &iInflictor, &Float:fDamage, &iD
 public OnEntityCreated(iEntity, const String:sClassname[]) {
 	if (StrEqual(sClassname, "tf_ammo_pack")) {
 		SDKHook(iEntity, SDKHook_Touch, OnTouchWeapon);
+	} else if (StrEqual(sClassname, "func_breakable")) {
+		SDKHook(iEntity, SDKHook_SpawnPost, OnButtonSpawned);
 	}
 }
 
@@ -424,6 +426,16 @@ public Action:OnTouchWeapon(iEntity, iClient) {
 	}
 
 	return Plugin_Handled;
+}
+
+public OnButtonSpawned(iEntity) {
+	decl String:sName[64];
+	GetEntPropString(iEntity, Prop_Data, "m_iName", sName, sizeof(sName));
+
+	if (StrEqual(sName, "wave_start")) {
+		g_iWaveStartButton = iEntity;
+		GetEntPropVector(iEntity, Prop_Send, "m_vecOrigin", g_fWaveStartButtonLocation);
+	}
 }
 
 public Action:OnNobuildEnter(iEntity, iClient) {

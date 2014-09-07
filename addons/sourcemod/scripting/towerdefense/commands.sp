@@ -9,7 +9,6 @@ stock RegisterCommands() {
 
 	// Start Round
 	RegAdminCmd("sm_pregame", Command_PreGame, ADMFLAG_ROOT);
-	RegAdminCmd("sm_start", Command_Start, ADMFLAG_ROOT);
 
 	// Client Commands
 	RegConsoleCmd("sm_s", Command_BuildSentry);
@@ -88,16 +87,6 @@ public Action:Command_PreGame(iClient, iArgs) {
 		SDKHook(iEntity, SDKHook_EndTouch, OnNobuildExit);
 	}
 	
-	return Plugin_Handled;
-}
-
-public Action:Command_Start(iClient, iArgs) {
-	if (!g_bEnabled) {
-		return Plugin_Handled;
-	}
-
-	Wave_Spawn();
-
 	return Plugin_Handled;
 }
 

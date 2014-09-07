@@ -87,13 +87,18 @@ new g_iUpgradeMetal[MAXPLAYERS + 1];
 
 /*==========  Boolean  ==========*/
 
+new bool:g_bStartWaveEarly;
+
 /*==========  Handle  ==========*/
 
 /*==========  Float  ==========*/
+
+new Float:g_fWaveStartButtonLocation[3];
 
 /*==========  Integer  ==========*/
 
 new g_iCurrentWave;
 new g_iRespawnWaveTime;
+new g_iWaveStartButton;
 
 /*==========  String  ==========*/
