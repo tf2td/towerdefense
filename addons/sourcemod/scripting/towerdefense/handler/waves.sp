@@ -96,6 +96,10 @@ stock Wave_OnDeath(iAttacker) {
  */
 
 stock Wave_OnDeathAll() {
+	if (!g_bEnabled) {
+		return;
+	}
+
 	g_bStartWaveEarly = false;
 
 	g_iCurrentWave++;
@@ -108,6 +112,54 @@ stock Wave_OnDeathAll() {
 	PrintToChatAll("\x01You have \x04%d seconds\x01 to prepare for the next wave!", g_iRespawnWaveTime);
 
 	Log(TDLogLevel_Info, "Passed wave %d", g_iCurrentWave);
+}
+
+/**
+ * Called when an attacker touches a corner.
+ *
+ * @param iCorner		The corner trigger entity.
+ * @param iAttacker		The attacker.
+ * @noreturn
+ */
+
+public Wave_OnTouchCorner(iCorner, iAttacker) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	if (IsAttacker(iAttacker)) {
+		decl String:sCornerName[64];
+		GetEntPropString(iCorner, Prop_Data, "m_iName", sCornerName, sizeof(sCornerName));
+
+		if (StrContains(sCornerName, "corner_") != -1 && !StrEqual(sCornerName, "corner_final")) {
+			decl String:sCornerParentName[64];
+			GetEntPropString(iCorner, Prop_Data, "m_iParent", sCornerParentName, sizeof(sCornerParentName));
+
+			new iNextCorner = -1;
+			decl String:sNextCornerName[64];
+
+			while ((iNextCorner = FindEntityByClassname(iNextCorner, "trigger_multiple")) != -1) {
+				GetEntPropString(iNextCorner, Prop_Data, "m_iName", sNextCornerName, sizeof(sNextCornerName));
+
+				if (StrEqual(sCornerParentName, sNextCornerName)) {
+					break;
+				}
+			}
+
+			if (IsValidEntity(iNextCorner)) {
+				new Float:fLocation[3], Float:fNextLocation[3];
+
+				GetEntPropVector(iCorner, Prop_Data, "m_vecAbsOrigin", fLocation);
+				GetEntPropVector(iNextCorner, Prop_Data, "m_vecAbsOrigin", fNextLocation);
+				
+				new Float:fVector[3], Float:fAngles[3];
+				MakeVectorFromPoints(fLocation, fNextLocation, fVector);
+				GetVectorAngles(fVector, fAngles);
+
+				TeleportEntity(iAttacker, NULL_VECTOR, fAngles, NULL_VECTOR);
+			}
+		}
+	}
 }
 
 /**

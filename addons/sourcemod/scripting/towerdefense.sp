@@ -417,10 +417,16 @@ public OnEntityCreated(iEntity, const String:sClassname[]) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnButtonSpawned);
 	} else if (StrContains(sClassname, "tf_projectile_") != -1) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnProjectileSpawned);
+	} else if (StrEqual(sClassname, "trigger_multiple")) {
+		SDKHook(iEntity, SDKHook_StartTouchPost, Wave_OnTouchCorner);
 	}
 }
 
 public Action:OnTouchWeapon(iEntity, iClient) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+
 	if (IsDefender(iClient)) {
 		AcceptEntityInput(iEntity, "Kill");
 		AddClientMetal(iClient, 100);
@@ -431,6 +437,10 @@ public Action:OnTouchWeapon(iEntity, iClient) {
 }
 
 public OnButtonSpawned(iEntity) {
+	if (!g_bEnabled) {
+		return;
+	}
+
 	decl String:sName[64];
 	GetEntPropString(iEntity, Prop_Data, "m_iName", sName, sizeof(sName));
 
@@ -441,10 +451,18 @@ public OnButtonSpawned(iEntity) {
 }
 
 public OnProjectileSpawned(iEntity) {
+	if (!g_bEnabled) {
+		return;
+	}
+
 	SDKHook(iEntity, SDKHook_ShouldCollide, OnProjectileCollide);
 }
 
 public bool:OnProjectileCollide(iEntity, iCollisiongroup, iContentsmask, bool:bResult) {
+	if (!g_bEnabled) {
+		return true;
+	}
+
 	new iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
 
 	if (IsValidClient(iOwner)) {
@@ -470,11 +488,11 @@ public bool:OnProjectileCollide(iEntity, iCollisiongroup, iContentsmask, bool:bR
 	return true;
 }
 
-public bool:TraceRayProjectile(iEntity, iMask, any:iData) {
-	return !(IsValidEntity(iEntity) && IsValidClient(iData) && iEntity != iData && GetEntProp(iEntity, Prop_Send, "m_iTeamNum") == GetEntProp(iData, Prop_Send, "m_iTeamNum"));
-}
-
 public Action:OnNobuildEnter(iEntity, iClient) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+
 	if (IsDefender(iClient)) {
 		g_bInsideNobuild[iClient] = true;
 	} else if (IsTower(iClient)) {
@@ -487,6 +505,10 @@ public Action:OnNobuildEnter(iEntity, iClient) {
 }
 
 public Action:OnNobuildExit(iEntity, iClient) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+
 	if (IsDefender(iClient)) {
 		g_bInsideNobuild[iClient] = false;
 	}
