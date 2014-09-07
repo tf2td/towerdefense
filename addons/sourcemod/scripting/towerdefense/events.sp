@@ -148,6 +148,8 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 		Wave_OnSpawn(iClient);
 		RequestFrame(Wave_OnSpawnPost, iClient);
 	}
+
+	SetEntProp(iClient, Prop_Data, "m_CollisionGroup", 13); // COLLISION_GROUP_PROJECTILE
 }
 
 public Action:Event_Sound(iClients[64], &iNumClients, String:sSample[PLATFORM_MAX_PATH], &iEntity, &iChannel, &Float:fVolume, &iLevel, &iPitch, &iFlags) {

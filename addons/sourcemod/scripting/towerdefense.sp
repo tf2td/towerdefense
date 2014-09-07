@@ -415,6 +415,8 @@ public OnEntityCreated(iEntity, const String:sClassname[]) {
 		SDKHook(iEntity, SDKHook_Touch, OnTouchWeapon);
 	} else if (StrEqual(sClassname, "func_breakable")) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnButtonSpawned);
+	} else if (StrContains(sClassname, "tf_projectile_") != -1) {
+		SDKHook(iEntity, SDKHook_SpawnPost, OnProjectileSpawned);
 	}
 }
 
@@ -436,6 +438,40 @@ public OnButtonSpawned(iEntity) {
 		g_iWaveStartButton = iEntity;
 		GetEntPropVector(iEntity, Prop_Send, "m_vecOrigin", g_fWaveStartButtonLocation);
 	}
+}
+
+public OnProjectileSpawned(iEntity) {
+	SDKHook(iEntity, SDKHook_ShouldCollide, OnProjectileCollide);
+}
+
+public bool:OnProjectileCollide(iEntity, iCollisiongroup, iContentsmask, bool:bResult) {
+	new iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
+
+	if (IsValidClient(iOwner)) {
+		new Float:fLocation[3], Float:fAngles[3];
+		GetEntPropVector(iEntity, Prop_Data, "m_vecOrigin", fLocation);
+		GetEntPropVector(iEntity, Prop_Data, "m_angAbsRotation", fAngles);
+
+		TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayPlayers, iOwner);
+
+		if (TR_DidHit()) {
+			new iTarget = TR_GetEntityIndex();
+
+			if (IsValidClient(iTarget)) {
+				if (GetClientTeam(iOwner) != GetClientTeam(iTarget)) {
+					SetEntProp(iEntity, Prop_Data, "m_CollisionGroup", 0);
+				} else {
+					SetEntProp(iEntity, Prop_Data, "m_CollisionGroup", 24);
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+public bool:TraceRayProjectile(iEntity, iMask, any:iData) {
+	return !(IsValidEntity(iEntity) && IsValidClient(iData) && iEntity != iData && GetEntProp(iEntity, Prop_Send, "m_iTeamNum") == GetEntProp(iData, Prop_Send, "m_iTeamNum"));
 }
 
 public Action:OnNobuildEnter(iEntity, iClient) {
