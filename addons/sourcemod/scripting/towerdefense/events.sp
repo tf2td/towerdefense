@@ -146,6 +146,7 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 		Tower_OnSpawn(iClient, GetTowerId(iClient));
 	} else if (IsAttacker(iClient)) {
 		Wave_OnSpawn(iClient);
+		RequestFrame(Wave_OnSpawnPost, iClient);
 	}
 }
 

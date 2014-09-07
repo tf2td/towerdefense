@@ -52,6 +52,25 @@ stock Wave_OnSpawn(iAttacker) {
 }
 
 /**
+ * Called the frame after an attacker spawned.
+ *
+ * @param iAttacker		The attacker.
+ * @noreturn
+ */
+
+public Wave_OnSpawnPost(any:iAttacker) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	new iMaxHealth = GetEntProp(iAttacker, Prop_Data, "m_iMaxHealth");
+	new iWaveHealth = Wave_GetHealth(g_iCurrentWave);
+
+	TF2Attrib_SetByName(iAttacker, "max health additive bonus", float(iWaveHealth - iMaxHealth));
+	SetEntityHealth(iAttacker, iWaveHealth);
+}
+
+/**
  * Called when an attacker dies.
  *
  * @param iAttacker		The attacker.
