@@ -570,6 +570,11 @@ stock PrecacheSounds() {
 	
 	PrecacheSound("items/ammo_pickup.wav");
 	PrecacheSound("items/gunpickup2.wav");
+	PrecacheSound("vo/announcer_begins_5sec.wav");
+	PrecacheSound("vo/announcer_begins_4sec.wav");
+	PrecacheSound("vo/announcer_begins_3sec.wav");
+	PrecacheSound("vo/announcer_begins_2sec.wav");
+	PrecacheSound("vo/announcer_begins_1sec.wav");
 	PrecacheSound("vo/engineer_no03.wav");
 }
 

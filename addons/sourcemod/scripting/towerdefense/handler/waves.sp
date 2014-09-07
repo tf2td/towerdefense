@@ -34,7 +34,8 @@ stock Wave_OnDeath(iAttacker) {
 	if (GetAliveAttackerCount() <= 1) {
 		g_iCurrentWave++;
 
-		CreateTimer(float(g_iRespawnWaveTime), Delay_SpawnNextWave, _, TIMER_FLAG_NO_MAPCHANGE);
+		CreateTimer(float(g_iRespawnWaveTime + 1), Delay_SpawnNextWave, _, TIMER_FLAG_NO_MAPCHANGE);
+		CreateTimer(1.0, Timer_NextWaveCountdown, g_iRespawnWaveTime - 1, TIMER_FLAG_NO_MAPCHANGE);
 
 		PrintToChatAll("\x04*** Passed wave %d ***", g_iCurrentWave);
 		PrintToChatAll("\x01You have \x04%d seconds\x01 to prepare for the next wave!", g_iRespawnWaveTime);
@@ -134,6 +135,60 @@ public Action:Delay_KickAttacker(Handle:hTimer, any:iAttacker) {
 
 public Action:Delay_SpawnNextWave(Handle:hTimer) {
 	Wave_Spawn();
+
+	return Plugin_Stop;
+}
+
+public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
+	if (iTime <= 0) {
+		return Plugin_Stop;
+	}
+
+	switch (iTime) {
+		case 5: {
+			SetHudTextParams(-1.0, 0.6, 5.1, 255, 255, 255, 255, 2, 2.0);
+
+			for (new iClient = 1; iClient <= MaxClients; iClient++) {
+				if (IsDefender(iClient)) {
+					ShowHudText(iClient, -1, "Wave %d with %d HP incoming!", g_iCurrentWave + 1, Wave_GetHealth(g_iCurrentWave));
+				}
+			}
+
+			EmitSoundToAll("vo/announcer_begins_5sec.wav");
+		}
+		case 4: {
+			EmitSoundToAll("vo/announcer_begins_4sec.wav");
+		}
+		case 3: {
+			EmitSoundToAll("vo/announcer_begins_3sec.wav");
+		}
+		case 2: {
+			EmitSoundToAll("vo/announcer_begins_2sec.wav");
+		}
+		case 1: {
+			EmitSoundToAll("vo/announcer_begins_1sec.wav");
+		}
+	}
+
+	static bool:bFirstCall = true;
+	static iFirstTime = 0;
+
+	if (bFirstCall) {
+		iFirstTime = iTime;
+		bFirstCall = false;
+	}
+
+	if (iFirstTime > 5) {
+		SetHudTextParams(-1.0, 0.85, 1.1, 255, 255, 255, 255);
+
+		for (new iClient = 1; iClient <= MaxClients; iClient++) {
+			if (IsDefender(iClient)) {
+				ShowHudText(iClient, -1, "Next wave in: %02d", iTime);
+			}
+		}
+	}
+
+	CreateTimer(1.0, Timer_NextWaveCountdown, iTime - 1, TIMER_FLAG_NO_MAPCHANGE);
 
 	return Plugin_Stop;
 }
