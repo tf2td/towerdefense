@@ -71,6 +71,39 @@ public Wave_OnSpawnPost(any:iAttacker) {
 }
 
 /**
+ * Called the frame after an attacker gets damaged.
+ *
+ * @param iVictim		The victim.
+ * @param iAttacker		The attacker.
+ * @param iInflictor	The inflictor.
+ * @param fDamage		The damage.
+ * @param iDamageType	The damage type.
+ * @noreturn
+ */
+
+stock Wave_OnTakeDamagePost(iVictim, iAttacker, iInflictor, Float:fDamage, iDamageType) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	new iHealthBar = EntRefToEntIndex(g_iHealthBar);
+	if (IsValidEntity(iHealthBar)) {
+		new iTotalHealth = 0;
+
+		for (new iClient = 1; iClient <= MaxClients; iClient++) {
+			if (IsAttacker(iClient)) {
+				iTotalHealth += GetEntProp(iClient, Prop_Data, "m_iHealth");
+			}
+		}
+
+		new iTotalHealthMax = Wave_GetHealth(g_iCurrentWave) * Wave_GetQuantity(g_iCurrentWave);
+		new Float:fPercentage = float(iTotalHealth) / float(iTotalHealthMax);
+
+		SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", RoundToFloor(fPercentage * 255));
+	}
+}
+
+/**
  * Called when an attacker dies.
  *
  * @param iAttacker		The attacker.

@@ -126,6 +126,13 @@ public OnMapStart() {
 
 	PrecacheModels();
 	PrecacheSounds();
+
+	new iHealthBar = CreateEntityByName("monster_resource");
+
+	if (DispatchSpawn(iHealthBar)) {
+		SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 0);
+		g_iHealthBar = EntIndexToEntRef(iHealthBar);
+	}
 }
 
 public OnMapEnd() {
@@ -174,6 +181,11 @@ public OnConfigsExecuted() {
 	g_iBuildingLimit[TDBuilding_Dispenser] = 0;
 	g_iBuildingLimit[TDBuilding_TeleporterEntry] = 1;
 	g_iBuildingLimit[TDBuilding_TeleporterExit] = 1;
+
+	new iHealthBar = EntRefToEntIndex(g_iHealthBar);
+	if (IsValidEntity(iHealthBar)) {
+		SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 0);
+	}
 
 	Database_Connect();
 }
@@ -246,6 +258,7 @@ public OnClientPutInServer(iClient) {
 	}
 
 	SDKHook(iClient, SDKHook_OnTakeDamage, OnTakeDamage);
+	SDKHook(iClient, SDKHook_OnTakeDamagePost, OnTakeDamagePost);
 
 	g_bCarryingObject[iClient] = false;
 	g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
@@ -408,6 +421,16 @@ public Action:OnTakeDamage(iClient, &iAttacker, &iInflictor, &Float:fDamage, &iD
 	}
 
 	return Plugin_Continue;
+}
+
+public OnTakeDamagePost(iClient, iAttacker, iInflictor, Float:fDamage, iDamageType) {
+	if (!g_bEnabled) {
+		return;
+	}
+
+	if (IsAttacker(iClient)) {
+		Wave_OnTakeDamagePost(iClient, iAttacker, iInflictor, fDamage, iDamageType);
+	}
 }
 
 public OnEntityCreated(iEntity, const String:sClassname[]) {

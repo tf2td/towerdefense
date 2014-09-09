@@ -98,6 +98,7 @@ new Float:g_fWaveStartButtonLocation[3];
 /*==========  Integer  ==========*/
 
 new g_iCurrentWave;
+new g_iHealthBar;
 new g_iRespawnWaveTime;
 new g_iWaveStartButton;
 
