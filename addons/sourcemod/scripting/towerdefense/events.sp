@@ -18,6 +18,7 @@ stock HookEvents() {
 	HookEvent("player_disconnect", Event_PlayerDisconnect, EventHookMode_Pre);
 	HookEvent("player_dropobject", Event_PlayerDropObject);
 	HookEvent("post_inventory_application", Event_PostInventoryApplication, EventHookMode_Post);
+	HookEvent("teamplay_round_win", Event_RoundWin);
 
 	// User Messages
 	HookUserMessage(GetUserMessageId("VGUIMenu"), Event_PlayerVGUIMenu, true);
@@ -150,6 +151,21 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 	}
 
 	SetEntProp(iClient, Prop_Data, "m_CollisionGroup", 13); // COLLISION_GROUP_PROJECTILE
+}
+
+public Action:Event_RoundWin(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+	new iTeam = GetEventInt(hEvent, "team");
+
+	ServerCommand("bot_kick all");
+	ServerCommand("mp_autoteambalance 0");
+
+	if (iTeam == TEAM_ATTACKER) {
+		PrintToChatAll("\x07FF0000You have lost! Do you feel bad now?");
+	}
+
+	OnConfigsExecuted();
+
+	return Plugin_Handled;
 }
 
 public Action:Event_Sound(iClients[64], &iNumClients, String:sSample[PLATFORM_MAX_PATH], &iEntity, &iChannel, &Float:fVolume, &iLevel, &iPitch, &iFlags) {
