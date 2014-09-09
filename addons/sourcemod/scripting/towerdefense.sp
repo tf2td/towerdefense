@@ -182,6 +182,8 @@ public OnConfigsExecuted() {
 	g_iBuildingLimit[TDBuilding_TeleporterEntry] = 1;
 	g_iBuildingLimit[TDBuilding_TeleporterExit] = 1;
 
+	g_iMetalPackCount = 0;
+
 	new iHealthBar = EntRefToEntIndex(g_iHealthBar);
 	if (IsValidEntity(iHealthBar)) {
 		SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 0);
@@ -451,9 +453,19 @@ public Action:OnTouchWeapon(iEntity, iClient) {
 	}
 
 	if (IsDefender(iClient)) {
-		AcceptEntityInput(iEntity, "Kill");
-		AddClientMetal(iClient, 100);
-		EmitSoundToAll("items/ammo_pickup.wav");
+		new iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
+
+		if (IsValidEntity(iOwner)) {
+			// Picking up weapon
+
+			AcceptEntityInput(iEntity, "Kill");
+			AddClientMetal(iClient, 100);
+			EmitSoundToAll("items/ammo_pickup.wav", iClient);
+		} else {
+			AcceptEntityInput(iEntity, "Kill");
+			AddClientMetal(iClient, 15);
+			EmitSoundToAll("items/ammo_pickup.wav", iClient);
+		}
 	}
 
 	return Plugin_Handled;
