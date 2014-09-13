@@ -180,7 +180,7 @@ stock ResupplyClient(iClient, bool:bAmmoOnly = false, Float:fPercent = 1.0) {
 	if (IsValidEntity(iWeapon)) {
 		// Engineer's Pistol
 
-		GivePlayerAmmo(iClient, RoundToFloor(32 * fPercent), GetEntProp(iWeapon, Prop_Send, "m_iPrimaryAmmoType"), true); 
+		GivePlayerAmmo(iClient, RoundToFloor(200 * fPercent), GetEntProp(iWeapon, Prop_Send, "m_iPrimaryAmmoType"), true); 
 
 		if (!bAmmoOnly) {
 			SetClientClip(iClient, TFWeaponSlot_Secondary, 12);
