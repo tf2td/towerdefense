@@ -460,6 +460,7 @@ public Action:OnTouchWeapon(iEntity, iClient) {
 
 			AcceptEntityInput(iEntity, "Kill");
 			AddClientMetal(iClient, 100);
+			ResupplyClient(iClient, true, 0.25);
 			EmitSoundToAll("items/ammo_pickup.wav", iClient);
 		} else {
 			AcceptEntityInput(iEntity, "Kill");

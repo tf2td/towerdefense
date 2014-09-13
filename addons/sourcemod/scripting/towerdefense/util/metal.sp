@@ -148,3 +148,62 @@ public OnMetalPackPickup(iMetalPack, iClient) {
 
 	g_iMetalPackCount--;
 }
+
+/**
+ * Refills a clients ammo, clip and/or ammo.
+ *
+ * @param iClient		The client.
+ * @param bAmmoOnly		Only refill ammo not clip.
+ * @param fPercent		The percent to refill (0.5 would be 50%).
+ * @noreturn
+ */
+
+stock ResupplyClient(iClient, bool:bAmmoOnly = false, Float:fPercent = 1.0) {
+	if (!IsDefender(iClient) || !IsPlayerAlive(iClient)) {
+		return;
+	}
+
+	new iWeapon = GetPlayerWeaponSlot(iClient, TFWeaponSlot_Primary);
+
+	if (IsValidEntity(iWeapon)) {
+		// Engineer's Shotgun
+
+		GivePlayerAmmo(iClient, RoundToFloor(32 * fPercent), GetEntProp(iWeapon, Prop_Send, "m_iPrimaryAmmoType"), true); 
+
+		if (!bAmmoOnly) {
+			SetClientClip(iClient, TFWeaponSlot_Primary, 6);
+		}
+	}
+
+	iWeapon = GetPlayerWeaponSlot(iClient, TFWeaponSlot_Secondary);
+
+	if (IsValidEntity(iWeapon)) {
+		// Engineer's Pistol
+
+		GivePlayerAmmo(iClient, RoundToFloor(32 * fPercent), GetEntProp(iWeapon, Prop_Send, "m_iPrimaryAmmoType"), true); 
+
+		if (!bAmmoOnly) {
+			SetClientClip(iClient, TFWeaponSlot_Secondary, 12);
+		}
+	}
+}
+
+/**
+ * Sets the clip of a weapon.
+ *
+ * @param iClient		The client.
+ * @param iSlot			The weapons slot index.
+ * @param iClip			The clip the weapon should get.
+ * @noreturn
+ */
+
+stock SetClientClip(iClient, iSlot, iClip) {	
+	if (IsValidClient(iClient) && IsClientInGame(iClient) && IsPlayerAlive(iClient)) {
+		new iWeapon = GetPlayerWeaponSlot(iClient, iSlot);
+		
+		if (IsValidEntity(iWeapon)) {
+			new iAmmoTable = FindSendPropInfo("CTFWeaponBase", "m_iClip1");
+			SetEntData(iWeapon, iAmmoTable, iClip, 4, true);
+		}
+	}
+}
