@@ -1274,3 +1274,133 @@ stock GetClientByNameExact(String:sName[]) {
 	
 	return -1;
 }
+
+/**
+ * Attaches a annotation to an entity.
+ *
+ * @param iEntity		The entity.
+ * @param fLifetime		The lifetime of the annotation.
+ * @param sMessage		The message to show.
+ * @param ...			Message formatting parameters.
+ * @noreturn
+ */
+
+stock AttachAnnotation(iEntity, Float:fLifetime, String:sMessage[], any:...) {
+	new Handle:hEvent = CreateEvent("show_annotation");
+
+	if (hEvent == INVALID_HANDLE) {
+		return;
+	}
+	
+	SetEventInt(hEvent, "follow_entindex", iEntity); 
+	SetEventInt(hEvent, "id", iEntity); 
+	SetEventFloat(hEvent, "lifetime", fLifetime);
+	SetEventString(hEvent, "play_sound", "misc/null.wav");
+
+	decl String:sFormattedMessage[256];
+	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
+	SetEventString(hEvent, "text", sFormattedMessage);
+
+	FireEvent(hEvent);
+}
+
+/**
+ * Hides the annotation which is attached to an entity.
+ *
+ * @param iEntity		The entity.
+ * @noreturn
+ */
+
+stock HideAnnotation(iEntity) {
+	new Handle:hEvent = CreateEvent("hide_annotation"); 
+
+	if (hEvent == INVALID_HANDLE) {
+		return;
+	}
+
+	SetEventInt(hEvent, "id", iEntity); 
+	FireEvent(hEvent);
+}
+
+/**
+ * Attaches a annotation to an entity.
+ *
+ * @param iClient		The client.
+ * @param iEntity		The entity.
+ * @param fLifetime		The lifetime of the annotation.
+ * @param sMessage		The message to show.
+ * @param ...			Message formatting parameters.
+ * @noreturn
+ */
+
+stock AttachAdvancedAnnotation(iClient, iEntity, Float:fLifetime, String:sMessage[], any:...) {
+	new Handle:hEvent = CreateEvent("show_annotation");
+
+	if (hEvent == INVALID_HANDLE) {
+		return;
+	}
+	
+	SetEventInt(hEvent, "follow_entindex", iEntity);
+	SetEventInt(hEvent, "id", iClient * iEntity);
+	SetEventFloat(hEvent, "lifetime", fLifetime);
+	SetEventString(hEvent, "play_sound", "misc/null.wav");
+
+	decl String:sFormattedMessage[256];
+	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 5);
+	SetEventString(hEvent, "text", sFormattedMessage);
+	
+	SetEventInt(hEvent, "visibilityBitfield", GetVisibilityBitfield(iClient));
+
+	FireEvent(hEvent);
+}
+
+/**
+ * Hides the annotation which is attached to an entity.
+ *
+ * @param iEntity		The client.
+ * @param iEntity		The entity.
+ * @noreturn
+ */
+
+stock HideAdvancedAnnotation(iClient, iEntity) {
+	new Handle:hEvent = CreateEvent("hide_annotation"); 
+
+	if (hEvent == INVALID_HANDLE) {
+		return;
+	}
+
+	SetEventInt(hEvent, "id", iClient * iEntity); 
+	FireEvent(hEvent);
+}
+
+/**
+ * Shows an annotation at a given location.
+ *
+ * @param iId			The id (use this to hide).
+ * @param fLocation		The location vector.
+ * @param fLifetime		The lifetime of the annotation.
+ * @param sMessage		The message to show.
+ * @param ...			Message formatting parameters.
+ * @noreturn
+ */
+
+stock ShowAnnotation(iId, Float:fLocation[3], Float:fOffsetZ, Float:fLifetime, String:sMessage[], any:...) {
+	new Handle:hEvent = CreateEvent("show_annotation");
+
+	if (hEvent == INVALID_HANDLE) {
+		return;
+	}
+	
+	SetEventFloat(hEvent, "worldPosX", fLocation[0]);
+	SetEventFloat(hEvent, "worldPosY", fLocation[1]);
+	SetEventFloat(hEvent, "worldPosZ", fLocation[2] + fOffsetZ);
+	SetEventInt(hEvent, "id", iId);
+	SetEventFloat(hEvent, "lifetime", fLifetime);
+	SetEventString(hEvent, "play_sound", "misc/null.wav");
+
+	decl String:sFormattedMessage[256];
+	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
+	SetEventString(hEvent, "text", sFormattedMessage);
+
+	FireEvent(hEvent);
+}

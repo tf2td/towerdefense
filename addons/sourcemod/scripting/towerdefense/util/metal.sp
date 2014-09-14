@@ -76,6 +76,21 @@ stock bool:AddClientMetal(iClient, iMetal) {
  */
 
 stock TDMetalPackReturn:SpawnMetalPack(TDMetalPackSpawnType:iMetalPackSpawnType, Float:fLocation[3], iMetal) {
+	new iEntity;
+	return SpawnMetalPack2(iMetalPackSpawnType, fLocation, iMetal, iEntity);
+}
+
+/**
+ * Spawns a metal pack.
+ *
+ * @param iMetalPackSpawnType	The metal pack type.
+ * @param fLocation				The location it should spawn at.
+ * @param iMetal				The amount of metal it should spawn with.
+ * @param iEntity				The entity reference to the metal pack.
+ * @return						A TDMetalPackReturn value.
+ */
+
+stock TDMetalPackReturn:SpawnMetalPack2(TDMetalPackSpawnType:iMetalPackSpawnType, Float:fLocation[3], iMetal, &iEntity) {
 	if (iMetal <= 0) {
 		return TDMetalPack_InvalidMetal;
 	}
@@ -124,6 +139,7 @@ stock TDMetalPackReturn:SpawnMetalPack(TDMetalPackSpawnType:iMetalPackSpawnType,
 		SDKHook(iMetalPack, SDKHook_Touch, OnMetalPackPickup);
 
 		g_iMetalPackCount++;
+		iEntity = EntIndexToEntRef(iMetalPack);
 	}
 
 	Log(TDLogLevel_Debug, "Spawned metal pack (%d, Metal: %d)", iMetalPack, iMetal);
@@ -143,6 +159,7 @@ public OnMetalPackPickup(iMetalPack, iClient) {
 
 	AddClientMetal(iClient, iMetal);
 	EmitSoundToClient(iClient, "items/gunpickup2.wav");
+	HideAnnotation(iMetalPack);
 
 	AcceptEntityInput(iMetalPack, "Kill");
 

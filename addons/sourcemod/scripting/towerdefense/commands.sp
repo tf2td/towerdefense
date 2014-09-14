@@ -78,7 +78,7 @@ public Action:Command_PreGame(iClient, iArgs) {
 	}
 
 	SpawnMetalPacks(TDMetalPack_Start);
-	
+
 	PrintToChatAll("\x04Have fun playing!");
 	PrintToChatAll("\x04Don't forget to pick up dropped weapons!");
 
@@ -142,6 +142,8 @@ public Action:Command_BuildSentry(iClient, iArgs) {
 }
 
 public Action:Command_DropMetal(iClient, iArgs) {
+	SpawnMetalPacks(TDMetalPack_Boss);
+
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
