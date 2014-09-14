@@ -54,6 +54,7 @@ public Plugin:myinfo =
 #include "towerdefense/handler/towers.sp"
 #include "towerdefense/handler/waves.sp"
 #include "towerdefense/handler/weapons.sp"
+#include "towerdefense/handler/metalpacks.sp"
 
 #include "towerdefense/commands.sp"
 #include "towerdefense/database.sp"
@@ -80,26 +81,33 @@ public OnPluginStart() {
 
 	Log_Initialize(TDLogLevel_Debug, TDLogType_Console);
 
-	g_hMapTowers = INVALID_HANDLE;
 	if (g_hMapTowers != INVALID_HANDLE) {
 		CloseHandle(g_hMapTowers);
 		g_hMapTowers = INVALID_HANDLE;
 	}
+
 	g_hMapTowers = CreateTrie();
 
-	g_hMapWeapons = INVALID_HANDLE;
 	if (g_hMapWeapons != INVALID_HANDLE) {
 		CloseHandle(g_hMapWeapons);
 		g_hMapWeapons = INVALID_HANDLE;
 	}
+
 	g_hMapWeapons = CreateTrie();
 
-	g_hMapWaves = INVALID_HANDLE;
 	if (g_hMapWaves != INVALID_HANDLE) {
 		CloseHandle(g_hMapWaves);
 		g_hMapWaves = INVALID_HANDLE;
 	}
+
 	g_hMapWaves = CreateTrie();
+
+	if (g_hMapMetalpacks != INVALID_HANDLE) {
+		CloseHandle(g_hMapMetalpacks);
+		g_hMapMetalpacks = INVALID_HANDLE;
+	}
+
+	g_hMapMetalpacks = CreateTrie();
 
 	LoadConVars();
 	HookEvents();

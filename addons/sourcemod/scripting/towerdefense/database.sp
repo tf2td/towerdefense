@@ -382,6 +382,7 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
 				Database_LoadTowers();
 				Database_LoadWeapons();
 				Database_LoadWaves();
+				Database_LoadMetalpacks();
 			}
 		} else if (iData == 1) {
 			SQL_FetchRow(hResult);
@@ -730,6 +731,71 @@ public Database_OnLoadWaves(Handle:hDriver, Handle:hResult, const String:sError[
 
 			iWaveId++;
 		}
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+/**
+ * Loads metalpacks to its map.
+ *
+ * @noreturn
+ */
+
+stock Database_LoadMetalpacks() {
+	decl String:sQuery[512];
+	
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `type`, `metal`, `location` \
+		FROM `metalpack` \
+		INNER JOIN `metalpacktype` \
+			ON (`metalpack`.`metalpacktype_id` = `metalpacktype`.`metalpacktype_id`) \
+ 		WHERE `map_id` = %d \
+ 		ORDER BY `metalpack_id` ASC",
+ 	m_iServerMap);
+	
+	SQL_TQuery(m_hDatabase, Database_OnLoadMetalpacks, sQuery);
+}
+
+public Database_OnLoadMetalpacks(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+	if (hResult == INVALID_HANDLE) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_LoadMetalpacks > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
+		new iMetalpackId = 0;
+		decl String:sKey[64], String:sBuffer[128];
+
+		// Type  Metal Location
+		// start 400   1100 -1200 -90
+
+		while (SQL_FetchRow(hResult)) {
+			// Save metalpack type
+			Format(sKey, sizeof(sKey), "%d_type", iMetalpackId);
+			SQL_FetchString(hResult, 0, sBuffer, sizeof(sBuffer));
+			SetTrieString(g_hMapMetalpacks, sKey, sBuffer);
+
+			// PrintToServer("%s => %s", sKey, sBuffer);
+
+			// Save metalpack metal
+			Format(sKey, sizeof(sKey), "%d_metal", iMetalpackId);
+			SetTrieValue(g_hMapMetalpacks, sKey, SQL_FetchInt(hResult, 1));
+
+			// PrintToServer("%s => %s", sKey, sBuffer);
+
+			// Save metalpack location
+			Format(sKey, sizeof(sKey), "%d_location", iMetalpackId);
+			SQL_FetchString(hResult, 2, sBuffer, sizeof(sBuffer));
+			SetTrieString(g_hMapMetalpacks, sKey, sBuffer);
+
+			// PrintToServer("%s => %s", sKey, sBuffer);
+
+			iMetalpackId++;
+		}
+
+		// Save metalpack quantity
+		SetTrieValue(g_hMapMetalpacks, "quantity", iMetalpackId);
 	}
 
 	if (hResult != INVALID_HANDLE) {

@@ -69,13 +69,13 @@ stock bool:AddClientMetal(iClient, iMetal) {
 /**
  * Spawns a metal pack.
  *
- * @param iMetalPackType	The metal pack type.
- * @param fLocation			The location it should spawn at.
- * @param iMetal			The amount of metal it should spawn with.
- * @return					A TDMetalPackReturn value.
+ * @param iMetalPackSpawnType	The metal pack type.
+ * @param fLocation				The location it should spawn at.
+ * @param iMetal				The amount of metal it should spawn with.
+ * @return						A TDMetalPackReturn value.
  */
 
-stock TDMetalPackReturn:SpawnMetalPack(TDMetalPackType:iMetalPackType, Float:fLocation[3], iMetal) {
+stock TDMetalPackReturn:SpawnMetalPack(TDMetalPackSpawnType:iMetalPackSpawnType, Float:fLocation[3], iMetal) {
 	if (iMetal <= 0) {
 		return TDMetalPack_InvalidMetal;
 	}
@@ -86,7 +86,7 @@ stock TDMetalPackReturn:SpawnMetalPack(TDMetalPackType:iMetalPackType, Float:fLo
 
 	decl String:sModelPath[PLATFORM_MAX_PATH];
 
-	switch (iMetalPackType) {
+	switch (iMetalPackSpawnType) {
 		case TDMetalPack_Small: {
 			strcopy(sModelPath, sizeof(sModelPath), "models/items/ammopack_small.mdl");
 		}

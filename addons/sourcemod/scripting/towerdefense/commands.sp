@@ -77,8 +77,10 @@ public Action:Command_PreGame(iClient, iArgs) {
 		return Plugin_Handled;
 	}
 
-	PrintToChatAll("\x01Have fun playing!");
-	PrintToChatAll("\x01Don't forget to pick up dropped weapons!");
+	SpawnMetalPacks(TDMetalPack_Start);
+	
+	PrintToChatAll("\x04Have fun playing!");
+	PrintToChatAll("\x04Don't forget to pick up dropped weapons!");
 
 	// Hook func_nobuild events
 	new iEntity = -1;

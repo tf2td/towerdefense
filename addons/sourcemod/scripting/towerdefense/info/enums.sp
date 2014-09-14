@@ -7,7 +7,7 @@ enum TDBloodColor
 	TDBlood_Color_Mech
 };
 
-enum TDMetalPackType
+enum TDMetalPackSpawnType
 {
 	TDMetalPack_Small = 0,
 	TDMetalPack_Medium,
@@ -72,4 +72,11 @@ enum TDWaveType
 	TDWaveType_KnockbackImmune,
 	TDWaveType_Air,
 	TDWaveType_JarateImmune
+};
+
+enum TDMetalPackType
+{
+	TDMetalPack_Invalid = -1,
+	TDMetalPack_Start = 0,
+	TDMetalPack_Boss
 };
