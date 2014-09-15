@@ -300,9 +300,35 @@ public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
 		case 5: {
 			SetHudTextParams(-1.0, 0.6, 5.1, 255, 255, 255, 255, 2, 2.0);
 
+			new iWaveHealth = Wave_GetHealth(g_iCurrentWave);
+			g_iNextWaveType = Wave_GetType(g_iCurrentWave);
+
 			for (new iClient = 1; iClient <= MaxClients; iClient++) {
 				if (IsDefender(iClient)) {
-					ShowHudText(iClient, -1, "Wave %d with %d HP incoming!", g_iCurrentWave + 1, Wave_GetHealth(g_iCurrentWave));
+					switch (g_iNextWaveType) {
+						case TDWaveType_Boss: {
+							ShowHudText(iClient, -1, "Boss with %d HP incoming!", iWaveHealth);
+						}
+						case TDWaveType_Rapid: {
+							ShowHudText(iClient, -1, "Rapid Wave with %d HP incoming!", iWaveHealth);
+						}
+						case TDWaveType_Regen: {
+							ShowHudText(iClient, -1, "Regen Wave with %d HP incoming!", iWaveHealth);
+						}
+						case TDWaveType_KnockbackImmune: {
+							ShowHudText(iClient, -1, "Knockback Immune Wave with %d HP incoming!", iWaveHealth);
+						}
+						case TDWaveType_Air: {
+							ShowHudText(iClient, -1, "Air Wave with %d HP incoming!", iWaveHealth);
+						}
+						case TDWaveType_JarateImmune: {
+							ShowHudText(iClient, -1, "Jarate Immune Wave with %d HP incoming!", iWaveHealth);
+						}
+						default: {
+							ShowHudText(iClient, -1, "Wave %d with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
+						}
+					}
+					
 				}
 			}
 
