@@ -325,6 +325,18 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 		}
 	}
 
+	if (IsAttacker(iClient)) {
+		fVelocity[0] = 5000.0;
+		fVelocity[1] = 5000.0;
+
+		switch (g_iNextWaveType) {
+			case TDWaveType_Rapid: {
+				fVelocity[0] = 5000.0;
+				fVelocity[1] = 5000.0;
+			}
+		}
+	}
+
 	if (IsDefender(iClient)) {
 		// Attach/detach tower on right-click
 		if (IsButtonReleased(iClient, iButtons, IN_ATTACK2)) { 

@@ -68,6 +68,30 @@ public Wave_OnSpawnPost(any:iAttacker) {
 
 	TF2Attrib_SetByName(iAttacker, "max health additive bonus", float(iWaveHealth - iMaxHealth));
 	SetEntityHealth(iAttacker, iWaveHealth);
+
+	switch (g_iNextWaveType) {
+		case TDWaveType_Boss: {
+			
+		}
+		case TDWaveType_Rapid: {
+			
+		}
+		case TDWaveType_Regen: {
+			
+		}
+		case TDWaveType_KnockbackImmune: {
+			TF2Attrib_SetByName(iAttacker, "damage force reduction", 0.0);
+		}
+		case TDWaveType_Air: {
+			TF2Attrib_SetByName(iAttacker, "damage force reduction", 0.0);
+		}
+		case TDWaveType_JarateImmune: {
+			
+		}
+		default: {
+			
+		}
+	}
 }
 
 /**
@@ -136,6 +160,7 @@ stock Wave_OnDeathAll() {
 	g_bStartWaveEarly = false;
 
 	g_iCurrentWave++;
+	g_iNextWaveType = Wave_GetType(g_iCurrentWave);
 
 	TeleportEntity(g_iWaveStartButton, g_fWaveStartButtonLocation, NULL_VECTOR, Float:{0.0, 0.0, 0.0});
 
@@ -301,7 +326,6 @@ public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
 			SetHudTextParams(-1.0, 0.6, 5.1, 255, 255, 255, 255, 2, 2.0);
 
 			new iWaveHealth = Wave_GetHealth(g_iCurrentWave);
-			g_iNextWaveType = Wave_GetType(g_iCurrentWave);
 
 			for (new iClient = 1; iClient <= MaxClients; iClient++) {
 				if (IsDefender(iClient)) {
@@ -328,7 +352,6 @@ public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
 							ShowHudText(iClient, -1, "Wave %d with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
 						}
 					}
-					
 				}
 			}
 
