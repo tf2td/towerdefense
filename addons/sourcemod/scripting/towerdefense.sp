@@ -51,10 +51,11 @@ public Plugin:myinfo =
 #include "towerdefense/util/tf2items.sp"
 #include "towerdefense/util/zones.sp"
 
+#include "towerdefense/handler/corners.sp"
+#include "towerdefense/handler/metalpacks.sp"
 #include "towerdefense/handler/towers.sp"
 #include "towerdefense/handler/waves.sp"
 #include "towerdefense/handler/weapons.sp"
-#include "towerdefense/handler/metalpacks.sp"
 
 #include "towerdefense/commands.sp"
 #include "towerdefense/database.sp"
@@ -338,6 +339,25 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 	}
 
 	if (IsDefender(iClient)) {
+		static iCount = 1;
+
+		// Check 33 times per second
+		if (iCount >= 2) {
+			new iCornerA, iCornerB;
+
+			if (Corner_GetBetween(iClient, iCornerA, iCornerB)) {
+				decl String:sNameA[64], String:sNameB[64];
+				Corner_GetName(iCornerA, sNameA, sizeof(sNameA), false);
+				Corner_GetName(iCornerB, sNameB, sizeof(sNameB), false);
+
+				PrintToChatAll("%N is between %s and %s", iClient, sNameA, sNameB);
+			}
+
+			iCount = 1;
+		} else {
+			iCount++;
+		}
+
 		// Attach/detach tower on right-click
 		if (IsButtonReleased(iClient, iButtons, IN_ATTACK2)) { 
 			decl String:sActiveWeapon[64];
