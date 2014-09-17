@@ -327,37 +327,27 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 	}
 
 	if (IsAttacker(iClient)) {
+		new iCornerA, iCornerB;
+
+		if (Corner_GetBetween(iClient, iCornerA, iCornerB)) {
+			new Float:fAnglesCorners[3];
+
+			PrintToChatAll("%N is between %d and %d", iClient, Corner_GetNumber(iCornerA), Corner_GetNumber(iCornerB));
+
+			Corner_GetAngles(iCornerA, iCornerB, fAnglesCorners);
+			TeleportEntity(iClient, NULL_VECTOR, fAnglesCorners, NULL_VECTOR);
+		}
+
 		fVelocity[0] = 5000.0;
-		fVelocity[1] = 5000.0;
 
 		switch (g_iNextWaveType) {
 			case TDWaveType_Rapid: {
 				fVelocity[0] = 5000.0;
-				fVelocity[1] = 5000.0;
 			}
 		}
 	}
 
 	if (IsDefender(iClient)) {
-		static iCount = 1;
-
-		// Check 33 times per second
-		if (iCount >= 2) {
-			new iCornerA, iCornerB;
-
-			if (Corner_GetBetween(iClient, iCornerA, iCornerB)) {
-				decl String:sNameA[64], String:sNameB[64];
-				Corner_GetName(iCornerA, sNameA, sizeof(sNameA), false);
-				Corner_GetName(iCornerB, sNameB, sizeof(sNameB), false);
-
-				PrintToChatAll("%N is between %s and %s", iClient, sNameA, sNameB);
-			}
-
-			iCount = 1;
-		} else {
-			iCount++;
-		}
-
 		// Attach/detach tower on right-click
 		if (IsButtonReleased(iClient, iButtons, IN_ATTACK2)) { 
 			decl String:sActiveWeapon[64];
@@ -1435,4 +1425,12 @@ stock ShowAnnotation(iId, Float:fLocation[3], Float:fOffsetZ, Float:fLifetime, S
 	SetEventString(hEvent, "text", sFormattedMessage);
 
 	FireEvent(hEvent);
+}
+
+stock Abs(iValue) {
+	if (iValue < 0) {
+		return iValue * (-1);
+	}
+
+	return iValue;
 }

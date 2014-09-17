@@ -214,7 +214,7 @@ public Wave_OnTouchCorner(iCorner, iAttacker) {
 				MakeVectorFromPoints(fLocation, fNextLocation, fVector);
 				GetVectorAngles(fVector, fAngles);
 
-				TeleportEntity(iAttacker, NULL_VECTOR, fAngles, NULL_VECTOR);
+				//TeleportEntity(iAttacker, NULL_VECTOR, fAngles, NULL_VECTOR);
 			}
 		}
 	}

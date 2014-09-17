@@ -170,6 +170,36 @@ stock bool:Corner_GetLocation(iCorner, Float:fLocation[3], bool:bValidate = true
 }
 
 /**
+ * Gets the angle between two corners.
+ *
+ * @param iCornerA 		The first corner.
+ * @param iCornerB 		The second corner.
+ * @param fAngles		The angles vector.
+ * @param bValidate		Validate the corner.
+ * @return				True on success, false if corner was not found.
+ */
+
+stock bool:Corner_GetAngles(iCornerA, iCornerB, Float:fAngles[3], bool:bValidate = true) {
+	new Float:fLocationCornerA[3], Float:fLocationCornerB[3], Float:fVector[3];
+
+	if (!bValidate) {
+		Corner_GetLocation(iCornerA, fLocationCornerA, false);
+		Corner_GetLocation(iCornerB, fLocationCornerB, false);
+
+		MakeVectorFromPoints(fLocationCornerA, fLocationCornerB, fVector);
+		GetVectorAngles(fVector, fAngles);
+	} else if (Corner_IsValid(iCornerA) && Corner_IsValid(iCornerB)) {
+		Corner_GetLocation(iCornerA, fLocationCornerA, false);
+		Corner_GetLocation(iCornerB, fLocationCornerB, false);
+
+		MakeVectorFromPoints(fLocationCornerA, fLocationCornerB, fVector);
+		GetVectorAngles(fVector, fAngles);
+	}
+
+	return false;
+}
+
+/**
  * Gets the next corner.
  *
  * @param iCorner		The current corner.
@@ -275,27 +305,47 @@ stock bool:Corner_GetBetween(iClient, &iCornerA, &iCornerB, Float:fEpsilon = 15.
 		return false;
 	}
 
-	new bool:bResult = false;
-
-	static iNearBefore;
+	static iNearBefore[MAXPLAYERS + 1];
 
 	new iNear = Corner_GetNearest(iClient);
+	
+	new Float:fLocationNear[3], Float:fLocationClient[3];
+	Corner_GetLocation(iNear, fLocationNear, false);
+	GetClientAbsOrigin(iClient, fLocationClient);
 
-	// Not working for corners which are before the now-near one...
-	if (Corner_GetNumber(iNearBefore) != -1 && Corner_GetNumber(iNear) - 1 > Corner_GetNumber(iNearBefore)) {
+	new Float:fVector[3], Float:fAngles[3], Float:fAnglesClient[3];
+	MakeVectorFromPoints(fLocationNear, fLocationClient, fVector);
+	GetVectorAngles(fVector, fAngles);
+	GetClientEyeAngles(iClient, fAnglesClient);
+
+	PrintToChatAll("%N: LOOKING: %.2f NEXT: %.2f DIFF: %.2f", iClient, fAnglesClient[1], fAngles[1], FloatAbs(fAngles[1] - fAnglesClient[1]));
+
+	new Float:fAnglesDiff = FloatAbs(fAngles[1] - fAnglesClient[1]);
+
+	if (fAnglesDiff != 0.0 && fAnglesDiff != 45.0 && fAnglesDiff != 90.0 && fAnglesDiff != 135.0 && fAnglesDiff != 180.0 && 
+		fAnglesDiff != 225.0 && fAnglesDiff != 270.0 && fAnglesDiff != 315.0 && fAnglesDiff != 360.0 && fAnglesDiff > 5.0) {
+
 		return false;
+	}
+
+	new iNumberNearBefore = Corner_GetNumber(iNearBefore[iClient]);
+
+	if (iNumberNearBefore != -1 && IsValidEntity(iNear)) {
+		new iNumberNear = Corner_GetNumber(iNear);
+
+		if (iNumberNear != -1) {
+			if (Abs(iNumberNearBefore - iNumberNear) > 1) {
+				iNearBefore[iClient] = iNear;
+				return false;
+			}
+		}
 	}
 	
 	new iNext = Corner_GetNext(iNear);
-	new iPrev = Corner_GetPrevious(iNear);
 
-	new Float:fLocationNear[3], Float:fLocationNext[3], Float:fLocationPrev[3], Float:fLocationClient[3];
-
-	Corner_GetLocation(iNear, fLocationNear, false);
+	new Float:fLocationNext[3];
 	Corner_GetLocation(iNext, fLocationNext);
-	Corner_GetLocation(iPrev, fLocationPrev);
-	GetClientAbsOrigin(iClient, fLocationClient);
-
+	
 	new Float:fResultA[3], Float:fResultB[3];
 	SubtractVectors(fLocationNear, fLocationNext, fResultA);
 	SubtractVectors(fLocationClient, fLocationNext, fResultB);
@@ -310,8 +360,14 @@ stock bool:Corner_GetBetween(iClient, &iCornerA, &iCornerB, Float:fEpsilon = 15.
 		iCornerA = iNear;
 		iCornerB = iNext;
 
-		bResult = true;
+		iNearBefore[iClient] = iNear;
+		return true;
 	}
+
+	new iPrev = Corner_GetPrevious(iNear);
+
+	new Float:fLocationPrev[3];
+	Corner_GetLocation(iPrev, fLocationPrev);
 
 	SubtractVectors(fLocationNear, fLocationPrev, fResultA);
 	SubtractVectors(fLocationClient, fLocationPrev, fResultB);
@@ -325,10 +381,9 @@ stock bool:Corner_GetBetween(iClient, &iCornerA, &iCornerB, Float:fEpsilon = 15.
 		iCornerA = iPrev;
 		iCornerB = iNear;
 
-		bResult = true;
+		iNearBefore[iClient] = iNear;
+		return true;
 	}
 
-	iNearBefore = iNear;
-
-	return bResult;
+	return false;
 }
