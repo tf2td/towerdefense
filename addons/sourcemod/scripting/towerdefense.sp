@@ -454,7 +454,8 @@ public OnTakeDamagePost(iClient, iAttacker, iInflictor, Float:fDamage, iDamageTy
 
 public OnEntityCreated(iEntity, const String:sClassname[]) {
 	if (StrEqual(sClassname, "tf_ammo_pack")) {
-		SDKHook(iEntity, SDKHook_Touch, OnTouchWeapon);
+		SDKHook(iEntity, SDKHook_SpawnPost, OnWeaponSpawned);
+		
 	} else if (StrEqual(sClassname, "func_breakable")) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnButtonSpawned);
 	} else if (StrContains(sClassname, "tf_projectile_") != -1) {
@@ -464,15 +465,28 @@ public OnEntityCreated(iEntity, const String:sClassname[]) {
 	}
 }
 
+public OnWeaponSpawned(iEntity) {
+	new iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
+
+	decl String:sName[64];
+	IntToString(iOwner, sName, sizeof(sName));
+	DispatchKeyValue(iEntity, "targetname", sName);
+
+	SDKHook(iEntity, SDKHook_Touch, OnTouchWeapon);
+}
+
 public Action:OnTouchWeapon(iEntity, iClient) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
 
 	if (IsDefender(iClient)) {
-		new iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
+		decl String:sName[64];
+		GetEntPropString(iEntity, Prop_Data, "m_iName", sName, sizeof(sName));
 
-		if (IsValidEntity(iOwner)) {
+		new iOwner = StringToInt(sName);
+
+		if (IsValidClient(iOwner)) {
 			// Picking up weapon
 
 			AcceptEntityInput(iEntity, "Kill");
