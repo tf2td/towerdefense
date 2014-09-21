@@ -57,6 +57,10 @@ public Action:Event_PlayerChangeTeam(Handle:hEvent, const String:sName[], bool:b
 		return Plugin_Continue;
 	}
 
+	if (GetEventBool(hEvent, "disconnect")) {
+		return Plugin_Continue;
+	}
+
 	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
 	
 	SetEventBroadcast(hEvent, true); // Block the chat output (Player ... joined team BLU)
