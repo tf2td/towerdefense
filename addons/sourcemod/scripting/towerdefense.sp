@@ -326,23 +326,10 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 		}
 	}
 
-	if (IsAttacker(iClient)) {
-		new iCornerA, iCornerB;
-
-		if (Corner_GetBetween(iClient, iCornerA, iCornerB)) {
-			new Float:fAnglesCorners[3];
-
-			PrintToChatAll("%N is between %d and %d", iClient, Corner_GetNumber(iCornerA), Corner_GetNumber(iCornerB));
-
-			Corner_GetAngles(iCornerA, iCornerB, fAnglesCorners);
-			TeleportEntity(iClient, NULL_VECTOR, fAnglesCorners, NULL_VECTOR);
-		}
-
-		fVelocity[0] = 5000.0;
-
+	if (IsAttacker(iClient) && g_bBoostWave[iClient]) {
 		switch (g_iNextWaveType) {
 			case TDWaveType_Rapid: {
-				fVelocity[0] = 5000.0;
+				fVelocity[0] = 500.0;
 			}
 		}
 	}

@@ -318,8 +318,6 @@ stock bool:Corner_GetBetween(iClient, &iCornerA, &iCornerB, Float:fEpsilon = 15.
 	GetVectorAngles(fVector, fAngles);
 	GetClientEyeAngles(iClient, fAnglesClient);
 
-	PrintToChatAll("%N: LOOKING: %.2f NEXT: %.2f DIFF: %.2f", iClient, fAnglesClient[1], fAngles[1], FloatAbs(fAngles[1] - fAnglesClient[1]));
-
 	new Float:fAnglesDiff = FloatAbs(fAngles[1] - fAnglesClient[1]);
 
 	if (fAnglesDiff != 0.0 && fAnglesDiff != 45.0 && fAnglesDiff != 90.0 && fAnglesDiff != 135.0 && fAnglesDiff != 180.0 && 

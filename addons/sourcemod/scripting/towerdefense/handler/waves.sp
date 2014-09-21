@@ -74,7 +74,7 @@ public Wave_OnSpawnPost(any:iAttacker) {
 			
 		}
 		case TDWaveType_Rapid: {
-			
+			g_bBoostWave[iAttacker] = true;
 		}
 		case TDWaveType_Regen: {
 			
@@ -186,36 +186,14 @@ public Wave_OnTouchCorner(iCorner, iAttacker) {
 	}
 
 	if (IsAttacker(iAttacker)) {
-		decl String:sCornerName[64];
-		GetEntPropString(iCorner, Prop_Data, "m_iName", sCornerName, sizeof(sCornerName));
+		new iNextCorner = Corner_GetNext(iCorner);
 
-		if (StrContains(sCornerName, "corner_") != -1 && !StrEqual(sCornerName, "corner_final")) {
-			decl String:sCornerParentName[64];
-			GetEntPropString(iCorner, Prop_Data, "m_iParent", sCornerParentName, sizeof(sCornerParentName));
-
-			new iNextCorner = -1;
-			decl String:sNextCornerName[64];
-
-			while ((iNextCorner = FindEntityByClassname(iNextCorner, "trigger_multiple")) != -1) {
-				GetEntPropString(iNextCorner, Prop_Data, "m_iName", sNextCornerName, sizeof(sNextCornerName));
-
-				if (StrEqual(sCornerParentName, sNextCornerName)) {
-					break;
-				}
-			}
-
-			if (IsValidEntity(iNextCorner)) {
-				new Float:fLocation[3], Float:fNextLocation[3];
-
-				GetEntPropVector(iCorner, Prop_Data, "m_vecAbsOrigin", fLocation);
-				GetEntPropVector(iNextCorner, Prop_Data, "m_vecAbsOrigin", fNextLocation);
-				
-				new Float:fVector[3], Float:fAngles[3];
-				MakeVectorFromPoints(fLocation, fNextLocation, fVector);
-				GetVectorAngles(fVector, fAngles);
-
-				//TeleportEntity(iAttacker, NULL_VECTOR, fAngles, NULL_VECTOR);
-			}
+		if (iNextCorner != -1) {
+			new Float:fAngles[3];
+			Corner_GetAngles(iCorner, iNextCorner, fAngles);
+			TeleportEntity(iAttacker, NULL_VECTOR, fAngles, NULL_VECTOR);
+		} else {
+			g_bBoostWave[iAttacker] = false;
 		}
 	}
 }
