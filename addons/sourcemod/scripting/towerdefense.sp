@@ -439,6 +439,21 @@ public Action:OnTakeDamage(iClient, &iAttacker, &iInflictor, &Float:fDamage, &iD
 		return Plugin_Handled;
 	}
 
+	if (IsDefender(iClient)) {
+		if (fDamage >= GetClientHealth(iClient)) {
+			new iMetal = GetClientMetal(iClient);
+
+			if (iMetal > 0) {
+				new Float:fLocation[3];
+
+				GetClientEyePosition(iClient, fLocation);
+				fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
+
+				SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal);
+			}
+		}
+	}
+
 	return Plugin_Continue;
 }
 
@@ -455,7 +470,6 @@ public OnTakeDamagePost(iClient, iAttacker, iInflictor, Float:fDamage, iDamageTy
 public OnEntityCreated(iEntity, const String:sClassname[]) {
 	if (StrEqual(sClassname, "tf_ammo_pack")) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnWeaponSpawned);
-		
 	} else if (StrEqual(sClassname, "func_breakable")) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnButtonSpawned);
 	} else if (StrContains(sClassname, "tf_projectile_") != -1) {
@@ -467,6 +481,10 @@ public OnEntityCreated(iEntity, const String:sClassname[]) {
 
 public OnWeaponSpawned(iEntity) {
 	new iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
+
+	if (IsDefender(iOwner)) {
+		AcceptEntityInput(iEntity, "Kill");
+	}
 
 	decl String:sName[64];
 	IntToString(iOwner, sName, sizeof(sName));

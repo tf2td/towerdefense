@@ -21,6 +21,8 @@ stock RegisterCommands() {
 	// Command Listeners
 	AddCommandListener(CommandListener_Build, "build");
 	AddCommandListener(CommandListener_ClosedMotd, "closed_htmlpage");
+	AddCommandListener(CommandListener_Kill, "kill");
+	AddCommandListener(CommandListener_Kill, "explode");
 }
 
 /*=====================================
@@ -142,8 +144,6 @@ public Action:Command_BuildSentry(iClient, iArgs) {
 }
 
 public Action:Command_DropMetal(iClient, iArgs) {
-	SpawnMetalPacks(TDMetalPack_Boss);
-
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
@@ -266,6 +266,27 @@ public Action:CommandListener_ClosedMotd(iClient, const String:sCommand[], iArgs
 	if (GetClientMetal(iClient) <= 0) {
 		SetClientMetal(iClient, 1); // for resetting HUD
 		ResetClientMetal(iClient);
+	}
+
+	return Plugin_Continue;
+}
+
+public Action:CommandListener_Kill(iClient, const String:sCommand[], iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+
+	if (IsDefender(iClient)) {
+		new iMetal = GetClientMetal(iClient);
+
+		if (iMetal > 0) {
+			new Float:fLocation[3];
+
+			GetClientEyePosition(iClient, fLocation);
+			fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
+
+			SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal);
+		}
 	}
 
 	return Plugin_Continue;
