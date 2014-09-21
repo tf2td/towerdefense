@@ -298,6 +298,17 @@ public OnClientDisconnect(iClient) {
 	if (IsTower(g_iAttachedTower[iClient])) {
 		Tower_OnCarrierDisconnected(g_iAttachedTower[iClient], iClient);
 	}
+
+	new iMetal = GetClientMetal(iClient);
+
+	if (iMetal > 0) {
+		new Float:fLocation[3];
+
+		GetClientEyePosition(iClient, fLocation);
+		fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
+
+		SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal);
+	}
 }
 
 public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], Float:fAngles[3], &iWeapon) {
