@@ -338,10 +338,8 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 	}
 
 	if (IsAttacker(iClient) && g_bBoostWave[iClient]) {
-		switch (g_iNextWaveType) {
-			case TDWaveType_Rapid: {
-				fVelocity[0] = 500.0;
-			}
+		if (g_iNextWaveType & TDWaveType_Rapid) {
+			fVelocity[0] = 500.0;
 		}
 	}
 

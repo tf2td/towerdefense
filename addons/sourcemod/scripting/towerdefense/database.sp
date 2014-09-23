@@ -663,10 +663,8 @@ stock Database_LoadWaves() {
 	decl String:sQuery[512];
 	
 	Format(sQuery, sizeof(sQuery), "\
-		SELECT `wavetype`.`type`, `wave`.`name`, `classtype`.`type`, `quantity`, `health`, IF(`wavetype`.`type` = 'air', `teleport_air`, `teleport_ground`) \
+		SELECT `wavetype`, `wave`.`name`, `classtype`.`type`, `quantity`, `health`, IF(`wavetype` & (SELECT `bit_value` FROM `wavetype` WHERE `wavetype`.`type` = 'air'), `teleport_air`, `teleport_ground`) \
 		FROM `wave` \
-		INNER JOIN `wavetype` \
-			ON (`wave`.`wavetype_id` = `wavetype`.`wavetype_id`) \
 		INNER JOIN `classtype` \
 			ON (`wave`.`classtype_id` = `classtype`.`classtype_id`) \
 		INNER JOIN `map` \
@@ -686,15 +684,16 @@ public Database_OnLoadWaves(Handle:hDriver, Handle:hResult, const String:sError[
 		decl String:sKey[64], String:sBuffer[128];
 
 		// Type Name      Class Quantiy Health Location
-		// none WeakScout Scout 4       125    560 -1795 -78 0 90 0
+		// 0    WeakScout Scout 4       125    560 -1795 -78 0 90 0
 
 		while (SQL_FetchRow(hResult)) {
 			// Save wave type
 			Format(sKey, sizeof(sKey), "%d_type", iWaveId);
-			SQL_FetchString(hResult, 0, sBuffer, sizeof(sBuffer));
-			SetTrieString(g_hMapWaves, sKey, sBuffer);
+			SetTrieValue(g_hMapWaves, sKey, SQL_FetchInt(hResult, 0));
 
-			// PrintToServer("%s => %s", sKey, sBuffer);
+			if (iWaveId == 0) {
+				g_iNextWaveType = SQL_FetchInt(hResult, 0);
+			}
 
 			// Save wave name
 			Format(sKey, sizeof(sKey), "%d_name", iWaveId);

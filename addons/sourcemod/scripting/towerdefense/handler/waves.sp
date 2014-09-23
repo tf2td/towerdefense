@@ -69,28 +69,28 @@ public Wave_OnSpawnPost(any:iAttacker) {
 	TF2Attrib_SetByName(iAttacker, "max health additive bonus", float(iWaveHealth - iMaxHealth));
 	SetEntityHealth(iAttacker, iWaveHealth);
 
-	switch (g_iNextWaveType) {
-		case TDWaveType_Boss: {
-			
-		}
-		case TDWaveType_Rapid: {
-			g_bBoostWave[iAttacker] = true;
-		}
-		case TDWaveType_Regen: {
-			TF2Attrib_SetByName(iAttacker, "health regen", float(RoundFloat(iWaveHealth * 0.05)));
-		}
-		case TDWaveType_KnockbackImmune: {
-			TF2Attrib_SetByName(iAttacker, "damage force reduction", 0.0);
-		}
-		case TDWaveType_Air: {
-			TF2Attrib_SetByName(iAttacker, "damage force reduction", 0.0);
-		}
-		case TDWaveType_JarateImmune: {
-			
-		}
-		default: {
-			
-		}
+	if (g_iNextWaveType & TDWaveType_Boss) {
+		
+	}
+
+	if (g_iNextWaveType & TDWaveType_Rapid) {
+		g_bBoostWave[iAttacker] = true;
+	}
+
+	if (g_iNextWaveType & TDWaveType_Regen) {
+		TF2Attrib_SetByName(iAttacker, "health regen", float(RoundFloat(iWaveHealth * 0.05)));
+	}
+
+	if (g_iNextWaveType & TDWaveType_KnockbackImmune) {
+		TF2Attrib_SetByName(iAttacker, "damage force reduction", 0.0);
+	}
+
+	if (g_iNextWaveType & TDWaveType_Air) {
+		TF2Attrib_SetByName(iAttacker, "damage force reduction", 0.0);
+	}
+
+	if (g_iNextWaveType & TDWaveType_JarateImmune) {
+		
 	}
 }
 
@@ -317,31 +317,64 @@ public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
 			SetHudTextParams(-1.0, 0.6, 5.1, 255, 255, 255, 255, 2, 2.0);
 
 			new iWaveHealth = Wave_GetHealth(g_iCurrentWave);
+			
+			decl String:sType[256];
+			strcopy(sType, sizeof(sType), "");
+
+			if (g_iNextWaveType & TDWaveType_Rapid) {
+				if (StrEqual(sType, "")) {
+					Format(sType, sizeof(sType), "%s", "Rapid");
+				} else {
+					Format(sType, sizeof(sType), "%s + %s", sType, "Rapid");
+				}
+			}
+
+			if (g_iNextWaveType & TDWaveType_Regen) {
+				if (StrEqual(sType, "")) {
+					Format(sType, sizeof(sType), "%s", "Regen");
+				} else {
+					Format(sType, sizeof(sType), "%s + %s", sType, "Regen");
+				}
+			}
+
+			if (g_iNextWaveType & TDWaveType_KnockbackImmune) {
+				if (StrEqual(sType, "")) {
+					Format(sType, sizeof(sType), "%s", "Knockback Immune");
+				} else {
+					Format(sType, sizeof(sType), "%s + %s", sType, "Knockback Immune");
+				}
+			}
+
+			if (g_iNextWaveType & TDWaveType_Air) {
+				if (StrEqual(sType, "")) {
+					Format(sType, sizeof(sType), "%s", "Air");
+				} else {
+					Format(sType, sizeof(sType), "%s + %s", sType, "Air");
+				}
+			}
+
+			if (g_iNextWaveType & TDWaveType_JarateImmune) {
+				if (StrEqual(sType, "")) {
+					Format(sType, sizeof(sType), "%s", "Jarate Immune");
+				} else {
+					Format(sType, sizeof(sType), "%s + %s", sType, "Jarate Immune");
+				}
+			}
+
+			if (g_iNextWaveType & TDWaveType_Boss) {
+				if (StrEqual(sType, "")) {
+					Format(sType, sizeof(sType), "%s", "Boss");
+				} else {
+					Format(sType, sizeof(sType), "%s %s", sType, "Boss");
+				}
+			}
 
 			for (new iClient = 1; iClient <= MaxClients; iClient++) {
 				if (IsDefender(iClient)) {
-					switch (g_iNextWaveType) {
-						case TDWaveType_Boss: {
-							ShowHudText(iClient, -1, "Boss with %d HP incoming!", iWaveHealth);
-						}
-						case TDWaveType_Rapid: {
-							ShowHudText(iClient, -1, "Rapid Wave with %d HP incoming!", iWaveHealth);
-						}
-						case TDWaveType_Regen: {
-							ShowHudText(iClient, -1, "Regen Wave with %d HP incoming!", iWaveHealth);
-						}
-						case TDWaveType_KnockbackImmune: {
-							ShowHudText(iClient, -1, "Knockback Immune Wave with %d HP incoming!", iWaveHealth);
-						}
-						case TDWaveType_Air: {
-							ShowHudText(iClient, -1, "Air Wave with %d HP incoming!", iWaveHealth);
-						}
-						case TDWaveType_JarateImmune: {
-							ShowHudText(iClient, -1, "Jarate Immune Wave with %d HP incoming!", iWaveHealth);
-						}
-						default: {
-							ShowHudText(iClient, -1, "Wave %d with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
-						}
+					if (StrEqual(sType, "")) {
+						ShowHudText(iClient, -1, "Wave (%d) with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
+					} else {
+						ShowHudText(iClient, -1, "%s Wave (%d) with %d HP incoming!", sType, g_iCurrentWave + 1, iWaveHealth);
 					}
 				}
 			}
@@ -424,47 +457,19 @@ stock Wave_GetName(iWave, String:sBuffer[], iMaxLength) {
  * Gets the type of a wave.
  *
  * @param iWave 		The wave.
- * @param sBuffer		The destination string buffer.
- * @param iMaxLength	The maximum length of the output string buffer.
- * @return				True on success, false if wave was not found.
+ * @return				The waves type bit field.
  */
 
-stock Wave_GetTypeString(iWave, String:sBuffer[], iMaxLength) {
+stock Wave_GetType(iWave) {
 	decl String:sKey[32];
 	Format(sKey, sizeof(sKey), "%d_type", iWave);
-
-	return GetTrieString(g_hMapWaves, sKey, sBuffer, iMaxLength);
-}
-
-/**
- * Gets the type of a wave.
- *
- * @param iWave 		The wave.
- * @return				The waves type.
- */
-
-stock TDWaveType:Wave_GetType(iWave) {
-	decl String:sKey[32];
-	Format(sKey, sizeof(sKey), "%d_type", iWave);
-
-	decl String:sType[32];
-	GetTrieString(g_hMapWaves, sKey, sType, sizeof(sType));
-
-	if (StrEqual(sType, "boss")) {
-		return TDWaveType_Boss;
-	} else if (StrEqual(sType, "rapid")) {
-		return TDWaveType_Rapid;
-	} else if (StrEqual(sType, "regen")) {
-		return TDWaveType_Regen;
-	} else if (StrEqual(sType, "knockbackImmune")) {
-		return TDWaveType_KnockbackImmune;
-	} else if (StrEqual(sType, "air")) {
-		return TDWaveType_Air;
-	} else if (StrEqual(sType, "jarateImmune")) {
-		return TDWaveType_JarateImmune;
+	
+	new iType = 0;
+	if (!GetTrieValue(g_hMapWaves, sKey, iType)) {
+		return -1;
 	}
 
-	return TDWaveType_None;
+	return iType;
 }
 
 /**

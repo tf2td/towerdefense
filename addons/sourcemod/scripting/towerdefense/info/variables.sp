@@ -101,7 +101,7 @@ new Float:g_fWaveStartButtonLocation[3];
 
 new g_iCurrentWave;
 new g_iHealthBar;
-new TDWaveType:g_iNextWaveType;
+new g_iNextWaveType;
 new g_iRespawnWaveTime;
 new g_iWaveStartButton;
 

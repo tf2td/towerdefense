@@ -63,15 +63,14 @@ enum TDTowerId
 	TDTower_Quantity
 };
 
-enum TDWaveType
+enum
 {
-	TDWaveType_None = 0,
-	TDWaveType_Boss,
-	TDWaveType_Rapid,
-	TDWaveType_Regen,
-	TDWaveType_KnockbackImmune,
-	TDWaveType_Air,
-	TDWaveType_JarateImmune
+	TDWaveType_Boss 			= (1 << 0), // 1
+	TDWaveType_Rapid 			= (1 << 1), // 2
+	TDWaveType_Regen 			= (1 << 2), // 4
+	TDWaveType_KnockbackImmune 	= (1 << 3), // 8
+	TDWaveType_Air 				= (1 << 4), // 16
+	TDWaveType_JarateImmune 	= (1 << 5)  // 32
 };
 
 enum TDMetalPackType
