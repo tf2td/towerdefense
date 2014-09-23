@@ -219,23 +219,34 @@ stock Wave_Spawn() {
 		return;
 	}
 
-	for (new i = 1; i <= Wave_GetQuantity(g_iCurrentWave); i++) {
-		ServerCommand("bot -team red -class %s -name %s%d", sClass, sName, i);
+	new iWaveQuantity = Wave_GetQuantity(g_iCurrentWave);
+
+	if (iWaveQuantity > 1) {
+		for (new i = 1; i <= iWaveQuantity; i++) {
+			ServerCommand("bot -team red -class %s -name %s%d", sClass, sName, i);
+		}
+	} else {
+		ServerCommand("bot -team red -class %s -name %s", sClass, sName);
 	}
 
-	Wave_TeleportToSpawn();
+	Wave_TeleportToSpawn(iWaveQuantity);
 }
 
 /**
  * Starts to teleport all wave attackers.
  *
+ * @param iWaveQuantity			The waves quantiy.
  * @noreturn
  */
 
-stock Wave_TeleportToSpawn() {
-	Log(TDLogLevel_Info, "Spawned wave %d (%d attackers)", g_iCurrentWave + 1, Wave_GetQuantity(g_iCurrentWave));
+stock Wave_TeleportToSpawn(iWaveQuantity) {
+	Log(TDLogLevel_Info, "Spawned wave %d (%d attackers)", g_iCurrentWave + 1, iWaveQuantity);
 
-	CreateTimer(1.0, TeleportWaveDelay, 1, TIMER_FLAG_NO_MAPCHANGE);
+	if (iWaveQuantity > 1) {
+		CreateTimer(1.0, TeleportWaveDelay, 1, TIMER_FLAG_NO_MAPCHANGE);
+	} else {
+		CreateTimer(1.0, TeleportWaveDelay, 0, TIMER_FLAG_NO_MAPCHANGE);
+	}
 }
 
 public Action:TeleportWaveDelay(Handle:hTimer, any:iNumber) {
@@ -250,9 +261,11 @@ public Action:TeleportWaveDelay(Handle:hTimer, any:iNumber) {
 		return Plugin_Stop;
 	}
 
-	Format(sName, sizeof(sName), "%s%d", sName, iNumber);
+	if (iNumber > 0) {
+		Format(sName, sizeof(sName), "%s%d", sName, iNumber);
+	}
 
-	new iAttacker = GetClientByNameExact(sName);
+	new iAttacker = GetClientByNameExact(sName, TEAM_ATTACKER);
 
 	if (IsAttacker(iAttacker)) {
 		new Float:fLocation[3];

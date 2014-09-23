@@ -1308,18 +1308,27 @@ stock PrintToHudAll(const String:sMessage[], any:...) {
  * Gets a client by name.
  *
  * @param sName			The clients name.
+ * @param iTeam			The clients team, -1 for both teams.
  * @return				The client, or -1 on error.
  */
 
-stock GetClientByNameExact(String:sName[]) {
+stock GetClientByNameExact(String:sName[], iTeam = -1) {
 	new String:sClientName[MAX_NAME_LENGTH];
 	
 	for (new iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsClientInGame(iClient)) {
-			GetClientName(iClient, sClientName, sizeof(sClientName));
-			
-			if (StrEqual(sName, sClientName)) {
-				return iClient;
+			if (iTeam == -1) {
+				GetClientName(iClient, sClientName, sizeof(sClientName));
+				
+				if (StrEqual(sName, sClientName)) {
+					return iClient;
+				}
+			} else if (GetClientTeam(iClient) == iTeam) {
+				GetClientName(iClient, sClientName, sizeof(sClientName));
+				
+				if (StrEqual(sName, sClientName)) {
+					return iClient;
+				}
 			}
 		}
 	}
