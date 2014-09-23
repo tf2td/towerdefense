@@ -77,7 +77,7 @@ public Wave_OnSpawnPost(any:iAttacker) {
 			g_bBoostWave[iAttacker] = true;
 		}
 		case TDWaveType_Regen: {
-			
+			TF2Attrib_SetByName(iAttacker, "health regen", float(RoundFloat(iWaveHealth * 0.05)));
 		}
 		case TDWaveType_KnockbackImmune: {
 			TF2Attrib_SetByName(iAttacker, "damage force reduction", 0.0);
