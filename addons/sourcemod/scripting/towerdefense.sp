@@ -459,16 +459,20 @@ public Action:OnTakeDamage(iClient, &iAttacker, &iInflictor, &Float:fDamage, &iD
 	}
 
 	if (IsDefender(iClient)) {
-		if (fDamage >= GetClientHealth(iClient)) {
-			new iMetal = GetClientMetal(iClient);
+		if (IsValidClient(iAttacker)) {
+			if (iClient == iAttacker || GetClientTeam(iClient) != GetClientTeam(iAttacker)) {
+				if (fDamage >= GetClientHealth(iClient)) {
+					new iMetal = GetClientMetal(iClient);
 
-			if (iMetal > 0) {
-				new Float:fLocation[3];
+					if (iMetal > 0) {
+						new Float:fLocation[3];
 
-				GetClientEyePosition(iClient, fLocation);
-				fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
+						GetClientEyePosition(iClient, fLocation);
+						fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
 
-				SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal);
+						SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal);
+					}
+				}
 			}
 		}
 	}
