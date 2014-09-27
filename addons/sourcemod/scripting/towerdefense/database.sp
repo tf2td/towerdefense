@@ -309,9 +309,6 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
 			decl String:sPath[PLATFORM_MAX_PATH];
 			Format(sPath, sizeof(sPath), "addons/sourcemod/plugins/%s", sFile);
 
-			PrintToServer("Url: %s", sUrl);
-			PrintToServer("Dest: %s", sPath);
-
 			Updater_Download(sUrl, sPath);
 		}
 	}
@@ -320,6 +317,32 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
 		CloseHandle(hResult);
 		hResult = INVALID_HANDLE;
 	}
+}
+
+stock bool:Database_UpdatedServer() {
+	decl String:sQuery[128];
+
+	Format(sQuery, sizeof(sQuery), "CALL UpdatedServer('%s', %d)", m_sServerIp, m_iServerPort);
+	 
+	SQL_LockDatabase(g_hDatabase);
+		
+	new Handle:hQuery = SQL_Query(g_hDatabase, sQuery);
+
+	if (hQuery == INVALID_HANDLE) {
+		decl String:sError[256];
+		SQL_GetError(g_hDatabase, sError, sizeof(sError));
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_UpdatedServer > Error: %s", sError);
+
+		SQL_UnlockDatabase(g_hDatabase);
+		return false;
+	}
+
+	new bool:bResult = (SQL_FetchRow(hQuery) && SQL_FetchInt(hQuery, 0) == 0);
+
+	SQL_UnlockDatabase(g_hDatabase);
+	CloseHandle(hQuery);
+
+	return bResult;
 }
 
 /*======================================

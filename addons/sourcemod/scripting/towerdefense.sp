@@ -3,6 +3,7 @@
 #include <sourcemod>
 #include <sdkhooks>
 #include <sdktools>
+#include <socket>
 #include <steamtools>
 #include <tf2>
 #include <tf2_stocks>
