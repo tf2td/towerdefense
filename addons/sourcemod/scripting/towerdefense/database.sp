@@ -2,8 +2,6 @@
 
 #include <sourcemod>
 
-static Handle:m_hDatabase;
-
 static String:m_sServerIp[16];
 static m_iServerPort;
 
@@ -21,26 +19,21 @@ stock Database_Connect() {
 		return;
 	}
 
-	if (m_hDatabase != INVALID_HANDLE) {
-		CloseHandle(m_hDatabase);
-		m_hDatabase = INVALID_HANDLE;
-	}
-
-	if (m_hDatabase == INVALID_HANDLE) {
-		//decl String:sDrowssap[128];
-		//MD5String("1NGIwZDk2Y", sDrowssap, sizeof(sDrowssap));
+	if (g_hDatabase == INVALID_HANDLE) {
+		decl String:sPassword[128];
+		MD5String(DATABASE_PASS, sPassword, sizeof(sPassword));
 
 		new Handle:hKeyValues = CreateKeyValues("");
-		KvSetString(hKeyValues, "host", "46.38.241.137");
-		KvSetString(hKeyValues, "database", "tf2tdsql5");
-		KvSetString(hKeyValues, "user", "tf2tdsql5");
-		KvSetString(hKeyValues, "pass", "1NGIwZDk2Y");
+		KvSetString(hKeyValues, "host", DATABASE_HOST);
+		KvSetString(hKeyValues, "database", DATABASE_NAME);
+		KvSetString(hKeyValues, "user", DATABASE_USER);
+		KvSetString(hKeyValues, "pass", sPassword);
 
 		new String:sError[512];
-		m_hDatabase = SQL_ConnectCustom(hKeyValues, sError, sizeof(sError), true);
+		g_hDatabase = SQL_ConnectCustom(hKeyValues, sError, sizeof(sError), true);
 		CloseHandle(hKeyValues);
 
-		if (m_hDatabase == INVALID_HANDLE) {
+		if (g_hDatabase == INVALID_HANDLE) {
 			LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to connect to the database! Error: %s", sError);
 		} else {
 			Log(TDLogLevel_Info, "Successfully connected to the database");
@@ -72,15 +65,11 @@ stock Database_Connect() {
  */
 
 stock Database_CheckServer() {
-	decl String:sQuery[512];
+	decl String:sQuery[128];
 
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `server_id` \
-		FROM `server` \
-		WHERE `ip` = '%s' AND `port` = %d",
-	m_sServerIp, m_iServerPort);
+	Format(sQuery, sizeof(sQuery), "CALL GetServerInfo('%s', %d)", m_sServerIp, m_iServerPort);
 
-	SQL_TQuery(m_hDatabase, Database_OnCheckServer, sQuery);
+	SQL_TQuery(g_hDatabase, Database_OnCheckServer, sQuery);
 }
 
 public Database_OnCheckServer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
@@ -95,7 +84,7 @@ public Database_OnCheckServer(Handle:hDriver, Handle:hResult, const String:sErro
 
 		m_iServerId = SQL_FetchInt(hResult, 0);
 
-		Database_RefreshServer();
+		Database_UpdateServer();
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -113,51 +102,21 @@ public Database_OnCheckServer(Handle:hDriver, Handle:hResult, const String:sErro
 stock Database_AddServer() {
 	decl String:sQuery[512];
 
-	Format(sQuery, sizeof(sQuery), "\
-		INSERT INTO `server` (`ip`, `port`) \
-		VALUES ('%s', %d)",
-	m_sServerIp, m_iServerPort);
+	Format(sQuery, sizeof(sQuery), "CALL AddServer('%s', %d, '%s')", m_sServerIp, m_iServerPort, PLUGIN_HOST);
 
-	SQL_TQuery(m_hDatabase, Database_OnAddServer, sQuery, 0);
+	SQL_TQuery(g_hDatabase, Database_OnAddServer, sQuery);
 }
 
 public Database_OnAddServer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_AddServer > Error: %s", sError);
 	} else {
-		decl String:sQuery[512];
+		Log(TDLogLevel_Info, "Added server to database (%s:%d)", m_sServerIp, m_iServerPort);
+		
+		SQL_FetchRow(hResult);
+		m_iServerId = SQL_FetchInt(hResult, 0);
 
-		if (iData == 0) {
-			Format(sQuery, sizeof(sQuery), "\
-				SELECT `server_id` \
-				FROM `server` \
-				WHERE `ip` = '%s' AND `port` = %d",
-			m_sServerIp, m_iServerPort);
-
-			SQL_TQuery(m_hDatabase, Database_OnAddServer, sQuery, 1);
-		} else if (iData == 1) {
-			SQL_FetchRow(hResult);
-
-			m_iServerId = SQL_FetchInt(hResult, 0);
-
-			Format(sQuery, sizeof(sQuery), "\
-				INSERT INTO `server_stats` (`server_id`) \
-				VALUES (%d)",
-			m_iServerId);
-
-			SQL_TQuery(m_hDatabase, Database_OnAddServer, sQuery, 2);
-		} else if (iData == 2) {
-			Format(sQuery, sizeof(sQuery), "\
-				INSERT INTO `server_config` (`server_id`) \
-				VALUES (%d)",
-			m_iServerId);
-
-			SQL_TQuery(m_hDatabase, Database_OnAddServer, sQuery, 3);
-		} else if (iData == 3) {
-			Log(TDLogLevel_Info, "Added server to database (%s:%d)", m_sServerIp, m_iServerPort);
-
-			Database_RefreshServer();
-		}
+		Database_UpdateServer();
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -167,55 +126,40 @@ public Database_OnAddServer(Handle:hDriver, Handle:hResult, const String:sError[
 }
 
 /**
- * Refreshs a server.
+ * Updates a servers info.
  *
  * @noreturn
  */
 
-stock Database_RefreshServer() {
+stock Database_UpdateServer() {
 	decl String:sQuery[512];
 
 	decl String:sServerName[128], String:sServerNameSave[256];
 
 	GetConVarString(FindConVar("hostname"), sServerName, sizeof(sServerName));
-	SQL_EscapeString(m_hDatabase, sServerName, sServerNameSave, sizeof(sServerNameSave));
+	SQL_EscapeString(g_hDatabase, sServerName, sServerNameSave, sizeof(sServerNameSave));
 
 	decl String:sPassword[32], String:sPasswordSave[64];
 	GetConVarString(FindConVar("sv_password"), sPassword, sizeof(sPassword));
-	SQL_EscapeString(m_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
+	SQL_EscapeString(g_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
 
-	Format(sQuery, sizeof(sQuery), "\
-		UPDATE `server` \
-		SET `name` = '%s', \
-			`host_id` = ( \
-				SELECT `host_id` \
-				FROM `host` \
-				WHERE `name` = '%s'), \
-			`version` = '%s', \
-			`password` = '%s', \
-			`players` = %d \
-		WHERE `ip` = '%s' AND `port` = %d", 
-	sServerNameSave, PLUGIN_HOST, PLUGIN_VERSION, sPasswordSave, GetRealClientCount(), m_sServerIp, m_iServerPort);
+	Format(sQuery, sizeof(sQuery), "CALL UpdateServer('%s', %d, '%s', '%s', '%s', %d)", m_sServerIp, m_iServerPort, sServerNameSave, PLUGIN_VERSION, sPasswordSave, GetRealClientCount());
 
-	SQL_TQuery(m_hDatabase, Database_OnRefreshServer, sQuery, 0);
+	SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 0);
 }
 
-public Database_OnRefreshServer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public Database_OnUpdateServer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_RefreshServer > Error: %s", sError);
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_UpdateServer > Error: %s", sError);
 	} else {
-		decl String:sQuery[512];
+		decl String:sQuery[128];
 		decl String:sCurrentMap[PLATFORM_MAX_PATH];
 		GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
 		if (iData == 0) {
-			Format(sQuery, sizeof(sQuery), "\
-				SELECT `map_id`, `respawn_wave_time` \
-				FROM `map` \
-				WHERE `name` = '%s'",
-			sCurrentMap);
+			Format(sQuery, sizeof(sQuery), "CALL GetMapInfo('%s')", sCurrentMap);
 
-			SQL_TQuery(m_hDatabase, Database_OnRefreshServer, sQuery, 1);
+			SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 1);
 		} else if (iData == 1) {
 			if (SQL_GetRowCount(hResult) == 0) {
 				LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Map \"%s\" is not supported, thus Tower Defense has been disabled.", sCurrentMap);
@@ -236,15 +180,11 @@ public Database_OnRefreshServer(Handle:hDriver, Handle:hResult, const String:sEr
 			m_iServerMap = SQL_FetchInt(hResult, 0);
 			g_iRespawnWaveTime = SQL_FetchInt(hResult, 1);
 
-			Format(sQuery, sizeof(sQuery), "\
-				UPDATE `server` \
-				SET `map_id` = %d \
-				WHERE `ip` = '%s' AND `port` = %d", 
-			m_iServerMap, m_sServerIp, m_iServerPort);
+			Format(sQuery, sizeof(sQuery), "CALL UpdateServerMap('%s', %d, %d)", m_sServerIp, m_iServerPort, m_iServerMap);
 
-			SQL_TQuery(m_hDatabase, Database_OnRefreshServer, sQuery, 2);
+			SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 2);
 		} else if (iData == 2) {
-			Log(TDLogLevel_Info, "Refreshed server in database (%s:%d)", m_sServerIp, m_iServerPort);
+			Log(TDLogLevel_Info, "Updated server in database (%s:%d)", m_sServerIp, m_iServerPort);
 
 			Database_CheckForDelete();
 		}
@@ -263,15 +203,11 @@ public Database_OnRefreshServer(Handle:hDriver, Handle:hResult, const String:sEr
  */
 
 stock Database_CheckForDelete() {
-	decl String:sQuery[512];
+	decl String:sQuery[128];
 
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `delete` \
-		FROM `server` \
-		WHERE `ip` = '%s' AND `port` = %d", 
-	m_sServerIp, m_iServerPort);
+	Format(sQuery, sizeof(sQuery), "CALL GetServerDelete('%s', %d)", m_sServerIp, m_iServerPort);
 
-	SQL_TQuery(m_hDatabase, Database_OnCheckForDelete, sQuery);
+	SQL_TQuery(g_hDatabase, Database_OnCheckForDelete, sQuery);
 }
 
 public Database_OnCheckForDelete(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
@@ -309,15 +245,11 @@ public Database_OnCheckForDelete(Handle:hDriver, Handle:hResult, const String:sE
  */
 
 public Database_CheckServerVerified() {
-	new String:sQuery[512];
+	decl String:sQuery[128];
 
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `verified` \
-		FROM `server` \
-		WHERE `ip` = '%s' AND `port` = %d", 
-	m_sServerIp, m_iServerPort);
+	Format(sQuery, sizeof(sQuery), "CALL GetServerVerified('%s', %d)", m_sServerIp, m_iServerPort);
 
-	SQL_TQuery(m_hDatabase, Database_OnCheckServerVerified, sQuery);
+	SQL_TQuery(g_hDatabase, Database_OnCheckServerVerified, sQuery);
 }
 
 public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
@@ -350,60 +282,37 @@ public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const Stri
  */
 
 stock Database_CheckForUpdates() {
-	decl String:sQuery[512];
+	decl String:sQuery[128];
 
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `update` \
-		FROM `server` \
-		WHERE `ip` = '%s' AND `port` = %d", 
-	m_sServerIp, m_iServerPort);
+	Format(sQuery, sizeof(sQuery), "CALL GetServerUpdate('%s', %d)", m_sServerIp, m_iServerPort);
 
-	SQL_TQuery(m_hDatabase, Database_OnCheckForUpdates, sQuery, 0);
+	SQL_TQuery(g_hDatabase, Database_OnCheckForUpdates, sQuery);
 }
 
 public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckForUpdates > Error: %s", sError);
 	} else {
-		if (iData == 0) {
-			SQL_FetchRow(hResult);
+		SQL_FetchRow(hResult);
 
-			if (SQL_FetchInt(hResult, 0) == 1) {
-				decl String:sQuery[512];
+		decl String:sUrl[256];
+		SQL_FetchString(hResult, 0, sUrl, sizeof(sUrl));
 
-				Format(sQuery, sizeof(sQuery), "\
-					SELECT `update_url` \
-					FROM `server` \
-					WHERE `ip` = '%s' AND `port` = %d", 
-				m_sServerIp, m_iServerPort);
+		if (StrEqual(sUrl, "")) {
+			Database_LoadTowers();
+		} else {
+			Log(TDLogLevel_Info, "Plugin update pending. Updating now ...");
 
-				SQL_TQuery(m_hDatabase, Database_OnCheckForUpdates, sQuery, 1);
-			} else {
-				Database_LoadTowers();
-				Database_LoadWeapons();
-				Database_LoadWaves();
-				Database_LoadMetalpacks();
-			}
-		} else if (iData == 1) {
-			SQL_FetchRow(hResult);
+			decl String:sFile[PLATFORM_MAX_PATH];
+			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
 
-			if (!SQL_IsFieldNull(hResult, 0)) {
-				decl String:sUrl[256];
-				SQL_FetchString(hResult, 0, sUrl, sizeof(sUrl));
+			decl String:sPath[PLATFORM_MAX_PATH];
+			Format(sPath, sizeof(sPath), "addons/sourcemod/plugins/%s", sFile);
 
-				Log(TDLogLevel_Info, "Plugin update pending. Updating now ...");
+			PrintToServer("Url: %s", sUrl);
+			PrintToServer("Dest: %s", sPath);
 
-				decl String:sFile[PLATFORM_MAX_PATH];
-				GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
-
-				decl String:sPath[PLATFORM_MAX_PATH];
-				Format(sPath, sizeof(sPath), "addons/sourcemod/plugins/%s", sFile);
-
-				PrintToServer("Url: %s", sUrl);
-				PrintToServer("Dest: %s", sPath);
-
-				Updater_Download(sUrl, sPath);
-			}
+			Updater_Download(sUrl, sPath);
 		}
 	}
 
@@ -424,21 +333,11 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
  */
 
 stock Database_LoadTowers() {
-	decl String:sQuery[512];
+	decl String:sQuery[128];
 	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `tower`.`tower_id`, `level`, `tower`.`name`, `type`, `price`, `teleport_tower`, `damagetype`, `description`, `metal`, `weapon_id`, `attack_primary`, `attack_secondary`, `rotate`, `pitch`, `damage`, `attackspeed`, `area` \
-		FROM `tower` \
-		INNER JOIN `classtype` \
-			ON (`tower`.`classtype_id` = `classtype`.`classtype_id`) \
-		INNER JOIN `map` \
-			ON (`map`.`map_id` = %d) \
-		INNER JOIN `towerlevel` \
-			ON (`tower`.`tower_id` = `towerlevel`.`tower_id`) \
- 		ORDER BY `name` ASC, `level` ASC", 
- 	m_iServerMap);
+	Format(sQuery, sizeof(sQuery), "CALL GetTowers(%d)", m_iServerMap);
 	
-	SQL_TQuery(m_hDatabase, Database_OnLoadTowers, sQuery);
+	SQL_TQuery(g_hDatabase, Database_OnLoadTowers, sQuery);
 }
 
 public Database_OnLoadTowers(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
@@ -561,6 +460,8 @@ public Database_OnLoadTowers(Handle:hDriver, Handle:hResult, const String:sError
 		CloseHandle(hResult);
 		hResult = INVALID_HANDLE;
 	}
+
+	Database_LoadWeapons();
 }
 
 /**
@@ -570,15 +471,11 @@ public Database_OnLoadTowers(Handle:hDriver, Handle:hResult, const String:sError
  */
 
 stock Database_LoadWeapons() {
-	decl String:sQuery[512];
+	decl String:sQuery[128];
 	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `name`, `index`, `slot`, `level`, `quality`, `classname`, `attributes`, `preserve_attributes` \
-		FROM `weapon` \
- 		ORDER BY `weapon_id` ASC"
- 	);
+	Format(sQuery, sizeof(sQuery), "CALL GetWeapons()");
 	
-	SQL_TQuery(m_hDatabase, Database_OnLoadWeapons, sQuery);
+	SQL_TQuery(g_hDatabase, Database_OnLoadWeapons, sQuery);
 }
 
 public Database_OnLoadWeapons(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
@@ -651,6 +548,8 @@ public Database_OnLoadWeapons(Handle:hDriver, Handle:hResult, const String:sErro
 		CloseHandle(hResult);
 		hResult = INVALID_HANDLE;
 	}
+
+	Database_LoadWaves();
 }
 
 /**
@@ -660,20 +559,11 @@ public Database_OnLoadWeapons(Handle:hDriver, Handle:hResult, const String:sErro
  */
 
 stock Database_LoadWaves() {
-	decl String:sQuery[512];
+	decl String:sQuery[128];
 	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `wavetype`, `wave`.`name`, `classtype`.`type`, `quantity`, `health`, IF(`wavetype` & (SELECT `bit_value` FROM `wavetype` WHERE `wavetype`.`type` = 'air'), `teleport_air`, `teleport_ground`) \
-		FROM `wave` \
-		INNER JOIN `classtype` \
-			ON (`wave`.`classtype_id` = `classtype`.`classtype_id`) \
-		INNER JOIN `map` \
-			ON (`map`.`map_id` = %d) \
- 		WHERE `wave_id` >= `wave_start` AND `wave_id` <= `wave_end` \
- 		ORDER BY `wave_id` ASC",
- 	m_iServerMap);
+	Format(sQuery, sizeof(sQuery), "CALL GetWaves(%d)", m_iServerMap);
 	
-	SQL_TQuery(m_hDatabase, Database_OnLoadWaves, sQuery);
+	SQL_TQuery(g_hDatabase, Database_OnLoadWaves, sQuery);
 }
 
 public Database_OnLoadWaves(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
@@ -736,6 +626,8 @@ public Database_OnLoadWaves(Handle:hDriver, Handle:hResult, const String:sError[
 		CloseHandle(hResult);
 		hResult = INVALID_HANDLE;
 	}
+
+	Database_LoadMetalpacks();
 }
 
 /**
@@ -745,18 +637,11 @@ public Database_OnLoadWaves(Handle:hDriver, Handle:hResult, const String:sError[
  */
 
 stock Database_LoadMetalpacks() {
-	decl String:sQuery[512];
+	decl String:sQuery[128];
 	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `type`, `metal`, `location` \
-		FROM `metalpack` \
-		INNER JOIN `metalpacktype` \
-			ON (`metalpack`.`metalpacktype_id` = `metalpacktype`.`metalpacktype_id`) \
- 		WHERE `map_id` = %d \
- 		ORDER BY `metalpack_id` ASC",
- 	m_iServerMap);
+	Format(sQuery, sizeof(sQuery), "CALL GetMetalpacks(%d)", m_iServerMap);
 	
-	SQL_TQuery(m_hDatabase, Database_OnLoadMetalpacks, sQuery);
+	SQL_TQuery(g_hDatabase, Database_OnLoadMetalpacks, sQuery);
 }
 
 public Database_OnLoadMetalpacks(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {

@@ -22,6 +22,7 @@ new bool:g_bTowerDefenseMap;
 
 /*==========  Handle  ==========*/
 
+new Handle:g_hDatabase;
 new Handle:g_hEnabled;
 
 /*==========  Float  ==========*/
