@@ -270,7 +270,7 @@ public OnClientAuthorized(iClient, const String:sSteamId[]) {
 
 	decl String:sCommunityId[32];
 	if (GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId))) {
-		PrintToServer("%N = %s", iClient, sCommunityId);
+		Database_CheckPlayer(iClient, sCommunityId);
 	}
 }
 

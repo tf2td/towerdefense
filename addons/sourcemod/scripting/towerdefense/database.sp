@@ -58,6 +58,10 @@ stock Database_Connect() {
 	}
 }
 
+/*========================================
+=            Server Functions            =
+========================================*/
+
 /**
  * Checks if a server does already exist.
  *
@@ -343,6 +347,154 @@ stock bool:Database_UpdatedServer() {
 	CloseHandle(hQuery);
 
 	return bResult;
+}
+
+/*========================================
+=            Player Functions            =
+========================================*/
+
+/**
+ * Checks if a player already exists.
+ *
+ * @param iClient			The client.
+ * @param sSteamId			The players 64-bit steam id (community id).
+ * @noreturn
+ */
+
+stock Database_CheckPlayer(iClient, const String:sSteamId[]) {
+	decl String:sQuery[128];
+
+	Format(sQuery, sizeof(sQuery), "CALL GetPlayerInfo('%s')", sSteamId);
+
+	new Handle:hPack = CreateDataPack();
+
+	WritePackCell(hPack, iClient);		// 0
+	WritePackString(hPack, sSteamId);	// 8
+
+	SQL_TQuery(g_hDatabase, Database_OnCheckPlayer, sQuery, hPack);
+}
+
+public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+	ResetPack(iData);
+
+	if (hResult == INVALID_HANDLE) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckPlayer > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult) == 0) {
+		// No player found, add it
+
+		decl String:sSteamId[32];
+		SetPackPosition(iData, 8);
+		ReadPackString(iData, sSteamId, sizeof(sSteamId));
+
+		Database_AddPlayer(iData);
+	} else {
+		SQL_FetchRow(hResult);
+
+		SetPackPosition(iData, 0);
+
+		new iClient = ReadPackCell(iData);
+		new iPlayerId = SQL_FetchInt(hResult, 0);
+
+		Database_UpdatePlayer(iClient, iPlayerId);
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+/**
+ * Adds a player.
+ *
+ * @param hPack 		The datapack handle with the player infos.
+ * @noreturn
+ */
+
+stock Database_AddPlayer(Handle:hPack) {
+	decl String:sQuery[512];
+	decl String:sSteamId[32];
+
+	ResetPack(hPack);
+
+	SetPackPosition(hPack, 8);
+	ReadPackString(hPack, sSteamId, sizeof(sSteamId));
+
+	Format(sQuery, sizeof(sQuery), "CALL AddPlayer('%s', %d)", sSteamId, m_iServerId);
+
+	SQL_TQuery(g_hDatabase, Database_OnAddPlayer, sQuery, hPack);
+}
+
+public Database_OnAddPlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+	if (hResult == INVALID_HANDLE) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_AddPlayer > Error: %s", sError);
+	} else {
+		ResetPack(iData);
+
+		new iClient = ReadPackCell(iData);
+
+		decl String:sSteamId[32];
+		ReadPackString(iData, sSteamId, sizeof(sSteamId));
+
+		Log(TDLogLevel_Info, "Added player to database (%s)", sSteamId);
+
+		SQL_FetchRow(hResult);
+		
+		new iPlayerId = SQL_FetchInt(hResult, 0);
+
+		Database_UpdatePlayer(iClient, iPlayerId);
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+/**
+ * Updates a servers info.
+ *
+ * @param iClient			The client.
+ * @param iPlayerId			The players database id.
+ * @noreturn
+ */
+
+stock Database_UpdatePlayer(iClient, iPlayerId) {
+	decl String:sQuery[512];
+
+	decl String:sPlayerName[MAX_NAME_LENGTH + 1];
+	decl String:sPlayerNameSave[MAX_NAME_LENGTH * 2 + 1];
+
+	GetClientName(iClient, sPlayerName, sizeof(sPlayerName));
+	SQL_EscapeString(g_hDatabase, sPlayerName, sPlayerNameSave, sizeof(sPlayerNameSave));
+
+	decl String:sPlayerIp[16];
+	decl String:sPlayerIpSave[33];
+
+	GetClientIP(iClient, sPlayerIp, sizeof(sPlayerIp));
+	SQL_EscapeString(g_hDatabase, sPlayerIp, sPlayerIpSave, sizeof(sPlayerIpSave));
+
+	Format(sQuery, sizeof(sQuery), "CALL UpdatePlayer(%d, '%s', '%s', %d)", iPlayerId, sPlayerNameSave, sPlayerIpSave, m_iServerId);
+
+	SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer, sQuery);
+}
+
+public Database_OnUpdatePlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+	if (hResult == INVALID_HANDLE) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_UpdatePlayer > Error: %s", sError);
+	} else {
+		SQL_FetchRow(hResult);
+
+		decl String:sSteamId[32];
+		SQL_FetchString(hResult, 0, sSteamId, sizeof(sSteamId));
+
+		Log(TDLogLevel_Info, "Updated player in database (%s)", sSteamId);
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
 }
 
 /*======================================
