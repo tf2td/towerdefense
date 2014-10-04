@@ -220,7 +220,10 @@ public Database_OnCheckForDelete(Handle:hDriver, Handle:hResult, const String:sE
 	} else {
 		SQL_FetchRow(hResult);
 
-		if (SQL_FetchInt(hResult, 0) == 1) {
+		decl String:sDelete[32];
+		SQL_FetchString(hResult, 0, sDelete, sizeof(sDelete));
+
+		if (StrEqual(sDelete, "delete")) {
 			decl String:sFile[PLATFORM_MAX_PATH], String:sPath[PLATFORM_MAX_PATH];
 			
 			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
@@ -262,14 +265,17 @@ public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const Stri
 	} else {
 		SQL_FetchRow(hResult);
 
-		if (SQL_FetchInt(hResult, 0) == 0) {
+		decl String:sVerfied[32];
+		SQL_FetchString(hResult, 0, sVerfied, sizeof(sVerfied));
+
+		if (StrEqual(sVerfied, "verified")) {
+			Database_CheckForUpdates();
+		} else {
 			LogType(TDLogLevel_Warning, TDLogType_FileAndConsole, "Your server is not verified, please contact us at tf2td.net or on Steam");
 
 			decl String:sFile[PLATFORM_MAX_PATH];
 			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
 			ServerCommand("sm plugins unload %s", sFile);
-		} else {
-			Database_CheckForUpdates();
 		}
 	}
 
@@ -368,8 +374,8 @@ stock Database_CheckPlayer(iClient, const String:sSteamId[]) {
 
 	new Handle:hPack = CreateDataPack();
 
-	WritePackCell(hPack, iClient);		// 0
-	WritePackString(hPack, sSteamId);	// 8
+	WritePackCell(hPack, GetClientUserId(iClient));		// 0
+	WritePackString(hPack, sSteamId);					// 8
 
 	SQL_TQuery(g_hDatabase, Database_OnCheckPlayer, sQuery, hPack);
 }
@@ -392,10 +398,10 @@ public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sErro
 
 		SetPackPosition(iData, 0);
 
-		new iClient = ReadPackCell(iData);
+		new iUserId = ReadPackCell(iData);
 		new iPlayerId = SQL_FetchInt(hResult, 0);
 
-		Database_UpdatePlayer(iClient, iPlayerId);
+		Database_UpdatePlayer(iUserId, iPlayerId);
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -431,7 +437,7 @@ public Database_OnAddPlayer(Handle:hDriver, Handle:hResult, const String:sError[
 	} else {
 		ResetPack(iData);
 
-		new iClient = ReadPackCell(iData);
+		new iUserId = ReadPackCell(iData);
 
 		decl String:sSteamId[32];
 		ReadPackString(iData, sSteamId, sizeof(sSteamId));
@@ -442,7 +448,7 @@ public Database_OnAddPlayer(Handle:hDriver, Handle:hResult, const String:sError[
 		
 		new iPlayerId = SQL_FetchInt(hResult, 0);
 
-		Database_UpdatePlayer(iClient, iPlayerId);
+		Database_UpdatePlayer(iUserId, iPlayerId);
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -454,16 +460,18 @@ public Database_OnAddPlayer(Handle:hDriver, Handle:hResult, const String:sError[
 /**
  * Updates a servers info.
  *
- * @param iClient			The client.
+ * @param iUserId			The clients user id.
  * @param iPlayerId			The players database id.
  * @noreturn
  */
 
-stock Database_UpdatePlayer(iClient, iPlayerId) {
+stock Database_UpdatePlayer(iUserId, iPlayerId) {
 	decl String:sQuery[512];
 
 	decl String:sPlayerName[MAX_NAME_LENGTH + 1];
 	decl String:sPlayerNameSave[MAX_NAME_LENGTH * 2 + 1];
+
+	new iClient = GetClientOfUserId(iUserId);
 
 	GetClientName(iClient, sPlayerName, sizeof(sPlayerName));
 	SQL_EscapeString(g_hDatabase, sPlayerName, sPlayerNameSave, sizeof(sPlayerNameSave));
