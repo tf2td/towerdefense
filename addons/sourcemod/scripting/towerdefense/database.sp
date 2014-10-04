@@ -147,7 +147,7 @@ stock Database_UpdateServer() {
 	GetConVarString(FindConVar("sv_password"), sPassword, sizeof(sPassword));
 	SQL_EscapeString(g_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
 
-	Format(sQuery, sizeof(sQuery), "CALL UpdateServer('%s', %d, '%s', '%s', '%s', %d)", m_sServerIp, m_iServerPort, sServerNameSave, PLUGIN_VERSION, sPasswordSave, GetRealClientCount());
+	Format(sQuery, sizeof(sQuery), "CALL UpdateServer(%d, '%s', '%s', '%s', %d)", m_iServerId, sServerNameSave, PLUGIN_VERSION, sPasswordSave, GetRealClientCount());
 
 	SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 0);
 }
@@ -184,7 +184,7 @@ public Database_OnUpdateServer(Handle:hDriver, Handle:hResult, const String:sErr
 			m_iServerMap = SQL_FetchInt(hResult, 0);
 			g_iRespawnWaveTime = SQL_FetchInt(hResult, 1);
 
-			Format(sQuery, sizeof(sQuery), "CALL UpdateServerMap('%s', %d, %d)", m_sServerIp, m_iServerPort, m_iServerMap);
+			Format(sQuery, sizeof(sQuery), "CALL UpdateServerMap(%d, %d)", m_iServerId, m_iServerMap);
 
 			SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 2);
 		} else if (iData == 2) {
@@ -209,7 +209,7 @@ public Database_OnUpdateServer(Handle:hDriver, Handle:hResult, const String:sErr
 stock Database_CheckForDelete() {
 	decl String:sQuery[128];
 
-	Format(sQuery, sizeof(sQuery), "CALL GetServerDelete('%s', %d)", m_sServerIp, m_iServerPort);
+	Format(sQuery, sizeof(sQuery), "CALL GetServerDelete(%d)", m_iServerId);
 
 	SQL_TQuery(g_hDatabase, Database_OnCheckForDelete, sQuery);
 }
@@ -254,7 +254,7 @@ public Database_OnCheckForDelete(Handle:hDriver, Handle:hResult, const String:sE
 public Database_CheckServerVerified() {
 	decl String:sQuery[128];
 
-	Format(sQuery, sizeof(sQuery), "CALL GetServerVerified('%s', %d)", m_sServerIp, m_iServerPort);
+	Format(sQuery, sizeof(sQuery), "CALL GetServerVerified(%d)", m_iServerId);
 
 	SQL_TQuery(g_hDatabase, Database_OnCheckServerVerified, sQuery);
 }
@@ -294,7 +294,7 @@ public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const Stri
 stock Database_CheckForUpdates() {
 	decl String:sQuery[128];
 
-	Format(sQuery, sizeof(sQuery), "CALL GetServerUpdate('%s', %d)", m_sServerIp, m_iServerPort);
+	Format(sQuery, sizeof(sQuery), "CALL GetServerUpdate(%d)", m_iServerId);
 
 	SQL_TQuery(g_hDatabase, Database_OnCheckForUpdates, sQuery);
 }
@@ -332,7 +332,7 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
 stock bool:Database_UpdatedServer() {
 	decl String:sQuery[128];
 
-	Format(sQuery, sizeof(sQuery), "CALL UpdatedServer('%s', %d)", m_sServerIp, m_iServerPort);
+	Format(sQuery, sizeof(sQuery), "CALL UpdatedServer(%d)", m_iServerId);
 	 
 	SQL_LockDatabase(g_hDatabase);
 		
@@ -374,34 +374,31 @@ stock Database_CheckPlayer(iClient, const String:sSteamId[]) {
 
 	new Handle:hPack = CreateDataPack();
 
-	WritePackCell(hPack, GetClientUserId(iClient));		// 0
-	WritePackString(hPack, sSteamId);					// 8
+	WritePackCell(hPack, GetClientUserId(iClient));		//  0 - user id
+	WritePackCell(hPack, 0);							//  8 - database id
+	WritePackString(hPack, sSteamId);					// 16 - steam id
 
 	SQL_TQuery(g_hDatabase, Database_OnCheckPlayer, sQuery, hPack);
 }
 
-public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
-	ResetPack(iData);
-
+public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckPlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult) == 0) {
 		// No player found, add it
 
+		SetPackPosition(hPack, 16);
 		decl String:sSteamId[32];
-		SetPackPosition(iData, 8);
-		ReadPackString(iData, sSteamId, sizeof(sSteamId));
+		ReadPackString(hPack, sSteamId, sizeof(sSteamId));
 
-		Database_AddPlayer(iData);
+		Database_AddPlayer(hPack);
 	} else {
 		SQL_FetchRow(hResult);
 
-		SetPackPosition(iData, 0);
+		SetPackPosition(hPack, 8);
+		WritePackCell(hPack, SQL_FetchInt(hResult, 0));
 
-		new iUserId = ReadPackCell(iData);
-		new iPlayerId = SQL_FetchInt(hResult, 0);
-
-		Database_UpdatePlayer(iUserId, iPlayerId);
+		Database_UpdatePlayer(hPack);
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -413,7 +410,7 @@ public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sErro
 /**
  * Adds a player.
  *
- * @param hPack 		The datapack handle with the player infos.
+ * @param hPack 			The datapack handle containing the player info.
  * @noreturn
  */
 
@@ -421,9 +418,7 @@ stock Database_AddPlayer(Handle:hPack) {
 	decl String:sQuery[512];
 	decl String:sSteamId[32];
 
-	ResetPack(hPack);
-
-	SetPackPosition(hPack, 8);
+	SetPackPosition(hPack, 16);
 	ReadPackString(hPack, sSteamId, sizeof(sSteamId));
 
 	Format(sQuery, sizeof(sQuery), "CALL AddPlayer('%s', %d)", sSteamId, m_iServerId);
@@ -431,24 +426,23 @@ stock Database_AddPlayer(Handle:hPack) {
 	SQL_TQuery(g_hDatabase, Database_OnAddPlayer, sQuery, hPack);
 }
 
-public Database_OnAddPlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public Database_OnAddPlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_AddPlayer > Error: %s", sError);
 	} else {
-		ResetPack(iData);
-
-		new iUserId = ReadPackCell(iData);
+		SetPackPosition(hPack, 16);
 
 		decl String:sSteamId[32];
-		ReadPackString(iData, sSteamId, sizeof(sSteamId));
+		ReadPackString(hPack, sSteamId, sizeof(sSteamId));
 
 		Log(TDLogLevel_Info, "Added player to database (%s)", sSteamId);
 
 		SQL_FetchRow(hResult);
 		
-		new iPlayerId = SQL_FetchInt(hResult, 0);
+		SetPackPosition(hPack, 8);
+		WritePackCell(hPack, SQL_FetchInt(hResult, 0));
 
-		Database_UpdatePlayer(iUserId, iPlayerId);
+		Database_UpdatePlayer(hPack);
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -460,18 +454,19 @@ public Database_OnAddPlayer(Handle:hDriver, Handle:hResult, const String:sError[
 /**
  * Updates a servers info.
  *
- * @param iUserId			The clients user id.
- * @param iPlayerId			The players database id.
+ * @param hPack 			The datapack handle containing the player info.
  * @noreturn
  */
 
-stock Database_UpdatePlayer(iUserId, iPlayerId) {
+stock Database_UpdatePlayer(Handle:hPack) {
 	decl String:sQuery[512];
 
 	decl String:sPlayerName[MAX_NAME_LENGTH + 1];
 	decl String:sPlayerNameSave[MAX_NAME_LENGTH * 2 + 1];
 
-	new iClient = GetClientOfUserId(iUserId);
+	SetPackPosition(hPack, 0);
+
+	new iClient = GetClientOfUserId(ReadPackCell(hPack));
 
 	GetClientName(iClient, sPlayerName, sizeof(sPlayerName));
 	SQL_EscapeString(g_hDatabase, sPlayerName, sPlayerNameSave, sizeof(sPlayerNameSave));
@@ -482,12 +477,16 @@ stock Database_UpdatePlayer(iUserId, iPlayerId) {
 	GetClientIP(iClient, sPlayerIp, sizeof(sPlayerIp));
 	SQL_EscapeString(g_hDatabase, sPlayerIp, sPlayerIpSave, sizeof(sPlayerIpSave));
 
+	SetPackPosition(hPack, 8);
+
+	new iPlayerId = ReadPackCell(hPack);
+
 	Format(sQuery, sizeof(sQuery), "CALL UpdatePlayer(%d, '%s', '%s', %d)", iPlayerId, sPlayerNameSave, sPlayerIpSave, m_iServerId);
 
-	SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer, sQuery);
+	SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer, sQuery, hPack);
 }
 
-public Database_OnUpdatePlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public Database_OnUpdatePlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else {
@@ -497,6 +496,50 @@ public Database_OnUpdatePlayer(Handle:hDriver, Handle:hResult, const String:sErr
 		SQL_FetchString(hResult, 0, sSteamId, sizeof(sSteamId));
 
 		Log(TDLogLevel_Info, "Updated player in database (%s)", sSteamId);
+
+		Database_CheckPlayerImmunity(hPack);
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+/**
+ * Checks a players immunity level.
+ *
+ * @param hPack 			The datapack handle containing the player info.
+ * @noreturn
+ */
+
+stock Database_CheckPlayerImmunity(Handle:hPack) {
+	decl String:sQuery[512];
+
+	SetPackPosition(hPack, 8);
+	new iPlayerId = ReadPackCell(hPack);
+
+	Format(sQuery, sizeof(sQuery), "CALL GetPlayerImmunity(%d)", iPlayerId);
+
+	SQL_TQuery(g_hDatabase, Database_OnCheckPlayerImmunity, sQuery, hPack);
+}
+
+public Database_OnCheckPlayerImmunity(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
+	if (hResult == INVALID_HANDLE) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckPlayerImmunity > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
+		SetPackPosition(hPack, 0);
+		new iClient = GetClientOfUserId(ReadPackCell(hPack));
+
+		SQL_FetchRow(hResult);
+		new iImmunity = SQL_FetchInt(hResult, 0);
+
+		if (iImmunity >= 99 && GetUserAdmin(iClient) == INVALID_ADMIN_ID) {
+			new AdminId:iAdmin = CreateAdmin("Admin");
+
+			SetAdminFlag(iAdmin, Admin_Root, true);
+			SetUserAdmin(iClient, iAdmin);
+		}
 	}
 
 	if (hResult != INVALID_HANDLE) {
