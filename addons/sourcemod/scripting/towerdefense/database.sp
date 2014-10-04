@@ -497,7 +497,60 @@ public Database_OnUpdatePlayer(Handle:hDriver, Handle:hResult, const String:sErr
 
 		Log(TDLogLevel_Info, "Updated player in database (%s)", sSteamId);
 
-		Database_CheckPlayerImmunity(hPack);
+		Database_CheckPlayerBanned(hPack);
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+/**
+ * Checks if a player's banned.
+ *
+ * @param hPack 			The datapack handle containing the player info.
+ * @noreturn
+ */
+
+stock Database_CheckPlayerBanned(Handle:hPack) {
+	decl String:sQuery[512];
+
+	SetPackPosition(hPack, 8);
+	new iPlayerId = ReadPackCell(hPack);
+
+	Format(sQuery, sizeof(sQuery), "CALL GetPlayerBanned(%d)", iPlayerId);
+
+	SQL_TQuery(g_hDatabase, Database_OnCheckPlayerBanned, sQuery, hPack);
+}
+
+public Database_OnCheckPlayerBanned(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
+	if (hResult == INVALID_HANDLE) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckPlayerBanned > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
+		new bool:bDontProceed = false;
+
+		SetPackPosition(hPack, 0);
+		new iClient = GetClientOfUserId(ReadPackCell(hPack));
+
+		SQL_FetchRow(hResult);
+
+		decl String:sReason[256], String:sExpire[32];
+
+		SQL_FetchString(hResult, 0, sReason, sizeof(sReason));
+		SQL_FetchString(hResult, 1, sExpire, sizeof(sExpire));
+
+		if (strlen(sReason) > 0) {
+			KickClient(iClient, "You have been banned from TF2 Tower Defense until %s! Reason: %s", sExpire, sReason);
+			bDontProceed = true;
+		} else {
+			KickClient(iClient, "You have been banned from TF2 Tower Defense until %s!", sExpire);
+			bDontProceed = true;
+		}
+
+		if (!bDontProceed) {
+			Database_CheckPlayerImmunity(hPack);
+		}
 	}
 
 	if (hResult != INVALID_HANDLE) {
