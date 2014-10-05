@@ -34,7 +34,7 @@ stock Database_Connect() {
 		CloseHandle(hKeyValues);
 
 		if (g_hDatabase == INVALID_HANDLE) {
-			LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to connect to the database! Error: %s", sError);
+			Log(TDLogLevel_Error, "Failed to connect to the database! Error: %s", sError);
 		} else {
 			Log(TDLogLevel_Info, "Successfully connected to the database");
 
@@ -78,7 +78,7 @@ stock Database_CheckServer() {
 
 public Database_OnCheckServer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckServer > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_CheckServer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult) == 0) {
 		// No server found, add it
 
@@ -113,8 +113,8 @@ stock Database_AddServer() {
 
 public Database_OnAddServer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_AddServer > Error: %s", sError);
-	} else {
+		Log(TDLogLevel_Error, "Query failed at Database_AddServer > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
 		Log(TDLogLevel_Info, "Added server to database (%s:%d)", m_sServerIp, m_iServerPort);
 		
 		SQL_FetchRow(hResult);
@@ -154,7 +154,7 @@ stock Database_UpdateServer() {
 
 public Database_OnUpdateServer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_UpdateServer > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_UpdateServer > Error: %s", sError);
 	} else {
 		decl String:sQuery[128];
 		decl String:sCurrentMap[PLATFORM_MAX_PATH];
@@ -166,7 +166,7 @@ public Database_OnUpdateServer(Handle:hDriver, Handle:hResult, const String:sErr
 			SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 1);
 		} else if (iData == 1) {
 			if (SQL_GetRowCount(hResult) == 0) {
-				LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Map \"%s\" is not supported, thus Tower Defense has been disabled.", sCurrentMap);
+				Log(TDLogLevel_Error, "Map \"%s\" is not supported, thus Tower Defense has been disabled.", sCurrentMap);
 				
 				g_bEnabled = false;
 				UpdateGameDescription();
@@ -216,7 +216,7 @@ stock Database_CheckForDelete() {
 
 public Database_OnCheckForDelete(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckForDelete > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_CheckForDelete > Error: %s", sError);
 	} else {
 		SQL_FetchRow(hResult);
 
@@ -235,8 +235,82 @@ public Database_OnCheckForDelete(Handle:hDriver, Handle:hResult, const String:sE
 				}
 			}
 		} else {
-			Database_CheckServerVerified();
+			Database_CheckServerSettings();
 		}
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+/**
+ * Checks for the servers settings.
+ *
+ * @noreturn
+ */
+
+stock Database_CheckServerSettings() {
+	decl String:sQuery[128];
+
+	Format(sQuery, sizeof(sQuery), "CALL GetServerSettings(%d)", m_iServerId);
+
+	SQL_TQuery(g_hDatabase, Database_OnCheckServerSettings, sQuery);
+}
+
+public Database_OnCheckServerSettings(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_CheckServerSettings > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
+		SQL_FetchRow(hResult);
+
+		decl String:sLockable[32];
+		SQL_FetchString(hResult, 0, sLockable, sizeof(sLockable));
+
+		if (StrEqual(sLockable, "not lockable")) {
+			
+		} else if (StrEqual(sLockable, "lockable")) {
+			
+		}
+
+		decl String:sLogLevel[32];
+		SQL_FetchString(hResult, 1, sLogLevel, sizeof(sLogLevel));
+		
+		new TDLogLevel:iLogLevel;
+
+		if (StrEqual(sLogLevel, "None")) {
+			iLogLevel = TDLogLevel_None;
+		} else if (StrEqual(sLogLevel, "Error")) {
+			iLogLevel = TDLogLevel_Error;
+		} else if (StrEqual(sLogLevel, "Warning")) {
+			iLogLevel = TDLogLevel_Warning;
+		} else if (StrEqual(sLogLevel, "Info")) {
+			iLogLevel = TDLogLevel_Info;
+		} else if (StrEqual(sLogLevel, "Debug")) {
+			iLogLevel = TDLogLevel_Debug;
+		} else if (StrEqual(sLogLevel, "Trace")) {
+			iLogLevel = TDLogLevel_Trace;
+		}
+
+		decl String:sLogType[32];
+		SQL_FetchString(hResult, 2, sLogType, sizeof(sLogType));
+
+		new TDLogType:iLogType;
+
+		if (StrEqual(sLogType, "File")) {
+			iLogType = TDLogType_File;
+		} else if (StrEqual(sLogType, "Console")) {
+			iLogType = TDLogType_Console;
+		} else if (StrEqual(sLogType, "File and console")) {
+			iLogType = TDLogType_FileAndConsole;
+		}
+
+		Log_Initialize(iLogLevel, iLogType);
+
+		Database_CheckServerVerified();
+	} else {
+		Database_CheckServerVerified();
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -251,7 +325,7 @@ public Database_OnCheckForDelete(Handle:hDriver, Handle:hResult, const String:sE
  * @noreturn
  */
 
-public Database_CheckServerVerified() {
+stock Database_CheckServerVerified() {
 	decl String:sQuery[128];
 
 	Format(sQuery, sizeof(sQuery), "CALL GetServerVerified(%d)", m_iServerId);
@@ -261,8 +335,8 @@ public Database_CheckServerVerified() {
 
 public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckServerVerified > Error: %s", sError);
-	} else {
+		Log(TDLogLevel_Error, "Query failed at Database_CheckServerVerified > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
 
 		decl String:sVerfied[32];
@@ -271,7 +345,7 @@ public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const Stri
 		if (StrEqual(sVerfied, "verified")) {
 			Database_CheckForUpdates();
 		} else {
-			LogType(TDLogLevel_Warning, TDLogType_FileAndConsole, "Your server is not verified, please contact us at tf2td.net or on Steam");
+			Log(TDLogLevel_Warning, "Your server is not verified, please contact us at tf2td.net or on Steam");
 
 			decl String:sFile[PLATFORM_MAX_PATH];
 			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
@@ -301,8 +375,8 @@ stock Database_CheckForUpdates() {
 
 public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckForUpdates > Error: %s", sError);
-	} else {
+		Log(TDLogLevel_Error, "Query failed at Database_CheckForUpdates > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
 
 		decl String:sUrl[256];
@@ -341,7 +415,7 @@ stock bool:Database_UpdatedServer() {
 	if (hQuery == INVALID_HANDLE) {
 		decl String:sError[256];
 		SQL_GetError(g_hDatabase, sError, sizeof(sError));
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_UpdatedServer > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatedServer > Error: %s", sError);
 
 		SQL_UnlockDatabase(g_hDatabase);
 		return false;
@@ -383,7 +457,7 @@ stock Database_CheckPlayer(iClient, const String:sSteamId[]) {
 
 public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckPlayer > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult) == 0) {
 		// No player found, add it
 
@@ -428,8 +502,8 @@ stock Database_AddPlayer(Handle:hPack) {
 
 public Database_OnAddPlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_AddPlayer > Error: %s", sError);
-	} else {
+		Log(TDLogLevel_Error, "Query failed at Database_AddPlayer > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
 		SetPackPosition(hPack, 16);
 
 		decl String:sSteamId[32];
@@ -488,8 +562,8 @@ stock Database_UpdatePlayer(Handle:hPack) {
 
 public Database_OnUpdatePlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_UpdatePlayer > Error: %s", sError);
-	} else {
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
 
 		decl String:sSteamId[32];
@@ -526,7 +600,7 @@ stock Database_CheckPlayerBanned(Handle:hPack) {
 
 public Database_OnCheckPlayerBanned(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckPlayerBanned > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerBanned > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		new bool:bDontProceed = false;
 
@@ -579,7 +653,7 @@ stock Database_CheckPlayerImmunity(Handle:hPack) {
 
 public Database_OnCheckPlayerImmunity(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_CheckPlayerImmunity > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerImmunity > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		SetPackPosition(hPack, 0);
 		new iClient = GetClientOfUserId(ReadPackCell(hPack));
@@ -621,7 +695,7 @@ stock Database_LoadTowers() {
 
 public Database_OnLoadTowers(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_LoadTowers > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_LoadTowers > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		new iTowerId = 0, iTowerLevel = 0;
 		decl String:sKey[64], String:sBuffer[128];
@@ -759,7 +833,7 @@ stock Database_LoadWeapons() {
 
 public Database_OnLoadWeapons(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_LoadWeapons > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_LoadWeapons > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		new iWeaponId = 1;
 		decl String:sKey[64], String:sBuffer[128];
@@ -847,7 +921,7 @@ stock Database_LoadWaves() {
 
 public Database_OnLoadWaves(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_LoadWaves > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_LoadWaves > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		new iWaveId = 0;
 		decl String:sKey[64], String:sBuffer[128];
@@ -925,7 +999,7 @@ stock Database_LoadMetalpacks() {
 
 public Database_OnLoadMetalpacks(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Query failed at Database_LoadMetalpacks > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_LoadMetalpacks > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		new iMetalpackId = 0;
 		decl String:sKey[64], String:sBuffer[128];

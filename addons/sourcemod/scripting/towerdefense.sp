@@ -86,7 +86,7 @@ public APLRes:AskPluginLoad2(Handle:hMyself, bool:bLate, String:sError[], iMaxLe
 public OnPluginStart() {
 	PrintToServer("%s Loaded %s %s by %s", PLUGIN_PREFIX, PLUGIN_NAME, PLUGIN_VERSION, PLUGIN_AUTHOR);
 
-	Log_Initialize(TDLogLevel_Debug, TDLogType_Console);
+	Log_Initialize(TDLogLevel_Info, TDLogType_Console);
 
 	if (g_hMapTowers != INVALID_HANDLE) {
 		CloseHandle(g_hMapTowers);
