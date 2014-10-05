@@ -343,7 +343,7 @@ public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const Stri
 		SQL_FetchString(hResult, 0, sVerfied, sizeof(sVerfied));
 
 		if (StrEqual(sVerfied, "verified")) {
-			Database_CheckForUpdates();
+			Database_CheckServerConfig();
 		} else {
 			Log(TDLogLevel_Warning, "Your server is not verified, please contact us at tf2td.net or on Steam");
 
@@ -351,6 +351,41 @@ public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const Stri
 			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
 			ServerCommand("sm plugins unload %s", sFile);
 		}
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+/**
+ * Checks for the servers config.
+ *
+ * @noreturn
+ */
+
+stock Database_CheckServerConfig() {
+	decl String:sQuery[128];
+
+	Format(sQuery, sizeof(sQuery), "CALL GetServerConfig(%d)", m_iServerId);
+
+	SQL_TQuery(g_hDatabase, Database_OnCheckServerConfig, sQuery);
+}
+
+public Database_OnCheckServerConfig(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_CheckServerConfig > Error: %s", sError);
+	} else {
+		decl String:sCommand[260];
+
+		while (SQL_FetchRow(hResult)) {
+			SQL_FetchString(hResult, 0, sCommand, sizeof(sCommand));
+
+			ServerCommand("%s", sCommand);
+		}
+		
+		Database_CheckForUpdates();
 	}
 
 	if (hResult != INVALID_HANDLE) {
