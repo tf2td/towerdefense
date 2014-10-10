@@ -59,6 +59,7 @@ public Plugin:myinfo =
 
 #include "towerdefense/handler/corners.sp"
 #include "towerdefense/handler/metalpacks.sp"
+#include "towerdefense/handler/panels.sp"
 #include "towerdefense/handler/towers.sp"
 #include "towerdefense/handler/waves.sp"
 #include "towerdefense/handler/weapons.sp"

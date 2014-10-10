@@ -170,6 +170,11 @@ stock Wave_OnDeathAll() {
 	PrintToChatAll("\x01You have \x04%d seconds\x01 to prepare for the next wave!", g_iRespawnWaveTime);
 
 	Log(TDLogLevel_Info, "Passed wave %d", g_iCurrentWave);
+
+	if (Panel_Remove(g_iCurrentWave)) {
+		PrintToChatAll("\x04New bonus (wave %d) available, see buy panel!", g_iCurrentWave);
+		Log(TDLogLevel_Debug, "New bonus available (Wave: %d)", g_iCurrentWave);
+	}
 }
 
 /**
