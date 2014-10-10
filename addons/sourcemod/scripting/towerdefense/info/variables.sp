@@ -22,7 +22,6 @@ new bool:g_bTowerDefenseMap;
 
 /*==========  Handle  ==========*/
 
-new Handle:g_hDatabase;
 new Handle:g_hEnabled;
 
 /*==========  Float  ==========*/
@@ -35,6 +34,30 @@ new g_iLaserMaterial;
 new g_iMetalPackCount;
 
 /*==========  String  ==========*/
+
+
+
+/*==========================================
+=            Database Variables            =
+==========================================*/
+
+/*==========  Boolean  ==========*/
+
+/*==========  Handle  ==========*/
+
+new Handle:g_hDatabase;
+
+/*==========  Float  ==========*/
+
+/*==========  Integer  ==========*/
+
+new g_iServerId;
+new g_iServerMap;
+new g_iServerPort;
+
+/*==========  String  ==========*/
+
+new String:g_sServerIp[16];
 
 
 

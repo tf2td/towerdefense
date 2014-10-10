@@ -64,8 +64,11 @@ public Plugin:myinfo =
 #include "towerdefense/handler/waves.sp"
 #include "towerdefense/handler/weapons.sp"
 
+#include "towerdefense/database/general.sp"
+#include "towerdefense/database/player.sp"
+#include "towerdefense/database/server.sp"
+
 #include "towerdefense/commands.sp"
-#include "towerdefense/database.sp"
 #include "towerdefense/events.sp"
 #include "towerdefense/timers.sp"
 #include "towerdefense/updater.sp"
