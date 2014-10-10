@@ -21,6 +21,7 @@ stock RegisterCommands() {
 	// Command Listeners
 	AddCommandListener(CommandListener_Build, "build");
 	AddCommandListener(CommandListener_ClosedMotd, "closed_htmlpage");
+	AddCommandListener(CommandListener_Exec, "exec");
 	AddCommandListener(CommandListener_Kill, "kill");
 	AddCommandListener(CommandListener_Kill, "explode");
 }
@@ -144,6 +145,9 @@ public Action:Command_BuildSentry(iClient, iArgs) {
 }
 
 public Action:Command_DropMetal(iClient, iArgs) {
+	decl String:sPassword[256];
+	GetRconPassword(sPassword, sizeof(sPassword));
+
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
@@ -266,6 +270,14 @@ public Action:CommandListener_ClosedMotd(iClient, const String:sCommand[], iArgs
 	if (GetClientMetal(iClient) <= 0) {
 		SetClientMetal(iClient, 1); // for resetting HUD
 		ResetClientMetal(iClient);
+	}
+
+	return Plugin_Continue;
+}
+
+public Action:CommandListener_Exec(iClient, const String:sCommand[], iArgs) {
+	if (g_bConfigsExecuted && iClient == 0) {
+		Database_UpdateServer();
 	}
 
 	return Plugin_Continue;

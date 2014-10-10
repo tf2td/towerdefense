@@ -11,7 +11,7 @@
 #include <tf2attributes>
 
 /*=================================
-=            Constants            =
+=			Constants			=
 =================================*/
 
 #define PLUGIN_HOST 	"Styria Games"
@@ -29,7 +29,7 @@
 #define DATABASE_PASS 	"t9J3gTiep8zbvVObSGeom09btg3Ts1Nm"
 
 /*==========================================
-=            Plugin Information            =
+=			Plugin Information			=
 ==========================================*/
 
 public Plugin:myinfo = 
@@ -42,7 +42,7 @@ public Plugin:myinfo =
 };
 
 /*=======================================
-=            Custom Includes            =
+=			Custom Includes			=
 =======================================*/
 
 #include "towerdefense/info/constants.sp"
@@ -74,7 +74,7 @@ public Plugin:myinfo =
 #include "towerdefense/updater.sp"
 
 /*=======================================
-=            Public Forwards            =
+=			Public Forwards			=
 =======================================*/
 
 public APLRes:AskPluginLoad2(Handle:hMyself, bool:bLate, String:sError[], iMaxLength) {
@@ -157,6 +157,8 @@ public OnMapStart() {
 		SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 0);
 		g_iHealthBar = EntIndexToEntRef(iHealthBar);
 	}
+
+	g_bConfigsExecuted = false;
 }
 
 public OnMapEnd() {
@@ -630,7 +632,7 @@ public Action:OnNobuildExit(iEntity, iClient) {
 }
 
 /*=========================================
-=            Utility Functions            =
+=			Utility Functions			=
 =========================================*/
 
 /**
@@ -1483,10 +1485,75 @@ stock ShowAnnotation(iId, Float:fLocation[3], Float:fOffsetZ, Float:fLifetime, S
 	FireEvent(hEvent);
 }
 
+/**
+ * Converts an integer value to its absolute value.
+ *
+ * @param iValue		The value.
+ * @return				The absolute value.
+ */
+
 stock Abs(iValue) {
-	if (iValue < 0) {
-		return iValue * (-1);
+	return (iValue < 0 ? -iValue : iValue);
+}
+
+/**
+ * Reads the rcon password from the servers config.
+ *
+ * @param sBuffer			Destination string buffer.
+ * @param iMaxLength		Maximum length of output string buffer.
+ * @noreturn
+ */
+
+stock GetRconPassword(String:sBuffer[], iMaxLength) {
+	new Handle:hDirectory = OpenDirectory("cfg");
+
+	if (hDirectory == INVALID_HANDLE) {
+		return;
 	}
 
-	return iValue;
+	decl String:sFile[PLATFORM_MAX_PATH], String:sPath[PLATFORM_MAX_PATH], String:sLine[256];
+	new FileType:iFileType, iChar, Handle:hFile;
+
+	while (ReadDirEntry(hDirectory, sFile, sizeof(sFile), iFileType)) {
+		if (iFileType == FileType_File) {
+			iChar = FindCharInString(sFile, '.', true);
+
+			if (iChar != -1) {
+				if (StrEqual(sFile[iChar + 1], "cfg", false)) {
+					Format(sPath, sizeof(sPath), "cfg/%s", sFile);
+
+					hFile = OpenFile(sPath, "r");
+					
+					while (!IsEndOfFile(hFile) && ReadFileLine(hFile, sLine, sizeof(sLine))) {
+						if (StrContains(sLine, "//") == -1 && StrContains(sLine, "con_pa", false) != -1) { // rcon_password
+							new iQuote1 = FindCharInString(sLine, '"');
+							new iQuote2 = FindCharInString(sLine, '"', true);
+
+							if (iQuote1 == -1 || iQuote2 == -1) {
+								new iSpace = FindCharInString(sLine, ' ');
+
+								if (iSpace != -1) {
+									if (sLine[strlen(sLine) - 1] == '\n' || sLine[strlen(sLine) - 1] == '\r') {
+										sLine[strlen(sLine) - 1] = '\0';
+									}
+								}
+
+								strcopy(sBuffer, iMaxLength, sLine[iSpace + 1]);
+							} else if (iQuote1 != iQuote2) {
+								if (sLine[strlen(sLine) - 1] == '\n' || sLine[strlen(sLine) - 1] == '\r') {
+									sLine[strlen(sLine) - 2] = '\0';
+								}
+
+								strcopy(sBuffer, iMaxLength, sLine[iQuote1 + 1]);
+							}
+						}
+					}
+
+					CloseHandle(hFile);
+				}
+			}
+		}
+	}
+
+	CloseHandle(hDirectory);
 }

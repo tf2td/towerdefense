@@ -14,6 +14,7 @@ new Handle:g_hMapMetalpacks;
 
 /*==========  Boolean  ==========*/
 
+new bool:g_bConfigsExecuted;
 new bool:g_bEnabled;
 new bool:g_bMapRunning;
 new bool:g_bSteamTools;

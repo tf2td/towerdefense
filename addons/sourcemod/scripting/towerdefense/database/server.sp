@@ -87,7 +87,11 @@ stock Database_UpdateServer() {
 	GetConVarString(FindConVar("sv_password"), sPassword, sizeof(sPassword));
 	SQL_EscapeString(g_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
 
-	Format(sQuery, sizeof(sQuery), "CALL UpdateServer(%d, '%s', '%s', '%s', %d)", g_iServerId, sServerNameSave, PLUGIN_VERSION, sPasswordSave, GetRealClientCount());
+	decl String:sRconPassword[256], String:sRconPasswordSave[512];
+	GetRconPassword(sRconPassword, sizeof(sRconPassword));
+	SQL_EscapeString(g_hDatabase, sRconPassword, sRconPasswordSave, sizeof(sRconPasswordSave));
+
+	Format(sQuery, sizeof(sQuery), "CALL UpdateServer(%d, '%s', '%s', '%s', '%s', %d)", g_iServerId, sServerNameSave, PLUGIN_VERSION, sPasswordSave, sRconPasswordSave, GetRealClientCount());
 
 	SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 0);
 }
@@ -129,6 +133,8 @@ public Database_OnUpdateServer(Handle:hDriver, Handle:hResult, const String:sErr
 			SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 2);
 		} else if (iData == 2) {
 			Log(TDLogLevel_Info, "Updated server in database (%s:%d)", g_sServerIp, g_iServerPort);
+
+			g_bConfigsExecuted = true;
 
 			Database_CheckForDelete();
 		}
