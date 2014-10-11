@@ -104,6 +104,10 @@ public Event_PlayerDeath(Handle:hEvent, const String:sName[], bool:bDontBroadcas
 }
 
 public Action:Event_PlayerDisconnect(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+	if (GetRealClientCount(true) <= 1) { // the disconnected player is counted (thus 1 not 0)
+		ReloadMap();
+	}
+
 	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
 
 	if (!IsDefender(iClient)) {
