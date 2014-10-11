@@ -142,47 +142,42 @@ public Database_OnLoadTowers(Handle:hDriver, Handle:hResult, const String:sError
 
 			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 9));
 
-			// Save tower level attack primary
-			Format(sKey, sizeof(sKey), "%d_%d_attack_primary", iTowerId, iTowerLevel);
-			SetTrieValue(g_hMapTowers, sKey, SQL_FetchInt(hResult, 10));
+			// Save tower level attack mode
+			Format(sKey, sizeof(sKey), "%d_%d_attack", iTowerId, iTowerLevel);
+			SQL_FetchString(hResult, 10, sBuffer, sizeof(sBuffer));
+			SetTrieString(g_hMapTowers, sKey, sBuffer);
 
-			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 10));
+			// PrintToServer("%s => %s", sKey, sBuffer);
 
-			// Save tower level attack secondary
-			Format(sKey, sizeof(sKey), "%d_%d_attack_secondary", iTowerId, iTowerLevel);
+			// Save tower level rotate
+			Format(sKey, sizeof(sKey), "%d_%d_rotate", iTowerId, iTowerLevel);
 			SetTrieValue(g_hMapTowers, sKey, SQL_FetchInt(hResult, 11));
 
 			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 11));
 
-			// Save tower level rotate
-			Format(sKey, sizeof(sKey), "%d_%d_rotate", iTowerId, iTowerLevel);
+			// Save tower level pitch
+			Format(sKey, sizeof(sKey), "%d_%d_pitch", iTowerId, iTowerLevel);
 			SetTrieValue(g_hMapTowers, sKey, SQL_FetchInt(hResult, 12));
 
 			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 12));
 
-			// Save tower level pitch
-			Format(sKey, sizeof(sKey), "%d_%d_pitch", iTowerId, iTowerLevel);
-			SetTrieValue(g_hMapTowers, sKey, SQL_FetchInt(hResult, 13));
-
-			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 13));
-
 			// Save tower level damage
 			Format(sKey, sizeof(sKey), "%d_%d_damage", iTowerId, iTowerLevel);
+			SetTrieValue(g_hMapTowers, sKey, SQL_FetchFloat(hResult, 13));
+
+			// PrintToServer("%s => %f", sKey, SQL_FetchFloat(hResult, 13));
+
+			// Save tower level attackspeed
+			Format(sKey, sizeof(sKey), "%d_%d_attackspeed", iTowerId, iTowerLevel);
 			SetTrieValue(g_hMapTowers, sKey, SQL_FetchFloat(hResult, 14));
 
 			// PrintToServer("%s => %f", sKey, SQL_FetchFloat(hResult, 14));
 
-			// Save tower level attackspeed
-			Format(sKey, sizeof(sKey), "%d_%d_attackspeed", iTowerId, iTowerLevel);
+			// Save tower level area
+			Format(sKey, sizeof(sKey), "%d_%d_area", iTowerId, iTowerLevel);
 			SetTrieValue(g_hMapTowers, sKey, SQL_FetchFloat(hResult, 15));
 
 			// PrintToServer("%s => %f", sKey, SQL_FetchFloat(hResult, 15));
-
-			// Save tower level area
-			Format(sKey, sizeof(sKey), "%d_%d_area", iTowerId, iTowerLevel);
-			SetTrieValue(g_hMapTowers, sKey, SQL_FetchFloat(hResult, 16));
-
-			// PrintToServer("%s => %f", sKey, SQL_FetchFloat(hResult, 16));
 		}
 	}
 

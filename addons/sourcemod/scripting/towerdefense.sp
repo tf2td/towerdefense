@@ -11,7 +11,7 @@
 #include <tf2attributes>
 
 /*=================================
-=			Constants			=
+=            Constants            =
 =================================*/
 
 #define PLUGIN_HOST 	"Styria Games"
@@ -29,7 +29,7 @@
 #define DATABASE_PASS 	"t9J3gTiep8zbvVObSGeom09btg3Ts1Nm"
 
 /*==========================================
-=			Plugin Information			=
+=            Plugin Information            =
 ==========================================*/
 
 public Plugin:myinfo = 
@@ -42,7 +42,7 @@ public Plugin:myinfo =
 };
 
 /*=======================================
-=			Custom Includes			=
+=            Custom Includes            =
 =======================================*/
 
 #include "towerdefense/info/constants.sp"
@@ -74,7 +74,7 @@ public Plugin:myinfo =
 #include "towerdefense/updater.sp"
 
 /*=======================================
-=			Public Forwards			=
+=            Public Forwards            =
 =======================================*/
 
 public APLRes:AskPluginLoad2(Handle:hMyself, bool:bLate, String:sError[], iMaxLength) {
@@ -632,7 +632,7 @@ public Action:OnNobuildExit(iEntity, iClient) {
 }
 
 /*=========================================
-=			Utility Functions			=
+=            Utility Functions            =
 =========================================*/
 
 /**

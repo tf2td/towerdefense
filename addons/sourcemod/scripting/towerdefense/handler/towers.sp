@@ -770,14 +770,14 @@ stock bool:Tower_GetAttackPrimary(TDTowerId:iTowerId) {
 
 	if (IsTower(iTower)) {
 		decl String:sKey[32];
-		Format(sKey, sizeof(sKey), "%d_%d_attack_primary", _:iTowerId, g_iUpgradeLevel[iTower]);
+		Format(sKey, sizeof(sKey), "%d_%d_attack", _:iTowerId, g_iUpgradeLevel[iTower]);
 
-		new iAttack = 0;
-		if (!GetTrieValue(g_hMapTowers, sKey, iAttack)) {
+		decl String:sAttackMode[64];
+		if (!GetTrieString(g_hMapTowers, sKey, sAttackMode, sizeof(sAttackMode))) {
 			return false;
 		}
 
-		return (iAttack != 0);
+		return StrEqual(sAttackMode, "Primary");
 	}
 
 	return false;
@@ -795,14 +795,14 @@ stock bool:Tower_GetAttackSecondary(TDTowerId:iTowerId) {
 
 	if (IsTower(iTower)) {
 		decl String:sKey[32];
-		Format(sKey, sizeof(sKey), "%d_%d_attack_secondary", _:iTowerId, g_iUpgradeLevel[iTower]);
+		Format(sKey, sizeof(sKey), "%d_%d_attack", _:iTowerId, g_iUpgradeLevel[iTower]);
 
-		new iAttack = 0;
-		if (!GetTrieValue(g_hMapTowers, sKey, iAttack)) {
+		decl String:sAttackMode[64];
+		if (!GetTrieString(g_hMapTowers, sKey, sAttackMode, sizeof(sAttackMode))) {
 			return false;
 		}
 
-		return (iAttack != 0);
+		return StrEqual(sAttackMode, "Secondary");
 	}
 
 	return false;
