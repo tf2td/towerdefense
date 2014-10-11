@@ -16,6 +16,7 @@ new Handle:g_hMapMetalpacks;
 
 new bool:g_bConfigsExecuted;
 new bool:g_bEnabled;
+new bool:g_bLockable;
 new bool:g_bMapRunning;
 new bool:g_bSteamTools;
 new bool:g_bTF2Attributes;

@@ -215,9 +215,9 @@ public Database_OnCheckServerSettings(Handle:hDriver, Handle:hResult, const Stri
 		SQL_FetchString(hResult, 0, sLockable, sizeof(sLockable));
 
 		if (StrEqual(sLockable, "not lockable")) {
-			
+			g_bLockable = false;
 		} else if (StrEqual(sLockable, "lockable")) {
-			
+			g_bLockable = true;
 		}
 
 		decl String:sLogLevel[32];
@@ -384,6 +384,12 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
 	}
 }
 
+/**
+ * Tells the database that the servers plugin got updated.
+ *
+ * @return				True on success, false ontherwise.
+ */
+
 stock bool:Database_UpdatedServer() {
 	decl String:sQuery[128];
 
@@ -408,4 +414,52 @@ stock bool:Database_UpdatedServer() {
 	CloseHandle(hQuery);
 
 	return bResult;
+}
+
+/**
+ * Sets the servers password in the database.
+ *
+ * @param sPassword 	The password to set.
+ * @param bReloadMap 	Reload map afterwards.
+ * @return				True on success, false ontherwise.
+ */
+
+stock Database_SetServerPassword(const String:sPassword[], bool:bReloadMap) {
+	decl String:sQuery[128];
+
+	decl String:sPasswordSave[64];
+	SQL_EscapeString(g_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
+
+	Format(sQuery, sizeof(sQuery), "CALL SetServerPassword(%d, '%s')", g_iServerId, sPasswordSave);
+
+	new Handle:hPack = CreateDataPack();
+
+	WritePackCell(hPack, bReloadMap ? 1 : 0);
+	WritePackString(hPack, sPassword);
+
+	SQL_TQuery(g_hDatabase, Database_OnSetServerPassword, sQuery, hPack);
+}
+
+public Database_OnSetServerPassword(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_OnSetServerPassword > Error: %s", sError);
+	} else {
+		ResetPack(hPack);
+
+		new bool:bReloadMap = (ReadPackCell(hPack) == 0 ? false : true);
+
+		decl String:sPassword[32];
+		ReadPackString(hPack, sPassword, sizeof(sPassword));
+
+		Log(TDLogLevel_Debug, "Set server password to \"%s\"", sPassword);
+
+		if (bReloadMap) {
+			ReloadMap();
+		}
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
 }

@@ -15,6 +15,7 @@
 =================================*/
 
 #define PLUGIN_HOST 	"Styria Games"
+#define SERVER_PASS 	"toPsecret"
 
 #define PLUGIN_NAME		"TF2 Tower Defense"
 #define PLUGIN_AUTHOR	"floube"
@@ -90,7 +91,7 @@ public APLRes:AskPluginLoad2(Handle:hMyself, bool:bLate, String:sError[], iMaxLe
 public OnPluginStart() {
 	PrintToServer("%s Loaded %s %s by %s", PLUGIN_PREFIX, PLUGIN_NAME, PLUGIN_VERSION, PLUGIN_AUTHOR);
 
-	Log_Initialize(TDLogLevel_Info, TDLogType_Console);
+	Log_Initialize(TDLogLevel_Debug, TDLogType_Console);
 
 	if (g_hMapTowers != INVALID_HANDLE) {
 		CloseHandle(g_hMapTowers);
@@ -214,6 +215,8 @@ public OnConfigsExecuted() {
 	if (IsValidEntity(iHealthBar)) {
 		SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 0);
 	}
+
+	SetPassword(SERVER_PASS, false);
 
 	Database_Connect();
 }
@@ -1556,4 +1559,23 @@ stock GetRconPassword(String:sBuffer[], iMaxLength) {
 	}
 
 	CloseHandle(hDirectory);
+}
+
+/**
+ * Sets the servers password.
+ *
+ * @param sPassword 	The password to set.
+ * @param bDatabase 	Save the password in the database.
+ * @param bReloadMap 	Reload map afterwards.
+ * @return				True on success, false ontherwise.
+ */
+
+stock SetPassword(const String:sPassword[], bool:bDatabase=true, bool:bReloadMap=false) {
+	ServerCommand("sv_password \"%s\"", sPassword);
+	
+	if (bDatabase) {
+		Database_SetServerPassword(sPassword, bReloadMap);
+	} else {
+		Log(TDLogLevel_Debug, "Set server password to \"%s\"", sPassword);
+	}
 }

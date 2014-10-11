@@ -7,8 +7,9 @@ stock RegisterCommands() {
 	RegAdminCmd("sm_gm", Command_GiveMetal, ADMFLAG_ROOT);
 	RegAdminCmd("sm_r", Command_ReloadMap, ADMFLAG_ROOT);
 
-	// Start Round
+	// Temporary commands
 	RegAdminCmd("sm_pregame", Command_PreGame, ADMFLAG_ROOT);
+	RegAdminCmd("sm_password", Command_Password, ADMFLAG_ROOT);
 
 	// Client Commands
 	RegConsoleCmd("sm_s", Command_BuildSentry);
@@ -90,6 +91,36 @@ public Action:Command_PreGame(iClient, iArgs) {
 	while ((iEntity = FindEntityByClassname(iEntity, "func_nobuild")) != -1) {
 		SDKHook(iEntity, SDKHook_StartTouch, OnNobuildEnter);
 		SDKHook(iEntity, SDKHook_EndTouch, OnNobuildExit);
+	}
+	
+	return Plugin_Handled;
+}
+
+public Action:Command_Password(iClient, iArgs) {
+	if (g_bLockable) {
+		decl String:sPassword[8];
+
+		for (new i = 0; i < 4; i++) {
+			switch (GetRandomInt(0, 2)) {
+				case 0: {
+					sPassword[i] = GetRandomInt('1', '9');
+				}
+
+				case 1, 2: {
+					sPassword[i] = GetRandomInt('a', 'z');
+				}
+			}
+		}
+
+		sPassword[4] = '\0';
+
+		PrintToChatAll("\x01Set the server password to \x04%s", sPassword);
+		PrintToChatAll("\x01If you want your friends to join, tell them the password.");
+		PrintToChatAll("\x01Write \x04!p\x01 to see the password again.");
+
+		SetPassword(sPassword);
+	} else {
+		PrintToChatAll("This server can't be locked!");
 	}
 	
 	return Plugin_Handled;
