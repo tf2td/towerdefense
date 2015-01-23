@@ -421,7 +421,7 @@ stock bool:Database_UpdatedServer() {
  *
  * @param sPassword 	The password to set.
  * @param bReloadMap 	Reload map afterwards.
- * @return				True on success, false ontherwise.
+ * @noreturn
  */
 
 stock Database_SetServerPassword(const String:sPassword[], bool:bReloadMap) {
@@ -442,7 +442,7 @@ stock Database_SetServerPassword(const String:sPassword[], bool:bReloadMap) {
 
 public Database_OnSetServerPassword(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
-		Log(TDLogLevel_Error, "Query failed at Database_OnSetServerPassword > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_SetServerPassword > Error: %s", sError);
 	} else {
 		ResetPack(hPack);
 
