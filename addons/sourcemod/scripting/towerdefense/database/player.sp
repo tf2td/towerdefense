@@ -58,7 +58,7 @@ public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sErro
 /**
  * Adds a player.
  *
- * @param hPack 			The datapack handle cotherwiseaining the player info.
+ * @param hPack 			The datapack handle containing the player info.
  * @noreturn
  */
 
@@ -102,7 +102,7 @@ public Database_OnAddPlayer(Handle:hDriver, Handle:hResult, const String:sError[
 /**
  * Updates a servers info.
  *
- * @param hPack 			The datapack handle cotherwiseaining the player info.
+ * @param hPack 			The datapack handle containing the player info.
  * @noreturn
  */
 
@@ -157,7 +157,7 @@ public Database_OnUpdatePlayer(Handle:hDriver, Handle:hResult, const String:sErr
 /**
  * Checks if a player's banned.
  *
- * @param hPack 			The datapack handle cotherwiseaining the player info.
+ * @param hPack 			The datapack handle containing the player info.
  * @noreturn
  */
 
@@ -210,7 +210,7 @@ public Database_OnCheckPlayerBanned(Handle:hDriver, Handle:hResult, const String
 /**
  * Checks a players immunity level.
  *
- * @param hPack 			The datapack handle cotherwiseaining the player info.
+ * @param hPack 			The datapack handle containing the player info.
  * @noreturn
  */
 
