@@ -2,6 +2,10 @@
 
 #include <sourcemod>
 
+#define PLAYER_USER_ID 		 0
+#define PLAYER_DATABASE_ID 	 8
+#define PLAYER_STEAM_ID 	16
+
 /**
  * Checks if a player already exists.
  *
@@ -35,7 +39,7 @@ public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sErro
 	} else if (SQL_GetRowCount(hResult) == 0) {
 		// No player found, add it
 
-		SetPackPosition(hPack, 16);
+		SetPackPosition(hPack, PLAYER_STEAM_ID);
 		decl String:sSteamId[32];
 		ReadPackString(hPack, sSteamId, sizeof(sSteamId));
 
@@ -43,7 +47,7 @@ public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sErro
 	} else {
 		SQL_FetchRow(hResult);
 
-		SetPackPosition(hPack, 8);
+		SetPackPosition(hPack, PLAYER_DATABASE_ID);
 		WritePackCell(hPack, SQL_FetchInt(hResult, 0));
 
 		Database_UpdatePlayer(hPack);
@@ -66,7 +70,7 @@ stock Database_AddPlayer(Handle:hPack) {
 	decl String:sQuery[512];
 	decl String:sSteamId[32];
 
-	SetPackPosition(hPack, 16);
+	SetPackPosition(hPack, PLAYER_STEAM_ID);
 	ReadPackString(hPack, sSteamId, sizeof(sSteamId));
 
 	Format(sQuery, sizeof(sQuery), "CALL AddPlayer('%s', %d)", sSteamId, g_iServerId);
@@ -78,7 +82,7 @@ public Database_OnAddPlayer(Handle:hDriver, Handle:hResult, const String:sError[
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_AddPlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		SetPackPosition(hPack, 16);
+		SetPackPosition(hPack, PLAYER_STEAM_ID);
 
 		decl String:sSteamId[32];
 		ReadPackString(hPack, sSteamId, sizeof(sSteamId));
@@ -87,7 +91,7 @@ public Database_OnAddPlayer(Handle:hDriver, Handle:hResult, const String:sError[
 
 		SQL_FetchRow(hResult);
 		
-		SetPackPosition(hPack, 8);
+		SetPackPosition(hPack, PLAYER_DATABASE_ID);
 		WritePackCell(hPack, SQL_FetchInt(hResult, 0));
 
 		Database_UpdatePlayer(hPack);
@@ -112,7 +116,7 @@ stock Database_UpdatePlayer(Handle:hPack) {
 	decl String:sPlayerName[MAX_NAME_LENGTH + 1];
 	decl String:sPlayerNameSave[MAX_NAME_LENGTH * 2 + 1];
 
-	SetPackPosition(hPack, 0);
+	SetPackPosition(hPack, PLAYER_USER_ID);
 
 	new iClient = GetClientOfUserId(ReadPackCell(hPack));
 
@@ -125,7 +129,7 @@ stock Database_UpdatePlayer(Handle:hPack) {
 	GetClientIP(iClient, sPlayerIp, sizeof(sPlayerIp));
 	SQL_EscapeString(g_hDatabase, sPlayerIp, sPlayerIpSave, sizeof(sPlayerIpSave));
 
-	SetPackPosition(hPack, 8);
+	SetPackPosition(hPack, PLAYER_DATABASE_ID);
 
 	new iPlayerId = ReadPackCell(hPack);
 
@@ -164,7 +168,7 @@ public Database_OnUpdatePlayer(Handle:hDriver, Handle:hResult, const String:sErr
 stock Database_CheckPlayerBanned(Handle:hPack) {
 	decl String:sQuery[512];
 
-	SetPackPosition(hPack, 8);
+	SetPackPosition(hPack, PLAYER_DATABASE_ID);
 	new iPlayerId = ReadPackCell(hPack);
 
 	Format(sQuery, sizeof(sQuery), "CALL GetPlayerBanned(%d)", iPlayerId);
@@ -178,7 +182,7 @@ public Database_OnCheckPlayerBanned(Handle:hDriver, Handle:hResult, const String
 	} else if (SQL_GetRowCount(hResult)) {
 		new bool:bDotherwiseProceed = false;
 
-		SetPackPosition(hPack, 0);
+		SetPackPosition(hPack, PLAYER_USER_ID);
 		new iClient = GetClientOfUserId(ReadPackCell(hPack));
 
 		SQL_FetchRow(hResult);
@@ -217,7 +221,7 @@ public Database_OnCheckPlayerBanned(Handle:hDriver, Handle:hResult, const String
 stock Database_CheckPlayerImmunity(Handle:hPack) {
 	decl String:sQuery[512];
 
-	SetPackPosition(hPack, 8);
+	SetPackPosition(hPack, PLAYER_DATABASE_ID);
 	new iPlayerId = ReadPackCell(hPack);
 
 	Format(sQuery, sizeof(sQuery), "\
@@ -234,7 +238,7 @@ public Database_OnCheckPlayerImmunity(Handle:hDriver, Handle:hResult, const Stri
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerImmunity > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		SetPackPosition(hPack, 0);
+		SetPackPosition(hPack, PLAYER_USER_ID);
 		new iClient = GetClientOfUserId(ReadPackCell(hPack));
 
 		SQL_FetchRow(hResult);
