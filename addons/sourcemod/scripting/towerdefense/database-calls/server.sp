@@ -387,7 +387,7 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
 /**
  * Tells the database that the servers plugin got updated.
  *
- * @return				True on success, false otherwise.
+ * @return				True on success, false otherwiseherwise.
  */
 
 stock bool:Database_UpdatedServer() {

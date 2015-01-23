@@ -63,17 +63,9 @@ stock Database_Connect() {
  */
 
 stock Database_LoadTowers() {
-	decl String:sQuery[512];
+	decl String:sQuery[128];
 	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `tower`.`tower_id` "a", `level` "b", `tower`.`name` "c", `class` "d", `price` "e", `teleport_tower` "f", `damagetype` "g", `description` "h", `metal` "i", `weapon_id` "j", `attack` "k", `rotate` "l", `pitch` "m", `damage` "n", `attackspeed` "o", `area` "p" \
-		FROM `tower` \
-		INNER JOIN `map` \
-			ON (`map`.`map_id` = %d) \
-		INNER JOIN `towerlevel` \
-			ON (`tower`.`tower_id` = `towerlevel`.`tower_id`) \
-		ORDER BY "c" ASC, "b" ASC \
-	", g_iServerMap);
+	Format(sQuery, sizeof(sQuery), "CALL GetTowers(%d)", g_iServerMap);
 	
 	SQL_TQuery(g_hDatabase, Database_OnLoadTowers, sQuery);
 }
@@ -204,13 +196,9 @@ public Database_OnLoadTowers(Handle:hDriver, Handle:hResult, const String:sError
  */
 
 stock Database_LoadWeapons() {
-	decl String:sQuery[256];
+	decl String:sQuery[128];
 	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `name` "a", `index` "b", (`slot` - 1) "c", `level` "d", (`quality` - 1) "e", `classname` "f", `attributes` "g", (`preserve_attributes` - 1) "h" \
-		FROM `weapon` \
-		ORDER BY `weapon_id` ASC \
-	");
+	Format(sQuery, sizeof(sQuery), "CALL GetWeapons()");
 	
 	SQL_TQuery(g_hDatabase, Database_OnLoadWeapons, sQuery);
 }
@@ -298,14 +286,7 @@ public Database_OnLoadWeapons(Handle:hDriver, Handle:hResult, const String:sErro
 stock Database_LoadWaves() {
 	decl String:sQuery[128];
 	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `wavetype` "a", `wave`.`name` "b", `class` "c", `quantity` "d", `health` "e", IF(`wavetype` & (SELECT `bit_value` FROM `wavetype` WHERE `wavetype`.`type` = 'air'), `teleport_air`, `teleport_ground`) "f" \
-		FROM `wave` \
-		INNER JOIN `map` \
-			ON (`map`.`map_id` = %d) \
-		WHERE `wave_id` >= `wave_start` AND `wave_id` <= `wave_end` \
-		ORDER BY `wave_id` ASC \
-	", g_iServerMap);
+	Format(sQuery, sizeof(sQuery), "CALL GetWaves(%d)", g_iServerMap);
 	
 	SQL_TQuery(g_hDatabase, Database_OnLoadWaves, sQuery);
 }
@@ -383,14 +364,7 @@ public Database_OnLoadWaves(Handle:hDriver, Handle:hResult, const String:sError[
 stock Database_LoadMetalpacks() {
 	decl String:sQuery[128];
 	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `type` "a", `metal` "b", `location` "c" \
-		FROM `metalpack` \
-		INNER JOIN `metalpacktype` \
-			ON (`metalpack`.`metalpacktype_id` = `metalpacktype`.`metalpacktype_id`) \
-		WHERE `map_id` = %d \
-		ORDER BY `metalpack_id` ASC; \
-	", g_iServerMap);
+	Format(sQuery, sizeof(sQuery), "CALL GetMetalpacks(%d)", g_iServerMap);
 	
 	SQL_TQuery(g_hDatabase, Database_OnLoadMetalpacks, sQuery);
 }

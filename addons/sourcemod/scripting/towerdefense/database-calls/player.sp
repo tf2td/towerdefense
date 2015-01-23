@@ -13,12 +13,7 @@
 stock Database_CheckPlayer(iClient, const String:sSteamId[]) {
 	decl String:sQuery[128];
 
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `player_id` "a" \
-		FROM `player` \
-		WHERE `player`.`steamid64` = '%s' \
-		LIMIT 1 \
-	", sSteamId);
+	Format(sQuery, sizeof(sQuery), "CALL GetPlayerInfo('%s')", sSteamId);
 
 	new Handle:hPack = CreateDataPack();
 
@@ -220,12 +215,7 @@ stock Database_CheckPlayerImmunity(Handle:hPack) {
 	SetPackPosition(hPack, 8);
 	new iPlayerId = ReadPackCell(hPack);
 
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `immunity` "a" \
-		FROM `player_immunity` \
-		WHERE `player_id` = %d \
-		LIMIT 1 \
-	", iPlayerId);
+	Format(sQuery, sizeof(sQuery), "CALL GetPlayerImmunity(%d)", iPlayerId);
 
 	SQL_TQuery(g_hDatabase, Database_OnCheckPlayerImmunity, sQuery, hPack);
 }

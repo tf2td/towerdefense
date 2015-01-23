@@ -65,9 +65,9 @@ public Plugin:myinfo =
 #include "towerdefense/handler/waves.sp"
 #include "towerdefense/handler/weapons.sp"
 
-#include "towerdefense/database/general.sp"
-#include "towerdefense/database/player.sp"
-#include "towerdefense/database/server.sp"
+#include "towerdefense/database-calls/general.sp"
+#include "towerdefense/database-calls/player.sp"
+#include "towerdefense/database-calls/server.sp"
 
 #include "towerdefense/commands.sp"
 #include "towerdefense/events.sp"
@@ -91,7 +91,7 @@ public APLRes:AskPluginLoad2(Handle:hMyself, bool:bLate, String:sError[], iMaxLe
 public OnPluginStart() {
 	PrintToServer("%s Loaded %s %s by %s", PLUGIN_PREFIX, PLUGIN_NAME, PLUGIN_VERSION, PLUGIN_AUTHOR);
 
-	Log_Initialize(TDLogLevel_Debug, TDLogType_Console);
+	Log_Initialize(TDLogLevel_Trace, TDLogType_Console);
 
 	if (g_hMapTowers != INVALID_HANDLE) {
 		CloseHandle(g_hMapTowers);
