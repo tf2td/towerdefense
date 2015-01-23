@@ -642,7 +642,7 @@ public Action:OnNobuildExit(iEntity, iClient) {
  * Checks if a client is a valid client.
  *
  * @param iClient		The clients index.
- * @return				True on success, false ontherwise.
+ * @return				True on success, false otherwise.
  */
 
 stock bool:IsValidClient(iClient) {
@@ -653,7 +653,7 @@ stock bool:IsValidClient(iClient) {
  * Checks if a client is a defender.
  *
  * @param iClient		The client.
- * @return				True on success, false ontherwise.
+ * @return				True on success, false otherwise.
  */
 
 stock bool:IsDefender(iClient) {
@@ -664,7 +664,7 @@ stock bool:IsDefender(iClient) {
  * Checks if a client is a tower.
  *
  * @param iClient		The client.
- * @return				True on success, false ontherwise.
+ * @return				True on success, false otherwise.
  */
 
 stock bool:IsTower(iClient) {
@@ -675,7 +675,7 @@ stock bool:IsTower(iClient) {
  * Checks if a client is an attacker.
  *
  * @param iClient		The client.
- * @return				True on success, false ontherwise.
+ * @return				True on success, false otherwise.
  */
 
 stock bool:IsAttacker(iClient) {
@@ -686,7 +686,7 @@ stock bool:IsAttacker(iClient) {
  * Checks if the current map is a Tower Defense map, 
  * which can either start with td_ or tf2td_.
  *
- * @return		True if the current map is a Tower Defense map, false ontherwise.
+ * @return		True if the current map is a Tower Defense map, false otherwise.
  */
 
 stock bool:IsTowerDefenseMap() {
@@ -791,7 +791,7 @@ stock GetRealClientCount(bool:bInGameOnly = false) {
  * @param iClient		The client.
  * @param iButtons		The clients current buttons.
  * @param iButton		The button to check for.
- * @return				True if pressed, false ontherwise.
+ * @return				True if pressed, false otherwise.
  */
 
 stock bool:IsButtonPressed(iClient, iButtons, iButton) { 
@@ -804,7 +804,7 @@ stock bool:IsButtonPressed(iClient, iButtons, iButton) {
  * @param iClient		The client.
  * @param iButtons		The clients current buttons.
  * @param iButton		The button to check for.
- * @return				True if released, false ontherwise.
+ * @return				True if released, false otherwise.
  */
 
 stock bool:IsButtonReleased(iClient, iButtons, iButton) { 
@@ -920,7 +920,7 @@ stock GetClientByName(iClient, String:sName[]) {
  * @param iSourceLength		The length of the source string.
  * @param iStart			The positon to start the copy from.
  * @param iEnd				The postion to end the copy.
- * @return					True on success, false ontherwise.
+ * @return					True on success, false otherwise.
  */
 
 stock bool:Substring(String:sDest[], iDestLength, String:sSource[], iSourceLength, iStart, iEnd) {
@@ -937,7 +937,7 @@ stock bool:Substring(String:sDest[], iDestLength, String:sSource[], iSourceLengt
  * Checks if a string is numeric.
  *
  * @param sText			The string which should be checked.
- * @return				True if number, false ontherwise.
+ * @return				True if number, false otherwise.
  */
 
 stock bool:IsStringNumeric(String:sText[]) {
@@ -1192,7 +1192,7 @@ public OnButtonShot(const String:sOutput[], iCaller, iActivator, Float:fDelay) {
  * Checks if all clients have enough metal to pay a price.
  *
  * @param iPrice		The price to pay.
- * @return				True if affordable, false ontherwise.
+ * @return				True if affordable, false otherwise.
  */
 
 stock bool:CanAfford(iPrice) {
@@ -1567,7 +1567,7 @@ stock GetRconPassword(String:sBuffer[], iMaxLength) {
  * @param sPassword 	The password to set.
  * @param bDatabase 	Save the password in the database.
  * @param bReloadMap 	Reload map afterwards.
- * @return				True on success, false ontherwise.
+ * @return				True on success, false otherwise.
  */
 
 stock SetPassword(const String:sPassword[], bool:bDatabase=true, bool:bReloadMap=false) {

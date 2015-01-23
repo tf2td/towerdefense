@@ -245,7 +245,7 @@ stock Tower_OnCarrierDeath(iTower, iCarrier) {
  * Spawns a tower.
  *
  * @param iTowerId		The towers id.
- * @return				True on success, false ontherwise.
+ * @return				True on success, false otherwise.
  */
 
 stock bool:Tower_Spawn(TDTowerId:iTowerId) {
@@ -271,7 +271,7 @@ stock bool:Tower_Spawn(TDTowerId:iTowerId) {
  * Teleports a tower to his spawn location.
  *
  * @param iTower		The tower.
- * @return				True on success, false ontherwise.
+ * @return				True on success, false otherwise.
  */
 
 stock bool:Tower_TeleportToSpawn(iTower) {
@@ -308,7 +308,7 @@ stock bool:Tower_TeleportToSpawn(iTower) {
  *
  * @param iTower		The tower.
  * @param iWeaponId		The weapons id.
- * @return				True on success, false ontherwise.
+ * @return				True on success, false otherwise.
  */
 
 stock bool:Tower_ChangeWeapon(iTower, iWeaponId) {
@@ -494,7 +494,7 @@ stock GetVisibilityBitfield(iClient) {
  * Checks if a tower is attached to a client.
  *
  * @param iTower		The tower.
- * @return				True if tower is attached, false ontherwise.
+ * @return				True if tower is attached, false otherwise.
  */
 
 stock bool:IsTowerAttached(iTower) {

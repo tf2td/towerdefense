@@ -6,7 +6,7 @@
  * Spawns all metalpacks (except the boss metalpack).
  *
  * @param iMetalPackType	The metal pack type.
- * @return					True on success, false ontherwise.
+ * @return					True on success, false otherwiseherwise.
  */
 
 stock bool:SpawnMetalPacks(TDMetalPackType:iMetalPackType) {

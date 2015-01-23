@@ -8,7 +8,7 @@
  * @param iClient		The client.
  * @param sBuffer		The destination string buffer.
  * @param iMaxLength	The maximum length of the output string buffer.
- * @return				True on success, false ontherwise.
+ * @return				True on success, false otherwise.
  */
 
 stock bool:GetClientCommunityId(iClient, String:sBuffer[], iMaxLength) {
