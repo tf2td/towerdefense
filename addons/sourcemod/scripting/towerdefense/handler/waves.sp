@@ -272,6 +272,8 @@ public Action:TeleportWaveDelay(Handle:hTimer, any:iNumber) {
 
 	new iAttacker = GetClientByNameExact(sName, TEAM_ATTACKER);
 
+	Log(TDLogLevel_Trace, "Should teleport attacker %d (%d, %s) of wave %d (%d attackers)", iNumber, iAttacker, sName, g_iCurrentWave + 1, Wave_GetQuantity(g_iCurrentWave));
+
 	if (IsAttacker(iAttacker)) {
 		new Float:fLocation[3];
 		if (!Wave_GetLocation(g_iCurrentWave, fLocation)) {
@@ -286,6 +288,8 @@ public Action:TeleportWaveDelay(Handle:hTimer, any:iNumber) {
 		}
 
 		TeleportEntity(iAttacker, fLocation, fAngles, Float:{0.0, 0.0, 0.0});
+
+		Log(TDLogLevel_Trace, " -> Teleported attacker");
 
 		CreateTimer(1.0, TeleportWaveDelay, iNumber + 1, TIMER_FLAG_NO_MAPCHANGE);
 	}
