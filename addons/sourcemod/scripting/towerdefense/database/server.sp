@@ -53,7 +53,10 @@ stock Database_AddServer() {
 
 	Format(sQuery, sizeof(sQuery), "\
 		INSERT INTO `server` (`ip`, `port`, `host_id`, `created`, `updated`) \
-		VALUES ('%s', %d, '%s', UTC_TIMESTAMP(), UTC_TIMESTAMP()) \
+		VALUES ('%s', %d, (SELECT `host_id` \
+						   FROM `host` \
+						   WHERE `name` = '%s' \
+						   LIMIT 1), UTC_TIMESTAMP(), UTC_TIMESTAMP()) \
 	", g_sServerIp, g_iServerPort, PLUGIN_HOST);
 
 	SQL_TQuery(g_hDatabase, Database_OnAddServer, sQuery, 0);
