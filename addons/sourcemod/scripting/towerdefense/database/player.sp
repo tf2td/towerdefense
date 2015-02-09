@@ -15,10 +15,10 @@
  */
 
 stock Database_CheckPlayer(iClient, const String:sSteamId[]) {
-	decl String:sQuery[128];
+	decl String:sQuery[192];
 
 	Format(sQuery, sizeof(sQuery), "\
-		SELECT `player_id` "a" \
+		SELECT `player_id` \
 		FROM `player` \
 		WHERE `player`.`steamid64` = '%s' \
 		LIMIT 1 \
@@ -38,10 +38,6 @@ public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sErro
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult) == 0) {
 		// No player found, add it
-
-		SetPackPosition(hPack, PLAYER_STEAM_ID);
-		decl String:sSteamId[32];
-		ReadPackString(hPack, sSteamId, sizeof(sSteamId));
 
 		Database_AddPlayer(hPack);
 	} else {
@@ -67,18 +63,37 @@ public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sErro
  */
 
 stock Database_AddPlayer(Handle:hPack) {
-	decl String:sQuery[512];
+	decl String:sQuery[128];
 	decl String:sSteamId[32];
 
 	SetPackPosition(hPack, PLAYER_STEAM_ID);
 	ReadPackString(hPack, sSteamId, sizeof(sSteamId));
 
-	Format(sQuery, sizeof(sQuery), "CALL AddPlayer('%s', %d)", sSteamId, g_iServerId);
+	Format(sQuery, sizeof(sQuery), "\
+		INSERT INTO `player` (`steamid64`, `first_server`) \
+		VALUES ('%s', %d) \
+	", sSteamId, g_iServerId);
 
-	SQL_TQuery(g_hDatabase, Database_OnAddPlayer, sQuery, hPack);
+	SQL_TQuery(g_hDatabase, Database_OnAddPlayer_1, sQuery, hPack);
 }
 
-public Database_OnAddPlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
+public Database_OnAddPlayer_1(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_AddPlayer > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
+		decl String:sQuery[32];
+		Format(sQuery, sizeof(sQuery), "SELECT LAST_INSERT_ID()");
+
+		SQL_TQuery(g_hDatabase, Database_OnAddPlayer_2, sQuery, hPack);
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+public Database_OnAddPlayer_2(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_AddPlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
@@ -133,12 +148,73 @@ stock Database_UpdatePlayer(Handle:hPack) {
 
 	new iPlayerId = ReadPackCell(hPack);
 
-	Format(sQuery, sizeof(sQuery), "CALL UpdatePlayer(%d, '%s', '%s', %d)", iPlayerId, sPlayerNameSave, sPlayerIpSave, g_iServerId);
+	Format(sQuery, sizeof(sQuery), "\
+		UPDATE `player` \
+		SET `name` = '%s', \
+			`ip` = '%s', \
+			`last_server` = %d, \
+			`current_server` = %d \
+		WHERE `player_id` = %d \
+		LIMIT 1 \
+	", sPlayerNameSave, sPlayerIpSave, g_iServerId, g_iServerId, iPlayerId);
 
-	SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer, sQuery, hPack);
+	SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_1, sQuery, hPack);
 }
 
-public Database_OnUpdatePlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
+public Database_OnUpdatePlayer_1(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
+		decl String:sQuery[512];
+
+		SetPackPosition(hPack, PLAYER_DATABASE_ID);
+		new iPlayerId = ReadPackCell(hPack);
+
+		Format(sQuery, sizeof(sQuery), "\
+			INSERT IGNORE INTO `player_stats` (`player_id`, `map_id`, `first_connect`, `last_connect`, `last_disconnect`) \
+			VALUES (%d, \
+					(SELECT `map_id` \
+					 FROM `server` \
+					 WHERE `server_id` = %d \
+					 LIMIT 1), \
+					UTC_TIMESTAMP(), UTC_TIMESTAMP(), UTC_TIMESTAMP()) \
+		", iPlayerId, g_iServerId);
+
+		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_2, sQuery, hPack);
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+public Database_OnUpdatePlayer_2(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
+		decl String:sQuery[128];
+
+		SetPackPosition(hPack, PLAYER_DATABASE_ID);
+		new iPlayerId = ReadPackCell(hPack);
+
+		Format(sQuery, sizeof(sQuery), "\
+			SELECT `steamid64` \
+			FROM `player` \
+			WHERE `player_id` = %d \
+			LIMIT 1 \
+		", iPlayerId);
+
+		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_3, sQuery, hPack);
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+public Database_OnUpdatePlayer_3(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
@@ -166,21 +242,52 @@ public Database_OnUpdatePlayer(Handle:hDriver, Handle:hResult, const String:sErr
  */
 
 stock Database_CheckPlayerBanned(Handle:hPack) {
-	decl String:sQuery[512];
+	decl String:sQuery[128];
 
 	SetPackPosition(hPack, PLAYER_DATABASE_ID);
 	new iPlayerId = ReadPackCell(hPack);
 
-	Format(sQuery, sizeof(sQuery), "CALL GetPlayerBanned(%d)", iPlayerId);
+	Format(sQuery, sizeof(sQuery), "\
+		UPDATE `player_ban` \
+		SET `active` = 'not active' \
+		WHERE `player_id` = %d AND `expire` <= UTC_TIMESTAMP() \
+	", iPlayerId);
 
-	SQL_TQuery(g_hDatabase, Database_OnCheckPlayerBanned, sQuery, hPack);
+	SQL_TQuery(g_hDatabase, Database_OnCheckPlayerBanned_1, sQuery, hPack);
 }
 
-public Database_OnCheckPlayerBanned(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
+public Database_OnCheckPlayerBanned_1(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerBanned > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		new bool:bDotherwiseProceed = false;
+		decl String:sQuery[512];
+
+		SetPackPosition(hPack, PLAYER_DATABASE_ID);
+		new iPlayerId = ReadPackCell(hPack);
+
+		Format(sQuery, sizeof(sQuery), "\
+			SELECT `reason`, CONCAT(`expire`, ' ', 'UTC') \
+			FROM `player_ban` \
+			WHERE `player_id` = %d AND `active` = 'active' AND `expire` IN (SELECT MAX(`expire`) \
+																			FROM `player_ban` \
+																			WHERE `player_id` = %d) \
+			LIMIT 1 \
+		", iPlayerId, iPlayerId);
+
+		SQL_TQuery(g_hDatabase, Database_OnCheckPlayerBanned_2, sQuery, hPack);
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+public Database_OnCheckPlayerBanned_2(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerBanned > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
+		new bool:bDontProceed = false;
 
 		SetPackPosition(hPack, PLAYER_USER_ID);
 		new iClient = GetClientOfUserId(ReadPackCell(hPack));
@@ -194,13 +301,13 @@ public Database_OnCheckPlayerBanned(Handle:hDriver, Handle:hResult, const String
 
 		if (strlen(sReason) > 0) {
 			KickClient(iClient, "You have been banned from TF2 Tower Defense until %s! Reason: %s", sExpire, sReason);
-			bDotherwiseProceed = true;
+			bDontProceed = true;
 		} else {
 			KickClient(iClient, "You have been banned from TF2 Tower Defense until %s!", sExpire);
-			bDotherwiseProceed = true;
+			bDontProceed = true;
 		}
 
-		if (!bDotherwiseProceed) {
+		if (!bDontProceed) {
 			Database_CheckPlayerImmunity(hPack);
 		}
 	}
@@ -225,7 +332,7 @@ stock Database_CheckPlayerImmunity(Handle:hPack) {
 	new iPlayerId = ReadPackCell(hPack);
 
 	Format(sQuery, sizeof(sQuery), "\
-		SELECT `immunity` "a" \
+		SELECT `immunity` \
 		FROM `player_immunity` \
 		WHERE `player_id` = %d \
 		LIMIT 1 \

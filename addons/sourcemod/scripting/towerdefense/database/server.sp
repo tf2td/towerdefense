@@ -11,7 +11,12 @@
 stock Database_CheckServer() {
 	decl String:sQuery[128];
 
-	Format(sQuery, sizeof(sQuery), "CALL GetServerInfo('%s', %d)", g_sServerIp, g_iServerPort);
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `server_id` \
+		FROM `server` \
+		WHERE `ip` = '%s' AND `port` = %d \
+		LIMIT 1 \
+	", g_sServerIp, g_iServerPort);
 
 	SQL_TQuery(g_hDatabase, Database_OnCheckServer, sQuery);
 }
@@ -44,23 +49,46 @@ public Database_OnCheckServer(Handle:hDriver, Handle:hResult, const String:sErro
  */
 
 stock Database_AddServer() {
-	decl String:sQuery[512];
+	decl String:sQuery[256];
 
-	Format(sQuery, sizeof(sQuery), "CALL AddServer('%s', %d, '%s')", g_sServerIp, g_iServerPort, PLUGIN_HOST);
+	Format(sQuery, sizeof(sQuery), "\
+		INSERT INTO `server` (`ip`, `port`, `host_id`, `created`, `updated`) \
+		VALUES ('%s', %d, '%s', UTC_TIMESTAMP(), UTC_TIMESTAMP()) \
+	", g_sServerIp, g_iServerPort, PLUGIN_HOST);
 
-	SQL_TQuery(g_hDatabase, Database_OnAddServer, sQuery);
+	SQL_TQuery(g_hDatabase, Database_OnAddServer, sQuery, 0);
 }
 
 public Database_OnAddServer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_AddServer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		Log(TDLogLevel_Info, "Added server to database (%s:%d)", g_sServerIp, g_iServerPort);
-		
-		SQL_FetchRow(hResult);
-		g_iServerId = SQL_FetchInt(hResult, 0);
+		decl String:sQuery[256];
 
-		Database_UpdateServer();
+		if (iData == 0) {
+			Format(sQuery, sizeof(sQuery), "\
+				SELECT `server_id` \
+				FROM `server` \
+				WHERE `ip` = '%s' AND `port` = %d \
+				LIMIT 1 \
+			", g_sServerIp, g_iServerPort);
+
+			SQL_TQuery(g_hDatabase, Database_OnAddServer, sQuery, 1);
+		} else if (iData == 1) {
+			SQL_FetchRow(hResult);
+			g_iServerId = SQL_FetchInt(hResult, 0);
+
+			Format(sQuery, sizeof(sQuery), "\
+				INSERT INTO `server_stats` (`server_id`) \
+				VALUES (%d) \
+			", g_iServerId);
+
+			SQL_TQuery(g_hDatabase, Database_OnAddServer, sQuery, 2);
+		} else if (iData == 2) {
+			Log(TDLogLevel_Info, "Added server to database (%s:%d)", g_sServerIp, g_iServerPort);
+		
+			Database_UpdateServer();
+		}
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -91,7 +119,17 @@ stock Database_UpdateServer() {
 	GetRconPassword(sRconPassword, sizeof(sRconPassword));
 	SQL_EscapeString(g_hDatabase, sRconPassword, sRconPasswordSave, sizeof(sRconPasswordSave));
 
-	Format(sQuery, sizeof(sQuery), "CALL UpdateServer(%d, '%s', '%s', '%s', '%s', %d)", g_iServerId, sServerNameSave, PLUGIN_VERSION, sPasswordSave, sRconPasswordSave, GetRealClientCount());
+	Format(sQuery, sizeof(sQuery), "\
+		UPDATE `server` \
+		SET `name` = '%s', \
+			`version` = '%s', \
+			`password` = '%s', \
+			`rcon_password` = '%s', \
+			`players` = %d, \
+			`updated` = UTC_TIMESTAMP() \
+		WHERE `server_id` = %d \
+		LIMIT 1 \
+	", sServerNameSave, PLUGIN_VERSION, sPasswordSave, sRconPasswordSave, GetRealClientCount(), g_iServerId);
 
 	SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 0);
 }
@@ -100,12 +138,17 @@ public Database_OnUpdateServer(Handle:hDriver, Handle:hResult, const String:sErr
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdateServer > Error: %s", sError);
 	} else {
-		decl String:sQuery[128];
+		decl String:sQuery[256];
 		decl String:sCurrentMap[PLATFORM_MAX_PATH];
 		GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
 		if (iData == 0) {
-			Format(sQuery, sizeof(sQuery), "CALL GetMapInfo('%s')", sCurrentMap);
+			Format(sQuery, sizeof(sQuery), "\
+				SELECT `map_id`, `respawn_wave_time` \
+				FROM `map` \
+				WHERE `name` = '%s' \
+				LIMIT 1 \
+			", sCurrentMap);
 
 			SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 1);
 		} else if (iData == 1) {
@@ -128,7 +171,12 @@ public Database_OnUpdateServer(Handle:hDriver, Handle:hResult, const String:sErr
 			g_iServerMap = SQL_FetchInt(hResult, 0);
 			g_iRespawnWaveTime = SQL_FetchInt(hResult, 1);
 
-			Format(sQuery, sizeof(sQuery), "CALL UpdateServerMap(%d, %d)", g_iServerId, g_iServerMap);
+			Format(sQuery, sizeof(sQuery), "\
+				UPDATE `server` \
+				SET `map_id` = %d \
+				WHERE `server_id` = %d \
+				LIMIT 1 \
+			", g_iServerMap, g_iServerId);
 
 			SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 2);
 		} else if (iData == 2) {
@@ -155,7 +203,12 @@ public Database_OnUpdateServer(Handle:hDriver, Handle:hResult, const String:sErr
 stock Database_CheckForDelete() {
 	decl String:sQuery[128];
 
-	Format(sQuery, sizeof(sQuery), "CALL GetServerDelete(%d)", g_iServerId);
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `delete` \
+		FROM `server` \
+		WHERE `server_id` = %d \
+		LIMIT 1 \
+	", g_iServerId);
 
 	SQL_TQuery(g_hDatabase, Database_OnCheckForDelete, sQuery);
 }
@@ -198,9 +251,16 @@ public Database_OnCheckForDelete(Handle:hDriver, Handle:hResult, const String:sE
  */
 
 stock Database_CheckServerSettings() {
-	decl String:sQuery[128];
+	decl String:sQuery[256];
 
-	Format(sQuery, sizeof(sQuery), "CALL GetServerSettings(%d)", g_iServerId);
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `lockable`, `loglevel`, `logtype` \
+		FROM `server` \
+		INNER JOIN `server_settings` \
+			ON (`server`.`server_settings_id` = `server_settings`.`server_settings_id`) \
+		WHERE `server_id` = %d \
+		LIMIT 1 \
+	", g_iServerId);
 
 	SQL_TQuery(g_hDatabase, Database_OnCheckServerSettings, sQuery);
 }
@@ -274,7 +334,12 @@ public Database_OnCheckServerSettings(Handle:hDriver, Handle:hResult, const Stri
 stock Database_CheckServerVerified() {
 	decl String:sQuery[128];
 
-	Format(sQuery, sizeof(sQuery), "CALL GetServerVerified(%d)", g_iServerId);
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `verified` \
+		FROM `server` \
+		WHERE `server_id` = %d \
+		LIMIT 1 \
+	", g_iServerId);
 
 	SQL_TQuery(g_hDatabase, Database_OnCheckServerVerified, sQuery);
 }
@@ -312,9 +377,18 @@ public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const Stri
  */
 
 stock Database_CheckServerConfig() {
-	decl String:sQuery[128];
+	decl String:sQuery[512];
 
-	Format(sQuery, sizeof(sQuery), "CALL GetServerConfig(%d)", g_iServerId);
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT CONCAT(`variable`, ' \"', `value`, '\"') \
+		FROM `config` \
+		INNER JOIN `server` \
+			ON (`server_id` = %d) \
+		INNER JOIN `server_settings` \
+			ON (`server`.`server_settings_id` = `server_settings`.`server_settings_id`) \
+		WHERE `config_id` >= `config_start` AND `config_id` <= `config_end` \
+		ORDER BY `config_id` ASC \
+	", g_iServerId);
 
 	SQL_TQuery(g_hDatabase, Database_OnCheckServerConfig, sQuery);
 }
@@ -349,7 +423,12 @@ public Database_OnCheckServerConfig(Handle:hDriver, Handle:hResult, const String
 stock Database_CheckForUpdates() {
 	decl String:sQuery[128];
 
-	Format(sQuery, sizeof(sQuery), "CALL GetServerUpdate(%d)", g_iServerId);
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT IF(`update` = 'update', '', `update_url`) \
+		FROM `server` \
+		WHERE `server_id` = %d \
+		LIMIT 1 \
+	", g_iServerId);
 
 	SQL_TQuery(g_hDatabase, Database_OnCheckForUpdates, sQuery);
 }
@@ -392,12 +471,38 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
 
 stock bool:Database_UpdatedServer() {
 	decl String:sQuery[128];
+	new Handle:hQuery = INVALID_HANDLE;
 
-	Format(sQuery, sizeof(sQuery), "CALL UpdatedServer(%d)", g_iServerId);
+	Format(sQuery, sizeof(sQuery), "\
+		UPDATE `server` \
+		SET `update` = 0 \
+		WHERE `server_id` = %d \
+		LIMIT 1 \
+	", g_iServerId);
 	 
 	SQL_LockDatabase(g_hDatabase);
 		
-	new Handle:hQuery = SQL_Query(g_hDatabase, sQuery);
+	hQuery = SQL_Query(g_hDatabase, sQuery);
+
+	if (hQuery == INVALID_HANDLE) {
+		decl String:sError[256];
+		SQL_GetError(g_hDatabase, sError, sizeof(sError));
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatedServer > Error: %s", sError);
+
+		SQL_UnlockDatabase(g_hDatabase);
+		return false;
+	}
+
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `update` \
+		FROM `server` \
+		WHERE `server_id` = %d \
+		LIMIT 1 \
+	", g_iServerId);
+	 
+	SQL_LockDatabase(g_hDatabase);
+		
+	hQuery = SQL_Query(g_hDatabase, sQuery);
 
 	if (hQuery == INVALID_HANDLE) {
 		decl String:sError[256];
@@ -430,7 +535,12 @@ stock Database_SetServerPassword(const String:sPassword[], bool:bReloadMap) {
 	decl String:sPasswordSave[64];
 	SQL_EscapeString(g_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
 
-	Format(sQuery, sizeof(sQuery), "CALL SetServerPassword(%d, '%s')", g_iServerId, sPasswordSave);
+	Format(sQuery, sizeof(sQuery), "\
+		UPDATE `server` \
+		SET `password` = '%s' \
+		WHERE `server_id` = %d \
+		LIMIT 1 \
+	", sPasswordSave, g_iServerId);
 
 	new Handle:hPack = CreateDataPack();
 

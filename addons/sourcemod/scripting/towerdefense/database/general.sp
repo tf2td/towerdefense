@@ -296,7 +296,7 @@ public Database_OnLoadWeapons(Handle:hDriver, Handle:hResult, const String:sErro
  */
 
 stock Database_LoadWaves() {
-	decl String:sQuery[128];
+	decl String:sQuery[512];
 	
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `wavetype`, `wave`.`name`, `class`, `quantity`, `health`, IF(`wavetype` & (SELECT `bit_value` FROM `wavetype` WHERE `wavetype`.`type` = 'air'), `teleport_air`, `teleport_ground`) \
@@ -381,7 +381,7 @@ public Database_OnLoadWaves(Handle:hDriver, Handle:hResult, const String:sError[
  */
 
 stock Database_LoadMetalpacks() {
-	decl String:sQuery[128];
+	decl String:sQuery[256];
 	
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `type`, `metal`, `location` \
@@ -389,7 +389,7 @@ stock Database_LoadMetalpacks() {
 		INNER JOIN `metalpacktype` \
 			ON (`metalpack`.`metalpacktype_id` = `metalpacktype`.`metalpacktype_id`) \
 		WHERE `map_id` = %d \
-		ORDER BY `metalpack_id` ASC; \
+		ORDER BY `metalpack_id` ASC \
 	", g_iServerMap);
 	
 	SQL_TQuery(g_hDatabase, Database_OnLoadMetalpacks, sQuery);

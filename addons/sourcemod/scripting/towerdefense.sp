@@ -65,9 +65,9 @@ public Plugin:myinfo =
 #include "towerdefense/handler/waves.sp"
 #include "towerdefense/handler/weapons.sp"
 
-#include "towerdefense/database-calls/general.sp"
-#include "towerdefense/database-calls/player.sp"
-#include "towerdefense/database-calls/server.sp"
+#include "towerdefense/database/general.sp"
+#include "towerdefense/database/player.sp"
+#include "towerdefense/database/server.sp"
 
 #include "towerdefense/commands.sp"
 #include "towerdefense/events.sp"
@@ -121,9 +121,9 @@ public OnPluginStart() {
 
 	g_hMapMetalpacks = CreateTrie();
 
-	LoadConVars();
 	HookEvents();
 	RegisterCommands();
+	LoadConVars();
 
 	// Plugin late load, re-load
 	for (new iClient = 1; iClient <= MaxClients; iClient++) {
@@ -217,6 +217,7 @@ public OnConfigsExecuted() {
 	}
 
 	SetPassword(SERVER_PASS, false);
+	SetConVars();
 
 	Database_Connect();
 }
