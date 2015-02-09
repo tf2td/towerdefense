@@ -8,7 +8,9 @@ stock LoadConVars() {
 	g_hEnabled = CreateConVar("td_enabled", "1", "Enables/disables Tower Defense", FCVAR_PLUGIN|FCVAR_DONTRECORD);
 
 	HookConVarChange(g_hEnabled, OnConVarChanged);
+}
 
+stock SetConVars() {
 	SetConVarInt(FindConVar("sv_cheats"), 1, true, false);
 }
 
