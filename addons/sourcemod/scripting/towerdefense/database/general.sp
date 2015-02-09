@@ -66,13 +66,13 @@ stock Database_LoadTowers() {
 	decl String:sQuery[512];
 	
 	Format(sQuery, sizeof(sQuery), "\
-		SELECT `tower`.`tower_id` "a", `level` "b", `tower`.`name` "c", `class` "d", `price` "e", `teleport_tower` "f", `damagetype` "g", `description` "h", `metal` "i", `weapon_id` "j", `attack` "k", `rotate` "l", `pitch` "m", `damage` "n", `attackspeed` "o", `area` "p" \
+		SELECT `tower`.`tower_id`, `level`, `tower`.`name`, `class`, `price`, `teleport_tower`, `damagetype`, `description`, `metal`, `weapon_id`, `attack`, `rotate`, `pitch`, `damage`, `attackspeed`, `area` \
 		FROM `tower` \
 		INNER JOIN `map` \
 			ON (`map`.`map_id` = %d) \
 		INNER JOIN `towerlevel` \
 			ON (`tower`.`tower_id` = `towerlevel`.`tower_id`) \
-		ORDER BY "c" ASC, "b" ASC \
+		ORDER BY `tower`.`name` ASC, `level` ASC \
 	", g_iServerMap);
 	
 	SQL_TQuery(g_hDatabase, Database_OnLoadTowers, sQuery);
@@ -207,7 +207,7 @@ stock Database_LoadWeapons() {
 	decl String:sQuery[256];
 	
 	Format(sQuery, sizeof(sQuery), "\
-		SELECT `name` "a", `index` "b", (`slot` - 1) "c", `level` "d", (`quality` - 1) "e", `classname` "f", `attributes` "g", (`preserve_attributes` - 1) "h" \
+		SELECT `name`, `index`, (`slot` - 1), `level`, (`quality` - 1), `classname`, `attributes`, (`preserve_attributes` - 1) \
 		FROM `weapon` \
 		ORDER BY `weapon_id` ASC \
 	");
@@ -299,7 +299,7 @@ stock Database_LoadWaves() {
 	decl String:sQuery[128];
 	
 	Format(sQuery, sizeof(sQuery), "\
-		SELECT `wavetype` "a", `wave`.`name` "b", `class` "c", `quantity` "d", `health` "e", IF(`wavetype` & (SELECT `bit_value` FROM `wavetype` WHERE `wavetype`.`type` = 'air'), `teleport_air`, `teleport_ground`) "f" \
+		SELECT `wavetype`, `wave`.`name`, `class`, `quantity`, `health`, IF(`wavetype` & (SELECT `bit_value` FROM `wavetype` WHERE `wavetype`.`type` = 'air'), `teleport_air`, `teleport_ground`) \
 		FROM `wave` \
 		INNER JOIN `map` \
 			ON (`map`.`map_id` = %d) \
@@ -384,7 +384,7 @@ stock Database_LoadMetalpacks() {
 	decl String:sQuery[128];
 	
 	Format(sQuery, sizeof(sQuery), "\
-		SELECT `type` "a", `metal` "b", `location` "c" \
+		SELECT `type`, `metal`, `location` \
 		FROM `metalpack` \
 		INNER JOIN `metalpacktype` \
 			ON (`metalpack`.`metalpacktype_id` = `metalpacktype`.`metalpacktype_id`) \
