@@ -207,13 +207,13 @@ public OnAllPluginsLoaded() {
 	if (g_bSteamTools) {
 		UpdateGameDescription();
 
-		Log(TDLogLevel_Info, "Found SteamTools on startup");
+		Log(TDLogLevel_Debug, "Found SteamTools on startup");
 	}
 
 	g_bTF2Attributes = LibraryExists("tf2attributes");
 
 	if (g_bTF2Attributes) {
-		Log(TDLogLevel_Info, "Found TF2Attributes on startup");
+		Log(TDLogLevel_Debug, "Found TF2Attributes on startup");
 	}
 }
 
@@ -222,11 +222,11 @@ public OnLibraryAdded(const String:sName[]) {
 		g_bSteamTools = true;
 		UpdateGameDescription();
 
-		Log(TDLogLevel_Info, "SteamTools loaded");
+		Log(TDLogLevel_Debug, "SteamTools loaded");
 	} else if (StrEqual(sName, "tf2attributes", false)) {
 		g_bTF2Attributes = true;
 
-		Log(TDLogLevel_Info, "TF2Attributes loaded");
+		Log(TDLogLevel_Debug, "TF2Attributes loaded");
 	}
 }
 
@@ -234,11 +234,11 @@ public OnLibraryRemoved(const String:sName[]) {
 	if (StrEqual(sName, "SteamTools", false)) {
 		g_bSteamTools = false;
 
-		Log(TDLogLevel_Info, "SteamTools unloaded");
+		Log(TDLogLevel_Debug, "SteamTools unloaded");
 	} else if (StrEqual(sName, "tf2attributes", false)) {
 		g_bTF2Attributes = false;
 
-		Log(TDLogLevel_Info, "TF2Attributes unloaded");
+		Log(TDLogLevel_Debug, "TF2Attributes unloaded");
 	}
 }
 
