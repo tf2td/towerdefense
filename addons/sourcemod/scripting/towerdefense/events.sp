@@ -173,7 +173,7 @@ public Action:Event_RoundWin(Handle:hEvent, const String:sName[], bool:bDontBroa
 		PrintToChatAll("\x07FF0000You have lost! Do you feel bad now?");
 	}
 
-	OnConfigsExecuted();
+	ResetServer();
 
 	return Plugin_Handled;
 }
