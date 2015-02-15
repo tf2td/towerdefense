@@ -291,7 +291,7 @@ public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const Stri
 		if (StrEqual(sVerfied, "verified")) {
 			Database_CheckServerConfig();
 		} else {
-			Log(TDLogLevel_Warning, "Your server is not verified, please cotherwiseact us at tf2td.net or on Steam");
+			Log(TDLogLevel_Warning, "Your server is not verified, please contact us at tf2td.net or on Steam");
 
 			decl String:sFile[PLATFORM_MAX_PATH];
 			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
