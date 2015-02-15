@@ -61,6 +61,7 @@ public Plugin:myinfo =
 #include "towerdefense/handler/corners.sp"
 #include "towerdefense/handler/metalpacks.sp"
 #include "towerdefense/handler/panels.sp"
+#include "towerdefense/handler/server.sp"
 #include "towerdefense/handler/towers.sp"
 #include "towerdefense/handler/waves.sp"
 #include "towerdefense/handler/weapons.sp"
@@ -131,6 +132,8 @@ public OnPluginStart() {
 			OnClientPutInServer(iClient);
 		}
 	}
+
+	SetPassword("WaitingForServerToInitialize", false);
 }
 
 public OnPluginEnd() {
@@ -179,47 +182,23 @@ public OnMapEnd() {
 }
 
 public OnConfigsExecuted() {
-	g_bEnabled = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap && g_bSteamTools && g_bTF2Attributes;
-	g_bMapRunning = true;
+	CreateTimer(1.0, InitializeServerDelay, 5, TIMER_FLAG_NO_MAPCHANGE);
+}
 
-	UpdateGameDescription();
-
-	if (!g_bEnabled) {
-		if (!g_bTowerDefenseMap) {
-			decl String:sCurrentMap[PLATFORM_MAX_PATH];
-			GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
-
-			Log(TDLogLevel_Info, "Map \"%s\" is not supported, thus Tower Defense has been disabled.", sCurrentMap);
-		} else {
-			Log(TDLogLevel_Info, "Tower Defense is disabled.");
-		}
-
-		return;
+public Action:InitializeServerDelay(Handle:hTimer, any:iTime) {
+	if (iTime <= 0) {
+		InitializeServer();
+		return Plugin_Stop;
 	}
 
-	StripConVarFlag("sv_cheats", FCVAR_NOTIFY);
-	StripConVarFlag("sv_tags", FCVAR_NOTIFY);
-	StripConVarFlag("tf_bot_count", FCVAR_NOTIFY);
-	StripConVarFlag("sv_password", FCVAR_NOTIFY);
-
-	HookButtons();
-
-	g_iBuildingLimit[TDBuilding_Sentry] = 1;
-	g_iBuildingLimit[TDBuilding_Dispenser] = 0;
-	g_iBuildingLimit[TDBuilding_TeleporterEntry] = 1;
-	g_iBuildingLimit[TDBuilding_TeleporterExit] = 1;
-
-	g_iMetalPackCount = 0;
-
-	new iHealthBar = EntRefToEntIndex(g_iHealthBar);
-	if (IsValidEntity(iHealthBar)) {
-		SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 0);
+	if (iTime == 1) {
+		Log(TDLogLevel_Info, "Initializing server in %d second", iTime);
+	} else {
+		Log(TDLogLevel_Info, "Initializing server in %d seconds", iTime);
 	}
 
-	SetPassword(SERVER_PASS, false);
-	SetConVars();
-
-	Database_Connect();
+	CreateTimer(1.0, InitializeServerDelay, iTime - 1, TIMER_FLAG_NO_MAPCHANGE);
+	return Plugin_Stop;
 }
 
 public OnAllPluginsLoaded() {
