@@ -157,6 +157,10 @@ stock Wave_OnDeathAll() {
 		return;
 	}
 
+	if (g_iNextWaveType & TDWaveType_Boss) {
+		SpawnMetalPacks(TDMetalPack_Boss);
+	}
+
 	g_bStartWaveEarly = false;
 
 	g_iCurrentWave++;
