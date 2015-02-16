@@ -336,15 +336,17 @@ public OnClientDisconnect(iClient) {
 		Tower_OnCarrierDisconnected(g_iAttachedTower[iClient], iClient);
 	}
 
-	new iMetal = GetClientMetal(iClient);
+	if (IsDefender(iClient)) {
+		new iMetal = GetClientMetal(iClient);
 
-	if (iMetal > 0) {
-		new Float:fLocation[3];
+		if (iMetal > 0) {
+			new Float:fLocation[3];
 
-		GetClientEyePosition(iClient, fLocation);
-		fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
+			GetClientEyePosition(iClient, fLocation);
+			fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
 
-		SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal);
+			SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal);
+		}
 	}
 }
 
