@@ -80,7 +80,7 @@ stock Database_AddPlayer(Handle:hPack) {
 public Database_OnAddPlayer_1(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_AddPlayer > Error: %s", sError);
-	} else if (SQL_GetRowCount(hResult)) {
+	} else {
 		decl String:sQuery[32];
 		Format(sQuery, sizeof(sQuery), "SELECT LAST_INSERT_ID()");
 
@@ -164,7 +164,7 @@ stock Database_UpdatePlayer(Handle:hPack) {
 public Database_OnUpdatePlayer_1(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
-	} else if (SQL_GetRowCount(hResult)) {
+	} else {
 		decl String:sQuery[512];
 
 		SetPackPosition(hPack, PLAYER_DATABASE_ID);
@@ -192,7 +192,7 @@ public Database_OnUpdatePlayer_1(Handle:hDriver, Handle:hResult, const String:sE
 public Database_OnUpdatePlayer_2(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
-	} else if (SQL_GetRowCount(hResult)) {
+	} else {
 		decl String:sQuery[128];
 
 		SetPackPosition(hPack, PLAYER_DATABASE_ID);
