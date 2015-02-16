@@ -58,6 +58,7 @@ public Plugin:myinfo =
 #include "towerdefense/util/tf2items.sp"
 #include "towerdefense/util/zones.sp"
 
+#include "towerdefense/handler/client.sp"
 #include "towerdefense/handler/corners.sp"
 #include "towerdefense/handler/metalpacks.sp"
 #include "towerdefense/handler/panels.sp"
@@ -182,6 +183,24 @@ public OnMapEnd() {
 }
 
 public OnConfigsExecuted() {
+	g_bEnabled = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap && g_bSteamTools && g_bTF2Attributes;
+	g_bMapRunning = true;
+
+	UpdateGameDescription();
+
+	if (!g_bEnabled) {
+		if (!g_bTowerDefenseMap) {
+			decl String:sCurrentMap[PLATFORM_MAX_PATH];
+			GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
+
+			Log(TDLogLevel_Info, "Map \"%s\" is not supported, thus Tower Defense has been disabled.", sCurrentMap);
+		} else {
+			Log(TDLogLevel_Info, "Tower Defense is disabled.");
+		}
+
+		return;
+	}
+
 	CreateTimer(1.0, InitializeServerDelay, 5, TIMER_FLAG_NO_MAPCHANGE);
 }
 
@@ -257,9 +276,13 @@ public OnClientAuthorized(iClient, const String:sSteamId[]) {
 		Log(TDLogLevel_Info, "Connected clients: %d/%d", GetRealClientCount(), PLAYER_LIMIT);
 	}
 
-	decl String:sCommunityId[32];
-	if (GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId))) {
-		Database_CheckPlayer(iClient, sCommunityId);
+	if (g_bDatabase) {
+		Log(TDLogLevel_Debug, "OnClientAuthorized: %N", iClient);
+
+		decl String:sCommunityId[32];
+		if (GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId))) {
+			Database_CheckPlayer(iClient, sCommunityId);
+		}
 	}
 }
 
@@ -277,6 +300,11 @@ public OnClientPutInServer(iClient) {
 	g_bReplaceWeapon[iClient][TFWeaponSlot_Melee] = false;
 
 	g_iAttachedTower[iClient] = 0;
+
+	if (!g_bServerInitialized) {
+		SetEntityMoveType(iClient, MOVETYPE_NONE);
+		PrintToChat(iClient, "\x04The server is currently initializing, wait a moment.");
+	}
 }
 
 public OnClientPostAdminCheck(iClient) {

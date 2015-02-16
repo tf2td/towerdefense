@@ -5,12 +5,12 @@
 /**
  * Connects to the database.
  *
- * @noreturn
+ * @return				True if connected successfully, false otherwise.
  */
 
-stock Database_Connect() {
+stock bool:Database_Connect() {
 	if (!g_bEnabled) {
-		return;
+		return false;
 	}
 
 	if (g_hDatabase == INVALID_HANDLE) {
@@ -29,27 +29,16 @@ stock Database_Connect() {
 
 		if (g_hDatabase == INVALID_HANDLE) {
 			Log(TDLogLevel_Error, "Failed to connect to the database! Error: %s", sError);
+
+			return false;
 		} else {
 			Log(TDLogLevel_Info, "Successfully connected to the database");
 
-			new iServerIp[4];
-			Steam_GetPublicIP(iServerIp);
-			Format(g_sServerIp, sizeof(g_sServerIp), "%d.%d.%d.%d", iServerIp[0], iServerIp[1], iServerIp[2], iServerIp[3]);
-
-			decl String:sServerPort[6];
-			GetConVarString(FindConVar("hostport"), sServerPort, sizeof(sServerPort));
-			g_iServerPort = StringToInt(sServerPort);
-
-			if (StrEqual(g_sServerIp, "0.0.0.0")) {
-				Log(TDLogLevel_Info, "Server has been restarted completely, reloading map for initializing");
-				ReloadMap();
-			} else {
-				Database_CheckServer();
-			}
+			return true;
 		}
-	} else {
-		Database_CheckServer();
 	}
+
+	return false;
 }
 
 /*======================================
