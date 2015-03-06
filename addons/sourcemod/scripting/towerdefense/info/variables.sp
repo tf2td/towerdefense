@@ -46,8 +46,6 @@ new g_iMetalPackCount;
 
 /*==========  Boolean  ==========*/
 
-new bool:g_bDatabase;
-
 /*==========  Handle  ==========*/
 
 new Handle:g_hDatabase;

@@ -5,14 +5,10 @@
 /**
  * Connects to the database.
  *
- * @return				True if connected successfully, false otherwise.
+ * @return				The database handle, or INVALID_HANDLE on failure.
  */
 
-stock bool:Database_Connect() {
-	if (!g_bEnabled) {
-		return false;
-	}
-
+stock Handle:Database_Connect(String:sError[], const iMaxLength) {
 	if (g_hDatabase == INVALID_HANDLE) {
 		decl String:sPassword[128];
 		MD5String(DATABASE_PASS, sPassword, sizeof(sPassword));
@@ -23,27 +19,26 @@ stock bool:Database_Connect() {
 		KvSetString(hKeyValues, "user", DATABASE_USER);
 		KvSetString(hKeyValues, "pass", sPassword);
 
-		new String:sError[512];
-		g_hDatabase = SQL_ConnectCustom(hKeyValues, sError, sizeof(sError), true);
+		g_hDatabase = SQL_ConnectCustom(hKeyValues, sError, iMaxLength, true);
 		CloseHandle(hKeyValues);
-
-		if (g_hDatabase == INVALID_HANDLE) {
-			Log(TDLogLevel_Error, "Failed to connect to the database! Error: %s", sError);
-
-			return false;
-		} else {
-			Log(TDLogLevel_Info, "Successfully connected to the database");
-
-			return true;
-		}
 	}
 
-	return false;
+	return g_hDatabase;
 }
 
 /*======================================
 =            Data Functions            =
 ======================================*/
+
+/**
+ * Starts to load all data from the database, calls Database_OnDataLoaded() when finished.
+ *
+ * @noreturn
+ */
+
+stock Database_LoadData() {
+	Database_LoadTowers();
+}
 
 /**
  * Loads towers to its map.
@@ -426,4 +421,6 @@ public Database_OnLoadMetalpacks(Handle:hDriver, Handle:hResult, const String:sE
 		CloseHandle(hResult);
 		hResult = INVALID_HANDLE;
 	}
+
+	Database_OnDataLoaded();
 }

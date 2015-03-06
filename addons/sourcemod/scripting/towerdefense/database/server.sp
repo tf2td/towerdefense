@@ -446,7 +446,7 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
 		SQL_FetchString(hResult, 0, sUrl, sizeof(sUrl));
 
 		if (StrEqual(sUrl, "")) {
-			Database_LoadTowers();
+			Database_OnServerChecked();
 		} else {
 			Log(TDLogLevel_Info, "Plugin update pending. Updating now ...");
 

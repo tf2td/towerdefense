@@ -10,6 +10,7 @@
  */
 
 stock HookEvents() {
+	HookEvent("player_activate", Event_PlayerActivate);
 	HookEvent("player_carryobject", Event_PlayerCarryObject);
 	HookEvent("player_changeclass", Event_PlayerChangeClass);
 	HookEvent("player_team", Event_PlayerChangeTeam, EventHookMode_Pre);
@@ -24,6 +25,26 @@ stock HookEvents() {
 	HookUserMessage(GetUserMessageId("VGUIMenu"), Event_PlayerVGUIMenu, true);
 
 	AddNormalSoundHook(Event_Sound);
+}
+
+public Event_PlayerActivate(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+
+	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
+		CreateTimer(1.0, InitInfoTimer, iClient, TIMER_FLAG_NO_MAPCHANGE);
+	}
+}
+
+public Action:InitInfoTimer(Handle:hTimer, any:iData) {
+	if (g_bServerInitialized) {
+		Player_ServerInitialized(iData);
+		return Plugin_Stop;
+	}
+
+	Player_ServerInitializing(iData);
+
+	CreateTimer(1.0, InitInfoTimer, iData, TIMER_FLAG_NO_MAPCHANGE);
+	return Plugin_Stop;
 }
 
 public Event_PlayerCarryObject(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
@@ -173,7 +194,7 @@ public Action:Event_RoundWin(Handle:hEvent, const String:sName[], bool:bDontBroa
 		PrintToChatAll("\x07FF0000You have lost! Do you feel bad now?");
 	}
 
-	ResetServer();
+	Server_Reset();
 
 	return Plugin_Handled;
 }

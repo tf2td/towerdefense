@@ -67,10 +67,10 @@ public Plugin:myinfo =
 #include "towerdefense/util/tf2items.sp"
 #include "towerdefense/util/zones.sp"
 
-#include "towerdefense/handler/client.sp"
 #include "towerdefense/handler/corners.sp"
 #include "towerdefense/handler/metalpacks.sp"
 #include "towerdefense/handler/panels.sp"
+#include "towerdefense/handler/player.sp"
 #include "towerdefense/handler/server.sp"
 #include "towerdefense/handler/towers.sp"
 #include "towerdefense/handler/waves.sp"
@@ -103,34 +103,6 @@ public OnPluginStart() {
 	PrintToServer("%s Loaded %s %s by %s", PLUGIN_PREFIX, PLUGIN_NAME, PLUGIN_VERSION, PLUGIN_AUTHOR);
 
 	Log_Initialize(TDLogLevel_Trace, TDLogType_Console);
-
-	if (g_hMapTowers != INVALID_HANDLE) {
-		CloseHandle(g_hMapTowers);
-		g_hMapTowers = INVALID_HANDLE;
-	}
-
-	g_hMapTowers = CreateTrie();
-
-	if (g_hMapWeapons != INVALID_HANDLE) {
-		CloseHandle(g_hMapWeapons);
-		g_hMapWeapons = INVALID_HANDLE;
-	}
-
-	g_hMapWeapons = CreateTrie();
-
-	if (g_hMapWaves != INVALID_HANDLE) {
-		CloseHandle(g_hMapWaves);
-		g_hMapWaves = INVALID_HANDLE;
-	}
-
-	g_hMapWaves = CreateTrie();
-
-	if (g_hMapMetalpacks != INVALID_HANDLE) {
-		CloseHandle(g_hMapMetalpacks);
-		g_hMapMetalpacks = INVALID_HANDLE;
-	}
-
-	g_hMapMetalpacks = CreateTrie();
 
 	HookEvents();
 	RegisterCommands();
@@ -210,22 +182,13 @@ public OnConfigsExecuted() {
 		return;
 	}
 
-	CreateTimer(1.0, InitializeServerDelay, 5, TIMER_FLAG_NO_MAPCHANGE);
+	g_bServerInitialized = false;
+
+	CreateTimer(15.0, InitializeDelay, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
 }
 
-public Action:InitializeServerDelay(Handle:hTimer, any:iTime) {
-	if (iTime <= 0) {
-		InitializeServer();
-		return Plugin_Stop;
-	}
-
-	if (iTime == 1) {
-		Log(TDLogLevel_Info, "Initializing server in %d second", iTime);
-	} else {
-		Log(TDLogLevel_Info, "Initializing server in %d seconds", iTime);
-	}
-
-	CreateTimer(1.0, InitializeServerDelay, iTime - 1, TIMER_FLAG_NO_MAPCHANGE);
+public Action:InitializeDelay(Handle:hTimer, any:iTime) {
+	Server_Initialize();
 	return Plugin_Stop;
 }
 
@@ -284,15 +247,6 @@ public OnClientAuthorized(iClient, const String:sSteamId[]) {
 
 		Log(TDLogLevel_Info, "Connected clients: %d/%d", GetRealClientCount(), PLAYER_LIMIT);
 	}
-
-	if (g_bDatabase) {
-		Log(TDLogLevel_Debug, "OnClientAuthorized: %N", iClient);
-
-		decl String:sCommunityId[32];
-		if (GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId))) {
-			Database_CheckPlayer(iClient, sCommunityId);
-		}
-	}
 }
 
 public OnClientPutInServer(iClient) {
@@ -309,11 +263,6 @@ public OnClientPutInServer(iClient) {
 	g_bReplaceWeapon[iClient][TFWeaponSlot_Melee] = false;
 
 	g_iAttachedTower[iClient] = 0;
-
-	if (!g_bServerInitialized) {
-		SetEntityMoveType(iClient, MOVETYPE_NONE);
-		PrintToChat(iClient, "\x04The server is currently initializing, wait a moment.");
-	}
 }
 
 public OnClientPostAdminCheck(iClient) {
@@ -324,6 +273,8 @@ public OnClientPostAdminCheck(iClient) {
 	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
 		ChangeClientTeam(iClient, TEAM_DEFENDER);
 		TF2_SetPlayerClass(iClient, TFClass_Engineer, false, true);
+
+		Log(TDLogLevel_Debug, "Moved player %N to Defenders team as Engineer", iClient);
 	}
 }
 
@@ -412,7 +363,7 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 		GetClientEyeAngles(iClient, fViewAngles);
 			
 		TR_TraceRayFilter(fLocation, fViewAngles, MASK_VISIBLE, RayType_Infinite, TraceRayEntities, iClient);
-		
+
 		if (TR_DidHit()) {
 			new iAimEntity = TR_GetEntityIndex();
 		
@@ -1340,7 +1291,7 @@ stock PrintToHudAll(const String:sMessage[], any:...) {
 	for (new iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsClientInGame(iClient) && !IsFakeClient(iClient)) {
 			VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 2);
-			PrintToHud(iClient, sBuffer);
+			PrintToHud(iClient, sFormattedMessage);
 		}
 	}
 }
@@ -1597,4 +1548,20 @@ stock SetPassword(const String:sPassword[], bool:bDatabase=true, bool:bReloadMap
 	} else {
 		Log(TDLogLevel_Debug, "Set server password to \"%s\"", sPassword);
 	}
+}
+
+/**
+ * Initializes a map (trie) handle.
+ *
+ * @param hMapHandle	The map handle to initialize.
+ * @noreturn
+ */
+
+stock CreateDataMap(&Handle:hMapHandle) {
+	if (hMapHandle != INVALID_HANDLE) {
+		CloseHandle(hMapHandle);
+		hMapHandle = INVALID_HANDLE;
+	}
+
+	hMapHandle = CreateTrie();
 }

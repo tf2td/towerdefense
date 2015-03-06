@@ -15,6 +15,10 @@
  */
 
 stock Database_CheckPlayer(iClient, const String:sSteamId[]) {
+	if (!IsDefender(iClient)) {
+		return;
+	}
+
 	decl String:sQuery[192];
 
 	Format(sQuery, sizeof(sQuery), "\
@@ -45,7 +49,7 @@ public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sErro
 
 		SetPackPosition(hPack, PLAYER_DATABASE_ID);
 		WritePackCell(hPack, SQL_FetchInt(hResult, 0));
-
+		
 		Database_UpdatePlayer(hPack);
 	}
 
