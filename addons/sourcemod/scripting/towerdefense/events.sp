@@ -13,10 +13,10 @@ stock HookEvents() {
 	HookEvent("player_activate", Event_PlayerActivate);
 	HookEvent("player_carryobject", Event_PlayerCarryObject);
 	HookEvent("player_changeclass", Event_PlayerChangeClass);
-	HookEvent("player_team", Event_PlayerChangeTeam, EventHookMode_Pre);
-	HookEvent("player_connect", Event_PlayerConnect, EventHookMode_Pre);
+	HookEvent("player_team", Event_PlayerChangeTeamPre, EventHookMode_Pre);
+	HookEvent("player_connect_client", Event_PlayerConnectPre, EventHookMode_Pre);
 	HookEvent("player_death", Event_PlayerDeath);
-	HookEvent("player_disconnect", Event_PlayerDisconnect, EventHookMode_Pre);
+	HookEvent("player_disconnect", Event_PlayerDisconnectPre, EventHookMode_Pre);
 	HookEvent("player_dropobject", Event_PlayerDropObject);
 	HookEvent("post_inventory_application", Event_PostInventoryApplication, EventHookMode_Post);
 	HookEvent("teamplay_round_win", Event_RoundWin);
@@ -30,21 +30,7 @@ stock HookEvents() {
 public Event_PlayerActivate(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
 	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
 
-	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
-		CreateTimer(1.0, InitInfoTimer, iClient, TIMER_FLAG_NO_MAPCHANGE);
-	}
-}
-
-public Action:InitInfoTimer(Handle:hTimer, any:iData) {
-	if (g_bServerInitialized) {
-		Player_ServerInitialized(iData);
-		return Plugin_Stop;
-	}
-
-	Player_ServerInitializing(iData);
-
-	CreateTimer(1.0, InitInfoTimer, iData, TIMER_FLAG_NO_MAPCHANGE);
-	return Plugin_Stop;
+	Player_Active(iClient);
 }
 
 public Event_PlayerCarryObject(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
@@ -73,7 +59,7 @@ public Event_PlayerChangeClass(Handle:hEvent, const String:sName[], bool:bDontBr
 	}
 }
 
-public Action:Event_PlayerChangeTeam(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+public Action:Event_PlayerChangeTeamPre(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
@@ -93,7 +79,7 @@ public Action:Event_PlayerChangeTeam(Handle:hEvent, const String:sName[], bool:b
 	return Plugin_Continue;
 }
 
-public Action:Event_PlayerConnect(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+public Action:Event_PlayerConnectPre(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
@@ -124,7 +110,7 @@ public Event_PlayerDeath(Handle:hEvent, const String:sName[], bool:bDontBroadcas
 	}
 }
 
-public Action:Event_PlayerDisconnect(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+public Action:Event_PlayerDisconnectPre(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
 	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
 
 	if (IsClientConnected(iClient) && !IsFakeClient(iClient)) {

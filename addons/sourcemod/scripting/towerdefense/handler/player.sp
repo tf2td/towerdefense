@@ -63,6 +63,72 @@ stock Player_ConnectionError(iClient, const String:sError[]) {
 	// Kick from server
 }
 
+/**
+ * Called once the client is connected.
+ *
+ * @param iUserId			The user id on server (unique on server). 
+ * @param iClient			The client.
+ * @param sName				The clients name.
+ * @param sCommunityId		The clients 32-bit steam id.
+ * @param sCommunityId		The clients 64-bit steam id (community id).
+ * @param sIp				The clients network address (ip).
+ * @noreturn
+ */
+
+stock Player_Connected(iUserId, iClient, const String:sName[], const String:sSteamId[], const String:sCommunityId[], const String:sIp[]) {
+	Log(TDLogLevel_Trace, "Player connected (UserId=%d, Client=%d, Name=%s, SteamId=%s, CommunityId=%s, Address=%s)", iUserId, iClient, sName, sSteamId, sCommunityId, sIp);
+
+	if (!StrEqual(sSteamId, "BOT")) {
+		if (GetRealClientCount() > PLAYER_LIMIT) {
+			KickClient(iClient, "Maximum number of players has been reached (%d/%d)", GetRealClientCount() - 1, PLAYER_LIMIT);
+			Log(TDLogLevel_Info, "Kicked player (%N, %s) (Maximum players reached: %d/%d)", iClient, sSteamId, GetRealClientCount() - 1, PLAYER_LIMIT);
+			return;
+		}
+
+		Log(TDLogLevel_Info, "Connected clients: %d/%d", GetRealClientCount(), PLAYER_LIMIT);
+
+		SDKHook(iClient, SDKHook_OnTakeDamage, OnTakeDamage);
+		SDKHook(iClient, SDKHook_OnTakeDamagePost, OnTakeDamagePost);
+
+		g_bCarryingObject[iClient] = false;
+		g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
+		g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
+		g_bReplaceWeapon[iClient][TFWeaponSlot_Melee] = false;
+
+		g_iAttachedTower[iClient] = 0;
+
+		ChangeClientTeam(iClient, TEAM_DEFENDER);
+		TF2_SetPlayerClass(iClient, TFClass_Engineer, false, true);
+
+		Log(TDLogLevel_Debug, "Moved player %N to the Defenders team as Engineer", iClient);
+	}
+}
+
+/**
+ * Called once the client has entered the game (connected and loaded)
+ *
+ * @param iClient			The client.
+ * @noreturn
+ */
+
+stock Player_Active(iClient) {
+	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
+		CreateTimer(1.0, InitInfoTimer, iClient, TIMER_FLAG_NO_MAPCHANGE);
+	}
+}
+
+public Action:InitInfoTimer(Handle:hTimer, any:iClient) {
+	if (g_bServerInitialized) {
+		Player_ServerInitialized(iClient);
+		return Plugin_Stop;
+	}
+
+	Player_ServerInitializing(iClient);
+
+	CreateTimer(1.0, InitInfoTimer, iClient, TIMER_FLAG_NO_MAPCHANGE);
+	return Plugin_Stop;
+}
+
 stock Player_SetUserId(iClient, iUserId) {
 	SetPackPosition(m_hPlayerData[iClient], PLAYER_USER_ID);
 	WritePackCell(m_hPlayerData[iClient], iUserId);

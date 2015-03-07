@@ -108,13 +108,6 @@ public OnPluginStart() {
 	RegisterCommands();
 	LoadConVars();
 
-	// Plugin late load, re-load
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
-		if (IsClientInGame(iClient)) {
-			OnClientPutInServer(iClient);
-		}
-	}
-
 	SetPassword("WaitingForServerToInitialize", false);
 }
 
@@ -233,49 +226,24 @@ public OnLibraryRemoved(const String:sName[]) {
 	}
 }
 
-public OnClientAuthorized(iClient, const String:sSteamId[]) {
-	if (!g_bEnabled) {
-		return;
-	}
-
-	if (IsValidClient(iClient) && !StrEqual(sSteamId, "BOT")) {
-		if (GetRealClientCount() > PLAYER_LIMIT) {
-			KickClient(iClient, "Maximum number of players has been reached (%d/%d)", GetRealClientCount() - 1, PLAYER_LIMIT);
-			Log(TDLogLevel_Info, "Kicked player (%N, %s) (Maximum players reached: %d/%d)", iClient, sSteamId, GetRealClientCount() - 1, PLAYER_LIMIT);
-			return;
-		}
-
-		Log(TDLogLevel_Info, "Connected clients: %d/%d", GetRealClientCount(), PLAYER_LIMIT);
-	}
-}
-
-public OnClientPutInServer(iClient) {
-	if (!g_bEnabled) {
-		return;
-	}
-
-	SDKHook(iClient, SDKHook_OnTakeDamage, OnTakeDamage);
-	SDKHook(iClient, SDKHook_OnTakeDamagePost, OnTakeDamagePost);
-
-	g_bCarryingObject[iClient] = false;
-	g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
-	g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
-	g_bReplaceWeapon[iClient][TFWeaponSlot_Melee] = false;
-
-	g_iAttachedTower[iClient] = 0;
-}
-
 public OnClientPostAdminCheck(iClient) {
 	if (!g_bEnabled) {
 		return;
 	}
 
-	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
-		ChangeClientTeam(iClient, TEAM_DEFENDER);
-		TF2_SetPlayerClass(iClient, TFClass_Engineer, false, true);
+	decl String:sName[MAX_NAME_LENGTH];
+	GetClientName(iClient, sName, sizeof(sName));
 
-		Log(TDLogLevel_Debug, "Moved player %N to Defenders team as Engineer", iClient);
-	}
+	decl String:sSteamId[32];
+	GetClientAuthString(iClient, sSteamId, sizeof(sSteamId));
+
+	decl String:sCommunityId[32];
+	GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId));
+		
+	decl String:sIp[32];
+	GetClientIP(iClient, sIp, sizeof(sIp));
+
+	Player_Connected(GetClientUserId(iClient), iClient, sName, sSteamId, sCommunityId, sIp);
 }
 
 public OnClientDisconnect(iClient) {
