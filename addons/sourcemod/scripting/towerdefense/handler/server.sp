@@ -37,12 +37,6 @@ stock Server_Initialize() {
 		}
 
 		SetPassword(SERVER_PASS, false);
-		SetConVars();
-
-		CreateDataMap(g_hMapTowers);
-		CreateDataMap(g_hMapWeapons);
-		CreateDataMap(g_hMapWaves);
-		CreateDataMap(g_hMapMetalpacks);
 
 		Database_LoadData(); // Calls Database_OnDataLoaded() when finished
 	}
