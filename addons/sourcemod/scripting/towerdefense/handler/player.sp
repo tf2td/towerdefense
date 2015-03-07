@@ -2,20 +2,15 @@
 
 #include <sourcemod>
 
-#define PLAYER_USER_ID 		 0
-#define PLAYER_DATABASE_ID 	 8
-#define PLAYER_STEAM_ID 	16
-
-new Handle:m_hPlayerData[MAXPLAYERS + 1];
-
 /**
  * Called multiple times during server initialization.
  *
- * @param iClient		The client.
+ * @param iUserId			The user id on server (unique on server).
+ * @param iClient			The client.
  * @noreturn
  */
 
-stock Player_ServerInitializing(iClient) {
+stock Player_ServerInitializing(iUserId, iClient) {
 	if (!TF2_IsPlayerInCondition(iClient, TFCond_RestrictToMelee)) {
 		TF2_AddCondition(iClient, TFCond_RestrictToMelee);
 		SetEntPropEnt(iClient, Prop_Send, "m_hActiveWeapon", GetPlayerWeaponSlot(iClient, TFWeaponSlot_Melee));
@@ -29,38 +24,34 @@ stock Player_ServerInitializing(iClient) {
 /**
  * Called once the server is initialized.
  *
+ * @param iUserId			The user id on server (unique on server).
  * @param iClient			The client.
  * @noreturn
  */
 
-stock Player_ServerInitialized(iClient) {
+stock Player_ServerInitialized(iUserId, iClient) {
 	decl String:sCommunityId[32];
-
-	if (!GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId))) {
-		Player_ConnectionError(iClient, "Could not get Steam identification number");
-		return;
-	}
-
-	m_hPlayerData[iClient] = CreateDataPack();
-
-	Player_SetUserId(iClient, GetClientUserId(iClient));
-	Player_SetDatabaseId(iClient, 0);
-	Player_SetSteamId(iClient, sCommunityId);
+	Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sCommunityId, sizeof(sCommunityId));
 
 	TF2_RemoveCondition(iClient, TFCond_RestrictToMelee);
 	SetEntityMoveType(iClient, MOVETYPE_WALK);
 
-	Player_SyncDatabase(iClient, sCommunityId);
+	Player_SyncDatabase(iUserId, iClient, sCommunityId);
 
 	Log(TDLogLevel_Debug, "Successfully initialized player %N (%s)", iClient, sCommunityId);
 }
 
-stock Player_SyncDatabase(iClient, const String:sCommunityId[]) {
-	Database_CheckPlayer(iClient, sCommunityId);
-}
+/**
+ * Syncs all initial things of a client with the database.
+ *
+ * @param iUserId			The user id on server (unique on server).
+ * @param iClient			The client.
+ * @param sCommunityId		The clients 64-bit steam id (community id).
+ * @noreturn
+ */
 
-stock Player_ConnectionError(iClient, const String:sError[]) {
-	// Kick from server
+stock Player_SyncDatabase(iUserId, iClient, const String:sCommunityId[]) {
+	Database_CheckPlayer(iUserId, iClient, sCommunityId);
 }
 
 /**
@@ -76,7 +67,7 @@ stock Player_ConnectionError(iClient, const String:sError[]) {
  */
 
 stock Player_Connected(iUserId, iClient, const String:sName[], const String:sSteamId[], const String:sCommunityId[], const String:sIp[]) {
-	Log(TDLogLevel_Trace, "Player connected (UserId=%d, Client=%d, Name=%s, SteamId=%s, CommunityId=%s, Address=%s)", iUserId, iClient, sName, sSteamId, sCommunityId, sIp);
+	Log(TDLogLevel_Debug, "Player connected (UserId=%d, Client=%d, Name=%s, SteamId=%s, CommunityId=%s, Address=%s)", iUserId, iClient, sName, sSteamId, sCommunityId, sIp);
 
 	if (!StrEqual(sSteamId, "BOT")) {
 		if (GetRealClientCount() > PLAYER_LIMIT) {
@@ -86,6 +77,10 @@ stock Player_Connected(iUserId, iClient, const String:sName[], const String:sSte
 		}
 
 		Log(TDLogLevel_Info, "Connected clients: %d/%d", GetRealClientCount(), PLAYER_LIMIT);
+
+		Player_USetString(iUserId, PLAYER_STEAM_ID, sSteamId);
+		Player_USetString(iUserId, PLAYER_COMMUNITY_ID, sCommunityId);
+		Player_USetString(iUserId, PLAYER_IP_ADDRESS, sIp);
 
 		SDKHook(iClient, SDKHook_OnTakeDamage, OnTakeDamage);
 		SDKHook(iClient, SDKHook_OnTakeDamagePost, OnTakeDamagePost);
@@ -105,56 +100,256 @@ stock Player_Connected(iUserId, iClient, const String:sName[], const String:sSte
 }
 
 /**
- * Called once the client has entered the game (connected and loaded)
+ * Called once the client has entered the game (connected and loaded).
  *
+ * @param iUserId			The user id on server (unique on server).
  * @param iClient			The client.
  * @noreturn
  */
 
-stock Player_Active(iClient) {
+stock Player_Loaded(iUserId, iClient) {
+	decl String:sCommunityId[32];
+	Player_CGetString(iClient, PLAYER_COMMUNITY_ID, sCommunityId, sizeof(sCommunityId));
+
+	Log(TDLogLevel_Debug, "Player loaded (UserId=%d, Client=%d, CommunityId=%s)", iUserId, iClient, sCommunityId);
+
 	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
-		CreateTimer(1.0, InitInfoTimer, iClient, TIMER_FLAG_NO_MAPCHANGE);
+		CreateTimer(1.0, InitInfoTimer, iUserId, TIMER_FLAG_NO_MAPCHANGE);
 	}
 }
 
-public Action:InitInfoTimer(Handle:hTimer, any:iClient) {
+public Action:InitInfoTimer(Handle:hTimer, any:iUserId) {
 	if (g_bServerInitialized) {
-		Player_ServerInitialized(iClient);
+		Player_ServerInitialized(iUserId, GetClientOfUserId(iUserId));
 		return Plugin_Stop;
 	}
 
-	Player_ServerInitializing(iClient);
+	Player_ServerInitializing(iUserId, GetClientOfUserId(iUserId));
 
-	CreateTimer(1.0, InitInfoTimer, iClient, TIMER_FLAG_NO_MAPCHANGE);
+	CreateTimer(1.0, InitInfoTimer, iUserId, TIMER_FLAG_NO_MAPCHANGE);
 	return Plugin_Stop;
 }
 
-stock Player_SetUserId(iClient, iUserId) {
-	SetPackPosition(m_hPlayerData[iClient], PLAYER_USER_ID);
-	WritePackCell(m_hPlayerData[iClient], iUserId);
+stock CheckClientForUserId(iClient) {
+	return (iClient > 0 && iClient <= MaxClients && IsClientConnected(iClient));
 }
 
-stock Player_GetUserId(iClient) {
-	SetPackPosition(m_hPlayerData[iClient], PLAYER_USER_ID)
-	return ReadPackCell(m_hPlayerData[iClient]);
+stock Player_USetValue(iUserId, const String:sKey[], iValue) {
+	decl String:sUserIdKey[128];
+	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
+
+	Log(TDLogLevel_Trace, "Player_USetValue: iUserId=%d, sKey=%s, iValue=%d", iUserId, sKey, iValue);
+
+	SetTrieValue(g_hPlayerData, sUserIdKey, iValue);
 }
 
-stock Player_SetDatabaseId(iClient, iDatabaseId) {
-	SetPackPosition(m_hPlayerData[iClient], PLAYER_DATABASE_ID);
-	WritePackCell(m_hPlayerData[iClient], iDatabaseId);
+stock Player_CSetValue(iClient, const String:sKey[], iValue) {
+	if (CheckClientForUserId(iClient)) {
+		Player_USetValue(GetClientUserId(iClient), sKey, iValue);
+	}
 }
 
-stock Player_GetDatabaseId(iClient) {
-	SetPackPosition(m_hPlayerData[iClient], PLAYER_DATABASE_ID)
-	return ReadPackCell(m_hPlayerData[iClient]);
+stock bool:Player_UGetValue(iUserId, const String:sKey[], &iValue) {
+	decl String:sUserIdKey[128];
+	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
+
+	Log(TDLogLevel_Trace, "Player_UGetValue: iUserId=%d, sKey=%s", iUserId, sKey);
+	
+	if (!GetTrieValue(g_hPlayerData, sUserIdKey, iValue)) {
+		iValue = -1;
+		return false;
+	}
+
+	return true;
 }
 
-stock Player_SetSteamId(iClient, const String:sSteamId[]) {
-	SetPackPosition(m_hPlayerData[iClient], PLAYER_STEAM_ID);
-	WritePackString(m_hPlayerData[iClient], sSteamId);
+stock bool:Player_CGetValue(iClient, const String:sKey[], &iValue) {
+	return CheckClientForUserId(iClient) && Player_UGetValue(GetClientUserId(iClient), sKey, iValue);
 }
 
-stock Player_GetSteamId(iClient, String:sSteamId[], iMaxLength) {
-	SetPackPosition(m_hPlayerData[iClient], PLAYER_STEAM_ID);
-	ReadPackString(m_hPlayerData[iClient], sSteamId, iMaxLength);
+stock Player_USetBool(iUserId, const String:sKey[], bool:bValue) {
+	decl String:sUserIdKey[128];
+	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
+
+	Log(TDLogLevel_Trace, "Player_USetBool: iUserId=%d, sKey=%s, bValue=%s", iUserId, sKey, (bValue ? "true" : "false"));
+
+	SetTrieValue(g_hPlayerData, sUserIdKey, (bValue ? 1 : 0));
 }
+
+stock Player_CSetBool(iClient, const String:sKey[], bool:bValue) {
+	if (CheckClientForUserId(iClient)) {
+		Player_USetBool(GetClientUserId(iClient), sKey, bValue);
+	}
+}
+
+stock bool:Player_UGetBool(iUserId, const String:sKey[]) {
+	decl String:sUserIdKey[128];
+	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
+
+	Log(TDLogLevel_Trace, "Player_UGetBool: iUserId=%d, sKey=%s", iUserId, sKey);
+	
+	new iValue = 0;
+	GetTrieValue(g_hPlayerData, sUserIdKey, iValue);
+
+	return (iValue != 0);
+}
+
+stock bool:Player_CGetBool(iClient, const String:sKey[]) {
+	return CheckClientForUserId(iClient) && Player_UGetBool(GetClientUserId(iClient), sKey);
+}
+
+stock Player_USetFloat(iUserId, const String:sKey[], Float:fValue) {
+	decl String:sUserIdKey[128];
+	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
+
+	decl String:sValue[64];
+	FloatToString(fValue, sValue, sizeof(sValue))
+
+	Log(TDLogLevel_Trace, "Player_USetFloat: iUserId=%d, sKey=%s, fValue=%f", iUserId, sKey, fValue);
+
+	SetTrieString(g_hPlayerData, sUserIdKey, sValue);
+}
+
+stock Player_CSetFloat(iClient, const String:sKey[], Float:fValue) {
+	if (CheckClientForUserId(iClient)) {
+		Player_USetFloat(GetClientUserId(iClient), sKey, fValue);
+	}
+}
+
+stock bool:Player_UGetFloat(iUserId, const String:sKey[], &Float:fValue) {
+	decl String:sUserIdKey[128];
+	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
+
+	Log(TDLogLevel_Trace, "Player_UGetFloat: iUserId=%d, sKey=%s", iUserId, sKey);
+
+	decl String:sValue[64];
+	if (!GetTrieString(g_hPlayerData, sUserIdKey, sValue, sizeof(sValue))) {
+		fValue = -1.0;
+		return false;
+	}
+
+	fValue = StringToFloat(sValue);
+	return true;
+}
+
+stock bool:Player_CGetFloat(iClient, const String:sKey[], &Float:fValue) {
+	return CheckClientForUserId(iClient) && Player_UGetFloat(GetClientUserId(iClient), sKey, fValue);
+}
+
+stock Player_USetString(iUserId, const String:sKey[], const String:sValue[], any:...) {
+	decl String:sUserIdKey[128];
+	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
+
+	decl String:sFormattedValue[256];
+	VFormat(sFormattedValue, sizeof(sFormattedValue), sValue, 4);
+
+	Log(TDLogLevel_Trace, "Player_USetString: iUserId=%d, sKey=%s, sValue=%s", iUserId, sKey, sValue);
+
+	SetTrieString(g_hPlayerData, sUserIdKey, sFormattedValue);
+}
+
+stock Player_CSetString(iClient, const String:sKey[], const String:sValue[], any:...) {
+	if (CheckClientForUserId(iClient)) {
+		decl String:sFormattedValue[256];
+		VFormat(sFormattedValue, sizeof(sFormattedValue), sValue, 4);
+
+		Player_USetString(GetClientUserId(iClient), sKey, sFormattedValue);
+	}
+}
+
+stock bool:Player_UGetString(iUserId, const String:sKey[], String:sValue[], iMaxLength) {
+	decl String:sUserIdKey[128];
+	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
+
+	Log(TDLogLevel_Trace, "Player_UGetString: iUserId=%d, sKey=%s, iMaxLength=%d", iUserId, sKey, iMaxLength);
+
+	if (!GetTrieString(g_hPlayerData, sUserIdKey, sValue, iMaxLength)) {
+		Format(sValue, iMaxLength, "");
+		return false;
+	}
+
+	return true;
+}
+
+stock bool:Player_CGetString(iClient, const String:sKey[], String:sValue[], iMaxLength) {
+	return CheckClientForUserId(iClient) && Player_UGetString(GetClientUserId(iClient), sKey, sValue, iMaxLength);
+}
+
+/*==========  May not be of use  ==========*/
+/*
+stock Player_USetArray(iUserId, const String:sKey[], const any:aArray[], iNumItems) {
+	decl String:sUserIdKey[128];
+	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
+
+	Log(TDLogLevel_Trace, "Player_USetArray: iUserId=%d, sKey=%s, iNumItems=%d", iUserId, sKey, iNumItems);
+
+	SetTrieArray(g_hPlayerData, sUserIdKey, aArray, iNumItems);
+}
+
+stock Player_CSetArray(iClient, const String:sKey[], const any:aArray[], iNumItems) {
+	if (CheckClientForUserId(iClient)) {
+		Player_USetArray(GetClientUserId(iClient), sKey, aArray, iNumItems);
+	}
+}
+
+stock bool:Player_UGetArray(iUserId, const String:sKey[], any:aArray[], iMaxSize) {
+	decl String:sUserIdKey[128];
+	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
+
+	Log(TDLogLevel_Trace, "Player_UGetArray: iUserId=%d, sKey=%s, iMaxSize=%d", iUserId, sKey, iMaxSize);
+
+	new bool:bResult = GetTrieArray(g_hPlayerData, sUserIdKey, aArray, iMaxSize);
+
+	if (!bResult) {
+		bResult = GetTrieValue(g_hPlayerData, sUserIdKey, aArray[0]);
+	}
+
+	return bResult;
+}
+
+stock bool:Player_CGetArray(iClient, const String:sKey[], any:aArray[], iMaxSize) {
+	return CheckClientForUserId(iClient) && Player_UGetArray(GetClientUserId(iClient), sKey, aArray, iMaxSize);
+}
+
+stock Player_USetArrayValue(iUserId, const String:sKey[], iIndex, any:aValue, const iNumItems) {
+	decl String:sUserIdKey[128];
+	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
+
+	Log(TDLogLevel_Trace, "Player_USetArrayValue: iUserId=%d, sKey=%s, iIndex=%d, iNumItems=%d", iUserId, sKey, iIndex, iNumItems);
+
+	new any:aArray[iNumItems];
+	GetTrieArray(g_hPlayerData, sUserIdKey, aArray, iNumItems);
+
+	aArray[iIndex] = aValue;
+
+	SetTrieArray(g_hPlayerData, sUserIdKey, aArray, iNumItems);
+}
+
+stock Player_CSetArrayValue(iClient, const String:sKey[], iIndex, any:aValue, const iNumItems) {
+	if (CheckClientForUserId(iClient)) {
+		Player_USetArrayValue(GetClientUserId(iClient), sKey, iIndex, aValue, iNumItems);
+	}
+}
+
+stock bool:Player_UGetArrayValue(iUserId, const String:sKey[], iIndex, &any:aValue, const iNumItems) {
+	decl String:sUserIdKey[128];
+	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
+
+	Log(TDLogLevel_Trace, "Player_USetArrayValue: iUserId=%d, sKey=%s, iIndex=%d, iNumItems=%d", iUserId, sKey, iIndex, iNumItems);
+
+	new any:aArray[iNumItems];
+	new bool:bResult = GetTrieArray(g_hPlayerData, sUserIdKey, aArray, iNumItems);
+
+	if (bResult) {
+		aValue = aArray[iIndex];
+	} else {
+		bResult = GetTrieValue(g_hPlayerData, sUserIdKey, aValue);
+	}
+
+	return bResult;
+}
+
+stock bool:Player_CGetArrayValue(iClient, const String:sKey[], iIndex, &any:aValue, const iNumItems) {
+	return CheckClientForUserId(iClient) && Player_UGetArrayValue(GetClientUserId(iClient), sKey, iIndex, aValue, iNumItems);
+}
+*/

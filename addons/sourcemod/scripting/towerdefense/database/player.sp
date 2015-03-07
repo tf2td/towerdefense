@@ -2,43 +2,16 @@
 
 #include <sourcemod>
 
-stock SetUserId(Handle:hPlayerData, iUserId) {
-	SetTrieValue(hPlayerData, "player_user_id", iUserId);
-}
-
-stock GetUserId(Handle:hPlayerData) {
-	new iUserId;
-	GetTrieValue(hPlayerData, "player_user_id", iUserId);
-	return iUserId;
-}
-
-stock SetDatabaseId(Handle:hPlayerData, iDatabaseId) {
-	SetTrieValue(hPlayerData, "player_database_id", iDatabaseId);
-}
-
-stock GetDatabaseId(Handle:hPlayerData) {
-	new iDatabaseId;
-	GetTrieValue(hPlayerData, "player_database_id", iDatabaseId);
-	return iDatabaseId;
-}
-
-stock SetSteamId(Handle:hPlayerData, const String:sSteamId[]) {
-	SetTrieString(hPlayerData, "player_steam_id", sSteamId);
-}
-
-stock GetSteamId(Handle:hPlayerData, String:sSteamId[], iMaxLength) {
-	GetTrieString(hPlayerData, "player_steam_id", sSteamId, iMaxLength);
-}
-
 /**
  * Checks if a player already exists.
  *
+ * @param iUserId			The user id on server (unique on server).
  * @param iClient			The client.
- * @param sSteamId			The players 64-bit steam id (community id).
+ * @param sCommunityId		The clients 64-bit steam id (community id).
  * @noreturn
  */
 
-stock Database_CheckPlayer(iClient, const String:sSteamId[]) {
+stock Database_CheckPlayer(iUserId, iClient, const String:sCommunityId[]) {
 	if (!IsDefender(iClient)) {
 		return;
 	}
@@ -50,31 +23,24 @@ stock Database_CheckPlayer(iClient, const String:sSteamId[]) {
 		FROM `player` \
 		WHERE `player`.`steamid64` = '%s' \
 		LIMIT 1 \
-	", sSteamId);
+	", sCommunityId);
 
-	new Handle:hPlayerData;
-	CreateDataMap(hPlayerData);
-
-	SetUserId(hPlayerData, GetClientUserId(iClient));
-	SetDatabaseId(hPlayerData, 0);
-	SetSteamId(hPlayerData, sSteamId);
-
-	SQL_TQuery(g_hDatabase, Database_OnCheckPlayer, sQuery, hPlayerData);
+	SQL_TQuery(g_hDatabase, Database_OnCheckPlayer, sQuery, iUserId);
 }
 
-public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:hPlayerData) {
+public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult) == 0) {
 		// No player found, add it
 
-		Database_AddPlayer(hPlayerData);
+		Database_AddPlayer(iUserId);
 	} else {
 		SQL_FetchRow(hResult);
 
-		SetDatabaseId(hPlayerData, SQL_FetchInt(hResult, 0));
+		Player_USetValue(iUserId, PLAYER_DATABASE_ID, SQL_FetchInt(hResult, 0));
 
-		Database_UpdatePlayer(hPlayerData);
+		Database_UpdatePlayer(iUserId);
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -86,32 +52,32 @@ public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sErro
 /**
  * Adds a player.
  *
- * @param hPlayerData 			The datamap (trie) handle containing the player info.
+ * @param iUserId			The user id on server (unique on server).
  * @noreturn
  */
 
-stock Database_AddPlayer(Handle:hPlayerData) {
+stock Database_AddPlayer(iUserId) {
 	decl String:sQuery[128];
 	decl String:sSteamId[32];
 
-	GetSteamId(hPlayerData, sSteamId, sizeof(sSteamId));
+	Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sSteamId, sizeof(sSteamId));
 
 	Format(sQuery, sizeof(sQuery), "\
 		INSERT INTO `player` (`steamid64`, `first_server`) \
 		VALUES ('%s', %d) \
 	", sSteamId, g_iServerId);
 
-	SQL_TQuery(g_hDatabase, Database_OnAddPlayer_1, sQuery, hPlayerData);
+	SQL_TQuery(g_hDatabase, Database_OnAddPlayer_1, sQuery, iUserId);
 }
 
-public Database_OnAddPlayer_1(Handle:hDriver, Handle:hResult, const String:sError[], any:hPlayerData) {
+public Database_OnAddPlayer_1(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_AddPlayer > Error: %s", sError);
 	} else {
 		decl String:sQuery[32];
 		Format(sQuery, sizeof(sQuery), "SELECT LAST_INSERT_ID()");
 
-		SQL_TQuery(g_hDatabase, Database_OnAddPlayer_2, sQuery, hPlayerData);
+		SQL_TQuery(g_hDatabase, Database_OnAddPlayer_2, sQuery, iUserId);
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -120,20 +86,20 @@ public Database_OnAddPlayer_1(Handle:hDriver, Handle:hResult, const String:sErro
 	}
 }
 
-public Database_OnAddPlayer_2(Handle:hDriver, Handle:hResult, const String:sError[], any:hPlayerData) {
+public Database_OnAddPlayer_2(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_AddPlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		decl String:sSteamId[32];
-		GetSteamId(hPlayerData, sSteamId, sizeof(sSteamId));
+		Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sSteamId, sizeof(sSteamId));
 
-		Log(TDLogLevel_Info, "Added player %N to database (%s)", GetClientOfUserId(GetUserId(hPlayerData)), sSteamId);
+		Log(TDLogLevel_Info, "Added player %N to database (%s)", GetClientOfUserId(iUserId), sSteamId);
 
 		SQL_FetchRow(hResult);
 		
-		SetDatabaseId(hPlayerData, SQL_FetchInt(hResult, 0));
+		Player_USetValue(iUserId, PLAYER_DATABASE_ID, SQL_FetchInt(hResult, 0));
 
-		Database_UpdatePlayer(hPlayerData);
+		Database_UpdatePlayer(iUserId);
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -145,17 +111,17 @@ public Database_OnAddPlayer_2(Handle:hDriver, Handle:hResult, const String:sErro
 /**
  * Updates a servers info.
  *
- * @param hPlayerData 			The datamap (trie) handle containing the player info.
+ * @param iUserId			The user id on server (unique on server).
  * @noreturn
  */
 
-stock Database_UpdatePlayer(Handle:hPlayerData) {
+stock Database_UpdatePlayer(iUserId) {
 	decl String:sQuery[512];
 
 	decl String:sPlayerName[MAX_NAME_LENGTH + 1];
 	decl String:sPlayerNameSave[MAX_NAME_LENGTH * 2 + 1];
 
-	new iClient = GetClientOfUserId(GetUserId(hPlayerData));
+	new iClient = GetClientOfUserId(iUserId);
 
 	GetClientName(iClient, sPlayerName, sizeof(sPlayerName));
 	SQL_EscapeString(g_hDatabase, sPlayerName, sPlayerNameSave, sizeof(sPlayerNameSave));
@@ -163,10 +129,11 @@ stock Database_UpdatePlayer(Handle:hPlayerData) {
 	decl String:sPlayerIp[16];
 	decl String:sPlayerIpSave[33];
 
-	GetClientIP(iClient, sPlayerIp, sizeof(sPlayerIp));
+	Player_UGetString(iUserId, PLAYER_IP_ADDRESS, sPlayerIp, sizeof(sPlayerIp));
 	SQL_EscapeString(g_hDatabase, sPlayerIp, sPlayerIpSave, sizeof(sPlayerIpSave));
 
-	new iPlayerId = GetDatabaseId(hPlayerData);
+	new iPlayerId;
+	Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 	Format(sQuery, sizeof(sQuery), "\
 		UPDATE `player` \
@@ -178,16 +145,17 @@ stock Database_UpdatePlayer(Handle:hPlayerData) {
 		LIMIT 1 \
 	", sPlayerNameSave, sPlayerIpSave, g_iServerId, g_iServerId, iPlayerId);
 
-	SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_1, sQuery, hPlayerData);
+	SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_1, sQuery, iUserId);
 }
 
-public Database_OnUpdatePlayer_1(Handle:hDriver, Handle:hResult, const String:sError[], any:hPlayerData) {
+public Database_OnUpdatePlayer_1(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else {
 		decl String:sQuery[512];
 
-		new iPlayerId = GetDatabaseId(hPlayerData);
+		new iPlayerId;
+		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 		Format(sQuery, sizeof(sQuery), "\
 			INSERT IGNORE INTO `player_stats` (`player_id`, `map_id`, `first_connect`, `last_connect`, `last_disconnect`) \
@@ -199,7 +167,7 @@ public Database_OnUpdatePlayer_1(Handle:hDriver, Handle:hResult, const String:sE
 					UTC_TIMESTAMP(), UTC_TIMESTAMP(), UTC_TIMESTAMP()) \
 		", iPlayerId, g_iServerId);
 
-		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_2, sQuery, hPlayerData);
+		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_2, sQuery, iUserId);
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -208,13 +176,14 @@ public Database_OnUpdatePlayer_1(Handle:hDriver, Handle:hResult, const String:sE
 	}
 }
 
-public Database_OnUpdatePlayer_2(Handle:hDriver, Handle:hResult, const String:sError[], any:hPlayerData) {
+public Database_OnUpdatePlayer_2(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else {
 		decl String:sQuery[128];
 
-		new iPlayerId = GetDatabaseId(hPlayerData);
+		new iPlayerId;
+		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 		Format(sQuery, sizeof(sQuery), "\
 			SELECT `steamid64` \
@@ -223,7 +192,7 @@ public Database_OnUpdatePlayer_2(Handle:hDriver, Handle:hResult, const String:sE
 			LIMIT 1 \
 		", iPlayerId);
 
-		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_3, sQuery, hPlayerData);
+		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_3, sQuery, iUserId);
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -232,7 +201,7 @@ public Database_OnUpdatePlayer_2(Handle:hDriver, Handle:hResult, const String:sE
 	}
 }
 
-public Database_OnUpdatePlayer_3(Handle:hDriver, Handle:hResult, const String:sError[], any:hPlayerData) {
+public Database_OnUpdatePlayer_3(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
@@ -241,9 +210,9 @@ public Database_OnUpdatePlayer_3(Handle:hDriver, Handle:hResult, const String:sE
 		decl String:sSteamId[32];
 		SQL_FetchString(hResult, 0, sSteamId, sizeof(sSteamId));
 
-		Log(TDLogLevel_Info, "Updated player %N in database (%s)", GetClientOfUserId(GetUserId(hPlayerData)), sSteamId);
+		Log(TDLogLevel_Info, "Updated player %N in database (%s)", GetClientOfUserId(iUserId), sSteamId);
 
-		Database_CheckPlayerBanned(hPlayerData);
+		Database_CheckPlayerBanned(iUserId);
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -255,14 +224,15 @@ public Database_OnUpdatePlayer_3(Handle:hDriver, Handle:hResult, const String:sE
 /**
  * Checks if a player's banned.
  *
- * @param hPlayerData 			The datamap (trie) handle containing the player info.
+ * @param iUserId			The user id on server (unique on server).
  * @noreturn
  */
 
-stock Database_CheckPlayerBanned(Handle:hPlayerData) {
+stock Database_CheckPlayerBanned(iUserId) {
 	decl String:sQuery[128];
 
-	new iPlayerId = GetDatabaseId(hPlayerData);
+	new iPlayerId;
+	Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 	Format(sQuery, sizeof(sQuery), "\
 		UPDATE `player_ban` \
@@ -270,16 +240,17 @@ stock Database_CheckPlayerBanned(Handle:hPlayerData) {
 		WHERE `player_id` = %d AND `expire` <= UTC_TIMESTAMP() \
 	", iPlayerId);
 
-	SQL_TQuery(g_hDatabase, Database_OnCheckPlayerBanned_1, sQuery, hPlayerData);
+	SQL_TQuery(g_hDatabase, Database_OnCheckPlayerBanned_1, sQuery, iUserId);
 }
 
-public Database_OnCheckPlayerBanned_1(Handle:hDriver, Handle:hResult, const String:sError[], any:hPlayerData) {
+public Database_OnCheckPlayerBanned_1(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerBanned > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		decl String:sQuery[512];
 
-		new iPlayerId = GetDatabaseId(hPlayerData);
+		new iPlayerId;
+		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 		Format(sQuery, sizeof(sQuery), "\
 			SELECT `reason`, CONCAT(`expire`, ' ', 'UTC') \
@@ -290,7 +261,7 @@ public Database_OnCheckPlayerBanned_1(Handle:hDriver, Handle:hResult, const Stri
 			LIMIT 1 \
 		", iPlayerId, iPlayerId);
 
-		SQL_TQuery(g_hDatabase, Database_OnCheckPlayerBanned_2, sQuery, hPlayerData);
+		SQL_TQuery(g_hDatabase, Database_OnCheckPlayerBanned_2, sQuery, iUserId);
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -299,13 +270,13 @@ public Database_OnCheckPlayerBanned_1(Handle:hDriver, Handle:hResult, const Stri
 	}
 }
 
-public Database_OnCheckPlayerBanned_2(Handle:hDriver, Handle:hResult, const String:sError[], any:hPlayerData) {
+public Database_OnCheckPlayerBanned_2(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerBanned > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		new bool:bDontProceed = false;
 
-		new iClient = GetClientOfUserId(GetUserId(hPlayerData));
+		new iClient = GetClientOfUserId(iUserId);
 
 		SQL_FetchRow(hResult);
 
@@ -323,7 +294,7 @@ public Database_OnCheckPlayerBanned_2(Handle:hDriver, Handle:hResult, const Stri
 		}
 
 		if (!bDontProceed) {
-			Database_CheckPlayerImmunity(hPlayerData);
+			Database_CheckPlayerImmunity(iUserId);
 		}
 	}
 
@@ -336,14 +307,15 @@ public Database_OnCheckPlayerBanned_2(Handle:hDriver, Handle:hResult, const Stri
 /**
  * Checks a players immunity level.
  *
- * @param hPlayerData 			The datamap (trie) handle containing the player info.
+ * @param iUserId			The user id on server (unique on server).
  * @noreturn
  */
 
-stock Database_CheckPlayerImmunity(Handle:hPlayerData) {
+stock Database_CheckPlayerImmunity(iUserId) {
 	decl String:sQuery[512];
 
-	new iPlayerId = GetDatabaseId(hPlayerData);
+	new iPlayerId;
+	Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `immunity` \
@@ -352,14 +324,14 @@ stock Database_CheckPlayerImmunity(Handle:hPlayerData) {
 		LIMIT 1 \
 	", iPlayerId);
 
-	SQL_TQuery(g_hDatabase, Database_OnCheckPlayerImmunity, sQuery, hPlayerData);
+	SQL_TQuery(g_hDatabase, Database_OnCheckPlayerImmunity, sQuery, iUserId);
 }
 
-public Database_OnCheckPlayerImmunity(Handle:hDriver, Handle:hResult, const String:sError[], any:hPlayerData) {
+public Database_OnCheckPlayerImmunity(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerImmunity > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		new iClient = GetClientOfUserId(GetUserId(hPlayerData));
+		new iClient = GetClientOfUserId(iUserId);
 
 		SQL_FetchRow(hResult);
 		new iImmunity = SQL_FetchInt(hResult, 0);
@@ -370,8 +342,6 @@ public Database_OnCheckPlayerImmunity(Handle:hDriver, Handle:hResult, const Stri
 			SetAdminFlag(iAdmin, Admin_Root, true);
 			SetUserAdmin(iClient, iAdmin);
 		}
-
-		CloseHandle(hPlayerData);
 	}
 
 	if (hResult != INVALID_HANDLE) {

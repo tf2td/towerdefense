@@ -28,9 +28,7 @@ stock HookEvents() {
 }
 
 public Event_PlayerActivate(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
-	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
-
-	Player_Active(iClient);
+	Player_Loaded(GetEventInt(hEvent, "userid"), GetClientOfUserId(GetEventInt(hEvent, "userid")));
 }
 
 public Event_PlayerCarryObject(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {

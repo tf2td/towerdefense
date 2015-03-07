@@ -77,6 +77,8 @@ new bool:g_bReplaceWeapon[MAXPLAYERS + 1][3];
 
 /*==========  Handle  ==========*/
 
+new Handle:g_hPlayerData;
+
 /*==========  Float  ==========*/
 
 /*==========  Integer  ==========*/
