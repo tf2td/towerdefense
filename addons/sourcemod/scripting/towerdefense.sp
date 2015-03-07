@@ -102,11 +102,19 @@ public APLRes:AskPluginLoad2(Handle:hMyself, bool:bLate, String:sError[], iMaxLe
 public OnPluginStart() {
 	PrintToServer("%s Loaded %s %s by %s", PLUGIN_PREFIX, PLUGIN_NAME, PLUGIN_VERSION, PLUGIN_AUTHOR);
 
-	Log_Initialize(TDLogLevel_Trace, TDLogType_Console);
+	Log_Initialize(TDLogLevel_Debug, TDLogType_Console);
+
+	CreateDataMap(g_hMapTowers);
+	CreateDataMap(g_hMapWeapons);
+	CreateDataMap(g_hMapWaves);
+	CreateDataMap(g_hMapMetalpacks);
+
+	CreateDataMap(g_hPlayerData);
 
 	HookEvents();
 	RegisterCommands();
 	LoadConVars();
+	SetConVars();
 
 	SetPassword("WaitingForServerToInitialize", false);
 }
