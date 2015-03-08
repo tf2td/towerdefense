@@ -108,6 +108,8 @@ stock Player_Connected(iUserId, iClient, const String:sName[], const String:sSte
  */
 
 stock Player_OnDisconnectPre(iUserId, iClient) {
+	Database_UpdatePlayerDisconnect(iUserId);
+
 	if (GetRealClientCount(true) <= 1) { // the disconnected player is counted (thus 1 not 0)
 		SetPassword(SERVER_PASS, true, true);
 	}

@@ -205,6 +205,28 @@ public Database_OnUpdatePlayer_3(Handle:hDriver, Handle:hResult, const String:sE
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
+		decl String:sQuery[128];
+
+		Format(sQuery, sizeof(sQuery), "\
+			UPDATE `server` \
+			SET `players` = `players` + 1 \
+			WHERE `server_id` = %d \
+			LIMIT 1 \
+		", g_iServerId);
+
+		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_4, sQuery, iUserId);
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+public Database_OnUpdatePlayer_4(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
 
 		decl String:sSteamId[32];
@@ -348,6 +370,92 @@ public Database_OnCheckPlayerImmunity(Handle:hDriver, Handle:hResult, const Stri
 		Player_USetValue(iUserId, PLAYER_IMMUNITY, iImmunity);
 	} else {
 		Player_USetValue(iUserId, PLAYER_IMMUNITY, 0);
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+/**
+ * Updates a disconnect client things.
+ *
+ * @param iUserId			The user id on server (unique on server).
+ * @noreturn
+ */
+
+stock Database_UpdatePlayerDisconnect(iUserId) {
+	decl String:sQuery[128];
+
+	new iPlayerId;
+	Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
+
+	Format(sQuery, sizeof(sQuery), "\
+		UPDATE `player` \
+		SET `current_server` = NULL \
+		WHERE `player_id` = %d \
+		LIMIT 1 \
+	", iPlayerId);
+
+	SQL_TQuery(g_hDatabase, Database_OnUpdatePlayerDisconnect_1, sQuery, iUserId);
+}
+
+public Database_OnUpdatePlayerDisconnect_1(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
+	} else {
+		decl String:sQuery[128];
+
+		new iPlayerId;
+		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
+
+		Format(sQuery, sizeof(sQuery), "\
+			UPDATE `player_stats` \
+			SET `last_disconnect` = UTC_TIMESTAMP() \
+			WHERE `player_id` = %d \
+			LIMIT 1 \
+		", iPlayerId);
+
+		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayerDisconnect_2, sQuery, iUserId);
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+public Database_OnUpdatePlayerDisconnect_2(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
+	} else {
+		decl String:sQuery[128];
+
+		Format(sQuery, sizeof(sQuery), "\
+			UPDATE `server` \
+			SET `players` = `players` - 1 \
+			WHERE `server_id` = %d \
+			LIMIT 1 \
+		", g_iServerId);
+
+		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayerDisconnect_3, sQuery, iUserId);
+	}
+
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+public Database_OnUpdatePlayerDisconnect_3(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
+	} else {
+		decl String:sSteamId[32];
+		Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sSteamId, sizeof(sSteamId));
+
+		Log(TDLogLevel_Info, "Updated disconnected player in database (%s)", sSteamId);
 	}
 
 	if (hResult != INVALID_HANDLE) {
