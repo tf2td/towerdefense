@@ -246,7 +246,7 @@ stock Database_CheckPlayerBanned(iUserId) {
 public Database_OnCheckPlayerBanned_1(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerBanned > Error: %s", sError);
-	} else if (SQL_GetRowCount(hResult)) {
+	} else {
 		decl String:sQuery[512];
 
 		new iPlayerId;
@@ -296,6 +296,8 @@ public Database_OnCheckPlayerBanned_2(Handle:hDriver, Handle:hResult, const Stri
 		if (!bDontProceed) {
 			Database_CheckPlayerImmunity(iUserId);
 		}
+	} else {
+		Database_CheckPlayerImmunity(iUserId);
 	}
 
 	if (hResult != INVALID_HANDLE) {
@@ -344,6 +346,8 @@ public Database_OnCheckPlayerImmunity(Handle:hDriver, Handle:hResult, const Stri
 		}
 
 		Player_USetValue(iUserId, PLAYER_IMMUNITY, iImmunity);
+	} else {
+		Player_USetValue(iUserId, PLAYER_IMMUNITY, 0);
 	}
 
 	if (hResult != INVALID_HANDLE) {
