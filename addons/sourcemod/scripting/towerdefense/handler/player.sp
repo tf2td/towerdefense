@@ -100,6 +100,20 @@ stock Player_Connected(iUserId, iClient, const String:sName[], const String:sSte
 }
 
 /**
+ * Called before the client disconnects.
+ *
+ * @param iUserId			The user id on server (unique on server).
+ * @param iClient			The client.
+ * @noreturn
+ */
+
+stock Player_OnDisconnectPre(iUserId, iClient) {
+	if (GetRealClientCount(true) <= 1) { // the disconnected player is counted (thus 1 not 0)
+		SetPassword(SERVER_PASS, true, true);
+	}
+}
+
+/**
  * Called once the client has entered the game (connected and loaded).
  *
  * @param iUserId			The user id on server (unique on server).
@@ -128,6 +142,50 @@ public Action:InitInfoTimer(Handle:hTimer, any:iUserId) {
 
 	CreateTimer(1.0, InitInfoTimer, iUserId, TIMER_FLAG_NO_MAPCHANGE);
 	return Plugin_Stop;
+}
+
+/**
+ * Called when a client spawned.
+ *
+ * @param iUserId			The user id on server (unique on server).
+ * @param iClient			The client.
+ * @noreturn
+ */
+
+stock Player_OnSpawn(iUserId, iClient) {
+	ResetClientMetal(iClient);
+	SetEntProp(iClient, Prop_Data, "m_bloodColor", _:TDBlood_None);
+
+	if (g_bReplaceWeapon[iClient][TFWeaponSlot_Primary]) {
+		TF2Items_GiveWeapon(iClient, 9, TFWeaponSlot_Primary, 5, 1, true, "tf_weapon_shotgun_primary", "");	
+		
+		g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
+	}
+
+	if (g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary]) {
+		TF2Items_GiveWeapon(iClient, 22, TFWeaponSlot_Secondary, 5, 1, true, "tf_weapon_pistol", "");
+			
+		g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
+	}
+}
+
+/**
+ * Called when a client dies.
+ *
+ * @param iUserId			The user id on server (unique on server).
+ * @param iClient			The client.
+ * @noreturn
+ */
+
+stock Player_OnDeath(iUserId, iClient) {
+	g_bCarryingObject[iClient] = false;
+	g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
+	g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
+	g_bReplaceWeapon[iClient][TFWeaponSlot_Melee] = false;
+
+	if (IsTower(g_iAttachedTower[iClient])) {
+		Tower_OnCarrierDeath(g_iAttachedTower[iClient], iClient);
+	}
 }
 
 /**

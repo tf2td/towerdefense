@@ -100,32 +100,23 @@ public Event_PlayerDeath(Handle:hEvent, const String:sName[], bool:bDontBroadcas
 		return;
 	}
 
-	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+	new iUserId = GetEventInt(hEvent, "userid");
+	new iClient = GetClientOfUserId(iUserId);
 
 	if (IsDefender(iClient)) {
-		g_bCarryingObject[iClient] = false;
-		g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
-		g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
-		g_bReplaceWeapon[iClient][TFWeaponSlot_Melee] = false;
-
-		if (IsTower(g_iAttachedTower[iClient])) {
-			Tower_OnCarrierDeath(g_iAttachedTower[iClient], iClient);
-		}
+		Player_OnDeath(iUserId, iClient);
 	} else if (IsAttacker(iClient)) {
 		Wave_OnDeath(iClient);
 	}
 }
 
 public Action:Event_PlayerDisconnectPre(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
-	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+	new iUserId = GetEventInt(hEvent, "userid");
+	new iClient = GetClientOfUserId(iUserId);
 
-	if (IsClientConnected(iClient) && !IsFakeClient(iClient)) {
-		if (GetRealClientCount(true) <= 1) { // the disconnected player is counted (thus 1 not 0)
-			SetPassword(SERVER_PASS, true, true);
-		}
-	}
-
-	if (!IsDefender(iClient)) {
+	if (IsDefender(iClient)) {
+		Player_OnDisconnectPre(iUserId, iClient);
+	} else {
 		return Plugin_Handled;
 	}
 
@@ -149,23 +140,11 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 		return;
 	}
 
-	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+	new iUserId = GetEventInt(hEvent, "userid");
+	new iClient = GetClientOfUserId(iUserId);
 
 	if (IsDefender(iClient)) {
-		ResetClientMetal(iClient);
-		SetEntProp(iClient, Prop_Data, "m_bloodColor", _:TDBlood_None);
-
-		if (g_bReplaceWeapon[iClient][TFWeaponSlot_Primary]) {
-			TF2Items_GiveWeapon(iClient, 9, TFWeaponSlot_Primary, 5, 1, true, "tf_weapon_shotgun_primary", "");
-			
-			g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
-		}
-
-		if (g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary]) {
-			TF2Items_GiveWeapon(iClient, 22, TFWeaponSlot_Secondary, 5, 1, true, "tf_weapon_pistol", "");
-			
-			g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
-		}
+		Player_OnSpawn(iUserId, iClient);
 	} else if (IsTower(iClient)) {
 		Tower_OnSpawn(iClient, GetTowerId(iClient));
 	} else if (IsAttacker(iClient)) {
