@@ -1,3 +1,11 @@
+enum TDDataType
+{
+	TDDataType_Integer = 0,
+	TDDataType_Boolean,
+	TDDataType_Float,
+	TDDataType_String
+};
+
 enum TDBloodColor
 {
 	TDBlood_None = -1,

@@ -130,6 +130,40 @@ public Action:InitInfoTimer(Handle:hTimer, any:iUserId) {
 	return Plugin_Stop;
 }
 
+/**
+ * Called when a client data was set.
+ *
+ * @param iUserId			The user id on server (unique on server).
+ * @param iClient			The client.
+ * @param sKey				The set key.
+ * @param iDataType			The datatype of the set data.
+ * @param iValue			The value if the set data is an integer, -1 otherwise.
+ * @param bValue			The value if the set data is a boolean, false otherwise.
+ * @param fValue			The value if the set data is a float, -1.0 otherwise.
+ * @param sValue			The value if the set data is a string, empty string ("") otherwise.
+ * @noreturn
+ */
+
+stock Player_OnDataSet(iUserId, iClient, const String:sKey[], TDDataType:iDataType, iValue, bValue, Float:fValue, const String:sValue[]) {
+	switch (iDataType) {
+		case TDDataType_Integer: {
+			Log(TDLogLevel_Trace, "Player_OnDataSet: iUserId=%d, iClient=%d, sKey=%s, iDataType=TDDataType_Integer, iValue=%d", iUserId, iClient, sKey, iValue);
+		}
+
+		case TDDataType_Boolean: {
+			Log(TDLogLevel_Trace, "Player_OnDataSet: iUserId=%d, iClient=%d, sKey=%s, iDataType=TDDataType_Boolean, bValue=%s", iUserId, iClient, sKey, (bValue ? "true" : "false"));
+		}
+
+		case TDDataType_Float: {
+			Log(TDLogLevel_Trace, "Player_OnDataSet: iUserId=%d, iClient=%d, sKey=%s, iDataType=TDDataType_Float, fValue=%f", iUserId, iClient, sKey, fValue);
+		}
+
+		case TDDataType_String: {
+			Log(TDLogLevel_Trace, "Player_OnDataSet: iUserId=%d, iClient=%d, sKey=%s, iDataType=TDDataType_String, sValue=%s", iUserId, iClient, sKey, sValue);
+		}
+	}
+}
+
 stock CheckClientForUserId(iClient) {
 	return (iClient > 0 && iClient <= MaxClients && IsClientConnected(iClient));
 }
@@ -138,7 +172,7 @@ stock Player_USetValue(iUserId, const String:sKey[], iValue) {
 	decl String:sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
 
-	Log(TDLogLevel_Trace, "Player_USetValue: iUserId=%d, sKey=%s, iValue=%d", iUserId, sKey, iValue);
+	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_Integer, iValue, false, -1.0, "");
 
 	SetTrieValue(g_hPlayerData, sUserIdKey, iValue);
 }
@@ -171,7 +205,7 @@ stock Player_USetBool(iUserId, const String:sKey[], bool:bValue) {
 	decl String:sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
 
-	Log(TDLogLevel_Trace, "Player_USetBool: iUserId=%d, sKey=%s, bValue=%s", iUserId, sKey, (bValue ? "true" : "false"));
+	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_Integer, -1, bValue, -1.0, "");
 
 	SetTrieValue(g_hPlayerData, sUserIdKey, (bValue ? 1 : 0));
 }
@@ -205,7 +239,7 @@ stock Player_USetFloat(iUserId, const String:sKey[], Float:fValue) {
 	decl String:sValue[64];
 	FloatToString(fValue, sValue, sizeof(sValue))
 
-	Log(TDLogLevel_Trace, "Player_USetFloat: iUserId=%d, sKey=%s, fValue=%f", iUserId, sKey, fValue);
+	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_Integer, -1, false, fValue, "");
 
 	SetTrieString(g_hPlayerData, sUserIdKey, sValue);
 }
@@ -243,7 +277,7 @@ stock Player_USetString(iUserId, const String:sKey[], const String:sValue[], any
 	decl String:sFormattedValue[256];
 	VFormat(sFormattedValue, sizeof(sFormattedValue), sValue, 4);
 
-	Log(TDLogLevel_Trace, "Player_USetString: iUserId=%d, sKey=%s, sValue=%s", iUserId, sKey, sValue);
+	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_String, -1, false, -1.0, sValue);
 
 	SetTrieString(g_hPlayerData, sUserIdKey, sFormattedValue);
 }
