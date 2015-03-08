@@ -91,6 +91,8 @@ stock TDMetalPackReturn:SpawnMetalPack(TDMetalPackSpawnType:iMetalPackSpawnType,
  */
 
 stock TDMetalPackReturn:SpawnMetalPack2(TDMetalPackSpawnType:iMetalPackSpawnType, Float:fLocation[3], iMetal, &iEntity) {
+	Log(TDLogLevel_Trace, "SpawnMetalPack2: iMetalPackSpawnType=%d, fLocation=[%f, %f, %f], iMetal=%d", iMetalPackSpawnType, fLocation[0], fLocation[1], fLocation[2], iMetal);
+
 	if (iMetal <= 0) {
 		return TDMetalPack_InvalidMetal;
 	}

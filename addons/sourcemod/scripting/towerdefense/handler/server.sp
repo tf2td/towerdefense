@@ -38,28 +38,30 @@ stock Server_Initialize() {
 
 		SetPassword(SERVER_PASS, false);
 
-		Database_LoadData(); // Calls Database_OnDataLoaded() when finished
-	}
-}
+		new iServerIp[4];
+		Steam_GetPublicIP(iServerIp);
+		Format(g_sServerIp, sizeof(g_sServerIp), "%d.%d.%d.%d", iServerIp[0], iServerIp[1], iServerIp[2], iServerIp[3]);
 
-stock Database_OnDataLoaded() {
-	new iServerIp[4];
-	Steam_GetPublicIP(iServerIp);
-	Format(g_sServerIp, sizeof(g_sServerIp), "%d.%d.%d.%d", iServerIp[0], iServerIp[1], iServerIp[2], iServerIp[3]);
+		decl String:sServerPort[6];
+		GetConVarString(FindConVar("hostport"), sServerPort, sizeof(sServerPort));
+		g_iServerPort = StringToInt(sServerPort);
 
-	decl String:sServerPort[6];
-	GetConVarString(FindConVar("hostport"), sServerPort, sizeof(sServerPort));
-	g_iServerPort = StringToInt(sServerPort);
-
-	if (StrEqual(g_sServerIp, "0.0.0.0")) {
-		Log(TDLogLevel_Info, "Server has been restarted completely, reloading map for initializing");
-		ReloadMap();
-	} else {
-		Database_CheckServer(); // Calls Database_OnServerChecked() when finished
+		if (StrEqual(g_sServerIp, "0.0.0.0")) {
+			Log(TDLogLevel_Info, "Server has been restarted completely, reloading map for initializing");
+			ReloadMap();
+		} else {
+			Database_CheckServer(); // Calls Database_OnServerChecked() when finished
+		}
 	}
 }
 
 stock Database_OnServerChecked() {
+	Log(TDLogLevel_Trace, "Database_OnServerChecked");
+
+	Database_LoadData(); // Calls Database_OnDataLoaded() when finished
+}
+
+stock Database_OnDataLoaded() {
 	Log(TDLogLevel_Debug, "Successfully initialized server");
 
 	PrintToHudAll("WELCOME TO TF2 TOWER DEFENSE");
