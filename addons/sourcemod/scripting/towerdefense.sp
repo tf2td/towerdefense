@@ -129,6 +129,31 @@ public OnPluginEnd() {
 		g_hDatabase = INVALID_HANDLE;
 	}
 
+	if (g_hMapTowers != INVALID_HANDLE) {
+		CloseHandle(g_hMapTowers);
+		g_hMapTowers = INVALID_HANDLE;
+	}
+
+	if (g_hMapWeapons != INVALID_HANDLE) {
+		CloseHandle(g_hMapWeapons);
+		g_hMapWeapons = INVALID_HANDLE;
+	}
+
+	if (g_hMapWaves != INVALID_HANDLE) {
+		CloseHandle(g_hMapWaves);
+		g_hMapWaves = INVALID_HANDLE;
+	}
+
+	if (g_hMapMetalpacks != INVALID_HANDLE) {
+		CloseHandle(g_hMapMetalpacks);
+		g_hMapMetalpacks = INVALID_HANDLE;
+	}
+
+	if (g_hPlayerData != INVALID_HANDLE) {
+		CloseHandle(g_hPlayerData);
+		g_hPlayerData = INVALID_HANDLE;
+	}
+
 	SetConVarInt(FindConVar("sv_cheats"), 0, true, false);
 }
 
