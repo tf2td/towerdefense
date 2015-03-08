@@ -239,19 +239,21 @@ public OnClientPostAdminCheck(iClient) {
 		return;
 	}
 
-	decl String:sName[MAX_NAME_LENGTH];
-	GetClientName(iClient, sName, sizeof(sName));
-
 	decl String:sSteamId[32];
 	GetClientAuthString(iClient, sSteamId, sizeof(sSteamId));
 
-	decl String:sCommunityId[32];
-	GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId));
-		
-	decl String:sIp[32];
-	GetClientIP(iClient, sIp, sizeof(sIp));
+	if (!StrEqual(sSteamId, "BOT")) {
+		decl String:sName[MAX_NAME_LENGTH];
+		GetClientName(iClient, sName, sizeof(sName));
 
-	Player_Connected(GetClientUserId(iClient), iClient, sName, sSteamId, sCommunityId, sIp);
+		decl String:sCommunityId[32];
+		GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId));
+			
+		decl String:sIp[32];
+		GetClientIP(iClient, sIp, sizeof(sIp));
+
+		Player_Connected(GetClientUserId(iClient), iClient, sName, sSteamId, sCommunityId, sIp);
+	}
 }
 
 public OnClientDisconnect(iClient) {

@@ -28,7 +28,15 @@ stock HookEvents() {
 }
 
 public Event_PlayerActivate(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
-	Player_Loaded(GetEventInt(hEvent, "userid"), GetClientOfUserId(GetEventInt(hEvent, "userid")));
+	new iUserId = GetEventInt(hEvent, "userid");
+	new iClient = GetClientOfUserId(iUserId);
+
+	decl String:sSteamId[32];
+	GetClientAuthString(iClient, sSteamId, sizeof(sSteamId));
+
+	if (!StrEqual(sSteamId, "BOT")) {
+		Player_Loaded(iUserId, iClient);
+	}
 }
 
 public Event_PlayerCarryObject(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
