@@ -342,6 +342,8 @@ public Database_OnCheckPlayerImmunity(Handle:hDriver, Handle:hResult, const Stri
 			SetAdminFlag(iAdmin, Admin_Root, true);
 			SetUserAdmin(iClient, iAdmin);
 		}
+
+		Player_USetValue(iUserId, PLAYER_IMMUNITY, iImmunity);
 	}
 
 	if (hResult != INVALID_HANDLE) {

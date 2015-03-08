@@ -10,12 +10,10 @@
 =            Player Data Keys            =
 ========================================*/
 
-/*==========  Constants  ==========*/
-
 #define PLAYER_COMMUNITY_ID		"PLAYER_COMMUNITY_ID"
 #define PLAYER_DATABASE_ID		"PLAYER_DATABASE_ID"
+#define PLAYER_IMMUNITY			"PLAYER_IMMUNITY"
 #define PLAYER_IP_ADDRESS		"PLAYER_IP_ADDRESS"
-#define PLAYER_IS_ADMIN			"PLAYER_IS_ADMIN"
 #define PLAYER_STEAM_ID			"PLAYER_STEAM_ID"
 
 /*-----  End of Player Data Keys  ------*/
