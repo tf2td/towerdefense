@@ -2,6 +2,12 @@
 
 #include <sourcemod>
 
+#if defined INFO_INCLUDES
+	#include "../info/constants.sp"
+	#include "../info/enums.sp"
+	#include "../info/variables.sp"
+#endif
+
 /**
  * Spawns all metalpacks (except the boss metalpack).
  *

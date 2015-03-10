@@ -2,6 +2,12 @@
 
 #include <sourcemod>
 
+#if defined INFO_INCLUDES
+	#include "info/constants.sp"
+	#include "info/enums.sp"
+	#include "info/variables.sp"
+#endif
+
 stock Updater_Download(const String:sUrl[], const String:sDestination[]) {
 	decl String:sUrlPrefixed[256];
 

@@ -2,6 +2,12 @@
 
 #include <sourcemod>
 
+#if defined INFO_INCLUDES
+	#include "../info/constants.sp"
+	#include "../info/enums.sp"
+	#include "../info/variables.sp"
+#endif
+
 stock MD5String(const String:str[], String:output[], maxlen) {
 	decl x[2];
 	decl buf[4];

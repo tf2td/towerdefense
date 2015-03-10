@@ -2,6 +2,12 @@
 
 #include <sourcemod>
 
+#if defined INFO_INCLUDES
+	#include "../info/constants.sp"
+	#include "../info/enums.sp"
+	#include "../info/variables.sp"
+#endif
+
 /**
  * Called multiple times during server initialization.
  *
@@ -15,7 +21,7 @@ stock Player_ServerInitializing(iUserId, iClient) {
 		TF2_AddCondition(iClient, TFCond_RestrictToMelee);
 		SetEntPropEnt(iClient, Prop_Send, "m_hActiveWeapon", GetPlayerWeaponSlot(iClient, TFWeaponSlot_Melee));
 	}
-	
+
 	SetEntityMoveType(iClient, MOVETYPE_NONE);
 
 	PrintToHud(iClient, "INITIALIZING GAME, PLEASE WAIT A MOMENT ...");

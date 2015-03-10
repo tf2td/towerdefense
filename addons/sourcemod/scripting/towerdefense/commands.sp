@@ -2,6 +2,12 @@
 
 #include <sourcemod>
 
+#if defined INFO_INCLUDES
+	#include "info/constants.sp"
+	#include "info/enums.sp"
+	#include "info/variables.sp"
+#endif
+
 stock RegisterCommands() {
 	// Commands for testing purposes
 	RegAdminCmd("sm_gm", Command_GiveMetal, ADMFLAG_ROOT);

@@ -2,6 +2,12 @@
 
 #include <sourcemod>
 
+#if defined INFO_INCLUDES
+	#include "../info/constants.sp"
+	#include "../info/enums.sp"
+	#include "../info/variables.sp"
+#endif
+
 /**
  * Checks if a player already exists.
  *

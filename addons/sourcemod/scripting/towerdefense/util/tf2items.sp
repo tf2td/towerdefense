@@ -2,6 +2,12 @@
 
 #include <sourcemod>
 
+#if defined INFO_INCLUDES
+	#include "../info/constants.sp"
+	#include "../info/enums.sp"
+	#include "../info/variables.sp"
+#endif
+
 /**
  * Gives a weapon to a client.
  * See https://wiki.alliedmods.net/Team_fortress_2_item_definition_indexes for item indexes and classnames.

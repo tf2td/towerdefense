@@ -2,6 +2,12 @@
 
 #include <sourcemod>
 
+#if defined INFO_INCLUDES
+	#include "../info/constants.sp"
+	#include "../info/enums.sp"
+	#include "../info/variables.sp"
+#endif
+
 #define PLAYER_USER_ID 		 0
 #define PLAYER_DATABASE_ID 	 8
 #define PLAYER_STEAM_ID 	16
