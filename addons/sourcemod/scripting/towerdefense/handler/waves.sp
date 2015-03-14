@@ -398,19 +398,19 @@ public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
 				}
 			}
 
-			EmitSoundToAll("vo/announcer_begins_5sec.wav");
+			EmitSoundToAll("vo/announcer_begins_5sec.mp3");
 		}
 		case 4: {
-			EmitSoundToAll("vo/announcer_begins_4sec.wav");
+			EmitSoundToAll("vo/announcer_begins_4sec.mp3");
 		}
 		case 3: {
-			EmitSoundToAll("vo/announcer_begins_3sec.wav");
+			EmitSoundToAll("vo/announcer_begins_3sec.mp3");
 		}
 		case 2: {
-			EmitSoundToAll("vo/announcer_begins_2sec.wav");
+			EmitSoundToAll("vo/announcer_begins_2sec.mp3");
 		}
 		case 1: {
-			EmitSoundToAll("vo/announcer_begins_1sec.wav");
+			EmitSoundToAll("vo/announcer_begins_1sec.mp3");
 
 			TeleportEntity(g_iWaveStartButton, Float:{0.0, 0.0, -9192.0}, NULL_VECTOR, Float:{0.0, 0.0, 0.0});
 		}

@@ -725,18 +725,18 @@ stock PrecacheModels() {
 stock PrecacheSounds() {
 	new String:sRoboPath[64];
 	for (new i = 1; i <= 18; i++) {
-		Format(sRoboPath, sizeof(sRoboPath), "mvm/player/footsteps/robostep_%s%i.wav", (i < 10) ? "0" : "", i);
+		Format(sRoboPath, sizeof(sRoboPath), "mvm/player/footsteps/robostep_%s%i.mp3", (i < 10) ? "0" : "", i);
 		PrecacheSound(sRoboPath);
 	}
 	
 	PrecacheSound("items/ammo_pickup.wav");
 	PrecacheSound("items/gunpickup2.wav");
-	PrecacheSound("vo/announcer_begins_5sec.wav");
-	PrecacheSound("vo/announcer_begins_4sec.wav");
-	PrecacheSound("vo/announcer_begins_3sec.wav");
-	PrecacheSound("vo/announcer_begins_2sec.wav");
-	PrecacheSound("vo/announcer_begins_1sec.wav");
-	PrecacheSound("vo/engineer_no03.wav");
+	PrecacheSound("vo/announcer_begins_5sec.mp3");
+	PrecacheSound("vo/announcer_begins_4sec.mp3");
+	PrecacheSound("vo/announcer_begins_3sec.mp3");
+	PrecacheSound("vo/announcer_begins_2sec.mp3");
+	PrecacheSound("vo/announcer_begins_1sec.mp3");
+	PrecacheSound("vo/engineer_no03.mp3");
 }
 
 /**
@@ -1100,7 +1100,7 @@ stock Forbid(iClient, bool:bPlaySound, const String:sMessage[], any:...) {
 	PrintToChat(iClient, "\x07FF0000%s", sFormattedMessage);
 
 	if (bPlaySound) {
-		EmitSoundToClient(iClient, "vo/engineer_no03.wav");
+		EmitSoundToClient(iClient, "vo/engineer_no03.mp3");
 	}
 }
 
