@@ -556,18 +556,20 @@ public bool:OnProjectileCollide(iEntity, iCollisiongroup, iContentsmask, bool:bR
 
 	new iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
 
-	if (IsValidClient(iOwner)) {
+	if (IsValidEntity(iOwner)) {
+		new iTeam = GetEntProp(iOwner, Prop_Send, "m_iTeamNum");
+
 		new Float:fLocation[3], Float:fAngles[3];
 		GetEntPropVector(iEntity, Prop_Data, "m_vecOrigin", fLocation);
 		GetEntPropVector(iEntity, Prop_Data, "m_angAbsRotation", fAngles);
 
-		TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayPlayers, iOwner);
+		TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayPlayers);
 
 		if (TR_DidHit()) {
 			new iTarget = TR_GetEntityIndex();
 
 			if (IsValidClient(iTarget)) {
-				if (GetClientTeam(iOwner) != GetClientTeam(iTarget)) {
+				if (GetClientTeam(iTarget) != iTeam) {
 					SetEntProp(iEntity, Prop_Data, "m_CollisionGroup", 0);
 				} else {
 					SetEntProp(iEntity, Prop_Data, "m_CollisionGroup", 24);
