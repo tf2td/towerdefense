@@ -88,7 +88,7 @@ stock TF2Items_GiveWeapon(iClient, iItemDefinitionIndex, iSlot, iLevel, iQuality
 		iFlags |= OVERRIDE_ATTRIBUTES;
 	}
 
-	TF2Items_SetFlags(hItem, iFlags);
+	TF2Items_SetFlags(hItem, iFlags | FORCE_GENERATION);
 
 	TF2Items_SetClassname(hItem, sClassname);
 
