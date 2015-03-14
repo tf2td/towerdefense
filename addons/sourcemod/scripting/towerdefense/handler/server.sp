@@ -110,6 +110,7 @@ stock Server_Reset() {
 	g_bStartWaveEarly = false;
 
 	g_iCurrentWave = 0;
+	g_iNextWaveType = 0;
 
 	new iHealthBar = EntRefToEntIndex(g_iHealthBar);
 	if (IsValidEntity(iHealthBar)) {

@@ -117,7 +117,7 @@ new g_iUpgradeMetal[MAXPLAYERS + 1];
 
 /*==========  Boolean  ==========*/
 
-new bool:g_bBoostWave[MAXPLAYERS + 1];
+new bool:g_bBoostWave;
 new bool:g_bStartWaveEarly;
 
 /*==========  Handle  ==========*/

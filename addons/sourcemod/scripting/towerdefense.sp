@@ -330,10 +330,8 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 		}
 	}
 
-	if (IsAttacker(iClient) && g_bBoostWave[iClient]) {
-		if (g_iNextWaveType & TDWaveType_Rapid) {
-			fVelocity[0] = 500.0;
-		}
+	if (IsAttacker(iClient) && g_bBoostWave) {
+		fVelocity[0] = 500.0;
 	}
 
 	if (IsDefender(iClient)) {

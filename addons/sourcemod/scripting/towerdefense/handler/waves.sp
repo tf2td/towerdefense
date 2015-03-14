@@ -54,6 +54,8 @@ stock Wave_OnSpawn(iAttacker) {
 		return;
 	}
 
+	g_bBoostWave = false;
+
 	SetRobotModel(iAttacker);
 }
 
@@ -80,7 +82,7 @@ public Wave_OnSpawnPost(any:iAttacker) {
 	}
 
 	if (g_iNextWaveType & TDWaveType_Rapid) {
-		g_bBoostWave[iAttacker] = true;
+		g_bBoostWave = true;
 	}
 
 	if (g_iNextWaveType & TDWaveType_Regen) {
@@ -208,7 +210,7 @@ public Wave_OnTouchCorner(iCorner, iAttacker) {
 			Corner_GetAngles(iCorner, iNextCorner, fAngles);
 			TeleportEntity(iAttacker, NULL_VECTOR, fAngles, NULL_VECTOR);
 		} else {
-			g_bBoostWave[iAttacker] = false;
+			g_bBoostWave = false;
 		}
 	}
 }
