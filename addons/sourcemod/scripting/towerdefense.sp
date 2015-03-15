@@ -205,7 +205,7 @@ public OnConfigsExecuted() {
 
 	g_bServerInitialized = false;
 
-	CreateTimer(15.0, InitializeDelay, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
+	CreateTimer(5.0, InitializeDelay, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
 }
 
 public Action:InitializeDelay(Handle:hTimer, any:iTime) {

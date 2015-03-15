@@ -30,16 +30,7 @@ stock Server_Initialize() {
 
 		HookButtons();
 
-		g_iBuildingLimit[TDBuilding_Sentry] = 1;
-		g_iBuildingLimit[TDBuilding_Dispenser] = 0;
-		g_iBuildingLimit[TDBuilding_TeleporterEntry] = 1;
-		g_iBuildingLimit[TDBuilding_TeleporterExit] = 1;
-
-		g_iMetalPackCount = 0;
-
-		g_iHealthBar = GetHealthBar();
-
-		SetPassword(SERVER_PASS, false);
+		Server_Reset();
 
 		new iServerIp[4];
 		Steam_GetPublicIP(iServerIp);
