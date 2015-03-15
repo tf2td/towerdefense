@@ -71,6 +71,9 @@ public Wave_OnSpawnPost(any:iAttacker) {
 		return;
 	}
 
+	SDKHook(iAttacker, SDKHook_OnTakeDamage, OnTakeDamage);
+	SDKHook(iAttacker, SDKHook_OnTakeDamagePost, OnTakeDamagePost);
+
 	new iMaxHealth = GetEntProp(iAttacker, Prop_Data, "m_iMaxHealth");
 	new iWaveHealth = Wave_GetHealth(g_iCurrentWave);
 
@@ -118,20 +121,19 @@ stock Wave_OnTakeDamagePost(iVictim, iAttacker, iInflictor, Float:fDamage, iDama
 		return;
 	}
 
-	new iHealthBar = EntRefToEntIndex(g_iHealthBar);
-	if (IsValidEntity(iHealthBar)) {
+	if (IsValidEntity(g_iHealthBar)) {
 		new iTotalHealth = 0;
 
 		for (new iClient = 1; iClient <= MaxClients; iClient++) {
 			if (IsAttacker(iClient)) {
-				iTotalHealth += GetEntProp(iClient, Prop_Data, "m_iHealth");
+				iTotalHealth += GetClientHealth(iClient);
 			}
 		}
 
 		new iTotalHealthMax = Wave_GetHealth(g_iCurrentWave) * Wave_GetQuantity(g_iCurrentWave);
 		new Float:fPercentage = float(iTotalHealth) / float(iTotalHealthMax);
 
-		SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", RoundToFloor(fPercentage * 255));
+		SetEntProp(g_iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", RoundToFloor(fPercentage * 255));
 	}
 }
 
@@ -245,6 +247,8 @@ stock Wave_Spawn() {
 	} else {
 		ServerCommand("bot -team red -class %s -name %s", sClass, sName);
 	}
+
+	SetEntProp(g_iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 255);
 
 	Wave_TeleportToSpawn(iWaveQuantity);
 }

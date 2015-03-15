@@ -163,12 +163,7 @@ public OnMapStart() {
 	PrecacheModels();
 	PrecacheSounds();
 
-	new iHealthBar = CreateEntityByName("monster_resource");
-
-	if (DispatchSpawn(iHealthBar)) {
-		SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 0);
-		g_iHealthBar = EntIndexToEntRef(iHealthBar);
-	}
+	g_iHealthBar = GetHealthBar();
 
 	g_bConfigsExecuted = false;
 }
@@ -1567,4 +1562,26 @@ stock CreateDataMap(&Handle:hMapHandle) {
 	}
 
 	hMapHandle = CreateTrie();
+}
+
+/**
+ * Gets the entity index of the health bar.
+ *
+ * @return				The entity index of the health bar.
+ */
+
+stock GetHealthBar() {
+	new iHealthBar = FindEntityByClassname(-1, "monster_resource");
+	
+	if (!IsValidEntity(iHealthBar)) {
+		iHealthBar = CreateEntityByName("monster_resource");
+		
+		if (IsValidEntity(iHealthBar)) {
+			DispatchSpawn(iHealthBar);
+		}
+	}
+
+	SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 0);
+
+	return iHealthBar;
 }

@@ -37,10 +37,7 @@ stock Server_Initialize() {
 
 		g_iMetalPackCount = 0;
 
-		new iHealthBar = EntRefToEntIndex(g_iHealthBar);
-		if (IsValidEntity(iHealthBar)) {
-			SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 0);
-		}
+		g_iHealthBar = GetHealthBar();
 
 		SetPassword(SERVER_PASS, false);
 
@@ -112,10 +109,7 @@ stock Server_Reset() {
 	g_iCurrentWave = 0;
 	g_iNextWaveType = 0;
 
-	new iHealthBar = EntRefToEntIndex(g_iHealthBar);
-	if (IsValidEntity(iHealthBar)) {
-		SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 0);
-	}
+	g_iHealthBar = GetHealthBar();
 
 	SetPassword(SERVER_PASS, false);
 }
