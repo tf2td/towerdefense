@@ -285,8 +285,9 @@ public Action:CommandListener_Build(iClient, const String:sCommand[], iArgs) {
 
 	switch (iBuildingType) {
 		case TDBuilding_Sentry: {
-			PrintToChat(iClient, "\x01Use \x04!s \x01or \x04!sentry \x01to build a Sentry!");
-
+			//PrintToChat(iClient, "\x01Use \x04!s \x01or \x04!sentry \x01to build a Sentry!");
+			Command_BuildSentry(iClient, iArgs);
+			
 			return Plugin_Handled;
 		}
 		case TDBuilding_Dispenser: {
