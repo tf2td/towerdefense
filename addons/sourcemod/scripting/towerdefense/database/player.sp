@@ -17,12 +17,12 @@
  * @noreturn
  */
 
-stock Database_CheckPlayer(iUserId, iClient, const String:sCommunityId[]) {
+stock void Database_CheckPlayer(int iUserId, int iClient, const char[] sCommunityId) {
 	if (!IsDefender(iClient)) {
 		return;
 	}
 
-	decl String:sQuery[192];
+	char sQuery[192];
 
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `player_id` \
@@ -34,7 +34,7 @@ stock Database_CheckPlayer(iUserId, iClient, const String:sCommunityId[]) {
 	SQL_TQuery(g_hDatabase, Database_OnCheckPlayer, sQuery, iUserId);
 }
 
-public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+public void Database_OnCheckPlayer(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult) == 0) {
@@ -62,9 +62,9 @@ public Database_OnCheckPlayer(Handle:hDriver, Handle:hResult, const String:sErro
  * @noreturn
  */
 
-stock Database_AddPlayer(iUserId) {
-	decl String:sQuery[128];
-	decl String:sSteamId[32];
+stock void Database_AddPlayer(int iUserId) {
+	char sQuery[128];
+	char sSteamId[32];
 
 	Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sSteamId, sizeof(sSteamId));
 
@@ -76,11 +76,11 @@ stock Database_AddPlayer(iUserId) {
 	SQL_TQuery(g_hDatabase, Database_OnAddPlayer_1, sQuery, iUserId);
 }
 
-public Database_OnAddPlayer_1(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+public void Database_OnAddPlayer_1(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_AddPlayer > Error: %s", sError);
 	} else {
-		decl String:sQuery[32];
+		char sQuery[32];
 		Format(sQuery, sizeof(sQuery), "SELECT LAST_INSERT_ID()");
 
 		SQL_TQuery(g_hDatabase, Database_OnAddPlayer_2, sQuery, iUserId);
@@ -92,11 +92,11 @@ public Database_OnAddPlayer_1(Handle:hDriver, Handle:hResult, const String:sErro
 	}
 }
 
-public Database_OnAddPlayer_2(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+public void Database_OnAddPlayer_2(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_AddPlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		decl String:sSteamId[32];
+		char sSteamId[32];
 		Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sSteamId, sizeof(sSteamId));
 
 		Log(TDLogLevel_Info, "Added player %N to database (%s)", GetClientOfUserId(iUserId), sSteamId);
@@ -121,24 +121,24 @@ public Database_OnAddPlayer_2(Handle:hDriver, Handle:hResult, const String:sErro
  * @noreturn
  */
 
-stock Database_UpdatePlayer(iUserId) {
-	decl String:sQuery[512];
+stock void Database_UpdatePlayer(int iUserId) {
+	char sQuery[512];
 
-	decl String:sPlayerName[MAX_NAME_LENGTH + 1];
-	decl String:sPlayerNameSave[MAX_NAME_LENGTH * 2 + 1];
+	char sPlayerName[MAX_NAME_LENGTH + 1];
+	char sPlayerNameSave[MAX_NAME_LENGTH * 2 + 1];
 
-	new iClient = GetClientOfUserId(iUserId);
+	int iClient = GetClientOfUserId(iUserId);
 
 	GetClientName(iClient, sPlayerName, sizeof(sPlayerName));
 	SQL_EscapeString(g_hDatabase, sPlayerName, sPlayerNameSave, sizeof(sPlayerNameSave));
 
-	decl String:sPlayerIp[16];
-	decl String:sPlayerIpSave[33];
+	char sPlayerIp[16];
+	char sPlayerIpSave[33];
 
 	Player_UGetString(iUserId, PLAYER_IP_ADDRESS, sPlayerIp, sizeof(sPlayerIp));
 	SQL_EscapeString(g_hDatabase, sPlayerIp, sPlayerIpSave, sizeof(sPlayerIpSave));
 
-	new iPlayerId;
+	int iPlayerId;
 	Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 	Format(sQuery, sizeof(sQuery), "\
@@ -154,13 +154,13 @@ stock Database_UpdatePlayer(iUserId) {
 	SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_1, sQuery, iUserId);
 }
 
-public Database_OnUpdatePlayer_1(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+public void Database_OnUpdatePlayer_1(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else {
-		decl String:sQuery[512];
+		char sQuery[512];
 
-		new iPlayerId;
+		int iPlayerId;
 		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 		Format(sQuery, sizeof(sQuery), "\
@@ -182,13 +182,13 @@ public Database_OnUpdatePlayer_1(Handle:hDriver, Handle:hResult, const String:sE
 	}
 }
 
-public Database_OnUpdatePlayer_2(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+public void Database_OnUpdatePlayer_2(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else {
-		decl String:sQuery[128];
+		char sQuery[128];
 
-		new iPlayerId;
+		int iPlayerId;
 		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 		Format(sQuery, sizeof(sQuery), "\
@@ -207,11 +207,11 @@ public Database_OnUpdatePlayer_2(Handle:hDriver, Handle:hResult, const String:sE
 	}
 }
 
-public Database_OnUpdatePlayer_3(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+public void Database_OnUpdatePlayer_3(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		decl String:sQuery[128];
+		char sQuery[128];
 
 		Format(sQuery, sizeof(sQuery), "\
 			UPDATE `server` \
@@ -229,13 +229,13 @@ public Database_OnUpdatePlayer_3(Handle:hDriver, Handle:hResult, const String:sE
 	}
 }
 
-public Database_OnUpdatePlayer_4(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+public void Database_OnUpdatePlayer_4(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
 
-		decl String:sSteamId[32];
+		char sSteamId[32];
 		SQL_FetchString(hResult, 0, sSteamId, sizeof(sSteamId));
 
 		Log(TDLogLevel_Info, "Updated player %N in database (%s)", GetClientOfUserId(iUserId), sSteamId);
@@ -256,10 +256,10 @@ public Database_OnUpdatePlayer_4(Handle:hDriver, Handle:hResult, const String:sE
  * @noreturn
  */
 
-stock Database_CheckPlayerBanned(iUserId) {
-	decl String:sQuery[128];
+stock void Database_CheckPlayerBanned(int iUserId) {
+	char sQuery[128];
 
-	new iPlayerId;
+	int iPlayerId;
 	Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 	Format(sQuery, sizeof(sQuery), "\
@@ -271,13 +271,13 @@ stock Database_CheckPlayerBanned(iUserId) {
 	SQL_TQuery(g_hDatabase, Database_OnCheckPlayerBanned_1, sQuery, iUserId);
 }
 
-public Database_OnCheckPlayerBanned_1(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+public void Database_OnCheckPlayerBanned_1(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerBanned > Error: %s", sError);
 	} else {
-		decl String:sQuery[512];
+		char sQuery[512];
 
-		new iPlayerId;
+		int iPlayerId;
 		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 		Format(sQuery, sizeof(sQuery), "\
@@ -298,17 +298,17 @@ public Database_OnCheckPlayerBanned_1(Handle:hDriver, Handle:hResult, const Stri
 	}
 }
 
-public Database_OnCheckPlayerBanned_2(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+public void Database_OnCheckPlayerBanned_2(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerBanned > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		new bool:bDontProceed = false;
+		bool bDontProceed = false;
 
-		new iClient = GetClientOfUserId(iUserId);
+		int iClient = GetClientOfUserId(iUserId);
 
 		SQL_FetchRow(hResult);
 
-		decl String:sReason[256], String:sExpire[32];
+		char sReason[256], sExpire[32];
 
 		SQL_FetchString(hResult, 0, sReason, sizeof(sReason));
 		SQL_FetchString(hResult, 1, sExpire, sizeof(sExpire));
@@ -341,10 +341,10 @@ public Database_OnCheckPlayerBanned_2(Handle:hDriver, Handle:hResult, const Stri
  * @noreturn
  */
 
-stock Database_CheckPlayerImmunity(iUserId) {
-	decl String:sQuery[512];
+stock void Database_CheckPlayerImmunity(int iUserId) {
+	char sQuery[512];
 
-	new iPlayerId;
+	int iPlayerId;
 	Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 	Format(sQuery, sizeof(sQuery), "\
@@ -357,17 +357,17 @@ stock Database_CheckPlayerImmunity(iUserId) {
 	SQL_TQuery(g_hDatabase, Database_OnCheckPlayerImmunity, sQuery, iUserId);
 }
 
-public Database_OnCheckPlayerImmunity(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+public void Database_OnCheckPlayerImmunity(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerImmunity > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		new iClient = GetClientOfUserId(iUserId);
+		int iClient = GetClientOfUserId(iUserId);
 
 		SQL_FetchRow(hResult);
-		new iImmunity = SQL_FetchInt(hResult, 0);
+		int iImmunity = SQL_FetchInt(hResult, 0);
 
 		if (iImmunity >= 99 && GetUserAdmin(iClient) == INVALID_ADMIN_ID) {
-			new AdminId:iAdmin = CreateAdmin("Admin");
+			AdminId iAdmin = CreateAdmin("Admin");
 
 			SetAdminFlag(iAdmin, Admin_Root, true);
 			SetUserAdmin(iClient, iAdmin);
@@ -391,10 +391,10 @@ public Database_OnCheckPlayerImmunity(Handle:hDriver, Handle:hResult, const Stri
  * @noreturn
  */
 
-stock Database_UpdatePlayerDisconnect(iUserId) {
-	decl String:sQuery[128];
+stock void Database_UpdatePlayerDisconnect(int iUserId) {
+	char sQuery[128];
 
-	new iPlayerId;
+	int iPlayerId;
 	Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 	Format(sQuery, sizeof(sQuery), "\
@@ -407,13 +407,13 @@ stock Database_UpdatePlayerDisconnect(iUserId) {
 	SQL_TQuery(g_hDatabase, Database_OnUpdatePlayerDisconnect_1, sQuery, iUserId);
 }
 
-public Database_OnUpdatePlayerDisconnect_1(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+public void Database_OnUpdatePlayerDisconnect_1(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
 	} else {
-		decl String:sQuery[128];
+		char sQuery[128];
 
-		new iPlayerId;
+		int iPlayerId;
 		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
 		Format(sQuery, sizeof(sQuery), "\
@@ -432,11 +432,11 @@ public Database_OnUpdatePlayerDisconnect_1(Handle:hDriver, Handle:hResult, const
 	}
 }
 
-public Database_OnUpdatePlayerDisconnect_2(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+public void Database_OnUpdatePlayerDisconnect_2(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
 	} else {
-		decl String:sQuery[128];
+		char sQuery[128];
 
 		Format(sQuery, sizeof(sQuery), "\
 			UPDATE `server` \
@@ -454,11 +454,11 @@ public Database_OnUpdatePlayerDisconnect_2(Handle:hDriver, Handle:hResult, const
 	}
 }
 
-public Database_OnUpdatePlayerDisconnect_3(Handle:hDriver, Handle:hResult, const String:sError[], any:iUserId) {
+public void Database_OnUpdatePlayerDisconnect_3(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
 	} else {
-		decl String:sSteamId[32];
+		char sSteamId[32];
 		Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sSteamId, sizeof(sSteamId));
 
 		Log(TDLogLevel_Info, "Updated disconnected player in database (%s)", sSteamId);

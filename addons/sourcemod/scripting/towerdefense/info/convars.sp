@@ -8,7 +8,7 @@
 	#include "../info/variables.sp"
 #endif
 
-stock LoadConVars() {
+stock void LoadConVars() {
 	CreateConVar("towerdefense_version", PLUGIN_VERSION, "Tower Defense Version", FCVAR_PLUGIN|FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 
 	g_hEnabled = CreateConVar("td_enabled", "1", "Enables/disables Tower Defense", FCVAR_PLUGIN|FCVAR_DONTRECORD);
@@ -16,7 +16,7 @@ stock LoadConVars() {
 	HookConVarChange(g_hEnabled, OnConVarChanged);
 }
 
-stock SetConVars() {
+stock void SetConVars() {
 	SetConVarInt(FindConVar("sv_cheats"), 1, true, false);
 }
 
@@ -29,7 +29,7 @@ stock SetConVars() {
  * @noreturn
  */
 
-public OnConVarChanged(Handle:hConVar, const String:sOldValue[], const String:sNewValue[]) {
+public void OnConVarChanged(Handle hConVar, const char[] sOldValue, const char[] sNewValue) {
 	if (hConVar == g_hEnabled) {
 		if (!g_bMapRunning) {
 			return;
@@ -37,7 +37,7 @@ public OnConVarChanged(Handle:hConVar, const String:sOldValue[], const String:sN
 		
 		if (GetConVarBool(g_hEnabled)) {
 			if (!g_bEnabled) {
-				new bool:bEnabled = IsTowerDefenseMap();
+				bool bEnabled = IsTowerDefenseMap();
 
 				if (bEnabled) {
 					// Basically do the same as in OnConfigsExecuted().

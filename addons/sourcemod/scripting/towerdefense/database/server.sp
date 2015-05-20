@@ -14,8 +14,8 @@
  * @noreturn
  */
 
-stock Database_CheckServer() {
-	decl String:sQuery[128];
+stock void Database_CheckServer() {
+	char sQuery[128];
 
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `server_id` \
@@ -27,7 +27,7 @@ stock Database_CheckServer() {
 	SQL_TQuery(g_hDatabase, Database_OnCheckServer, sQuery);
 }
 
-public Database_OnCheckServer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public void Database_OnCheckServer(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckServer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult) == 0) {
@@ -54,8 +54,8 @@ public Database_OnCheckServer(Handle:hDriver, Handle:hResult, const String:sErro
  * @noreturn
  */
 
-stock Database_AddServer() {
-	decl String:sQuery[256];
+stock void Database_AddServer() {
+	char sQuery[256];
 
 	Format(sQuery, sizeof(sQuery), "\
 		INSERT INTO `server` (`ip`, `port`, `host_id`, `created`, `updated`) \
@@ -68,11 +68,11 @@ stock Database_AddServer() {
 	SQL_TQuery(g_hDatabase, Database_OnAddServer, sQuery, 0);
 }
 
-public Database_OnAddServer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public void Database_OnAddServer(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_AddServer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		decl String:sQuery[256];
+		char sQuery[256];
 
 		if (iData == 0) {
 			Format(sQuery, sizeof(sQuery), "\
@@ -112,19 +112,19 @@ public Database_OnAddServer(Handle:hDriver, Handle:hResult, const String:sError[
  * @noreturn
  */
 
-stock Database_UpdateServer() {
-	decl String:sQuery[512];
+stock void Database_UpdateServer() {
+	char sQuery[512];
 
-	decl String:sServerName[128], String:sServerNameSave[256];
+	char sServerName[128], sServerNameSave[256];
 
 	GetConVarString(FindConVar("hostname"), sServerName, sizeof(sServerName));
 	SQL_EscapeString(g_hDatabase, sServerName, sServerNameSave, sizeof(sServerNameSave));
 
-	decl String:sPassword[32], String:sPasswordSave[64];
+	char sPassword[32], sPasswordSave[64];
 	GetConVarString(FindConVar("sv_password"), sPassword, sizeof(sPassword));
 	SQL_EscapeString(g_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
 
-	decl String:sRconPassword[256], String:sRconPasswordSave[512];
+	char sRconPassword[256], sRconPasswordSave[512];
 	GetRconPassword(sRconPassword, sizeof(sRconPassword));
 	SQL_EscapeString(g_hDatabase, sRconPassword, sRconPasswordSave, sizeof(sRconPasswordSave));
 
@@ -143,12 +143,12 @@ stock Database_UpdateServer() {
 	SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 0);
 }
 
-public Database_OnUpdateServer(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public void Database_OnUpdateServer(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdateServer > Error: %s", sError);
 	} else {
-		decl String:sQuery[256];
-		decl String:sCurrentMap[PLATFORM_MAX_PATH];
+		char sQuery[256];
+		char sCurrentMap[PLATFORM_MAX_PATH];
 		GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
 		if (iData == 0) {
@@ -209,8 +209,8 @@ public Database_OnUpdateServer(Handle:hDriver, Handle:hResult, const String:sErr
  * @noreturn
  */
 
-stock Database_CheckForDelete() {
-	decl String:sQuery[128];
+stock void Database_CheckForDelete() {
+	char sQuery[128];
 
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `delete` \
@@ -222,17 +222,17 @@ stock Database_CheckForDelete() {
 	SQL_TQuery(g_hDatabase, Database_OnCheckForDelete, sQuery);
 }
 
-public Database_OnCheckForDelete(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public void Database_OnCheckForDelete(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckForDelete > Error: %s", sError);
 	} else {
 		SQL_FetchRow(hResult);
 
-		decl String:sDelete[32];
+		char sDelete[32];
 		SQL_FetchString(hResult, 0, sDelete, sizeof(sDelete));
 
 		if (StrEqual(sDelete, "delete")) {
-			decl String:sFile[PLATFORM_MAX_PATH], String:sPath[PLATFORM_MAX_PATH];
+			char sFile[PLATFORM_MAX_PATH], sPath[PLATFORM_MAX_PATH];
 			
 			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
 			BuildPath(Path_SM, sPath, PLATFORM_MAX_PATH, "plugins/%s", sFile);			
@@ -259,8 +259,8 @@ public Database_OnCheckForDelete(Handle:hDriver, Handle:hResult, const String:sE
  * @noreturn
  */
 
-stock Database_CheckServerSettings() {
-	decl String:sQuery[256];
+stock void Database_CheckServerSettings() {
+	char sQuery[256];
 
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `lockable`, `loglevel`, `logtype` \
@@ -274,13 +274,13 @@ stock Database_CheckServerSettings() {
 	SQL_TQuery(g_hDatabase, Database_OnCheckServerSettings, sQuery);
 }
 
-public Database_OnCheckServerSettings(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public void Database_OnCheckServerSettings(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckServerSettings > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
 
-		decl String:sLockable[32];
+		char sLockable[32];
 		SQL_FetchString(hResult, 0, sLockable, sizeof(sLockable));
 
 		if (StrEqual(sLockable, "not lockable")) {
@@ -289,10 +289,10 @@ public Database_OnCheckServerSettings(Handle:hDriver, Handle:hResult, const Stri
 			g_bLockable = true;
 		}
 
-		decl String:sLogLevel[32];
+		char sLogLevel[32];
 		SQL_FetchString(hResult, 1, sLogLevel, sizeof(sLogLevel));
 		
-		new TDLogLevel:iLogLevel;
+		TDLogLevel iLogLevel;
 
 		if (StrEqual(sLogLevel, "None")) {
 			iLogLevel = TDLogLevel_None;
@@ -308,10 +308,10 @@ public Database_OnCheckServerSettings(Handle:hDriver, Handle:hResult, const Stri
 			iLogLevel = TDLogLevel_Trace;
 		}
 
-		decl String:sLogType[32];
+		char sLogType[32];
 		SQL_FetchString(hResult, 2, sLogType, sizeof(sLogType));
 
-		new TDLogType:iLogType;
+		TDLogType iLogType;
 
 		if (StrEqual(sLogType, "File")) {
 			iLogType = TDLogType_File;
@@ -340,8 +340,8 @@ public Database_OnCheckServerSettings(Handle:hDriver, Handle:hResult, const Stri
  * @noreturn
  */
 
-stock Database_CheckServerVerified() {
-	decl String:sQuery[128];
+stock void Database_CheckServerVerified() {
+	char sQuery[128];
 
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `verified` \
@@ -353,13 +353,13 @@ stock Database_CheckServerVerified() {
 	SQL_TQuery(g_hDatabase, Database_OnCheckServerVerified, sQuery);
 }
 
-public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public void Database_OnCheckServerVerified(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckServerVerified > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
 
-		decl String:sVerfied[32];
+		char sVerfied[32];
 		SQL_FetchString(hResult, 0, sVerfied, sizeof(sVerfied));
 
 		if (StrEqual(sVerfied, "verified")) {
@@ -367,7 +367,7 @@ public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const Stri
 		} else {
 			Log(TDLogLevel_Warning, "Your server is not verified, please contact us at tf2td.net or on Steam");
 
-			decl String:sFile[PLATFORM_MAX_PATH];
+			char sFile[PLATFORM_MAX_PATH];
 			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
 			ServerCommand("sm plugins unload %s", sFile);
 		}
@@ -385,8 +385,8 @@ public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const Stri
  * @noreturn
  */
 
-stock Database_CheckServerConfig() {
-	decl String:sQuery[512];
+stock void Database_CheckServerConfig() {
+	char sQuery[512];
 
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT CONCAT(`variable`, ' \"', `value`, '\"') \
@@ -402,11 +402,11 @@ stock Database_CheckServerConfig() {
 	SQL_TQuery(g_hDatabase, Database_OnCheckServerConfig, sQuery);
 }
 
-public Database_OnCheckServerConfig(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public void Database_OnCheckServerConfig(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckServerConfig > Error: %s", sError);
 	} else {
-		decl String:sCommand[260];
+		char sCommand[260];
 
 		while (SQL_FetchRow(hResult)) {
 			SQL_FetchString(hResult, 0, sCommand, sizeof(sCommand));
@@ -429,8 +429,8 @@ public Database_OnCheckServerConfig(Handle:hDriver, Handle:hResult, const String
  * @noreturn
  */
 
-stock Database_CheckForUpdates() {
-	decl String:sQuery[128];
+stock void Database_CheckForUpdates() {
+	char sQuery[128];
 
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT IF(`update` = 'update', '', `update_url`) \
@@ -442,13 +442,13 @@ stock Database_CheckForUpdates() {
 	SQL_TQuery(g_hDatabase, Database_OnCheckForUpdates, sQuery);
 }
 
-public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public void Database_OnCheckForUpdates(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckForUpdates > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
 
-		decl String:sUrl[256];
+		char sUrl[256];
 		SQL_FetchString(hResult, 0, sUrl, sizeof(sUrl));
 
 		if (StrEqual(sUrl, "")) {
@@ -456,10 +456,10 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
 		} else {
 			Log(TDLogLevel_Info, "Plugin update pending. Updating now ...");
 
-			decl String:sFile[PLATFORM_MAX_PATH];
+			char sFile[PLATFORM_MAX_PATH];
 			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
 
-			decl String:sPath[PLATFORM_MAX_PATH];
+			char sPath[PLATFORM_MAX_PATH];
 			Format(sPath, sizeof(sPath), "addons/sourcemod/plugins/%s", sFile);
 
 			Updater_Download(sUrl, sPath);
@@ -478,9 +478,9 @@ public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:s
  * @return				True on success, false otherwise.
  */
 
-stock bool:Database_UpdatedServer() {
-	decl String:sQuery[128];
-	new Handle:hQuery = INVALID_HANDLE;
+stock bool Database_UpdatedServer() {
+	char sQuery[128];
+	Handle hQuery = INVALID_HANDLE;
 
 	Format(sQuery, sizeof(sQuery), "\
 		UPDATE `server` \
@@ -494,7 +494,7 @@ stock bool:Database_UpdatedServer() {
 	hQuery = SQL_Query(g_hDatabase, sQuery);
 
 	if (hQuery == INVALID_HANDLE) {
-		decl String:sError[256];
+		char sError[256];
 		SQL_GetError(g_hDatabase, sError, sizeof(sError));
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatedServer > Error: %s", sError);
 
@@ -514,7 +514,7 @@ stock bool:Database_UpdatedServer() {
 	hQuery = SQL_Query(g_hDatabase, sQuery);
 
 	if (hQuery == INVALID_HANDLE) {
-		decl String:sError[256];
+		char sError[256];
 		SQL_GetError(g_hDatabase, sError, sizeof(sError));
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatedServer > Error: %s", sError);
 
@@ -522,7 +522,7 @@ stock bool:Database_UpdatedServer() {
 		return false;
 	}
 
-	new bool:bResult = (SQL_FetchRow(hQuery) && SQL_FetchInt(hQuery, 0) == 0);
+	bool bResult = (SQL_FetchRow(hQuery) && SQL_FetchInt(hQuery, 0) == 0);
 
 	SQL_UnlockDatabase(g_hDatabase);
 	CloseHandle(hQuery);
@@ -538,10 +538,10 @@ stock bool:Database_UpdatedServer() {
  * @noreturn
  */
 
-stock Database_SetServerPassword(const String:sPassword[], bool:bReloadMap) {
-	decl String:sQuery[128];
+stock void Database_SetServerPassword(const char[] sPassword, bool bReloadMap) {
+	char sQuery[128];
 
-	decl String:sPasswordSave[64];
+	char sPasswordSave[64];
 	SQL_EscapeString(g_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
 
 	Format(sQuery, sizeof(sQuery), "\
@@ -551,7 +551,7 @@ stock Database_SetServerPassword(const String:sPassword[], bool:bReloadMap) {
 		LIMIT 1 \
 	", sPasswordSave, g_iServerId);
 
-	new Handle:hPack = CreateDataPack();
+	Handle hPack = CreateDataPack();
 
 	WritePackCell(hPack, bReloadMap ? 1 : 0);
 	WritePackString(hPack, sPassword);
@@ -559,15 +559,15 @@ stock Database_SetServerPassword(const String:sPassword[], bool:bReloadMap) {
 	SQL_TQuery(g_hDatabase, Database_OnSetServerPassword, sQuery, hPack);
 }
 
-public Database_OnSetServerPassword(Handle:hDriver, Handle:hResult, const String:sError[], any:hPack) {
+public void Database_OnSetServerPassword(Handle hDriver, Handle hResult, const char[] sError, any hPack) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_SetServerPassword > Error: %s", sError);
 	} else {
 		ResetPack(hPack);
 
-		new bool:bReloadMap = (ReadPackCell(hPack) == 0 ? false : true);
+		bool bReloadMap = (ReadPackCell(hPack) == 0 ? false : true);
 
-		decl String:sPassword[32];
+		char sPassword[32];
 		ReadPackString(hPack, sPassword, sizeof(sPassword));
 
 		Log(TDLogLevel_Debug, "Set server password to \"%s\"", sPassword);

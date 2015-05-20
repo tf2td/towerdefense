@@ -17,7 +17,7 @@
  * @noreturn
  */
 
-stock Wave_OnButtonStart(iWave, iButton, iActivator) {
+stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -26,16 +26,16 @@ stock Wave_OnButtonStart(iWave, iButton, iActivator) {
 		return;
 	}
 
-	decl String:sName[64];
+	char sName[64];
 	Format(sName, sizeof(sName), "wave_start_%d", iWave + 1);
 	DispatchKeyValue(iButton, "targetname", sName);
 
-	TeleportEntity(iButton, Float:{0.0, 0.0, -9192.0}, NULL_VECTOR, Float:{0.0, 0.0, 0.0});
+	TeleportEntity(iButton, view_as<float>({0.0, 0.0, -9192.0}), NULL_VECTOR, view_as<float>({0.0, 0.0, 0.0}));
 
 	PrintToChatAll("%N started \x04Wave %d", iActivator, iWave + 1);
 
 	if (iWave == 0) {
-		Timer_NextWaveCountdown(INVALID_HANDLE, 5);
+		Timer_NextWaveCountdown(null, 5);
 	} else {
 		g_bStartWaveEarly = true;
 		Wave_Spawn();
@@ -49,7 +49,7 @@ stock Wave_OnButtonStart(iWave, iButton, iActivator) {
  * @noreturn
  */
 
-stock Wave_OnSpawn(iAttacker) {
+stock void Wave_OnSpawn(int iAttacker) {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -66,7 +66,7 @@ stock Wave_OnSpawn(iAttacker) {
  * @noreturn
  */
 
-public Wave_OnSpawnPost(any:iAttacker) {
+public void Wave_OnSpawnPost(any iAttacker) {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -74,14 +74,14 @@ public Wave_OnSpawnPost(any:iAttacker) {
 	SDKHook(iAttacker, SDKHook_OnTakeDamage, OnTakeDamage);
 	SDKHook(iAttacker, SDKHook_OnTakeDamagePost, OnTakeDamagePost);
 
-	new iMaxHealth = GetEntProp(iAttacker, Prop_Data, "m_iMaxHealth");
-	new iWaveHealth = Wave_GetHealth(g_iCurrentWave);
+	int iMaxHealth = GetEntProp(iAttacker, Prop_Data, "m_iMaxHealth");
+	int iWaveHealth = Wave_GetHealth(g_iCurrentWave);
 
 	TF2Attrib_SetByName(iAttacker, "max health additive bonus", float(iWaveHealth - iMaxHealth));
 	SetEntityHealth(iAttacker, iWaveHealth);
 
 	if (g_iNextWaveType & TDWaveType_Boss) {
-		
+		// TODO(?)
 	}
 
 	if (g_iNextWaveType & TDWaveType_Rapid) {
@@ -101,7 +101,7 @@ public Wave_OnSpawnPost(any:iAttacker) {
 	}
 
 	if (g_iNextWaveType & TDWaveType_JarateImmune) {
-		
+		// TODO(?)
 	}
 }
 
@@ -116,22 +116,22 @@ public Wave_OnSpawnPost(any:iAttacker) {
  * @noreturn
  */
 
-stock Wave_OnTakeDamagePost(iVictim, iAttacker, iInflictor, Float:fDamage, iDamageType) {
+stock void Wave_OnTakeDamagePost(int iVictim, int iAttacker, int iInflictor, float fDamage, int iDamageType) {
 	if (!g_bEnabled) {
 		return;
 	}
 
 	if (IsValidEntity(g_iHealthBar)) {
-		new iTotalHealth = 0;
+		int iTotalHealth = 0;
 
-		for (new iClient = 1; iClient <= MaxClients; iClient++) {
+		for (int iClient = 1; iClient <= MaxClients; iClient++) {
 			if (IsAttacker(iClient)) {
 				iTotalHealth += GetClientHealth(iClient);
 			}
 		}
 
-		new iTotalHealthMax = Wave_GetHealth(g_iCurrentWave) * Wave_GetQuantity(g_iCurrentWave);
-		new Float:fPercentage = float(iTotalHealth) / float(iTotalHealthMax);
+		int iTotalHealthMax = Wave_GetHealth(g_iCurrentWave) * Wave_GetQuantity(g_iCurrentWave);
+		float fPercentage = float(iTotalHealth) / float(iTotalHealthMax);
 
 		SetEntProp(g_iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", RoundToFloor(fPercentage * 255));
 	}
@@ -144,7 +144,7 @@ stock Wave_OnTakeDamagePost(iVictim, iAttacker, iInflictor, Float:fDamage, iDama
  * @noreturn
  */
 
-stock Wave_OnDeath(iAttacker) {
+stock void Wave_OnDeath(int iAttacker) {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -162,7 +162,7 @@ stock Wave_OnDeath(iAttacker) {
  * @noreturn
  */
 
-stock Wave_OnDeathAll() {
+stock void Wave_OnDeathAll() {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -176,17 +176,17 @@ stock Wave_OnDeathAll() {
 	g_iCurrentWave++;
 	g_iNextWaveType = Wave_GetType(g_iCurrentWave);
 
-	TeleportEntity(g_iWaveStartButton, g_fWaveStartButtonLocation, NULL_VECTOR, Float:{0.0, 0.0, 0.0});
+	TeleportEntity(g_iWaveStartButton, g_fWaveStartButtonLocation, NULL_VECTOR, view_as<float>({0.0, 0.0, 0.0}));
 
 	Timer_NextWaveCountdown(INVALID_HANDLE, g_iRespawnWaveTime);
 
-	PrintToChatAll("\x04*** Passed wave %d ***", g_iCurrentWave);
+	PrintToChatAll("\x04*** Wave %d passed ***", g_iCurrentWave);
 	PrintToChatAll("\x01You have \x04%d seconds\x01 to prepare for the next wave!", g_iRespawnWaveTime);
 
-	Log(TDLogLevel_Info, "Passed wave %d", g_iCurrentWave);
+	Log(TDLogLevel_Info, "Wave %d passed", g_iCurrentWave);
 
 	if (Panel_Remove(g_iCurrentWave)) {
-		PrintToChatAll("\x04New bonus (wave %d) available, see buy panel!", g_iCurrentWave);
+		PrintToChatAll("\x04New bonus (wave %d) available, see the buy panel!", g_iCurrentWave);
 		Log(TDLogLevel_Debug, "New bonus available (Wave: %d)", g_iCurrentWave);
 	}
 }
@@ -199,16 +199,16 @@ stock Wave_OnDeathAll() {
  * @noreturn
  */
 
-public Wave_OnTouchCorner(iCorner, iAttacker) {
+public void Wave_OnTouchCorner(int iCorner, int iAttacker) {
 	if (!g_bEnabled) {
 		return;
 	}
 
 	if (IsAttacker(iAttacker)) {
-		new iNextCorner = Corner_GetNext(iCorner);
+		int iNextCorner = Corner_GetNext(iCorner);
 
 		if (iNextCorner != -1) {
-			new Float:fAngles[3];
+			float fAngles[3];
 			Corner_GetAngles(iCorner, iNextCorner, fAngles);
 			TeleportEntity(iAttacker, NULL_VECTOR, fAngles, NULL_VECTOR);
 		} else {
@@ -223,25 +223,25 @@ public Wave_OnTouchCorner(iCorner, iAttacker) {
  * @noreturn
  */
 
-stock Wave_Spawn() {
-	PrintToChatAll("\x04Spawned Wave %d!", g_iCurrentWave + 1);
+stock void Wave_Spawn() {
+	PrintToChatAll("\x04Wave %d incoming!", g_iCurrentWave + 1);
 
-	decl String:sName[MAX_NAME_LENGTH];
+	char sName[MAX_NAME_LENGTH];
 	if (!Wave_GetName(g_iCurrentWave, sName, sizeof(sName))) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to spawn wave %d, could not read name!", g_iCurrentWave);
 		return;
 	}
 
-	decl String:sClass[32];
+	char sClass[32];
 	if (!Wave_GetClassString(g_iCurrentWave, sClass, sizeof(sClass))) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to spawn wave %d, could not read class!", g_iCurrentWave);
 		return;
 	}
 
-	new iWaveQuantity = Wave_GetQuantity(g_iCurrentWave);
+	int iWaveQuantity = Wave_GetQuantity(g_iCurrentWave);
 
 	if (iWaveQuantity > 1) {
-		for (new i = 1; i <= iWaveQuantity; i++) {
+		for (int i = 1; i <= iWaveQuantity; i++) {
 			ServerCommand("bot -team red -class %s -name %s%d", sClass, sName, i);
 		}
 	} else {
@@ -260,7 +260,7 @@ stock Wave_Spawn() {
  * @noreturn
  */
 
-stock Wave_TeleportToSpawn(iWaveQuantity) {
+stock void Wave_TeleportToSpawn(int iWaveQuantity) {
 	Log(TDLogLevel_Info, "Spawned wave %d (%d attackers)", g_iCurrentWave + 1, iWaveQuantity);
 
 	if (iWaveQuantity > 1) {
@@ -270,13 +270,13 @@ stock Wave_TeleportToSpawn(iWaveQuantity) {
 	}
 }
 
-public Action:TeleportWaveDelay(Handle:hTimer, any:iNumber) {
+public Action TeleportWaveDelay(Handle hTimer, any iNumber) {
 	if (iNumber > Wave_GetQuantity(g_iCurrentWave)) {
 		Log(TDLogLevel_Debug, "Teleported wave %d (%d attackers)", g_iCurrentWave + 1, Wave_GetQuantity(g_iCurrentWave));
 		return Plugin_Stop;
 	}
 
-	decl String:sName[MAX_NAME_LENGTH];
+	char sName[MAX_NAME_LENGTH];
 	if (!Wave_GetName(g_iCurrentWave, sName, sizeof(sName))) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to teleport wave %d, could not read name!", g_iCurrentWave);
 		return Plugin_Stop;
@@ -286,24 +286,24 @@ public Action:TeleportWaveDelay(Handle:hTimer, any:iNumber) {
 		Format(sName, sizeof(sName), "%s%d", sName, iNumber);
 	}
 
-	new iAttacker = GetClientByNameExact(sName, TEAM_ATTACKER);
+	int iAttacker = GetClientByNameExact(sName, TEAM_ATTACKER);
 
 	Log(TDLogLevel_Trace, "Should teleport attacker %d (%d, %s) of wave %d (%d attackers)", iNumber, iAttacker, sName, g_iCurrentWave + 1, Wave_GetQuantity(g_iCurrentWave));
 
 	if (IsAttacker(iAttacker)) {
-		new Float:fLocation[3];
+		float fLocation[3];
 		if (!Wave_GetLocation(g_iCurrentWave, fLocation)) {
 			LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to teleport wave %d, could not read location!", g_iCurrentWave);
 			return Plugin_Stop;
 		}
 
-		new Float:fAngles[3];
+		float fAngles[3];
 		if (!Wave_GetAngles(g_iCurrentWave, fAngles)) {
 			LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to teleport wave %d, could not read angles!", g_iCurrentWave);
 			return Plugin_Stop;
 		}
 
-		TeleportEntity(iAttacker, fLocation, fAngles, Float:{0.0, 0.0, 0.0});
+		TeleportEntity(iAttacker, fLocation, fAngles, view_as<float>({0.0, 0.0, 0.0}));
 
 		Log(TDLogLevel_Trace, " -> Teleported attacker");
 
@@ -317,7 +317,7 @@ public Action:TeleportWaveDelay(Handle:hTimer, any:iNumber) {
 =            Utility Functions            =
 =========================================*/
 
-public Action:Delay_KickAttacker(Handle:hTimer, any:iAttacker) {
+public Action Delay_KickAttacker(Handle hTimer, any iAttacker) {
 	if (IsAttacker(iAttacker)) {
 		KickClient(iAttacker);
 	}
@@ -325,11 +325,11 @@ public Action:Delay_KickAttacker(Handle:hTimer, any:iAttacker) {
 	return Plugin_Stop;
 }
 
-public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
+public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
 	if (g_bStartWaveEarly) {
-		for (new iClient = 1; iClient <= MaxClients; iClient++) {
+		for (int iClient = 1; iClient <= MaxClients; iClient++) {
 			if (IsDefender(iClient)) {
-				PrintToChat(iClient, "\x04All of you received %d metal for starting %d seconds earlier!", (iTime + 1) * 10, iTime + 1);
+				PrintToChat(iClient, "\x04Everyone has received %d metal for starting %d seconds earlier!", (iTime + 1) * 10, iTime + 1);
 				AddClientMetal(iClient, (iTime + 1) * 10);
 			}
 		}
@@ -341,9 +341,9 @@ public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
 		case 5: {
 			SetHudTextParams(-1.0, 0.6, 5.1, 255, 255, 255, 255, 2, 2.0);
 
-			new iWaveHealth = Wave_GetHealth(g_iCurrentWave);
+			int iWaveHealth = Wave_GetHealth(g_iCurrentWave);
 			
-			decl String:sType[256];
+			char sType[256];
 			strcopy(sType, sizeof(sType), "");
 
 			if (g_iNextWaveType & TDWaveType_Rapid) {
@@ -394,7 +394,7 @@ public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
 				}
 			}
 
-			for (new iClient = 1; iClient <= MaxClients; iClient++) {
+			for (int iClient = 1; iClient <= MaxClients; iClient++) {
 				if (IsDefender(iClient)) {
 					if (StrEqual(sType, "")) {
 						ShowHudText(iClient, -1, "Wave (%d) with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
@@ -418,7 +418,7 @@ public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
 		case 1: {
 			EmitSoundToAll("vo/announcer_begins_1sec.mp3");
 
-			TeleportEntity(g_iWaveStartButton, Float:{0.0, 0.0, -9192.0}, NULL_VECTOR, Float:{0.0, 0.0, 0.0});
+			TeleportEntity(g_iWaveStartButton, view_as<float>({0.0, 0.0, -9192.0}), NULL_VECTOR, view_as<float>({0.0, 0.0, 0.0}));
 		}
 		case 0: {
 			Wave_Spawn();
@@ -429,9 +429,9 @@ public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
 
 	SetHudTextParams(-1.0, 0.85, 1.1, 255, 255, 255, 255);
 
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsDefender(iClient)) {
-			ShowHudText(iClient, -1, "Next wave in: %02d", iTime);
+			ShowHudText(iClient, -1, "Next wave arrives in: %02d", iTime);
 		}
 	}
 
@@ -446,10 +446,10 @@ public Action:Timer_NextWaveCountdown(Handle:hTimer, any:iTime) {
  * @return				Count of alive attackers.
  */
 
-stock GetAliveAttackerCount() {
-	new iAttackers = 0;
+stock int GetAliveAttackerCount() {
+	int iAttackers = 0;
 
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsAttacker(iClient) && IsPlayerAlive(iClient)) {
 			iAttackers++;
 		}
@@ -471,8 +471,8 @@ stock GetAliveAttackerCount() {
  * @return				True on success, false if wave was not found.
  */
 
-stock Wave_GetName(iWave, String:sBuffer[], iMaxLength) {
-	decl String:sKey[32];
+stock bool Wave_GetName(int iWave, char[] sBuffer, int iMaxLength) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_name", iWave);
 
 	return GetTrieString(g_hMapWaves, sKey, sBuffer, iMaxLength);
@@ -485,11 +485,11 @@ stock Wave_GetName(iWave, String:sBuffer[], iMaxLength) {
  * @return				The waves type bit field.
  */
 
-stock Wave_GetType(iWave) {
-	decl String:sKey[32];
+stock int Wave_GetType(int iWave) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_type", iWave);
 	
-	new iType = 0;
+	int iType = 0;
 	if (!GetTrieValue(g_hMapWaves, sKey, iType)) {
 		return -1;
 	}
@@ -506,8 +506,8 @@ stock Wave_GetType(iWave) {
  * @return				True on success, false if wave was not found.
  */
 
-stock bool:Wave_GetClassString(iWave, String:sBuffer[], iMaxLength) {
-	decl String:sKey[32];
+stock bool Wave_GetClassString(int iWave, char[] sBuffer, int iMaxLength) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_class", iWave);
 
 	return GetTrieString(g_hMapWaves, sKey, sBuffer, iMaxLength);
@@ -520,11 +520,11 @@ stock bool:Wave_GetClassString(iWave, String:sBuffer[], iMaxLength) {
  * @return				The waves class type, or TFClass_Unknown on error.
  */
 
-stock TFClassType:Wave_GetClass(iWave) {
-	decl String:sKey[32];
+stock TFClassType Wave_GetClass(int iWave) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_class", iWave);
 
-	decl String:sClass[32];
+	char sClass[32];
 	GetTrieString(g_hMapWaves, sKey, sClass, sizeof(sClass));
 
 	if (StrEqual(sClass, "Scout")) {
@@ -557,11 +557,11 @@ stock TFClassType:Wave_GetClass(iWave) {
  * @return				The waves quantity, or -1 on failure.
  */
 
-stock Wave_GetQuantity(iWave) {
-	decl String:sKey[32];
+stock int Wave_GetQuantity(int iWave) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_quantity", iWave);
 	
-	new iQuantity = 0;
+	int iQuantity = 0;
 	if (!GetTrieValue(g_hMapWaves, sKey, iQuantity)) {
 		return -1;
 	}
@@ -576,11 +576,11 @@ stock Wave_GetQuantity(iWave) {
  * @return				The waves health, or -1 on failure.
  */
 
-stock Wave_GetHealth(iWave) {
-	decl String:sKey[32];
+stock int Wave_GetHealth(int iWave) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_health", iWave);
 	
-	new iHealth = 0;
+	int iHealth = 0;
 	if (!GetTrieValue(g_hMapWaves, sKey, iHealth)) {
 		return -1;
 	}
@@ -596,13 +596,13 @@ stock Wave_GetHealth(iWave) {
  * @return				True on success, false if wave was not found.
  */
 
-stock bool:Wave_GetLocation(iWave, Float:fLocation[3]) {
-	decl String:sKey[32];
+stock bool Wave_GetLocation(int iWave, float fLocation[3]) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_location", iWave);
 	
-	decl String:sLocation[64];
+	char sLocation[64];
 	if (GetTrieString(g_hMapWaves, sKey, sLocation, sizeof(sLocation))) {
-		decl String:sLocationParts[6][16];
+		char sLocationParts[6][16];
 		ExplodeString(sLocation, " ", sLocationParts, sizeof(sLocationParts), sizeof(sLocationParts[]));
 
 		fLocation[0] = StringToFloat(sLocationParts[0]);
@@ -623,13 +623,13 @@ stock bool:Wave_GetLocation(iWave, Float:fLocation[3]) {
  * @return				True on success, false if wave was not found.
  */
 
-stock bool:Wave_GetAngles(iWave, Float:fAngles[3]) {
-	decl String:sKey[32];
+stock bool Wave_GetAngles(int iWave, float fAngles[3]) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_location", iWave);
 	
-	decl String:sAngles[64];
+	char sAngles[64];
 	if (GetTrieString(g_hMapWaves, sKey, sAngles, sizeof(sAngles))) {
-		decl String:sAnglesParts[6][16];
+		char sAnglesParts[6][16];
 		ExplodeString(sAngles, " ", sAnglesParts, sizeof(sAnglesParts), sizeof(sAnglesParts[]));
 
 		fAngles[0] = StringToFloat(sAnglesParts[3]);

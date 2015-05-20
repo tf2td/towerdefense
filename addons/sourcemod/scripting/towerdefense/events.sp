@@ -1,4 +1,5 @@
 #pragma semicolon 1
+#pragma newdecls required
 
 #include <sourcemod>
 
@@ -15,7 +16,7 @@
  * @noreturn
  */
 
-stock HookEvents() {
+stock void HookEvents() {
 	HookEvent("player_activate", Event_PlayerActivate);
 	HookEvent("player_carryobject", Event_PlayerCarryObject);
 	HookEvent("player_changeclass", Event_PlayerChangeClass);
@@ -33,45 +34,43 @@ stock HookEvents() {
 	AddNormalSoundHook(Event_Sound);
 }
 
-public Event_PlayerActivate(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
-	new iUserId = GetEventInt(hEvent, "userid");
-	new iClient = GetClientOfUserId(iUserId);
+public void Event_PlayerActivate(Handle hEvent, const char[] sName, bool bDontBroadcast) {
+	int iUserId = GetEventInt(hEvent, "userid");
+	int iClient = GetClientOfUserId(iUserId);
 
-	decl String:sSteamId[32];
-	GetClientAuthString(iClient, sSteamId, sizeof(sSteamId));
+	char sSteamId[32];
+	GetClientAuthId(iClient, AuthId_Steam2, sSteamId, sizeof(sSteamId));
 
 	if (!StrEqual(sSteamId, "BOT")) {
 		Player_Loaded(iUserId, iClient);
 	}
 }
 
-public Event_PlayerCarryObject(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+public void Event_PlayerCarryObject(Handle hEvent, const char[] sName, bool bDontBroadcast) {
 	if (!g_bEnabled) {
 		return;
 	}
 
-	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+	int iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
 	
 	if (IsDefender(iClient)) {
 		g_bCarryingObject[iClient] = true;
 	}
-
-	return;
 }
 
-public Event_PlayerChangeClass(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+public void Event_PlayerChangeClass(Handle hEvent, const char[] sName, bool bDontBroadcast) {
 	if (!g_bEnabled) {
 		return;
 	}
 
-	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+	int iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
 	
 	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
 		TF2_SetPlayerClass(iClient, TFClass_Engineer, false, true);
 	}
 }
 
-public Action:Event_PlayerChangeTeamPre(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+public Action Event_PlayerChangeTeamPre(Handle hEvent, const char[] sName, bool bDontBroadcast) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
@@ -80,7 +79,7 @@ public Action:Event_PlayerChangeTeamPre(Handle:hEvent, const String:sName[], boo
 		return Plugin_Continue;
 	}
 
-	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+	int iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
 	
 	SetEventBroadcast(hEvent, true); // Block the chat output (Player ... joined team BLU)
 	
@@ -91,7 +90,7 @@ public Action:Event_PlayerChangeTeamPre(Handle:hEvent, const String:sName[], boo
 	return Plugin_Continue;
 }
 
-public Action:Event_PlayerConnectPre(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+public Action Event_PlayerConnectPre(Handle hEvent, const char[] sName, bool bDontBroadcast) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
@@ -101,13 +100,13 @@ public Action:Event_PlayerConnectPre(Handle:hEvent, const String:sName[], bool:b
 	return Plugin_Continue;
 }
 
-public Event_PlayerDeath(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+public void Event_PlayerDeath(Handle hEvent, const char[] sName, bool bDontBroadcast) {
 	if (!g_bEnabled) {
 		return;
 	}
 
-	new iUserId = GetEventInt(hEvent, "userid");
-	new iClient = GetClientOfUserId(iUserId);
+	int iUserId = GetEventInt(hEvent, "userid");
+	int iClient = GetClientOfUserId(iUserId);
 
 	if (IsDefender(iClient)) {
 		Player_OnDeath(iUserId, iClient);
@@ -116,9 +115,9 @@ public Event_PlayerDeath(Handle:hEvent, const String:sName[], bool:bDontBroadcas
 	}
 }
 
-public Action:Event_PlayerDisconnectPre(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
-	new iUserId = GetEventInt(hEvent, "userid");
-	new iClient = GetClientOfUserId(iUserId);
+public Action Event_PlayerDisconnectPre(Handle hEvent, const char[] sName, bool bDontBroadcast) {
+	int iUserId = GetEventInt(hEvent, "userid");
+	int iClient = GetClientOfUserId(iUserId);
 
 	if (IsDefender(iClient)) {
 		Player_OnDisconnectPre(iUserId, iClient);
@@ -129,25 +128,25 @@ public Action:Event_PlayerDisconnectPre(Handle:hEvent, const String:sName[], boo
 	return Plugin_Continue;
 }
 
-public Event_PlayerDropObject(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+public void Event_PlayerDropObject(Handle hEvent, const char[] sName, bool bDontBroadcast) {
 	if (!g_bEnabled) {
 		return;
 	}
 
-	new iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+	int iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
 
 	if (IsDefender(iClient)) {
 		g_bCarryingObject[iClient] = false;
 	}
 }
 
-public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
+public void Event_PostInventoryApplication(Handle hEvent, const char[] sName, bool bDontBroadcast) {
 	if (!g_bEnabled) {
 		return;
 	}
 
-	new iUserId = GetEventInt(hEvent, "userid");
-	new iClient = GetClientOfUserId(iUserId);
+	int iUserId = GetEventInt(hEvent, "userid");
+	int iClient = GetClientOfUserId(iUserId);
 
 	if (IsDefender(iClient)) {
 		Player_OnSpawn(iUserId, iClient);
@@ -161,14 +160,14 @@ public Event_PostInventoryApplication(Handle:hEvent, const String:sName[], bool:
 	SetEntProp(iClient, Prop_Data, "m_CollisionGroup", 13); // COLLISION_GROUP_PROJECTILE
 }
 
-public Action:Event_RoundWin(Handle:hEvent, const String:sName[], bool:bDontBroadcast) {
-	new iTeam = GetEventInt(hEvent, "team");
+public Action Event_RoundWin(Handle hEvent, const char[] sName, bool bDontBroadcast) {
+	int iTeam = GetEventInt(hEvent, "team");
 
 	ServerCommand("bot_kick all");
 	ServerCommand("mp_autoteambalance 0");
 
 	if (iTeam == TEAM_ATTACKER) {
-		PrintToChatAll("\x07FF0000You have lost! Do you feel bad now?");
+		PrintToChatAll("\x07FF0000Game over! Resetting the map...");
 	}
 
 	Server_Reset();
@@ -176,7 +175,7 @@ public Action:Event_RoundWin(Handle:hEvent, const String:sName[], bool:bDontBroa
 	return Plugin_Handled;
 }
 
-public Action:Event_Sound(iClients[64], &iNumClients, String:sSample[PLATFORM_MAX_PATH], &iEntity, &iChannel, &Float:fVolume, &iLevel, &iPitch, &iFlags) {
+public Action Event_Sound(int iClients[64], int &iNumClients, char sSample[PLATFORM_MAX_PATH], int &iEntity, int &iChannel, float &fVolume, int &iLevel, int &iPitch, int &iFlags) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
@@ -197,9 +196,9 @@ public Action:Event_Sound(iClients[64], &iNumClients, String:sSample[PLATFORM_MA
 =            Usermessages            =
 ====================================*/
 
-public Action:Event_PlayerVGUIMenu(UserMsg:iMessageId, Handle:hBitBuffer, const iPlayers[], iPlayersNum, bool:bReliable, bool:bInit) {
-	decl String:sBuffer1[64];
-	decl String:sBuffer2[256];
+public Action Event_PlayerVGUIMenu(UserMsg iMessageId, Handle hBitBuffer, const int[] iPlayers, int iPlayersNum, bool bReliable, bool bInit) {
+	char sBuffer1[64];
+	char sBuffer2[256];
 
 	// check menu name
 	BfReadString(hBitBuffer, sBuffer1, sizeof(sBuffer1));
@@ -212,41 +211,41 @@ public Action:Event_PlayerVGUIMenu(UserMsg:iMessageId, Handle:hBitBuffer, const 
 		return Plugin_Continue;
 	}
 	
-	new iCount = BfReadByte(hBitBuffer);
+	int iCount = BfReadByte(hBitBuffer);
 
 	if (iCount == 0) {
 		return Plugin_Continue;
 	}
 
-	new Handle:hKeyValues = CreateKeyValues("data");
+	Handle hKeyValues = CreateKeyValues("data");
 
-	for (new i = 0; i < iCount; i++) {
+	for (int i = 0; i < iCount; i++) {
 		BfReadString(hBitBuffer, sBuffer1, sizeof(sBuffer1));
 		BfReadString(hBitBuffer, sBuffer2, sizeof(sBuffer2));
 		
 		if (StrEqual(sBuffer1, "customsvr") || (StrEqual(sBuffer1, "msg") && !StrEqual(sBuffer2, "motd"))) {
-			CloseHandle(hKeyValues);
+			delete hKeyValues;
 			return Plugin_Continue;
 		}
 		
 		KvSetString(hKeyValues, sBuffer1, sBuffer2);
 	}
 
-	new Handle:hPack;
+	Handle hPack;
 
 	CreateDataTimer(0.0, ShowMotd, hPack, TIMER_FLAG_NO_MAPCHANGE);
 
 	WritePackCell(hPack, GetClientUserId(iPlayers[0]));
-	WritePackCell(hPack, _:hKeyValues);
+	WritePackCell(hPack, view_as<int>(hKeyValues));
 	
 	return Plugin_Handled;
 }
 
-public Action:ShowMotd(Handle:hTimer, Handle:hPack) {
+public Action ShowMotd(Handle hTimer, Handle hPack) {
 	ResetPack(hPack);
 
-	new iClient = GetClientOfUserId(ReadPackCell(hPack));
-	new Handle:hKeyValues = Handle:ReadPackCell(hPack);
+	int iClient = GetClientOfUserId(ReadPackCell(hPack));
+	Handle hKeyValues = view_as<Handle>(ReadPackCell(hPack));
 	
 	if (!IsValidClient(iClient)) {
 		CloseHandle(hKeyValues);
@@ -277,13 +276,13 @@ public Action:ShowMotd(Handle:hTimer, Handle:hPack) {
  * @noreturn
  */
 
-public Action:TF2_CalcIsAttackCritical(iClient, iWeapon, String:sClassname[], &bool:bResult) {
+public Action TF2_CalcIsAttackCritical(int iClient, int iWeapon, char[] sClassname, bool &bResult) {
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
 
 	if (StrEqual(sClassname, "tf_weapon_wrench") || StrEqual(sClassname, "tf_weapon_robot_arm")) {
-		new Float:fLocation[3], Float:fAngles[3];
+		float fLocation[3], fAngles[3];
 
 		GetClientEyePosition(iClient, fLocation);
 		GetClientEyeAngles(iClient, fAngles);
@@ -291,10 +290,10 @@ public Action:TF2_CalcIsAttackCritical(iClient, iWeapon, String:sClassname[], &b
 		TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayPlayers, iClient);
 		
 		if (TR_DidHit()) {
-			new iTower = TR_GetEntityIndex();
+			int iTower = TR_GetEntityIndex();
 		
 			if (IsTower(iTower)) {
-				new Float:fHitLocation[3];
+				float fHitLocation[3];
 				TR_GetEndPosition(fHitLocation);
 
 				if (GetVectorDistance(fLocation, fHitLocation) <= 70.0) {
@@ -325,7 +324,8 @@ public Action:TF2_CalcIsAttackCritical(iClient, iWeapon, String:sClassname[], &b
  * @noreturn
  */
 
-public TF2Items_OnGiveNamedItem_Post(iClient, String:sClassname[], iItemDefinitionIndex, iItemLevel, iItemQuality, iEntityIndex) {
+// TODO(hurp): Does this function have to return an int? Compiler bug?
+public int TF2Items_OnGiveNamedItem_Post(int iClient, char[] sClassname, int iItemDefinitionIndex, int iItemLevel, int iItemQuality, int iEntityIndex) {
 	if (!g_bEnabled) {
 		return;
 	}

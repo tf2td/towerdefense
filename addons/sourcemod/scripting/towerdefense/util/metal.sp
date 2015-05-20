@@ -15,7 +15,7 @@
  * @return				The clients current metal.
  */
 
-stock GetClientMetal(iClient) {
+stock int GetClientMetal(int iClient) {
 	return GetEntData(iClient, FindDataMapOffs(iClient, "m_iAmmo") + (3 * 4), 4);
 }
 
@@ -27,7 +27,7 @@ stock GetClientMetal(iClient) {
  * @noreturn
  */
 
-stock SetClientMetal(iClient, iMetal) {
+stock void SetClientMetal(int iClient, int iMetal) {
 	SetEntData(iClient, FindDataMapOffs(iClient, "m_iAmmo") + (3 * 4), iMetal, 4);
 
 	Log(TDLogLevel_Trace, "Set %N's metal to %d", iClient, iMetal);
@@ -40,11 +40,11 @@ stock SetClientMetal(iClient, iMetal) {
  * @noreturn
  */
 
-stock ResetClientMetal(iClient) {
+stock void ResetClientMetal(int iClient) {
 	CreateTimer(0.0, ResetClientMetalDelayed, iClient, TIMER_FLAG_NO_MAPCHANGE); // Process next frame
 }
 
-public Action:ResetClientMetalDelayed(Handle:hTimer, any:iClient) {
+public Action ResetClientMetalDelayed(Handle hTimer, any iClient) {
 	SetClientMetal(iClient, 0);
 
 	return Plugin_Stop;
@@ -58,7 +58,7 @@ public Action:ResetClientMetalDelayed(Handle:hTimer, any:iClient) {
  * @return				True if amount could be added, false otherwise.
  */
 
-stock bool:AddClientMetal(iClient, iMetal) {
+stock bool AddClientMetal(int iClient, int iMetal) {
 	if (iMetal < 0) {
 		if (GetClientMetal(iClient) + iMetal >= 0) {
 			SetClientMetal(iClient, GetClientMetal(iClient) + iMetal);
@@ -81,8 +81,8 @@ stock bool:AddClientMetal(iClient, iMetal) {
  * @return						A TDMetalPackReturn value.
  */
 
-stock TDMetalPackReturn:SpawnMetalPack(TDMetalPackSpawnType:iMetalPackSpawnType, Float:fLocation[3], iMetal) {
-	new iEntity;
+stock TDMetalPackReturn SpawnMetalPack(TDMetalPackSpawnType iMetalPackSpawnType, float fLocation[3], int iMetal) {
+	int iEntity;
 	return SpawnMetalPack2(iMetalPackSpawnType, fLocation, iMetal, iEntity);
 }
 
@@ -96,7 +96,7 @@ stock TDMetalPackReturn:SpawnMetalPack(TDMetalPackSpawnType:iMetalPackSpawnType,
  * @return						A TDMetalPackReturn value.
  */
 
-stock TDMetalPackReturn:SpawnMetalPack2(TDMetalPackSpawnType:iMetalPackSpawnType, Float:fLocation[3], iMetal, &iEntity) {
+stock TDMetalPackReturn SpawnMetalPack2(TDMetalPackSpawnType iMetalPackSpawnType, float fLocation[3], int iMetal, int &iEntity) {
 	Log(TDLogLevel_Trace, "SpawnMetalPack2: iMetalPackSpawnType=%d, fLocation=[%f, %f, %f], iMetal=%d", iMetalPackSpawnType, fLocation[0], fLocation[1], fLocation[2], iMetal);
 
 	if (iMetal <= 0) {
@@ -107,7 +107,7 @@ stock TDMetalPackReturn:SpawnMetalPack2(TDMetalPackSpawnType:iMetalPackSpawnType
 		return TDMetalPack_LimitReached;
 	}
 
-	decl String:sModelPath[PLATFORM_MAX_PATH];
+	char sModelPath[PLATFORM_MAX_PATH];
 
 	switch (iMetalPackSpawnType) {
 		case TDMetalPack_Small: {
@@ -124,11 +124,11 @@ stock TDMetalPackReturn:SpawnMetalPack2(TDMetalPackSpawnType:iMetalPackSpawnType
 		}
 	}
 
-	new iMetalPack = CreateEntityByName("prop_dynamic");
+	int iMetalPack = CreateEntityByName("prop_dynamic");
 
 	DispatchKeyValue(iMetalPack, "model", sModelPath);
 
-	decl String:sMetal[32];
+	char sMetal[32];
 	IntToString(iMetal, sMetal, sizeof(sMetal));
 
 	DispatchKeyValue(iMetalPack, "targetname", sMetal);
@@ -155,15 +155,15 @@ stock TDMetalPackReturn:SpawnMetalPack2(TDMetalPackSpawnType:iMetalPackSpawnType
 	return TDMetalPack_SpawnedPack;
 }
 
-public OnMetalPackPickup(iMetalPack, iClient) {
+public void OnMetalPackPickup(int iMetalPack, int iClient) {
 	if (!IsDefender(iClient) || !IsValidEntity(iMetalPack)) {
 		return;
 	}
 
-	decl String:sMetal[32];
+	char sMetal[32];
 	GetEntPropString(iMetalPack, Prop_Data, "m_iName", sMetal, sizeof(sMetal));
 
-	new iMetal = StringToInt(sMetal);
+	int iMetal = StringToInt(sMetal);
 
 	AddClientMetal(iClient, iMetal);
 	EmitSoundToClient(iClient, "items/gunpickup2.wav");
@@ -183,12 +183,12 @@ public OnMetalPackPickup(iMetalPack, iClient) {
  * @noreturn
  */
 
-stock ResupplyClient(iClient, bool:bAmmoOnly = false, Float:fPercent = 1.0) {
+stock void ResupplyClient(int iClient, bool bAmmoOnly = false, float fPercent = 1.0) {
 	if (!IsDefender(iClient) || !IsPlayerAlive(iClient)) {
 		return;
 	}
 
-	new iWeapon = GetPlayerWeaponSlot(iClient, TFWeaponSlot_Primary);
+	int iWeapon = GetPlayerWeaponSlot(iClient, TFWeaponSlot_Primary);
 
 	if (IsValidEntity(iWeapon)) {
 		// Engineer's Shotgun
@@ -222,12 +222,12 @@ stock ResupplyClient(iClient, bool:bAmmoOnly = false, Float:fPercent = 1.0) {
  * @noreturn
  */
 
-stock SetClientClip(iClient, iSlot, iClip) {	
+stock void SetClientClip(int iClient, int iSlot, int iClip) {	
 	if (IsValidClient(iClient) && IsClientInGame(iClient) && IsPlayerAlive(iClient)) {
-		new iWeapon = GetPlayerWeaponSlot(iClient, iSlot);
+		int iWeapon = GetPlayerWeaponSlot(iClient, iSlot);
 		
 		if (IsValidEntity(iWeapon)) {
-			new iAmmoTable = FindSendPropInfo("CTFWeaponBase", "m_iClip1");
+			int iAmmoTable = FindSendPropInfo("CTFWeaponBase", "m_iClip1");
 			SetEntData(iWeapon, iAmmoTable, iClip, 4, true);
 		}
 	}

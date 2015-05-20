@@ -14,12 +14,12 @@
  * @return				The database handle, or INVALID_HANDLE on failure.
  */
 
-stock Handle:Database_Connect(String:sError[], const iMaxLength) {
+stock Handle Database_Connect(char[] sError, const int iMaxLength) {
 	if (g_hDatabase == INVALID_HANDLE) {
-		decl String:sPassword[128];
+		char sPassword[128];
 		MD5String(DATABASE_PASS, sPassword, sizeof(sPassword));
 
-		new Handle:hKeyValues = CreateKeyValues("");
+		Handle hKeyValues = CreateKeyValues("");
 		KvSetString(hKeyValues, "host", DATABASE_HOST);
 		KvSetString(hKeyValues, "database", DATABASE_NAME);
 		KvSetString(hKeyValues, "user", DATABASE_USER);
@@ -42,7 +42,7 @@ stock Handle:Database_Connect(String:sError[], const iMaxLength) {
  * @noreturn
  */
 
-stock Database_LoadData() {
+stock void Database_LoadData() {
 	Database_LoadTowers();
 }
 
@@ -52,8 +52,8 @@ stock Database_LoadData() {
  * @noreturn
  */
 
-stock Database_LoadTowers() {
-	decl String:sQuery[512];
+stock void Database_LoadTowers() {
+	char sQuery[512];
 	
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `tower`.`tower_id`, `level`, `tower`.`name`, `class`, `price`, `teleport_tower`, `damagetype`, `description`, `metal`, `weapon_id`, `attack`, `rotate`, `pitch`, `damage`, `attackspeed`, `area` \
@@ -68,12 +68,12 @@ stock Database_LoadTowers() {
 	SQL_TQuery(g_hDatabase, Database_OnLoadTowers, sQuery);
 }
 
-public Database_OnLoadTowers(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public void Database_OnLoadTowers(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_LoadTowers > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		new iTowerId = 0, iTowerLevel = 0;
-		decl String:sKey[64], String:sBuffer[128];
+		int iTowerId = 0, iTowerLevel = 0;
+		char sKey[64], sBuffer[128];
 
 		// Level Name          Class    Price Location          Damagetype Description Metal WeaponId AttackPrimary AttackSecondary Rotate Pitch Damage Attackspeed Area
 		// 1     EngineerTower Engineer 500   666 -626 -2 0 0 0 Melee      ...         1000  1        1             0               0      45    1.0    1.0         1.0
@@ -193,8 +193,8 @@ public Database_OnLoadTowers(Handle:hDriver, Handle:hResult, const String:sError
  * @noreturn
  */
 
-stock Database_LoadWeapons() {
-	decl String:sQuery[256];
+stock void Database_LoadWeapons() {
+	char sQuery[256];
 	
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `name`, `index`, (`slot` - 1), `level`, (`quality` - 1), `classname`, `attributes`, (`preserve_attributes` - 1) \
@@ -205,12 +205,12 @@ stock Database_LoadWeapons() {
 	SQL_TQuery(g_hDatabase, Database_OnLoadWeapons, sQuery);
 }
 
-public Database_OnLoadWeapons(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public void Database_OnLoadWeapons(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_LoadWeapons > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		new iWeaponId = 1;
-		decl String:sKey[64], String:sBuffer[128];
+		int iWeaponId = 1;
+		char sKey[64], sBuffer[128];
 
 		// Name   Index Slot Level Quality Classname        Attributes Preserve
 		// Wrench 7     2    1     0       tf_weapon_wrench            1
@@ -285,8 +285,8 @@ public Database_OnLoadWeapons(Handle:hDriver, Handle:hResult, const String:sErro
  * @noreturn
  */
 
-stock Database_LoadWaves() {
-	decl String:sQuery[512];
+stock void Database_LoadWaves() {
+	char sQuery[512];
 	
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `wavetype`, `wave`.`name`, `class`, `quantity`, `health`, IF(`wavetype` & (SELECT `bit_value` FROM `wavetype` WHERE `wavetype`.`type` = 'air'), `teleport_air`, `teleport_ground`) \
@@ -300,12 +300,12 @@ stock Database_LoadWaves() {
 	SQL_TQuery(g_hDatabase, Database_OnLoadWaves, sQuery);
 }
 
-public Database_OnLoadWaves(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public void Database_OnLoadWaves(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_LoadWaves > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		new iWaveId = 0;
-		decl String:sKey[64], String:sBuffer[128];
+		int iWaveId = 0;
+		char sKey[64], sBuffer[128];
 
 		// Type Name      Class Quantiy Health Location
 		// 0    WeakScout Scout 4       125    560 -1795 -78 0 90 0
@@ -370,8 +370,8 @@ public Database_OnLoadWaves(Handle:hDriver, Handle:hResult, const String:sError[
  * @noreturn
  */
 
-stock Database_LoadMetalpacks() {
-	decl String:sQuery[256];
+stock void Database_LoadMetalpacks() {
+	char sQuery[256];
 	
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `type`, `metal`, `location` \
@@ -385,12 +385,12 @@ stock Database_LoadMetalpacks() {
 	SQL_TQuery(g_hDatabase, Database_OnLoadMetalpacks, sQuery);
 }
 
-public Database_OnLoadMetalpacks(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
+public void Database_OnLoadMetalpacks(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_LoadMetalpacks > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		new iMetalpackId = 0;
-		decl String:sKey[64], String:sBuffer[128];
+		int iMetalpackId = 0;
+		char sKey[64], sBuffer[128];
 
 		// Type  Metal Location
 		// start 400   1100 -1200 -90

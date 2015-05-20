@@ -25,17 +25,17 @@ enum TDLogType
 	TDLogType_FileAndConsole = 2 	// logs to SourceMod logs and server console
 };
 
-static TDLogLevel:m_iLogLevel = TDLogLevel_Info;
-static TDLogType:m_iLogType = TDLogType_FileAndConsole;
+static TDLogLevel m_iLogLevel = TDLogLevel_Info;
+static TDLogType m_iLogType = TDLogType_FileAndConsole;
 
-stock Log_Initialize(TDLogLevel:iLogLevel = TDLogLevel_Info, TDLogType:iLogType = TDLogType_FileAndConsole) {
+stock void Log_Initialize(TDLogLevel iLogLevel = TDLogLevel_Info, TDLogType iLogType = TDLogType_FileAndConsole) {
 	m_iLogLevel = iLogLevel;
 	m_iLogType = iLogType;
 }
 
-stock Log(TDLogLevel:iLogLevel, const String:sMessage[], any:...) {
+stock void Log(TDLogLevel iLogLevel, const char[] sMessage, any ...) {
 	if (m_iLogLevel >= iLogLevel) {
-		decl String:sFormattedMessage[256];
+		char sFormattedMessage[256];
 		VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 3);
 
 		switch (m_iLogType) {
@@ -105,9 +105,9 @@ stock Log(TDLogLevel:iLogLevel, const String:sMessage[], any:...) {
 	}
 }
 
-stock LogType(TDLogLevel:iLogLevel, TDLogType:iLogType, const String:sMessage[], any:...) {
+stock void LogType(TDLogLevel iLogLevel, TDLogType iLogType, const char[] sMessage, any ...) {
 	if (m_iLogLevel >= iLogLevel) {
-		decl String:sFormattedMessage[256];
+		char sFormattedMessage[256];
 		VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
 
 		switch (iLogType) {

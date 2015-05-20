@@ -21,8 +21,8 @@
  * @return				True on success, false if weapon was not found.
  */
 
-stock bool:Weapon_GetName(iWeaponId, String:sBuffer[], iMaxLength) {
-	decl String:sKey[32];
+stock bool Weapon_GetName(int iWeaponId, char[] sBuffer, int iMaxLength) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_name", iWeaponId);
 
 	return GetTrieString(g_hMapWeapons, sKey, sBuffer, iMaxLength);
@@ -35,11 +35,11 @@ stock bool:Weapon_GetName(iWeaponId, String:sBuffer[], iMaxLength) {
  * @return				The weapons index, or -1 on failure.
  */
 
-stock Weapon_GetIndex(iWeaponId) {
-	decl String:sKey[32];
+stock int Weapon_GetIndex(int iWeaponId) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_index", iWeaponId);
 	
-	new iIndex = 0;
+	int iIndex = 0;
 	if (!GetTrieValue(g_hMapWeapons, sKey, iIndex)) {
 		return -1;
 	}
@@ -54,11 +54,11 @@ stock Weapon_GetIndex(iWeaponId) {
  * @return				The weapons slot, or -1 on failure.
  */
 
-stock Weapon_GetSlot(iWeaponId) {
-	decl String:sKey[32];
+stock int Weapon_GetSlot(int iWeaponId) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_slot", iWeaponId);
 	
-	new iSlot = 0;
+	int iSlot = 0;
 	if (!GetTrieValue(g_hMapWeapons, sKey, iSlot)) {
 		return -1;
 	}
@@ -73,11 +73,11 @@ stock Weapon_GetSlot(iWeaponId) {
  * @return				The weapons level, or -1 on failure.
  */
 
-stock Weapon_GetLevel(iWeaponId) {
-	decl String:sKey[32];
+stock int Weapon_GetLevel(int iWeaponId) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_level", iWeaponId);
 	
-	new iLevel = 0;
+	int iLevel = 0;
 	if (!GetTrieValue(g_hMapWeapons, sKey, iLevel)) {
 		return -1;
 	}
@@ -92,11 +92,11 @@ stock Weapon_GetLevel(iWeaponId) {
  * @return				The weapons quality, or -1 on failure.
  */
 
-stock Weapon_GetQuality(iWeaponId) {
-	decl String:sKey[32];
+stock int Weapon_GetQuality(int iWeaponId) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_quality", iWeaponId);
 	
-	new iQuality = 0;
+	int iQuality = 0;
 	if (!GetTrieValue(g_hMapWeapons, sKey, iQuality)) {
 		return -1;
 	}
@@ -113,8 +113,8 @@ stock Weapon_GetQuality(iWeaponId) {
  * @return				True on success, false if weapon was not found.
  */
 
-stock bool:Weapon_GetClassname(iWeaponId, String:sBuffer[], iMaxLength) {
-	decl String:sKey[32];
+stock bool Weapon_GetClassname(int iWeaponId, char[] sBuffer, int iMaxLength) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_classname", iWeaponId);
 
 	return GetTrieString(g_hMapWeapons, sKey, sBuffer, iMaxLength);
@@ -129,23 +129,23 @@ stock bool:Weapon_GetClassname(iWeaponId, String:sBuffer[], iMaxLength) {
  * @return				The attribute count.
  */
 
-stock Weapon_GetAttributes(iWeaponId, iAttributes[16], Float:iValues[16]) {
-	decl String:sKey[32];
+stock int Weapon_GetAttributes(int iWeaponId, int iAttributes[16], float iValues[16]) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_attributes", iWeaponId);
 
-	decl String:sAttributes[256];
+	char sAttributes[256];
 	if (GetTrieString(g_hMapWeapons, sKey, sAttributes, sizeof(sAttributes))) {
-		decl String:sAttributeParts[32][6];
-		new iCount = ExplodeString(sAttributes, ";", sAttributeParts, sizeof(sAttributeParts), sizeof(sAttributeParts[]));
+		char sAttributeParts[32][6];
+		int iCount = ExplodeString(sAttributes, ";", sAttributeParts, sizeof(sAttributeParts), sizeof(sAttributeParts[]));
 
 		if (iCount % 2 != 0) {
 			Log(TDLogLevel_Error, "Failed to parse weapon attributes for weapon id %d (some attribute has no value)", iWeaponId);
 			return 0;
 		}
 
-		new iAttributeCount = 0;
+		int iAttributeCount = 0;
 
-		for (new i = 0; i < iCount && iAttributeCount < 16; i += 2){
+		for (int i = 0; i < iCount && iAttributeCount < 16; i += 2){
 			iAttributes[iAttributeCount] = StringToInt(sAttributeParts[i]);
 			iValues[iAttributeCount] = StringToFloat(sAttributeParts[i + 1]);
 
@@ -165,11 +165,11 @@ stock Weapon_GetAttributes(iWeaponId, iAttributes[16], Float:iValues[16]) {
  * @return				True if should preserve, false otherwise.
  */
 
-stock bool:Weapon_GetPreserveAttributes(iWeaponId) {
-	decl String:sKey[32];
+stock bool Weapon_GetPreserveAttributes(int iWeaponId) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_preserve_attributes", iWeaponId);
 
-	new iPreserve = 0;
+	int iPreserve = 0;
 	if (!GetTrieValue(g_hMapWeapons, sKey, iPreserve)) {
 		return false;
 	}

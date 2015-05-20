@@ -15,12 +15,12 @@
  * @return				True if valid, false otherwise.
  */
 
-stock bool:Corner_IsValid(iCorner) {
+stock bool Corner_IsValid(int iCorner) {
 	if (!IsValidEntity(iCorner)) {
 		return false;
 	}
 
-	decl String:sBuffer[64];
+	char sBuffer[64];
 	GetEntityClassname(iCorner, sBuffer, sizeof(sBuffer));
 
 	if (StrEqual(sBuffer, "trigger_multiple")) {
@@ -39,9 +39,9 @@ stock bool:Corner_IsValid(iCorner) {
  * @return				The corners entity index, or -1 on failure.
  */
 
-stock Corner_FindByName(const String:sName[]) {
-	new iCorner = -1;
-	decl String:sCornerName[64];
+stock int Corner_FindByName(const char[] sName) {
+	int iCorner = -1;
+	char sCornerName[64];
 
 	while ((iCorner = FindEntityByClassname(iCorner, "trigger_multiple")) != -1) {
 		Corner_GetName(iCorner, sCornerName, sizeof(sCornerName));
@@ -61,9 +61,9 @@ stock Corner_FindByName(const String:sName[]) {
  * @return				The corners entity index, or -1 on failure.
  */
 
-stock Corner_FindByNextName(const String:sName[]) {
-	new iCorner = -1;
-	decl String:sCornerName[64];
+stock int Corner_FindByNextName(const char[] sName) {
+	int iCorner = -1;
+	char sCornerName[64];
 
 	while ((iCorner = FindEntityByClassname(iCorner, "trigger_multiple")) != -1) {
 		Corner_GetNextName(iCorner, sCornerName, sizeof(sCornerName));
@@ -84,23 +84,23 @@ stock Corner_FindByNextName(const String:sName[]) {
  * @return				The corner number, or -1 on failure.
  */
 
-stock Corner_GetNumber(iCorner, bool:bValidate = true) {
+stock int Corner_GetNumber(int iCorner, bool bValidate = true) {
 	if (!bValidate) {
-		decl String:sName[64];
+		char sName[64];
 		Corner_GetName(iCorner, sName, sizeof(sName), false);
 
 		if (!StrEqual(sName, "corner_final")) {
-			decl String:sNameParts[2][32];
+			char sNameParts[2][32];
 			ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
 
 			return StringToInt(sNameParts[1]);
 		}
 	} else if (Corner_IsValid(iCorner)) {
-		decl String:sName[64];
+		char sName[64];
 		Corner_GetName(iCorner, sName, sizeof(sName), false);
 
 		if (!StrEqual(sName, "corner_final")) {
-			decl String:sNameParts[2][32];
+			char sNameParts[2][32];
 			ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
 
 			return StringToInt(sNameParts[1]);
@@ -120,7 +120,7 @@ stock Corner_GetNumber(iCorner, bool:bValidate = true) {
  * @return				True on success, false if corner was not found.
  */
 
-stock bool:Corner_GetName(iCorner, String:sBuffer[], iMaxLength, bool:bValidate = true) {
+stock bool Corner_GetName(int iCorner, char[] sBuffer, int iMaxLength, bool bValidate = true) {
 	if (!bValidate) {
 		GetEntPropString(iCorner, Prop_Data, "m_iName", sBuffer, iMaxLength);
 		return true;
@@ -142,7 +142,7 @@ stock bool:Corner_GetName(iCorner, String:sBuffer[], iMaxLength, bool:bValidate 
  * @return				True on success, false if corner was not found.
  */
 
-stock bool:Corner_GetNextName(iCorner, String:sBuffer[], iMaxLength, bool:bValidate = true) {
+stock bool Corner_GetNextName(int iCorner, char[] sBuffer, int iMaxLength, bool bValidate = true) {
 	if (!bValidate) {
 		GetEntPropString(iCorner, Prop_Data, "m_iParent", sBuffer, iMaxLength);
 		return true;
@@ -163,7 +163,7 @@ stock bool:Corner_GetNextName(iCorner, String:sBuffer[], iMaxLength, bool:bValid
  * @return				True on success, false if corner was not found.
  */
 
-stock bool:Corner_GetLocation(iCorner, Float:fLocation[3], bool:bValidate = true) {
+stock bool Corner_GetLocation(int iCorner, float fLocation[3], bool bValidate = true) {
 	if (!bValidate) {
 		GetEntPropVector(iCorner, Prop_Data, "m_vecAbsOrigin", fLocation);
 		return true;
@@ -185,8 +185,8 @@ stock bool:Corner_GetLocation(iCorner, Float:fLocation[3], bool:bValidate = true
  * @return				True on success, false if corner was not found.
  */
 
-stock bool:Corner_GetAngles(iCornerA, iCornerB, Float:fAngles[3], bool:bValidate = true) {
-	new Float:fLocationCornerA[3], Float:fLocationCornerB[3], Float:fVector[3];
+stock bool Corner_GetAngles(int iCornerA, int iCornerB, float fAngles[3], bool bValidate = true) {
+	float fLocationCornerA[3], fLocationCornerB[3], fVector[3];
 
 	if (!bValidate) {
 		Corner_GetLocation(iCornerA, fLocationCornerA, false);
@@ -213,8 +213,8 @@ stock bool:Corner_GetAngles(iCornerA, iCornerB, Float:fAngles[3], bool:bValidate
  * @return				The next corners entity index, or -1 on failure.
  */
 
-stock Corner_GetNext(iCorner = -1, const String:sName[] = "") {
-	decl String:sCornerName[64];
+stock int Corner_GetNext(int iCorner = -1, const char sName[] = "") {
+	char sCornerName[64];
 
 	if (StrEqual(sName, "") && Corner_IsValid(iCorner)) {
 		Corner_GetName(iCorner, sCornerName, sizeof(sCornerName));
@@ -226,7 +226,7 @@ stock Corner_GetNext(iCorner = -1, const String:sName[] = "") {
 	}
 
 	if (StrContains(sCornerName, "corner_") != -1 && !StrEqual(sCornerName, "corner_final")) {
-		decl String:sNextName[64];
+		char sNextName[64];
 		Corner_GetNextName(iCorner, sNextName, sizeof(sNextName));
 
 		return Corner_FindByName(sNextName);
@@ -243,8 +243,8 @@ stock Corner_GetNext(iCorner = -1, const String:sName[] = "") {
  * @return				The previous corners entity index, or -1 on failure.
  */
 
-stock Corner_GetPrevious(iCorner = -1, const String:sName[] = "") {
-	decl String:sCornerName[64];
+stock void Corner_GetPrevious(int iCorner = -1, const char sName[] = "") {
+	char sCornerName[64];
 
 	if (StrEqual(sName, "") && Corner_IsValid(iCorner)) {
 		Corner_GetName(iCorner, sCornerName, sizeof(sCornerName));
@@ -269,16 +269,16 @@ stock Corner_GetPrevious(iCorner = -1, const String:sName[] = "") {
  * @return				The corners entity index, or -1 on failure.
  */
 
-stock Corner_GetNearest(iClient) {
+stock int Corner_GetNearest(int iClient) {
 	if (!IsValidClient(iClient) || !IsClientInGame(iClient) || !IsPlayerAlive(iClient)) {
 		return -1;
 	}
 
-	new Float:fCornerLocation[3], Float:fClientLocation[3];
+	float fCornerLocation[3], fClientLocation[3];
 	GetClientAbsOrigin(iClient, fClientLocation);
 
-	new iCorner = -1, iNearestCorner = -1;
-	new Float:fNearestDistance = 2147483647.0, Float:fDistance;
+	int iCorner = -1, iNearestCorner = -1;
+	float fNearestDistance = 2147483647.0, fDistance;
 
 	while ((iCorner = FindEntityByClassname(iCorner, "trigger_multiple")) != -1) {
 		if (Corner_IsValid(iCorner)) {
@@ -306,25 +306,25 @@ stock Corner_GetNearest(iClient) {
  * @return				False if not between any corners, true otherwise.
  */
 
-stock bool:Corner_GetBetween(iClient, &iCornerA, &iCornerB, Float:fEpsilon = 15.0) {
+stock bool Corner_GetBetween(int iClient, int &iCornerA, int &iCornerB, float fEpsilon = 15.0) {
 	if (!IsValidClient(iClient) || !IsClientInGame(iClient) || !IsPlayerAlive(iClient)) {
 		return false;
 	}
 
-	static iNearBefore[MAXPLAYERS + 1];
+	static int iNearBefore[MAXPLAYERS + 1];
 
-	new iNear = Corner_GetNearest(iClient);
+	int iNear = Corner_GetNearest(iClient);
 	
-	new Float:fLocationNear[3], Float:fLocationClient[3];
+	float fLocationNear[3], fLocationClient[3];
 	Corner_GetLocation(iNear, fLocationNear, false);
 	GetClientAbsOrigin(iClient, fLocationClient);
 
-	new Float:fVector[3], Float:fAngles[3], Float:fAnglesClient[3];
+	float fVector[3], fAngles[3], fAnglesClient[3];
 	MakeVectorFromPoints(fLocationNear, fLocationClient, fVector);
 	GetVectorAngles(fVector, fAngles);
 	GetClientEyeAngles(iClient, fAnglesClient);
 
-	new Float:fAnglesDiff = FloatAbs(fAngles[1] - fAnglesClient[1]);
+	float fAnglesDiff = FloatAbs(fAngles[1] - fAnglesClient[1]);
 
 	if (fAnglesDiff != 0.0 && fAnglesDiff != 45.0 && fAnglesDiff != 90.0 && fAnglesDiff != 135.0 && fAnglesDiff != 180.0 && 
 		fAnglesDiff != 225.0 && fAnglesDiff != 270.0 && fAnglesDiff != 315.0 && fAnglesDiff != 360.0 && fAnglesDiff > 5.0) {
@@ -332,10 +332,10 @@ stock bool:Corner_GetBetween(iClient, &iCornerA, &iCornerB, Float:fEpsilon = 15.
 		return false;
 	}
 
-	new iNumberNearBefore = Corner_GetNumber(iNearBefore[iClient]);
+	int iNumberNearBefore = Corner_GetNumber(iNearBefore[iClient]);
 
 	if (iNumberNearBefore != -1 && IsValidEntity(iNear)) {
-		new iNumberNear = Corner_GetNumber(iNear);
+		int iNumberNear = Corner_GetNumber(iNear);
 
 		if (iNumberNear != -1) {
 			if (Abs(iNumberNearBefore - iNumberNear) > 1) {
@@ -345,19 +345,19 @@ stock bool:Corner_GetBetween(iClient, &iCornerA, &iCornerB, Float:fEpsilon = 15.
 		}
 	}
 	
-	new iNext = Corner_GetNext(iNear);
+	int iNext = Corner_GetNext(iNear);
 
-	new Float:fLocationNext[3];
+	float fLocationNext[3];
 	Corner_GetLocation(iNext, fLocationNext);
 	
-	new Float:fResultA[3], Float:fResultB[3];
+	float fResultA[3], fResultB[3];
 	SubtractVectors(fLocationNear, fLocationNext, fResultA);
 	SubtractVectors(fLocationClient, fLocationNext, fResultB);
 
-	new Float:fScale = GetVectorDotProduct(fResultA, fResultB) / GetVectorDotProduct(fResultA, fResultA);
+	float fScale = GetVectorDotProduct(fResultA, fResultB) / GetVectorDotProduct(fResultA, fResultA);
 	ScaleVector(fResultA, fScale);
 
-	new Float:fResult[3];
+	float fResult[3];
 	SubtractVectors(fResultB, fResultA, fResult);
 
 	if (FloatAbs(fResult[0]) <= fEpsilon && FloatAbs(fResult[1]) <= fEpsilon) {
@@ -368,9 +368,9 @@ stock bool:Corner_GetBetween(iClient, &iCornerA, &iCornerB, Float:fEpsilon = 15.
 		return true;
 	}
 
-	new iPrev = Corner_GetPrevious(iNear);
+	int iPrev = Corner_GetPrevious(iNear);
 
-	new Float:fLocationPrev[3];
+	float fLocationPrev[3];
 	Corner_GetLocation(iPrev, fLocationPrev);
 
 	SubtractVectors(fLocationNear, fLocationPrev, fResultA);

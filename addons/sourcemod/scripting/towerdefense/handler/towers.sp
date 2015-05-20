@@ -17,7 +17,7 @@
  * @noreturn
  */
 
-stock Tower_OnButtonBuy(TDTowerId:iTowerId, iButton, iActivator) {
+stock void Tower_OnButtonBuy(TDTowerId iTowerId, int iButton, int iActivator) {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -26,14 +26,14 @@ stock Tower_OnButtonBuy(TDTowerId:iTowerId, iButton, iActivator) {
 		return;
 	}
 
-	if (!g_bTowerBought[_:iTowerId]) {
-		new iPrice = Tower_GetPrice(iTowerId);
-		decl String:sName[MAX_NAME_LENGTH];
+	if (!g_bTowerBought[view_as<int>(iTowerId)]) {
+		int iPrice = Tower_GetPrice(iTowerId);
+		char sName[MAX_NAME_LENGTH];
 		Tower_GetName(iTowerId, sName, sizeof(sName));
 
 		PrintToChatAll("\x01Buying \x04%s\x01 (Total price: \x04%d metal\x01)", sName, iPrice);
 
-		new iClients = GetRealClientCount(true);
+		int iClients = GetRealClientCount(true);
 
 		if (iClients <= 0) {
 			iClients = 1;
@@ -44,7 +44,7 @@ stock Tower_OnButtonBuy(TDTowerId:iTowerId, iButton, iActivator) {
 		if (CanAfford(iPrice)) {
 			Tower_Spawn(iTowerId);
 
-			for (new iClient = 1; iClient <= MaxClients; iClient++) {
+			for (int iClient = 1; iClient <= MaxClients; iClient++) {
 				if (IsDefender(iClient)) {
 					AddClientMetal(iClient, -iPrice);
 
@@ -54,7 +54,7 @@ stock Tower_OnButtonBuy(TDTowerId:iTowerId, iButton, iActivator) {
 
 			PrintToChatAll("\x01%N bought \x04%s", iActivator, sName);
 
-			g_bTowerBought[_:iTowerId] = true;
+			g_bTowerBought[view_as<int>(iTowerId)] = true;
 			AcceptEntityInput(iButton, "Break");
 		}
 	}
@@ -69,12 +69,12 @@ stock Tower_OnButtonBuy(TDTowerId:iTowerId, iButton, iActivator) {
  * @noreturn
  */
 
-stock Tower_OnButtonTeleport(TDTowerId:iTowerId, iButton, iActivator) {
+stock void Tower_OnButtonTeleport(TDTowerId iTowerId, int iButton, int iActivator) {
 	if (!g_bEnabled) {
 		return;
 	}
 
-	new iTower = GetTower(iTowerId);
+	int iTower = GetTower(iTowerId);
 
 	if (!IsTower(iTower)) {
 		return;
@@ -93,7 +93,7 @@ stock Tower_OnButtonTeleport(TDTowerId:iTowerId, iButton, iActivator) {
  * @noreturn
  */
 
-stock Tower_OnSpawn(iTower, TDTowerId:iTowerId) {
+stock void Tower_OnSpawn(int iTower, TDTowerId iTowerId) {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -102,7 +102,7 @@ stock Tower_OnSpawn(iTower, TDTowerId:iTowerId) {
 	g_iUpgradeLevel[iTower] = 1;
 	g_iLastMover[iTower] = 0;
 
-	SetEntProp(iTower, Prop_Data, "m_bloodColor", _:TDBlood_None);
+	SetEntProp(iTower, Prop_Data, "m_bloodColor", view_as<int>(TDBlood_None));
 	SetRobotModel(iTower);
 
 	// Change weapon
@@ -120,7 +120,7 @@ stock Tower_OnSpawn(iTower, TDTowerId:iTowerId) {
  * @noreturn
  */
 
-stock Tower_OnTouchNobuild(iTower) {
+stock void Tower_OnTouchNobuild(int iTower) {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -137,13 +137,13 @@ stock Tower_OnTouchNobuild(iTower) {
  * @noreturn
  */
 
-stock Tower_OnUpgrade(iTower, iClient) {
+stock void Tower_OnUpgrade(int iTower, int iClient) {
 	if (!g_bEnabled) {
 		return;
 	}
 
-	new TDTowerId:iTowerId = GetTowerId(iTower);
-	new iMaxLevel = Tower_GetMaxLevel(iTowerId);
+	TDTowerId iTowerId = GetTowerId(iTower);
+	int iMaxLevel = Tower_GetMaxLevel(iTowerId);
 
 	if (g_iUpgradeLevel[iTower] < iMaxLevel) {
 		if (!AddClientMetal(iClient, -50)) {
@@ -153,7 +153,7 @@ stock Tower_OnUpgrade(iTower, iClient) {
 		g_iUpgradeMetal[iTower] += 50;
 
 		if (g_iUpgradeMetal[iTower] >= Tower_GetMetal(iTowerId)) {
-			new iWeapon = Tower_GetWeapon(iTowerId);
+			int iWeapon = Tower_GetWeapon(iTowerId);
 
 			g_iUpgradeMetal[iTower] = 0;
 			g_iUpgradeLevel[iTower]++;
@@ -166,12 +166,12 @@ stock Tower_OnUpgrade(iTower, iClient) {
 
 			PrintToChatAll("\x04%N\x01 reached level \x04%d", iTower, g_iUpgradeLevel[iTower]);
 
-			new Float:fDamageScale = Tower_GetDamageScale(iTowerId);
+			float fDamageScale = Tower_GetDamageScale(iTowerId);
 			if (fDamageScale != 1.0) {
 				PrintToChatAll("\x04%N\x01 gained \x04%d%% damage bonus", iTower, RoundFloat(fDamageScale * 100 - 100));
 			}
 
-			new Float:fAttackspeedScale = Tower_GetAttackspeedScale(iTowerId);
+			float fAttackspeedScale = Tower_GetAttackspeedScale(iTowerId);
 			if (fAttackspeedScale != 1.0) {
 				PrintToChatAll("\x04%N\x01 gained \x04%d%% attackspeed", iTower, RoundFloat(fAttackspeedScale * 100 - 100));
 			}
@@ -199,7 +199,7 @@ stock Tower_OnUpgrade(iTower, iClient) {
  * @noreturn
  */
 
-stock Tower_OnWeaponChanged(iTower, TDTowerId:iTowerId, iItemDefinitionIndex, iSlot, iWeapon) {
+stock void Tower_OnWeaponChanged(int iTower, TDTowerId iTowerId, int iItemDefinitionIndex, int iSlot, int iWeapon) {
 	SetEntPropEnt(iTower, Prop_Send, "m_hActiveWeapon", GetPlayerWeaponSlot(iTower, iSlot));
 
 	Tower_SetLevelAttributes(iTower, iTowerId);
@@ -213,7 +213,7 @@ stock Tower_OnWeaponChanged(iTower, TDTowerId:iTowerId, iItemDefinitionIndex, iS
  * @noreturn
  */
 
-stock Tower_OnCarrierDisconnected(iTower, iCarrier) {
+stock void Tower_OnCarrierDisconnected(int iTower, int iCarrier) {
 	SetEntityMoveType(iTower, MOVETYPE_WALK);
 	HideAnnotation(iCarrier);
 
@@ -234,7 +234,7 @@ stock Tower_OnCarrierDisconnected(iTower, iCarrier) {
  * @noreturn
  */
 
-stock Tower_OnCarrierDeath(iTower, iCarrier) {
+stock void Tower_OnCarrierDeath(int iTower, int iCarrier) {
 	SetEntityMoveType(iTower, MOVETYPE_WALK);
 	HideAnnotation(iCarrier);
 	
@@ -254,12 +254,12 @@ stock Tower_OnCarrierDeath(iTower, iCarrier) {
  * @return				True on success, false otherwise.
  */
 
-stock bool:Tower_Spawn(TDTowerId:iTowerId) {
+stock bool Tower_Spawn(TDTowerId iTowerId) {
 	if (!g_bEnabled) {
 		return false;
 	}
 
-	decl String:sName[MAX_NAME_LENGTH], String:sClass[32];
+	char sName[MAX_NAME_LENGTH], sClass[32];
 
 	if (Tower_GetName(iTowerId, sName, sizeof(sName))) {
 		if (Tower_GetClassString(iTowerId, sClass, sizeof(sClass))) {
@@ -280,24 +280,24 @@ stock bool:Tower_Spawn(TDTowerId:iTowerId) {
  * @return				True on success, false otherwise.
  */
 
-stock bool:Tower_TeleportToSpawn(iTower) {
+stock bool Tower_TeleportToSpawn(int iTower) {
 	if (!g_bEnabled) {
 		return false;
 	}
 
-	new TDTowerId:iTowerId = GetTowerId(iTower);
+	TDTowerId iTowerId = GetTowerId(iTower);
 
 	if (iTowerId == TDTower_Invalid) {
 		return false;
 	}
 
-	new Float:fLocation[3], Float:fAngles[3];
+	float fLocation[3], fAngles[3];
 
 	if (Tower_GetLocation(iTowerId, fLocation)) {
 		if (Tower_GetAngles(iTowerId, fAngles)) {
-			TeleportEntity(iTower, fLocation, fAngles, Float:{0.0, 0.0, 0.0});
+			TeleportEntity(iTower, fLocation, fAngles, view_as<float>({0.0, 0.0, 0.0}));
 
-			decl String:sName[MAX_NAME_LENGTH];
+			char sName[MAX_NAME_LENGTH];
 			if (Tower_GetName(iTowerId, sName, sizeof(sName))) {
 				Log(TDLogLevel_Debug, "Tower (%s) teleported", sName);
 			}
@@ -317,25 +317,25 @@ stock bool:Tower_TeleportToSpawn(iTower) {
  * @return				True on success, false otherwise.
  */
 
-stock bool:Tower_ChangeWeapon(iTower, iWeaponId) {
+stock bool Tower_ChangeWeapon(int iTower, int iWeaponId) {
 	if (!g_bEnabled) {
 		return false;
 	}
 
 	if (IsTower(iTower)) {
-		new iIndex = -1;
+		int iIndex = -1;
 		if ((iIndex = Weapon_GetIndex(iWeaponId)) != -1) {
-			new iSlot = -1;
+			int iSlot = -1;
 			if ((iSlot = Weapon_GetSlot(iWeaponId)) != -1) {
-				new iLevel = -1;
+				int iLevel = -1;
 				if ((iLevel = Weapon_GetLevel(iWeaponId)) != -1) {
-					new iQuality = -1;
+					int iQuality = -1;
 					if ((iQuality = Weapon_GetQuality(iWeaponId)) != -1) {
-						decl String:sClassname[64];
+						char sClassname[64];
 						if (Weapon_GetClassname(iWeaponId, sClassname, sizeof(sClassname))) {
-							new bool:bPreserveAttributes = Weapon_GetPreserveAttributes(iWeaponId);
+							bool bPreserveAttributes = Weapon_GetPreserveAttributes(iWeaponId);
 
-							for (new i = 0; i < 3; i++) {
+							for (int i = 0; i < 3; i++) {
 								if (i != iSlot) {
 									TF2_RemoveWeaponSlot(iTower, i);
 								}
@@ -362,8 +362,8 @@ stock bool:Tower_ChangeWeapon(iTower, iWeaponId) {
  * @noreturn
  */
 
-stock Tower_SetLevelAttributes(iTower, TDTowerId:iTowerId) {
-	new iWeapon = GetEntPropEnt(iTower, Prop_Send, "m_hActiveWeapon");
+stock void Tower_SetLevelAttributes(int iTower, TDTowerId iTowerId) {
+	int iWeapon = GetEntPropEnt(iTower, Prop_Send, "m_hActiveWeapon");
 
 	if (TF2Attrib_SetByDefIndex(iWeapon, 2, Tower_GetDamageScale(iTowerId))) {
 		Log(TDLogLevel_Trace, "Successfully set attribute %d on %N to %f", 2, iTower, Tower_GetDamageScale(iTowerId));
@@ -381,12 +381,12 @@ stock Tower_SetLevelAttributes(iTower, TDTowerId:iTowerId) {
  * @noreturn
  */
 
-stock Tower_Pickup(iClient) {
+stock void Tower_Pickup(int iClient) {
 	if (!g_bEnabled) {
 		return;
 	}
 
-	new iTower = GetAimTarget(iClient);
+	int iTower = GetAimTarget(iClient);
 
 	if (IsTower(iTower)) {
 		if (IsTowerAttached(iTower)) {
@@ -398,7 +398,7 @@ stock Tower_Pickup(iClient) {
 
 		SetEntityMoveType(iTower, MOVETYPE_NOCLIP);
 
-		TeleportEntity(iTower, Float:{0.0, 0.0, -8192.0}, NULL_VECTOR, NULL_VECTOR); // Teleport out of the map
+		TeleportEntity(iTower, view_as<float>({0.0, 0.0, -8192.0}), NULL_VECTOR, NULL_VECTOR); // Teleport out of the map
 
 		HideAnnotation(iTower);
 		AttachAnnotation(iClient, 86400.0, "Moving: %N", iTower);
@@ -418,7 +418,7 @@ stock Tower_Pickup(iClient) {
  * @noreturn
  */
 
-stock Tower_Drop(iClient) {
+stock void Tower_Drop(int iClient) {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -428,8 +428,8 @@ stock Tower_Drop(iClient) {
 		return;
 	}
 
-	new iTower = g_iAttachedTower[iClient];
-	new Float:fLocation[3], Float:fAngles[3];
+	int iTower = g_iAttachedTower[iClient];
+	float fLocation[3], fAngles[3];
 
 	SetEntityMoveType(iTower, MOVETYPE_WALK);
 
@@ -457,15 +457,15 @@ stock Tower_Drop(iClient) {
  * @noreturn
  */
 
-stock Tower_ShowInfo(iClient) {
+stock void Tower_ShowInfo(int iClient) {
 	if (!g_bEnabled) {
 		return;
 	}
 
-	new iTower = GetAimTarget(iClient);
+	int iTower = GetAimTarget(iClient);
 
 	if (IsTower(iTower)) {
-		new TDTowerId:iTowerId = GetTowerId(iTower);
+		TDTowerId iTowerId = GetTowerId(iTower);
 
 		if (g_iUpgradeLevel[iTower] == Tower_GetMaxLevel(iTowerId)) {
 			AttachAdvancedAnnotation(iClient, iTower, 4.0, "%N\nCurrent Level: %d\nMax. Level Reached", iTower, g_iUpgradeLevel[iTower]);
@@ -486,12 +486,12 @@ stock Tower_ShowInfo(iClient) {
  * @return				The bitfield.
  */
 
-stock GetVisibilityBitfield(iClient) {
+stock int GetVisibilityBitfield(int iClient) {
 	if (!IsDefender(iClient)) {
 		return 1;
 	}
 
-	new iBitField = 1;
+	int iBitField = 1;
 	iBitField |= RoundFloat(Pow(2.0, float(iClient)));
 	return iBitField;
 }
@@ -503,8 +503,8 @@ stock GetVisibilityBitfield(iClient) {
  * @return				True if tower is attached, false otherwise.
  */
 
-stock bool:IsTowerAttached(iTower) {
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+stock bool IsTowerAttached(int iTower) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (g_iAttachedTower[iClient] == iTower) {
 			return true;
 		}
@@ -520,10 +520,10 @@ stock bool:IsTowerAttached(iTower) {
  * @return				The towers client index, or -1 on failure.
  */
 
-stock GetTower(TDTowerId:iTowerId) {
-	decl String:sName[MAX_NAME_LENGTH], String:sName2[MAX_NAME_LENGTH];
+stock int GetTower(TDTowerId iTowerId) {
+	char sName[MAX_NAME_LENGTH], sName2[MAX_NAME_LENGTH];
 	
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsTower(iClient)) {
 			GetClientName(iClient, sName, sizeof(sName));
 			Tower_GetName(iTowerId, sName2, sizeof(sName2));
@@ -544,20 +544,20 @@ stock GetTower(TDTowerId:iTowerId) {
  * @return				The towers id, or -1 on error.
  */
 
-stock TDTowerId:GetTowerId(iTower) {
+stock TDTowerId GetTowerId(int iTower) {
 	if (IsValidClient(iTower)) {
-		decl String:sName[MAX_NAME_LENGTH], String:sName2[MAX_NAME_LENGTH];
+		char sName[MAX_NAME_LENGTH], sName2[MAX_NAME_LENGTH];
 		GetClientName(iTower, sName, sizeof(sName));
 
-		new iClient, iTowerId;
+		int iClient, iTowerId;
 
 		for (iClient = 1; iClient <= MaxClients; iClient++) {
 			if (IsClientInGame(iClient)) {
-				for (iTowerId = 0; iTowerId < _:TDTower_Quantity; iTowerId++) {
-					Tower_GetName(TDTowerId:iTowerId, sName2, sizeof(sName2));
+				for (iTowerId = 0; iTowerId < view_as<int>(TDTower_Quantity); iTowerId++) {
+					Tower_GetName(view_as<TDTowerId>(iTowerId), sName2, sizeof(sName2));
 
 					if (StrEqual(sName, sName2)) {
-						return TDTowerId:iTowerId;
+						return view_as<TDTowerId>(iTowerId);
 					}
 				}
 			}
@@ -580,9 +580,9 @@ stock TDTowerId:GetTowerId(iTower) {
  * @return				True on success, false if tower was not found.
  */
 
-stock bool:Tower_GetName(TDTowerId:iTowerId, String:sBuffer[], iMaxLength) {
-	decl String:sKey[32];
-	Format(sKey, sizeof(sKey), "%d_name", _:iTowerId);
+stock bool Tower_GetName(TDTowerId iTowerId, char[] sBuffer, int iMaxLength) {
+	char sKey[32];
+	Format(sKey, sizeof(sKey), "%d_name", view_as<int>(iTowerId));
 
 	return GetTrieString(g_hMapTowers, sKey, sBuffer, iMaxLength);
 }
@@ -596,9 +596,9 @@ stock bool:Tower_GetName(TDTowerId:iTowerId, String:sBuffer[], iMaxLength) {
  * @return				True on success, false if tower was not found.
  */
 
-stock bool:Tower_GetClassString(TDTowerId:iTowerId, String:sBuffer[], iMaxLength) {
-	decl String:sKey[32];
-	Format(sKey, sizeof(sKey), "%d_class", _:iTowerId);
+stock bool Tower_GetClassString(TDTowerId iTowerId,char[] sBuffer, int iMaxLength) {
+	char sKey[32];
+	Format(sKey, sizeof(sKey), "%d_class", view_as<int>(iTowerId));
 
 	return GetTrieString(g_hMapTowers, sKey, sBuffer, iMaxLength);
 }
@@ -610,11 +610,11 @@ stock bool:Tower_GetClassString(TDTowerId:iTowerId, String:sBuffer[], iMaxLength
  * @return				The towers class type, or TFClass_Unknown on error.
  */
 
-stock TFClassType:Tower_GetClass(TDTowerId:iTowerId) {
-	decl String:sKey[32];
-	Format(sKey, sizeof(sKey), "%d_class", _:iTowerId);
+stock TFClassType Tower_GetClass(TDTowerId iTowerId) {
+	char sKey[32];
+	Format(sKey, sizeof(sKey), "%d_class", view_as<int>(iTowerId));
 
-	decl String:sClass[32];
+	char sClass[32];
 	GetTrieString(g_hMapTowers, sKey, sClass, sizeof(sClass));
 
 	if (StrEqual(sClass, "Scout")) {
@@ -647,11 +647,11 @@ stock TFClassType:Tower_GetClass(TDTowerId:iTowerId) {
  * @return				The towers price, or -1 on failure.
  */
 
-stock Tower_GetPrice(TDTowerId:iTowerId) {
-	decl String:sKey[32];
-	Format(sKey, sizeof(sKey), "%d_price", _:iTowerId);
+stock int Tower_GetPrice(TDTowerId iTowerId) {
+	char sKey[32];
+	Format(sKey, sizeof(sKey), "%d_price",view_as<int>(iTowerId));
 	
-	new iPrice = 0;
+	int iPrice = 0;
 	if (!GetTrieValue(g_hMapTowers, sKey, iPrice)) {
 		return -1;
 	}
@@ -667,13 +667,13 @@ stock Tower_GetPrice(TDTowerId:iTowerId) {
  * @return				True on success, false if tower was not found.
  */
 
-stock bool:Tower_GetLocation(TDTowerId:iTowerId, Float:fLocation[3]) {
-	decl String:sKey[32];
-	Format(sKey, sizeof(sKey), "%d_location", _:iTowerId);
+stock bool Tower_GetLocation(TDTowerId iTowerId, float fLocation[3]) {
+	char sKey[32];
+	Format(sKey, sizeof(sKey), "%d_location", view_as<int>(iTowerId));
 	
-	decl String:sLocation[64];
+	char sLocation[64];
 	if (GetTrieString(g_hMapTowers, sKey, sLocation, sizeof(sLocation))) {
-		decl String:sLocationParts[6][16];
+		char sLocationParts[6][16];
 		ExplodeString(sLocation, " ", sLocationParts, sizeof(sLocationParts), sizeof(sLocationParts[]));
 
 		fLocation[0] = StringToFloat(sLocationParts[0]);
@@ -695,13 +695,13 @@ stock bool:Tower_GetLocation(TDTowerId:iTowerId, Float:fLocation[3]) {
  * @return				True on success, false if tower was not found.
  */
 
-stock bool:Tower_GetAngles(TDTowerId:iTowerId, Float:fAngles[3]) {
-	decl String:sKey[32];
-	Format(sKey, sizeof(sKey), "%d_location", _:iTowerId);
+stock bool Tower_GetAngles(TDTowerId iTowerId, float fAngles[3]) {
+	char sKey[32];
+	Format(sKey, sizeof(sKey), "%d_location", view_as<int>(iTowerId));
 	
-	decl String:sAngles[64];
+	char sAngles[64];
 	if (GetTrieString(g_hMapTowers, sKey, sAngles, sizeof(sAngles))) {
-		decl String:sAnglesParts[6][16];
+		char sAnglesParts[6][16];
 		ExplodeString(sAngles, " ", sAnglesParts, sizeof(sAnglesParts), sizeof(sAnglesParts[]));
 
 		fAngles[0] = Tower_GetPitch(iTowerId);
@@ -721,14 +721,14 @@ stock bool:Tower_GetAngles(TDTowerId:iTowerId, Float:fAngles[3]) {
  * @return				The towers upgrade metal, or -1 on failure.
  */
 
-stock Tower_GetMetal(TDTowerId:iTowerId) {
-	new iTower = GetTower(iTowerId);
+stock int Tower_GetMetal(TDTowerId iTowerId) {
+	int iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
-		decl String:sKey[32];
-		Format(sKey, sizeof(sKey), "%d_%d_metal", _:iTowerId, g_iUpgradeLevel[iTower]);
+		char sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_metal", view_as<int>(iTowerId), g_iUpgradeLevel[iTower]);
 
-		new iMetal = 0;
+		int iMetal = 0;
 		if (!GetTrieValue(g_hMapTowers, sKey, iMetal)) {
 			return -1;
 		}
@@ -746,14 +746,14 @@ stock Tower_GetMetal(TDTowerId:iTowerId) {
  * @return				The towers weapon id, or -1 on failure.
  */
 
-stock Tower_GetWeapon(TDTowerId:iTowerId) {
-	new iTower = GetTower(iTowerId);
+stock int Tower_GetWeapon(TDTowerId iTowerId) {
+	int iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
-		decl String:sKey[32];
-		Format(sKey, sizeof(sKey), "%d_%d_weapon", _:iTowerId, g_iUpgradeLevel[iTower]);
+		char sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_weapon", view_as<int>(iTowerId), g_iUpgradeLevel[iTower]);
 
-		new iWeapon = 0;
+		int iWeapon = 0;
 		if (!GetTrieValue(g_hMapTowers, sKey, iWeapon)) {
 			return -1;
 		}
@@ -771,14 +771,14 @@ stock Tower_GetWeapon(TDTowerId:iTowerId) {
  * @return				True if should attack, false otherwise.
  */
 
-stock bool:Tower_GetAttackPrimary(TDTowerId:iTowerId) {
-	new iTower = GetTower(iTowerId);
+stock bool Tower_GetAttackPrimary(TDTowerId iTowerId) {
+	int iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
-		decl String:sKey[32];
-		Format(sKey, sizeof(sKey), "%d_%d_attack", _:iTowerId, g_iUpgradeLevel[iTower]);
+		char sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_attack", view_as<int>(iTowerId), g_iUpgradeLevel[iTower]);
 
-		decl String:sAttackMode[64];
+		char sAttackMode[64];
 		if (!GetTrieString(g_hMapTowers, sKey, sAttackMode, sizeof(sAttackMode))) {
 			return false;
 		}
@@ -796,14 +796,14 @@ stock bool:Tower_GetAttackPrimary(TDTowerId:iTowerId) {
  * @return				True if should attack, false otherwise.
  */
 
-stock bool:Tower_GetAttackSecondary(TDTowerId:iTowerId) {
-	new iTower = GetTower(iTowerId);
+stock bool Tower_GetAttackSecondary(TDTowerId iTowerId) {
+	int iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
-		decl String:sKey[32];
-		Format(sKey, sizeof(sKey), "%d_%d_attack", _:iTowerId, g_iUpgradeLevel[iTower]);
+		char sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_attack", view_as<int>(iTowerId), g_iUpgradeLevel[iTower]);
 
-		decl String:sAttackMode[64];
+		char sAttackMode[64];
 		if (!GetTrieString(g_hMapTowers, sKey, sAttackMode, sizeof(sAttackMode))) {
 			return false;
 		}
@@ -821,14 +821,14 @@ stock bool:Tower_GetAttackSecondary(TDTowerId:iTowerId) {
  * @return				True if should rotate, false otherwise.
  */
 
-stock bool:Tower_GetRotate(TDTowerId:iTowerId) {
-	new iTower = GetTower(iTowerId);
+stock bool Tower_GetRotate(TDTowerId iTowerId) {
+	int iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
-		decl String:sKey[32];
-		Format(sKey, sizeof(sKey), "%d_%d_rotate", _:iTowerId, g_iUpgradeLevel[iTower]);
+		char sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_rotate", view_as<int>(iTowerId), g_iUpgradeLevel[iTower]);
 
-		new iRotate = 0;
+		int iRotate = 0;
 		if (!GetTrieValue(g_hMapTowers, sKey, iRotate)) {
 			return false;
 		}
@@ -846,14 +846,14 @@ stock bool:Tower_GetRotate(TDTowerId:iTowerId) {
  * @return				The pitch, or 10.0 on failure.
  */
 
-stock Float:Tower_GetPitch(TDTowerId:iTowerId) {
-	new iTower = GetTower(iTowerId);
+stock float Tower_GetPitch(TDTowerId iTowerId) {
+	int iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
-		decl String:sKey[32];
-		Format(sKey, sizeof(sKey), "%d_%d_pitch", _:iTowerId, g_iUpgradeLevel[iTower]);
+		char sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_pitch", view_as<int>(iTowerId), g_iUpgradeLevel[iTower]);
 
-		new iPitch = 0;
+		int iPitch = 0;
 		if (!GetTrieValue(g_hMapTowers, sKey, iPitch)) {
 			return 0.0;
 		}
@@ -871,14 +871,14 @@ stock Float:Tower_GetPitch(TDTowerId:iTowerId) {
  * @return				The damage scale, or 1.0 on failure.
  */
 
-stock Float:Tower_GetDamageScale(TDTowerId:iTowerId) {
-	new iTower = GetTower(iTowerId);
+stock float Tower_GetDamageScale(TDTowerId iTowerId) {
+	int iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
-		decl String:sKey[32];
-		Format(sKey, sizeof(sKey), "%d_%d_damage", _:iTowerId, g_iUpgradeLevel[iTower]);
+		char sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_damage", view_as<int>(iTowerId), g_iUpgradeLevel[iTower]);
 
-		new Float:fDamage = 1.0;
+		float fDamage = 1.0;
 		if (!GetTrieValue(g_hMapTowers, sKey, fDamage)) {
 			return 1.0;
 		}
@@ -896,14 +896,14 @@ stock Float:Tower_GetDamageScale(TDTowerId:iTowerId) {
  * @return				The attackspeed scale, or 1.0 on failure.
  */
 
-stock Float:Tower_GetAttackspeedScale(TDTowerId:iTowerId) {
-	new iTower = GetTower(iTowerId);
+stock float Tower_GetAttackspeedScale(TDTowerId iTowerId) {
+	int iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
-		decl String:sKey[32];
-		Format(sKey, sizeof(sKey), "%d_%d_attackspeed", _:iTowerId, g_iUpgradeLevel[iTower]);
+		char sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_attackspeed", view_as<int>(iTowerId), g_iUpgradeLevel[iTower]);
 
-		new Float:fAttackspeed = 1.0;
+		float fAttackspeed = 1.0;
 		if (!GetTrieValue(g_hMapTowers, sKey, fAttackspeed)) {
 			return 1.0;
 		}
@@ -921,14 +921,14 @@ stock Float:Tower_GetAttackspeedScale(TDTowerId:iTowerId) {
  * @return				The area scale, or 1.0 on failure.
  */
 
-stock Float:Tower_GetAreaScale(TDTowerId:iTowerId) {
-	new iTower = GetTower(iTowerId);
+stock float Tower_GetAreaScale(TDTowerId iTowerId) {
+	int iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
-		decl String:sKey[32];
-		Format(sKey, sizeof(sKey), "%d_%d_area", _:iTowerId, g_iUpgradeLevel[iTower]);
+		char sKey[32];
+		Format(sKey, sizeof(sKey), "%d_%d_area", view_as<int>(iTowerId), g_iUpgradeLevel[iTower]);
 
-		new Float:fArea = 1.0;
+		float fArea = 1.0;
 		if (!GetTrieValue(g_hMapTowers, sKey, fArea)) {
 			return 1.0;
 		}
@@ -946,17 +946,17 @@ stock Float:Tower_GetAreaScale(TDTowerId:iTowerId) {
  * @return				The max level, or 1 on failure.
  */
 
-stock Tower_GetMaxLevel(TDTowerId:iTowerId) {
-	new iTower = GetTower(iTowerId);
+stock int Tower_GetMaxLevel(TDTowerId iTowerId) {
+	int iTower = GetTower(iTowerId);
 
 	if (IsTower(iTower)) {
-		decl String:sKey[32];
-		Format(sKey, sizeof(sKey), "%d_1_metal", _:iTowerId);
+		char sKey[32];
+		Format(sKey, sizeof(sKey), "%d_1_metal", view_as<int>(iTowerId));
 
-		new iLevel = 1, iMetal = 0;
+		int iLevel = 1, iMetal = 0;
 		while (GetTrieValue(g_hMapTowers, sKey, iMetal)) {
 			iLevel++;
-			Format(sKey, sizeof(sKey), "%d_%d_metal", _:iTowerId, iLevel);
+			Format(sKey, sizeof(sKey), "%d_%d_metal", view_as<int>(iTowerId), iLevel);
 		}
 
 		return iLevel - 1;
@@ -974,9 +974,9 @@ stock Tower_GetMaxLevel(TDTowerId:iTowerId) {
  * @return				True on success, false if tower was not found.
  */
 
-stock bool:Tower_GetDescription(TDTowerId:iTowerId, String:sBuffer[], iMaxLength) {
-	decl String:sKey[32];
-	Format(sKey, sizeof(sKey), "%d_description", _:iTowerId);
+stock bool Tower_GetDescription(TDTowerId iTowerId, char[] sBuffer, int iMaxLength) {
+	char sKey[32];
+	Format(sKey, sizeof(sKey), "%d_description", view_as<int>(iTowerId));
 
 	return GetTrieString(g_hMapTowers, sKey, sBuffer, iMaxLength);
 }
@@ -990,9 +990,9 @@ stock bool:Tower_GetDescription(TDTowerId:iTowerId, String:sBuffer[], iMaxLength
  * @return				True on success, false if tower was not found.
  */
 
-stock bool:Tower_GetDamagetype(TDTowerId:iTowerId, String:sBuffer[], iMaxLength) {
-	decl String:sKey[32];
-	Format(sKey, sizeof(sKey), "%d_damagetype", _:iTowerId);
+stock bool Tower_GetDamagetype(TDTowerId iTowerId, char[] sBuffer, int iMaxLength) {
+	char sKey[32];
+	Format(sKey, sizeof(sKey), "%d_damagetype", view_as<int>(iTowerId));
 
 	return GetTrieString(g_hMapTowers, sKey, sBuffer, iMaxLength);
 }

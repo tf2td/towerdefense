@@ -15,8 +15,8 @@
  * @return					True on success, false otherwiseherwise.
  */
 
-stock bool:SpawnMetalPacks(TDMetalPackType:iMetalPackType) {
-	new iNumPacks = 0;
+stock bool SpawnMetalPacks(TDMetalPackType iMetalPackType) {
+	int iNumPacks = 0;
 	if (!GetTrieValue(g_hMapMetalpacks, "quantity", iNumPacks)) {
 		return false;
 	}
@@ -25,10 +25,11 @@ stock bool:SpawnMetalPacks(TDMetalPackType:iMetalPackType) {
 		return true;
 	}
 
-	new iMetal = 0, iEntity, Float:fLocation[3];
-	decl String:sKey[32], String:sLocation[64], String:sLocationParts[6][16];
+	int iMetal = 0, iEntity;
+	float fLocation[3];
+	char sKey[32], sLocation[64], sLocationParts[6][16];
 
-	for (new iMetalPackId = 0; iMetalPackId < iNumPacks; iMetalPackId++) {
+	for (int iMetalPackId = 0; iMetalPackId < iNumPacks; iMetalPackId++) {
 		if (Metalpack_GetType(iMetalPackId) != iMetalPackType) {
 			continue;
 		}
@@ -72,11 +73,11 @@ stock bool:SpawnMetalPacks(TDMetalPackType:iMetalPackType) {
  * @return					A TDMetalPackType value.
  */
 
-stock TDMetalPackType:Metalpack_GetType(iMetalpackId) {
-	decl String:sKey[32];
+stock TDMetalPackType Metalpack_GetType(int iMetalpackId) {
+	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_type", iMetalpackId);
 
-	decl String:sType[64];
+	char sType[64];
 	GetTrieString(g_hMapMetalpacks, sKey, sType, sizeof(sType));
 
 	if (StrEqual(sType, "start")) {

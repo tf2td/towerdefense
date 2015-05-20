@@ -6,7 +6,6 @@
 
 **/
 
-
 #pragma semicolon 1
 
 #include <sourcemod>
@@ -18,6 +17,8 @@
 #include <tf2_stocks>
 #include <tf2items>
 #include <tf2attributes>
+
+#pragma newdecls required
 
 /*=================================
 =            Constants            =
@@ -42,7 +43,7 @@
 =            Plugin Information            =
 ==========================================*/
 
-public Plugin:myinfo = 
+public Plugin myinfo = 
 {
 	name = PLUGIN_NAME,
 	author = PLUGIN_AUTHOR,
@@ -89,9 +90,9 @@ public Plugin:myinfo =
 =            Public Forwards            =
 =======================================*/
 
-public APLRes:AskPluginLoad2(Handle:hMyself, bool:bLate, String:sError[], iMaxLength) {
+public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iMaxLength) {
 	if (GetEngineVersion() != Engine_TF2) {
-		Format(sError, iMaxLength, "Cannot run on other mods than TF2.");
+		Format(sError, iMaxLength, "This mod can only run under TF2.");
 		return APLRes_Failure;
 	}
 
@@ -99,7 +100,7 @@ public APLRes:AskPluginLoad2(Handle:hMyself, bool:bLate, String:sError[], iMaxLe
 	return APLRes_Success;
 }
 
-public OnPluginStart() {
+public void OnPluginStart() {
 	PrintToServer("%s Loaded %s %s by %s", PLUGIN_PREFIX, PLUGIN_NAME, PLUGIN_VERSION, PLUGIN_AUTHOR);
 
 	Log_Initialize(TDLogLevel_Trace, TDLogType_Console);
@@ -119,45 +120,45 @@ public OnPluginStart() {
 	SetPassword("WaitingForServerToInitialize", false);
 }
 
-public OnPluginEnd() {
+public void OnPluginEnd() {
 	if (g_bSteamTools) {
 		Steam_SetGameDescription("Team Fortress");
 	}
 
-	if (g_hDatabase != INVALID_HANDLE) {
+	if (g_hDatabase != null) {
 		CloseHandle(g_hDatabase);
-		g_hDatabase = INVALID_HANDLE;
+		g_hDatabase = null;
 	}
 
-	if (g_hMapTowers != INVALID_HANDLE) {
+	if (g_hMapTowers != null) {
 		CloseHandle(g_hMapTowers);
-		g_hMapTowers = INVALID_HANDLE;
+		g_hMapTowers = null;
 	}
 
-	if (g_hMapWeapons != INVALID_HANDLE) {
+	if (g_hMapWeapons != null) {
 		CloseHandle(g_hMapWeapons);
-		g_hMapWeapons = INVALID_HANDLE;
+		g_hMapWeapons = null;
 	}
 
-	if (g_hMapWaves != INVALID_HANDLE) {
+	if (g_hMapWaves != null) {
 		CloseHandle(g_hMapWaves);
-		g_hMapWaves = INVALID_HANDLE;
+		g_hMapWaves = null;
 	}
 
-	if (g_hMapMetalpacks != INVALID_HANDLE) {
+	if (g_hMapMetalpacks != null) {
 		CloseHandle(g_hMapMetalpacks);
-		g_hMapMetalpacks = INVALID_HANDLE;
+		g_hMapMetalpacks = null;
 	}
 
-	if (g_hPlayerData != INVALID_HANDLE) {
+	if (g_hPlayerData != null) {
 		CloseHandle(g_hPlayerData);
-		g_hPlayerData = INVALID_HANDLE;
+		g_hPlayerData = null;
 	}
 
 	SetConVarInt(FindConVar("sv_cheats"), 0, true, false);
 }
 
-public OnMapStart() {
+public void OnMapStart() {
 	g_bTowerDefenseMap = IsTowerDefenseMap();
 
 	PrecacheModels();
@@ -168,10 +169,10 @@ public OnMapStart() {
 	g_bConfigsExecuted = false;
 }
 
-public OnMapEnd() {
+public void OnMapEnd() {
 	g_bMapRunning = false;
 
-	new bool:bWasEnabled = g_bEnabled;
+	bool bWasEnabled = g_bEnabled;
 	g_bEnabled = false;
 
 	if (bWasEnabled) {
@@ -184,7 +185,7 @@ public OnMapEnd() {
 	AddConVarFlag("sv_password", FCVAR_NOTIFY);
 }
 
-public OnConfigsExecuted() {
+public void OnConfigsExecuted() {
 	g_bEnabled = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap && g_bSteamTools && g_bTF2Attributes;
 	g_bMapRunning = true;
 
@@ -192,7 +193,7 @@ public OnConfigsExecuted() {
 
 	if (!g_bEnabled) {
 		if (!g_bTowerDefenseMap) {
-			decl String:sCurrentMap[PLATFORM_MAX_PATH];
+			char sCurrentMap[PLATFORM_MAX_PATH];
 			GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
 			Log(TDLogLevel_Info, "Map \"%s\" is not supported, thus Tower Defense has been disabled.", sCurrentMap);
@@ -208,12 +209,12 @@ public OnConfigsExecuted() {
 	CreateTimer(5.0, InitializeDelay, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
 }
 
-public Action:InitializeDelay(Handle:hTimer, any:iTime) {
+public Action InitializeDelay(Handle hTimer, any iTime) {
 	Server_Initialize();
 	return Plugin_Stop;
 }
 
-public OnAllPluginsLoaded() {
+public void OnAllPluginsLoaded() {
 	g_bSteamTools = LibraryExists("SteamTools");
 
 	if (g_bSteamTools) {
@@ -229,7 +230,7 @@ public OnAllPluginsLoaded() {
 	}
 }
 
-public OnLibraryAdded(const String:sName[]) {
+public void OnLibraryAdded(const char[] sName) {
 	if (StrEqual(sName, "SteamTools", false)) {
 		g_bSteamTools = true;
 		UpdateGameDescription();
@@ -242,7 +243,7 @@ public OnLibraryAdded(const String:sName[]) {
 	}
 }
 
-public OnLibraryRemoved(const String:sName[]) {
+public void OnLibraryRemoved(const char[] sName) {
 	if (StrEqual(sName, "SteamTools", false)) {
 		g_bSteamTools = false;
 
@@ -254,29 +255,29 @@ public OnLibraryRemoved(const String:sName[]) {
 	}
 }
 
-public OnClientPostAdminCheck(iClient) {
+public void OnClientPostAdminCheck(int iClient) {
 	if (!g_bEnabled) {
 		return;
 	}
 
-	decl String:sSteamId[32];
-	GetClientAuthString(iClient, sSteamId, sizeof(sSteamId));
+	char sSteamId[32];
+	GetClientAuthId(iClient, AuthId_Steam2, sSteamId, sizeof(sSteamId));
 
 	if (!StrEqual(sSteamId, "BOT")) {
-		decl String:sName[MAX_NAME_LENGTH];
+		char sName[MAX_NAME_LENGTH];
 		GetClientName(iClient, sName, sizeof(sName));
 
-		decl String:sCommunityId[32];
+		char sCommunityId[32];
 		GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId));
 			
-		decl String:sIp[32];
+		char sIp[32];
 		GetClientIP(iClient, sIp, sizeof(sIp));
 
 		Player_Connected(GetClientUserId(iClient), iClient, sName, sSteamId, sCommunityId, sIp);
 	}
 }
 
-public OnClientDisconnect(iClient) {
+public void OnClientDisconnect(int iClient) {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -286,10 +287,10 @@ public OnClientDisconnect(iClient) {
 	}
 
 	if (IsDefender(iClient)) {
-		new iMetal = GetClientMetal(iClient);
+		int iMetal = GetClientMetal(iClient);
 
 		if (iMetal > 0) {
-			new Float:fLocation[3];
+			float fLocation[3];
 
 			GetClientEyePosition(iClient, fLocation);
 			fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
@@ -299,18 +300,18 @@ public OnClientDisconnect(iClient) {
 	}
 }
 
-public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], Float:fAngles[3], &iWeapon) {
+public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fVelocity[3], float fAngles[3], int &iWeapon) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
 
 	// Force towers to shoot
 	if (IsTower(iClient)) {
-		new TDTowerId:iTowerId = GetTowerId(iClient);
+		TDTowerId iTowerId = GetTowerId(iClient);
 
 		// Refill ammo for airblast tower
 		if (iTowerId == TDTower_Airblast_Pyro) {
-			new iOffset = FindSendPropInfo("CTFPlayer", "m_iAmmo");
+			int iOffset = FindSendPropInfo("CTFPlayer", "m_iAmmo");
 			if (GetEntData(iClient, iOffset + 4) <= 0) {
 				SetEntData(iClient, iOffset + 4, 100);
 			}
@@ -332,7 +333,7 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 	if (IsDefender(iClient)) {
 		// Attach/detach tower on right-click
 		if (IsButtonReleased(iClient, iButtons, IN_ATTACK2)) { 
-			decl String:sActiveWeapon[64];
+			char sActiveWeapon[64];
 			GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
 			
 			if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
@@ -346,7 +347,7 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 
 		// Show tower info on left-click
 		if (IsButtonReleased(iClient, iButtons, IN_ATTACK)) { 
-			decl String:sActiveWeapon[64];
+			char sActiveWeapon[64];
 			GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
 			
 			if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
@@ -354,47 +355,47 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 			}
 		}
 
-		new Float:fLocation[3], Float:fViewAngles[3];
+		float fLocation[3], fViewAngles[3];
 		GetClientEyePosition(iClient, fLocation);
 		GetClientEyeAngles(iClient, fViewAngles);
 			
 		TR_TraceRayFilter(fLocation, fViewAngles, MASK_VISIBLE, RayType_Infinite, TraceRayEntities, iClient);
 
 		if (TR_DidHit()) {
-			new iAimEntity = TR_GetEntityIndex();
+			int iAimEntity = TR_GetEntityIndex();
 		
 			if (IsValidEntity(iAimEntity)) {
-				decl String:sClassname[64];
+				char sClassname[64];
 				GetEntityClassname(iAimEntity, sClassname, sizeof(sClassname));
 
 				if (StrEqual(sClassname, "func_breakable")) {
-					decl String:sName[64];
+					char sName[64];
 					GetEntPropString(iAimEntity, Prop_Data, "m_iName", sName, sizeof(sName));
 
 					if (StrContains(sName, "break_tower_") != -1) {
-						new Float:fEntityLocation[3];
+						float fEntityLocation[3];
 						GetEntPropVector(iAimEntity, Prop_Send, "m_vecOrigin", fEntityLocation);
 
 						if (GetVectorDistance(fLocation, fEntityLocation) <= 512.0) {
-							new TDTowerId:iTowerId;
+							TDTowerId iTowerId;
 
 							if (StrContains(sName, "break_tower_tp_") != -1) {
-								decl String:sNameParts[4][32];
+								char sNameParts[4][32];
 								ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
 
-								iTowerId = TDTowerId:StringToInt(sNameParts[3]);
+								iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[3]));
 								Tower_GetName(iTowerId, sName, sizeof(sName));
 							} else {
-								decl String:sNameParts[3][32];
+								char sNameParts[3][32];
 								ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
 
-								iTowerId = TDTowerId:StringToInt(sNameParts[2]);
+								iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[2]));
 								Tower_GetName(iTowerId, sName, sizeof(sName));
 							}
 
-							decl String:sDescription[1024];
+							char sDescription[1024];
 							if (Tower_GetDescription(iTowerId, sDescription, sizeof(sDescription))) {
-								decl String:sDamagetype[64];
+								char sDamagetype[64];
 								if (Tower_GetDamagetype(iTowerId, sDamagetype, sizeof(sDamagetype))) {
 									PrintToHud(iClient, "\
 										%s \n\
@@ -424,7 +425,7 @@ public Action:OnPlayerRunCmd(iClient, &iButtons, &iImpulse, Float:fVelocity[3], 
 	return Plugin_Continue;
 }
 
-public Action:OnTakeDamage(iClient, &iAttacker, &iInflictor, &Float:fDamage, &iDamageType, &iWeapon, Float:fDamageForce[3], Float:fDamagePosition[3]) {
+public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &fDamage, int &iDamageType, int &iWeapon, float fDamageForce[3], float fDamagePosition[3]) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
@@ -438,10 +439,10 @@ public Action:OnTakeDamage(iClient, &iAttacker, &iInflictor, &Float:fDamage, &iD
 		if (IsValidClient(iAttacker)) {
 			if (iClient == iAttacker || GetClientTeam(iClient) != GetClientTeam(iAttacker)) {
 				if (fDamage >= GetClientHealth(iClient)) {
-					new iMetal = GetClientMetal(iClient);
+					int iMetal = GetClientMetal(iClient);
 
 					if (iMetal > 0) {
-						new Float:fLocation[3];
+						float fLocation[3];
 
 						GetClientEyePosition(iClient, fLocation);
 						fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
@@ -456,7 +457,7 @@ public Action:OnTakeDamage(iClient, &iAttacker, &iInflictor, &Float:fDamage, &iD
 	return Plugin_Continue;
 }
 
-public OnTakeDamagePost(iClient, iAttacker, iInflictor, Float:fDamage, iDamageType) {
+public void OnTakeDamagePost(int iClient, int iAttacker, int iInflictor, float fDamage, int iDamageType) {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -466,7 +467,7 @@ public OnTakeDamagePost(iClient, iAttacker, iInflictor, Float:fDamage, iDamageTy
 	}
 }
 
-public OnEntityCreated(iEntity, const String:sClassname[]) {
+public int OnEntityCreated(int iEntity, const char[] sClassname) {
 	if (StrEqual(sClassname, "tf_ammo_pack")) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnWeaponSpawned);
 	} else if (StrEqual(sClassname, "func_breakable")) {
@@ -478,30 +479,30 @@ public OnEntityCreated(iEntity, const String:sClassname[]) {
 	}
 }
 
-public OnWeaponSpawned(iEntity) {
-	new iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
+public void OnWeaponSpawned(int iEntity) {
+	int iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
 
 	if (IsDefender(iOwner)) {
 		AcceptEntityInput(iEntity, "Kill");
 	}
 
-	decl String:sName[64];
+	char sName[64];
 	IntToString(iOwner, sName, sizeof(sName));
 	DispatchKeyValue(iEntity, "targetname", sName);
 
 	SDKHook(iEntity, SDKHook_Touch, OnTouchWeapon);
 }
 
-public Action:OnTouchWeapon(iEntity, iClient) {
+public Action OnTouchWeapon(int iEntity, int iClient) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
 
 	if (IsDefender(iClient)) {
-		decl String:sName[64];
+		char sName[64];
 		GetEntPropString(iEntity, Prop_Data, "m_iName", sName, sizeof(sName));
 
-		new iOwner = StringToInt(sName);
+		int iOwner = StringToInt(sName);
 
 		if (IsValidClient(iOwner)) {
 			// Picking up weapon
@@ -520,12 +521,12 @@ public Action:OnTouchWeapon(iEntity, iClient) {
 	return Plugin_Handled;
 }
 
-public OnButtonSpawned(iEntity) {
+public void OnButtonSpawned(int iEntity) {
 	if (!g_bEnabled) {
 		return;
 	}
 
-	decl String:sName[64];
+	char sName[64];
 	GetEntPropString(iEntity, Prop_Data, "m_iName", sName, sizeof(sName));
 
 	if (StrEqual(sName, "wave_start")) {
@@ -534,7 +535,7 @@ public OnButtonSpawned(iEntity) {
 	}
 }
 
-public OnProjectileSpawned(iEntity) {
+public void OnProjectileSpawned(int iEntity) {
 	if (!g_bEnabled) {
 		return;
 	}
@@ -542,24 +543,24 @@ public OnProjectileSpawned(iEntity) {
 	SDKHook(iEntity, SDKHook_ShouldCollide, OnProjectileCollide);
 }
 
-public bool:OnProjectileCollide(iEntity, iCollisiongroup, iContentsmask, bool:bResult) {
+public bool OnProjectileCollide(int iEntity, int iCollisiongroup, int iContentsmask, bool bResult) {
 	if (!g_bEnabled) {
 		return true;
 	}
 
-	new iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
+	int iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
 
 	if (IsValidEntity(iOwner)) {
-		new iTeam = GetEntProp(iOwner, Prop_Send, "m_iTeamNum");
+		int iTeam = GetEntProp(iOwner, Prop_Send, "m_iTeamNum");
 
-		new Float:fLocation[3], Float:fAngles[3];
+		float fLocation[3], fAngles[3];
 		GetEntPropVector(iEntity, Prop_Data, "m_vecOrigin", fLocation);
 		GetEntPropVector(iEntity, Prop_Data, "m_angAbsRotation", fAngles);
 
 		TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayPlayers);
 
 		if (TR_DidHit()) {
-			new iTarget = TR_GetEntityIndex();
+			int iTarget = TR_GetEntityIndex();
 
 			if (IsValidClient(iTarget)) {
 				if (GetClientTeam(iTarget) != iTeam) {
@@ -574,7 +575,7 @@ public bool:OnProjectileCollide(iEntity, iCollisiongroup, iContentsmask, bool:bR
 	return true;
 }
 
-public Action:OnNobuildEnter(iEntity, iClient) {
+public Action OnNobuildEnter(int iEntity, int iClient) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
@@ -590,7 +591,7 @@ public Action:OnNobuildEnter(iEntity, iClient) {
 	return Plugin_Continue;
 }
 
-public Action:OnNobuildExit(iEntity, iClient) {
+public Action OnNobuildExit(int iEntity, int iClient) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
@@ -613,7 +614,7 @@ public Action:OnNobuildExit(iEntity, iClient) {
  * @return				True on success, false otherwise.
  */
 
-stock bool:IsValidClient(iClient) {
+stock bool IsValidClient(int iClient) {
 	return (iClient > 0 && iClient <= MaxClients);
 }
 
@@ -624,7 +625,7 @@ stock bool:IsValidClient(iClient) {
  * @return				True on success, false otherwise.
  */
 
-stock bool:IsDefender(iClient) {
+stock bool IsDefender(int iClient) {
 	return (IsValidClient(iClient) && IsClientConnected(iClient) && IsClientInGame(iClient) && !IsFakeClient(iClient) && GetClientTeam(iClient) == TEAM_DEFENDER);
 }
 
@@ -635,7 +636,7 @@ stock bool:IsDefender(iClient) {
  * @return				True on success, false otherwise.
  */
 
-stock bool:IsTower(iClient) {
+stock bool IsTower(int iClient) {
 	return (IsValidClient(iClient) && IsClientConnected(iClient) && IsClientInGame(iClient) && IsFakeClient(iClient) && GetClientTeam(iClient) == TEAM_DEFENDER);
 }
 
@@ -646,7 +647,7 @@ stock bool:IsTower(iClient) {
  * @return				True on success, false otherwise.
  */
 
-stock bool:IsAttacker(iClient) {
+stock bool IsAttacker(int iClient) {
 	return (IsValidClient(iClient) && IsClientConnected(iClient) && IsClientInGame(iClient) && IsFakeClient(iClient) && GetClientTeam(iClient) == TEAM_ATTACKER);
 }
 
@@ -657,8 +658,8 @@ stock bool:IsAttacker(iClient) {
  * @return		True if the current map is a Tower Defense map, false otherwise.
  */
 
-stock bool:IsTowerDefenseMap() {
-	new String:sCurrentMap[PLATFORM_MAX_PATH];
+stock bool IsTowerDefenseMap() {
+	char sCurrentMap[PLATFORM_MAX_PATH];
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
 	return (strncmp(sCurrentMap, "td_", 3) == 0 || strncmp(sCurrentMap, "tf2td_", 6) == 0);
@@ -670,12 +671,12 @@ stock bool:IsTowerDefenseMap() {
  * @noreturn
  */
 
-stock UpdateGameDescription() {
+stock void UpdateGameDescription() {
 	if (!g_bSteamTools) {
 		return;
 	}
 
-	decl String:sGamemode[64];
+	char sGamemode[64];
 
 	if (g_bEnabled) {
 		Format(sGamemode, sizeof(sGamemode), "%s (%s)", GAME_DESCRIPTION, PLUGIN_VERSION);
@@ -692,7 +693,7 @@ stock UpdateGameDescription() {
  * @noreturn
  */
 
-stock PrecacheModels() {
+stock void PrecacheModels() {
 	PrecacheModel("models/bots/scout/bot_scout.mdl");
 	PrecacheModel("models/bots/sniper/bot_sniper.mdl");
 	PrecacheModel("models/bots/soldier/bot_soldier.mdl");
@@ -717,9 +718,9 @@ stock PrecacheModels() {
  * @noreturn
  */
 
-stock PrecacheSounds() {
-	new String:sRoboPath[64];
-	for (new i = 1; i <= 18; i++) {
+stock void PrecacheSounds() {
+	char sRoboPath[64];
+	for (int i = 1; i <= 18; i++) {
 		Format(sRoboPath, sizeof(sRoboPath), "mvm/player/footsteps/robostep_%s%i.mp3", (i < 10) ? "0" : "", i);
 		PrecacheSound(sRoboPath);
 	}
@@ -741,10 +742,10 @@ stock PrecacheSounds() {
  * @return				The client count.
  */
 
-stock GetRealClientCount(bool:bInGameOnly = false) {
-	new iClients = 0;
+stock int GetRealClientCount(bool bInGameOnly = false) {
+	int iClients = 0;
 
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (((bInGameOnly) ? IsClientInGame(iClient) : IsClientConnected(iClient)) && !IsFakeClient(iClient)) {
 			iClients++;
 		}
@@ -762,7 +763,7 @@ stock GetRealClientCount(bool:bInGameOnly = false) {
  * @return				True if pressed, false otherwise.
  */
 
-stock bool:IsButtonPressed(iClient, iButtons, iButton) { 
+stock bool IsButtonPressed(int iClient, int iButtons, int iButton) { 
 	return ((iButtons & iButton) == iButton && (g_iLastButtons[iClient] & iButton) != iButton); 
 }
 
@@ -775,7 +776,7 @@ stock bool:IsButtonPressed(iClient, iButtons, iButton) {
  * @return				True if released, false otherwise.
  */
 
-stock bool:IsButtonReleased(iClient, iButtons, iButton) { 
+stock bool IsButtonReleased(int iClient, int iButtons, int iButton) { 
 	return ((g_iLastButtons[iClient] & iButton) == iButton && (iButtons & iButton) != iButton); 
 }
 
@@ -786,15 +787,15 @@ stock bool:IsButtonReleased(iClient, iButtons, iButton) {
  * @return				The targets or -1 if no target is being aimed at.
  */
 
-stock GetAimTarget(iClient) {
-	new Float:fLocation[3], Float:fAngles[3];
+stock int GetAimTarget(int iClient) {
+	float fLocation[3], fAngles[3];
 	GetClientEyePosition(iClient, fLocation);
 	GetClientEyeAngles(iClient, fAngles);
 		
 	TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayPlayers, iClient);
 	
 	if (TR_DidHit()) {
-		new iEntity = TR_GetEntityIndex();
+		int iEntity = TR_GetEntityIndex();
 	
 		if (IsValidEntity(iEntity) && IsValidClient(iEntity)) {
 			return iEntity;
@@ -804,7 +805,7 @@ stock GetAimTarget(iClient) {
 	return -1;
 }
 
-public bool:TraceRayPlayers(iEntity, iMask, any:iData) {
+public bool TraceRayPlayers(int iEntity, int iMask, any iData) {
 	return (iEntity != iData) && IsValidClient(iEntity);
 }
 
@@ -815,15 +816,15 @@ public bool:TraceRayPlayers(iEntity, iMask, any:iData) {
  * @return				The entity or -1 if no entity is being aimed at.
  */
 
-stock GetAimEntity(iClient) {
-	new Float:fLocation[3], Float:fAngles[3];
+stock int GetAimEntity(int iClient) {
+	float fLocation[3], fAngles[3];
 	GetClientEyePosition(iClient, fLocation);
 	GetClientEyeAngles(iClient, fAngles);
 		
 	TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayEntities, iClient);
 	
 	if (TR_DidHit()) {
-		new iEntity = TR_GetEntityIndex();
+		int iEntity = TR_GetEntityIndex();
 	
 		if (IsValidEntity(iEntity)) {
 			return iEntity;
@@ -833,7 +834,7 @@ stock GetAimEntity(iClient) {
 	return -1;
 }
 
-public bool:TraceRayEntities(iEntity, iMask, any:iData) {
+public bool TraceRayEntities(int iEntity, int iMask, any iData) {
 	return (iEntity != iData) && iEntity > MaxClients && IsValidEntity(iEntity);
 }
 
@@ -845,14 +846,14 @@ public bool:TraceRayEntities(iEntity, iMask, any:iData) {
  * @return				The clients client index, or -1 on error.
  */
 
-stock GetClientByName(iClient, String:sName[]) {
-	new String:sNameOfIndex[MAX_NAME_LENGTH + 1];
-	new iLen = strlen(sName);
+stock int GetClientByName(int iClient, char[] sName) {
+	char sNameOfIndex[MAX_NAME_LENGTH + 1];
+	int iLen = strlen(sName);
 	
-	new iResults = 0;
-	new iTarget = 0;
+	int iResults = 0;
+	int iTarget = 0;
 
-	for (new i = 1; i <= MaxClients; i++) {
+	for (int i = 1; i <= MaxClients; i++) {
 		if (IsClientInGame(i)) {
 			GetClientName(i, sNameOfIndex, sizeof(sNameOfIndex));
 			Substring(sNameOfIndex, sizeof(sNameOfIndex), sNameOfIndex, sizeof(sNameOfIndex), 0, iLen);
@@ -891,7 +892,7 @@ stock GetClientByName(iClient, String:sName[]) {
  * @return					True on success, false otherwise.
  */
 
-stock bool:Substring(String:sDest[], iDestLength, String:sSource[], iSourceLength, iStart, iEnd) {
+stock bool Substring(char[] sDest, int iDestLength, char[] sSource, int iSourceLength, int iStart, int iEnd) {
 	if (iEnd < iStart || iEnd > (iSourceLength - 1)) {
 		strcopy(sDest, iDestLength, NULL_STRING);
 		return false;
@@ -908,8 +909,8 @@ stock bool:Substring(String:sDest[], iDestLength, String:sSource[], iSourceLengt
  * @return				True if number, false otherwise.
  */
 
-stock bool:IsStringNumeric(String:sText[]) {
-	for (new iChar = 0; iChar < strlen(sText); iChar++) {
+stock bool IsStringNumeric(char[] sText) {
+	for (int iChar = 0; iChar < strlen(sText); iChar++) {
 		if (!IsCharNumeric(sText[iChar])) {
 			return false;
 		}
@@ -925,10 +926,10 @@ stock bool:IsStringNumeric(String:sText[]) {
  * @return				Distance to the ground.
  */
 
-stock Float:GetDistanceToGround(Float:fLocation[3]) {	
-	new Float:fGround[3];
+stock float GetDistanceToGround(float fLocation[3]) {	
+	float fGround[3];
 
-	TR_TraceRayFilter(fLocation, Float:{90.0, 0.0, 0.0}, MASK_PLAYERSOLID, RayType_Infinite, TraceRayNoPlayers, 0);
+	TR_TraceRayFilter(fLocation, view_as<float>({90.0, 0.0, 0.0}), MASK_PLAYERSOLID, RayType_Infinite, TraceRayNoPlayers, 0);
 	
 	if (TR_DidHit()) {
 		TR_GetEndPosition(fGround);
@@ -939,7 +940,7 @@ stock Float:GetDistanceToGround(Float:fLocation[3]) {
 	return 0.0;
 }
 
-public bool:TraceRayNoPlayers(iEntity, iMask, any:iData) {
+public bool TraceRayNoPlayers(int iEntity, int iMask, any iData) {
 	return !(iEntity == iData || IsValidClient(iEntity));
 }
 
@@ -950,8 +951,8 @@ public bool:TraceRayNoPlayers(iEntity, iMask, any:iData) {
  * @noreturn
  */
 
-stock SetRobotModel(iClient) {
-	decl String:sClass[16], String:sModelPath[PLATFORM_MAX_PATH];
+stock void SetRobotModel(int iClient) {
+	char sClass[16], sModelPath[PLATFORM_MAX_PATH];
 
 	GetClientClassName(iClient, sClass, sizeof(sClass));
 	Format(sModelPath, sizeof(sModelPath), "models/bots/%s/bot_%s.mdl", sClass, sClass);
@@ -969,7 +970,7 @@ stock SetRobotModel(iClient) {
  * @noreturn
  */
 
-stock GetClientClassName(iClient, String:sBuffer[], iMaxLength) {
+stock void GetClientClassName(int iClient, char[] sBuffer, int iMaxLength) {
 	switch (TF2_GetPlayerClass(iClient)) {
 		case TFClass_Scout: {
 			strcopy(sBuffer, iMaxLength, "scout");
@@ -1001,7 +1002,7 @@ stock GetClientClassName(iClient, String:sBuffer[], iMaxLength) {
  * @return				True if allowed, false otherwise.
  */
 
-public bool:CanClientBuild(iClient, TDBuildingType:iType) {
+public bool CanClientBuild(int iClient, TDBuildingType iType) {
 	if (!IsValidClient(iClient)) {
 		return false;
 	}
@@ -1023,7 +1024,7 @@ public bool:CanClientBuild(iClient, TDBuildingType:iType) {
 				return false;
 			}
 
-			new iEntity = -1, iCount = 0, iOwner = -1;
+			int iEntity = -1, iCount = 0, iOwner = -1;
 
 			while ((iEntity = FindEntityByClassname(iEntity, "obj_sentrygun")) != -1) {
 				iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hBuilder");
@@ -1051,7 +1052,7 @@ public bool:CanClientBuild(iClient, TDBuildingType:iType) {
 				return false;
 			}
 
-			new iEntity = -1, iCount = 0, iOwner = -1;
+			int iEntity = -1, iCount = 0, iOwner = -1;
 
 			while ((iEntity = FindEntityByClassname(iEntity, "obj_dispenser")) != -1) {
 				iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hBuilder");
@@ -1088,8 +1089,8 @@ public bool:CanClientBuild(iClient, TDBuildingType:iType) {
  * @noreturn
  */
 
-stock Forbid(iClient, bool:bPlaySound, const String:sMessage[], any:...) {
-	decl String:sFormattedMessage[512];
+stock void Forbid(int iClient, bool bPlaySound, const char[] sMessage, any ...) {
+	char sFormattedMessage[512];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
 
 	PrintToChat(iClient, "\x07FF0000%s", sFormattedMessage);
@@ -1105,8 +1106,8 @@ stock Forbid(iClient, bool:bPlaySound, const String:sMessage[], any:...) {
  * @noreturn
  */
 
-stock ReloadMap() {
-	new String:sCurrentMap[PLATFORM_MAX_PATH];
+stock void ReloadMap() {
+	char sCurrentMap[PLATFORM_MAX_PATH];
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
 	ServerCommand("changelevel %s", sCurrentMap);
@@ -1118,29 +1119,29 @@ stock ReloadMap() {
  * @noreturn
  */
 
-stock HookButtons() {
+stock void HookButtons() {
 	HookEntityOutput("func_breakable", "OnHealthChanged", OnButtonShot);
 }
 
-public OnButtonShot(const String:sOutput[], iCaller, iActivator, Float:fDelay) {
-	decl String:sName[64];
+public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, float fDelay) {
+	char sName[64];
 	GetEntPropString(iCaller, Prop_Data, "m_iName", sName, sizeof(sName));
 
 	if (StrContains(sName, "break_tower_tp_") != -1) {
 		// Tower teleport
 
-		decl String:sNameParts[4][32];
+		char sNameParts[4][32];
 		ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
 
-		new TDTowerId:iTowerId = TDTowerId:StringToInt(sNameParts[3]);
+		TDTowerId iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[3]));
 		Tower_OnButtonTeleport(iTowerId, iCaller, iActivator);
 	} else if (StrContains(sName, "break_tower_") != -1) {
 		// Tower buy
 
-		decl String:sNameParts[3][32];
+		char sNameParts[3][32];
 		ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
 
-		new TDTowerId:iTowerId = TDTowerId:StringToInt(sNameParts[2]);
+		TDTowerId iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[2]));
 		Tower_OnButtonBuy(iTowerId, iCaller, iActivator);
 	} else if (StrContains(sName, "wave_start") != -1) {
 		// Wave start
@@ -1148,7 +1149,7 @@ public OnButtonShot(const String:sOutput[], iCaller, iActivator, Float:fDelay) {
 		if (StrEqual(sName, "wave_start")) {
 			Wave_OnButtonStart(0, iCaller, iActivator);
 		} else {
-			decl String:sNameParts[3][32];
+			char sNameParts[3][32];
 			ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
 
 			Wave_OnButtonStart(StringToInt(sNameParts[2]), iCaller, iActivator);
@@ -1163,10 +1164,10 @@ public OnButtonShot(const String:sOutput[], iCaller, iActivator, Float:fDelay) {
  * @return				True if affordable, false otherwise.
  */
 
-stock bool:CanAfford(iPrice) {
-	new bool:bResult = true;
+stock bool CanAfford(int iPrice) {
+	bool bResult = true;
 
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsDefender(iClient)) {
 			if (GetClientMetal(iClient) < iPrice) {
 				PrintToChatAll("\x07FF0000%N needs %d metal", iClient, iPrice - GetClientMetal(iClient));
@@ -1187,8 +1188,9 @@ stock bool:CanAfford(iPrice) {
  * @noreturn
  */
 
-stock StripConVarFlag(String:sCvar[], iFlag) {
-	new Handle:hCvar, iFlags;
+stock void StripConVarFlag(char[] sCvar, int iFlag) {
+	Handle hCvar;
+	int iFlags;
 
 	hCvar = FindConVar(sCvar);
 	iFlags = GetConVarFlags(hCvar);
@@ -1204,8 +1206,9 @@ stock StripConVarFlag(String:sCvar[], iFlag) {
  * @noreturn
  */
 
-stock AddConVarFlag(String:sCvar[], iFlag) {
-	new Handle:hCvar, iFlags;
+stock void AddConVarFlag(char[] sCvar, int iFlag) {
+	Handle hCvar;
+	int iFlags;
 
 	hCvar = FindConVar(sCvar);
 	iFlags = GetConVarFlags(hCvar);
@@ -1220,8 +1223,8 @@ stock AddConVarFlag(String:sCvar[], iFlag) {
  * @return				True if inside, false otherwise.
  */
 
-stock bool:IsInsideClient(iClient) {
-	new Float:fMinBounds[3], Float:fMaxBounds[3], Float:fLocation[3];
+stock bool IsInsideClient(int iClient) {
+	float fMinBounds[3], fMaxBounds[3], fLocation[3];
 
 	GetClientMins(iClient, fMinBounds);
 	GetClientMaxs(iClient, fMaxBounds);
@@ -1242,13 +1245,13 @@ stock bool:IsInsideClient(iClient) {
  * @noreturn
  */
 
-stock PrintToHud(iClient, const String:sMessage[], any:...) {
+stock void PrintToHud(int iClient, const char[] sMessage, any ...) {
 	if (!IsValidClient(iClient) || !IsClientInGame(iClient)) {
 		return;
 	}
 	
 	/*
-	decl String:sBuffer[256];
+	char sBuffer[256];
 	
 	SetGlobalTransTarget(iClient);
 	VFormat(sBuffer, sizeof(sBuffer), sMessage, 3);
@@ -1265,10 +1268,10 @@ stock PrintToHud(iClient, const String:sMessage[], any:...) {
 	EndMessage();
 	*/
 
-	decl String:sFormattedMessage[256];
+	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 3);
 
-	new Handle:hBuffer = StartMessageOne("KeyHintText", iClient);
+	Handle hBuffer = StartMessageOne("KeyHintText", iClient);
 
 	BfWriteByte(hBuffer, 1);
 	BfWriteString(hBuffer, sFormattedMessage);
@@ -1283,10 +1286,10 @@ stock PrintToHud(iClient, const String:sMessage[], any:...) {
  * @noreturn
  */
 
-stock PrintToHudAll(const String:sMessage[], any:...) {
-	decl String:sFormattedMessage[256];
+stock void PrintToHudAll(const char[] sMessage, any ...) {
+	char sFormattedMessage[256];
 	
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsClientInGame(iClient) && !IsFakeClient(iClient)) {
 			VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 2);
 			PrintToHud(iClient, sFormattedMessage);
@@ -1302,10 +1305,10 @@ stock PrintToHudAll(const String:sMessage[], any:...) {
  * @return				The client, or -1 on error.
  */
 
-stock GetClientByNameExact(String:sName[], iTeam = -1) {
-	new String:sClientName[MAX_NAME_LENGTH];
+stock int GetClientByNameExact(char[] sName, int iTeam = -1) {
+	char sClientName[MAX_NAME_LENGTH];
 	
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsClientInGame(iClient)) {
 			if (iTeam == -1) {
 				GetClientName(iClient, sClientName, sizeof(sClientName));
@@ -1336,8 +1339,8 @@ stock GetClientByNameExact(String:sName[], iTeam = -1) {
  * @noreturn
  */
 
-stock AttachAnnotation(iEntity, Float:fLifetime, String:sMessage[], any:...) {
-	new Handle:hEvent = CreateEvent("show_annotation");
+stock void AttachAnnotation(int iEntity, float fLifetime, char[] sMessage, any ...) {
+	Handle hEvent = CreateEvent("show_annotation");
 
 	if (hEvent == INVALID_HANDLE) {
 		return;
@@ -1348,7 +1351,7 @@ stock AttachAnnotation(iEntity, Float:fLifetime, String:sMessage[], any:...) {
 	SetEventFloat(hEvent, "lifetime", fLifetime);
 	SetEventString(hEvent, "play_sound", "misc/null.wav");
 
-	decl String:sFormattedMessage[256];
+	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
 	SetEventString(hEvent, "text", sFormattedMessage);
 
@@ -1362,8 +1365,8 @@ stock AttachAnnotation(iEntity, Float:fLifetime, String:sMessage[], any:...) {
  * @noreturn
  */
 
-stock HideAnnotation(iEntity) {
-	new Handle:hEvent = CreateEvent("hide_annotation"); 
+stock void HideAnnotation(int iEntity) {
+	Handle hEvent = CreateEvent("hide_annotation"); 
 
 	if (hEvent == INVALID_HANDLE) {
 		return;
@@ -1384,8 +1387,8 @@ stock HideAnnotation(iEntity) {
  * @noreturn
  */
 
-stock AttachAdvancedAnnotation(iClient, iEntity, Float:fLifetime, String:sMessage[], any:...) {
-	new Handle:hEvent = CreateEvent("show_annotation");
+stock void AttachAdvancedAnnotation(int iClient, int iEntity, float fLifetime, char[] sMessage, any ...) {
+	Handle hEvent = CreateEvent("show_annotation");
 
 	if (hEvent == INVALID_HANDLE) {
 		return;
@@ -1396,7 +1399,7 @@ stock AttachAdvancedAnnotation(iClient, iEntity, Float:fLifetime, String:sMessag
 	SetEventFloat(hEvent, "lifetime", fLifetime);
 	SetEventString(hEvent, "play_sound", "misc/null.wav");
 
-	decl String:sFormattedMessage[256];
+	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 5);
 	SetEventString(hEvent, "text", sFormattedMessage);
 	
@@ -1413,8 +1416,8 @@ stock AttachAdvancedAnnotation(iClient, iEntity, Float:fLifetime, String:sMessag
  * @noreturn
  */
 
-stock HideAdvancedAnnotation(iClient, iEntity) {
-	new Handle:hEvent = CreateEvent("hide_annotation"); 
+stock void HideAdvancedAnnotation(int iClient, int iEntity) {
+	Handle hEvent = CreateEvent("hide_annotation"); 
 
 	if (hEvent == INVALID_HANDLE) {
 		return;
@@ -1435,8 +1438,8 @@ stock HideAdvancedAnnotation(iClient, iEntity) {
  * @noreturn
  */
 
-stock ShowAnnotation(iId, Float:fLocation[3], Float:fOffsetZ, Float:fLifetime, String:sMessage[], any:...) {
-	new Handle:hEvent = CreateEvent("show_annotation");
+stock void ShowAnnotation(int iId, float fLocation[3], float fOffsetZ, float fLifetime, char[] sMessage, any ...) {
+	Handle hEvent = CreateEvent("show_annotation");
 
 	if (hEvent == INVALID_HANDLE) {
 		return;
@@ -1449,7 +1452,7 @@ stock ShowAnnotation(iId, Float:fLocation[3], Float:fOffsetZ, Float:fLifetime, S
 	SetEventFloat(hEvent, "lifetime", fLifetime);
 	SetEventString(hEvent, "play_sound", "misc/null.wav");
 
-	decl String:sFormattedMessage[256];
+	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
 	SetEventString(hEvent, "text", sFormattedMessage);
 
@@ -1463,7 +1466,7 @@ stock ShowAnnotation(iId, Float:fLocation[3], Float:fOffsetZ, Float:fLifetime, S
  * @return				The absolute value.
  */
 
-stock Abs(iValue) {
+stock int Abs(int iValue) {
 	return (iValue < 0 ? -iValue : iValue);
 }
 
@@ -1475,15 +1478,17 @@ stock Abs(iValue) {
  * @noreturn
  */
 
-stock GetRconPassword(String:sBuffer[], iMaxLength) {
-	new Handle:hDirectory = OpenDirectory("cfg");
+stock void GetRconPassword(char[] sBuffer, int iMaxLength) {
+	Handle hDirectory = OpenDirectory("cfg");
 
 	if (hDirectory == INVALID_HANDLE) {
 		return;
 	}
 
-	decl String:sFile[PLATFORM_MAX_PATH], String:sPath[PLATFORM_MAX_PATH], String:sLine[256];
-	new FileType:iFileType, iChar, Handle:hFile;
+	char sFile[PLATFORM_MAX_PATH], sPath[PLATFORM_MAX_PATH], sLine[256];
+	FileType iFileType; 
+	int iChar;
+	Handle hFile;
 
 	while (ReadDirEntry(hDirectory, sFile, sizeof(sFile), iFileType)) {
 		if (iFileType == FileType_File) {
@@ -1497,11 +1502,11 @@ stock GetRconPassword(String:sBuffer[], iMaxLength) {
 					
 					while (!IsEndOfFile(hFile) && ReadFileLine(hFile, sLine, sizeof(sLine))) {
 						if (StrContains(sLine, "//") == -1 && StrContains(sLine, "con_pa", false) != -1) { // rcon_password
-							new iQuote1 = FindCharInString(sLine, '"');
-							new iQuote2 = FindCharInString(sLine, '"', true);
+							int iQuote1 = FindCharInString(sLine, '"');
+							int iQuote2 = FindCharInString(sLine, '"', true);
 
 							if (iQuote1 == -1 || iQuote2 == -1) {
-								new iSpace = FindCharInString(sLine, ' ');
+								int iSpace = FindCharInString(sLine, ' ');
 
 								if (iSpace != -1) {
 									if (sLine[strlen(sLine) - 1] == '\n' || sLine[strlen(sLine) - 1] == '\r') {
@@ -1537,8 +1542,10 @@ stock GetRconPassword(String:sBuffer[], iMaxLength) {
  * @param bReloadMap 	Reload map afterwards.
  * @return				True on success, false otherwise.
  */
+ 
+// TODO(?): Correct return type?
 
-stock SetPassword(const String:sPassword[], bool:bDatabase=true, bool:bReloadMap=false) {
+stock void SetPassword(const char[] sPassword, bool bDatabase=true, bool bReloadMap=false) {
 	ServerCommand("sv_password \"%s\"", sPassword);
 	
 	if (bDatabase) {
@@ -1555,7 +1562,7 @@ stock SetPassword(const String:sPassword[], bool:bDatabase=true, bool:bReloadMap
  * @noreturn
  */
 
-stock CreateDataMap(&Handle:hMapHandle) {
+stock void CreateDataMap(Handle &hMapHandle) {
 	if (hMapHandle != INVALID_HANDLE) {
 		CloseHandle(hMapHandle);
 		hMapHandle = INVALID_HANDLE;
@@ -1570,8 +1577,8 @@ stock CreateDataMap(&Handle:hMapHandle) {
  * @return				The entity index of the health bar.
  */
 
-stock GetHealthBar() {
-	new iHealthBar = FindEntityByClassname(-1, "monster_resource");
+stock int GetHealthBar() {
+	int iHealthBar = FindEntityByClassname(-1, "monster_resource");
 	
 	if (!IsValidEntity(iHealthBar)) {
 		iHealthBar = CreateEntityByName("monster_resource");

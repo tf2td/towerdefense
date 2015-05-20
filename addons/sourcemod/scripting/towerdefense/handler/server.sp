@@ -14,10 +14,10 @@
  * @noreturn
  */
 
-stock Server_Initialize() {
+stock void Server_Initialize() {
 	Log(TDLogLevel_Debug, "Initializing server");
 
-	decl String:sError[512];
+	char sError[512];
 	if (Database_Connect(sError, sizeof(sError)) == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Failed to connect to the database: %s", sError);
 	} else {
@@ -32,11 +32,11 @@ stock Server_Initialize() {
 
 		Server_Reset();
 
-		new iServerIp[4];
+		int iServerIp[4];
 		Steam_GetPublicIP(iServerIp);
 		Format(g_sServerIp, sizeof(g_sServerIp), "%d.%d.%d.%d", iServerIp[0], iServerIp[1], iServerIp[2], iServerIp[3]);
 
-		decl String:sServerPort[6];
+		char sServerPort[6];
 		GetConVarString(FindConVar("hostport"), sServerPort, sizeof(sServerPort));
 		g_iServerPort = StringToInt(sServerPort);
 
@@ -49,13 +49,13 @@ stock Server_Initialize() {
 	}
 }
 
-stock Database_OnServerChecked() {
+stock void Database_OnServerChecked() {
 	Log(TDLogLevel_Trace, "Database_OnServerChecked");
 
 	Database_LoadData(); // Calls Database_OnDataLoaded() when finished
 }
 
-stock Database_OnDataLoaded() {
+stock void Database_OnDataLoaded() {
 	Log(TDLogLevel_Debug, "Successfully initialized server");
 
 	PrintToHudAll("WELCOME TO TF2 TOWER DEFENSE");
@@ -69,7 +69,7 @@ stock Database_OnDataLoaded() {
  * @noreturn
  */
 
-stock Server_Reset() {
+stock void Server_Reset() {
 	g_bEnabled = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap && g_bSteamTools && g_bTF2Attributes;
 	g_bMapRunning = true;
 
@@ -77,7 +77,7 @@ stock Server_Reset() {
 
 	if (!g_bEnabled) {
 		if (!g_bTowerDefenseMap) {
-			decl String:sCurrentMap[PLATFORM_MAX_PATH];
+			char sCurrentMap[PLATFORM_MAX_PATH];
 			GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
 			Log(TDLogLevel_Info, "Map \"%s\" is not supported, thus Tower Defense has been disabled.", sCurrentMap);

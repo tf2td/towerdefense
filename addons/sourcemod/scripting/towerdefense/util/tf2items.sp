@@ -23,11 +23,11 @@
  * @noreturn
  */
 
-stock TF2Items_GiveWeapon(iClient, iItemDefinitionIndex, iSlot, iLevel, iQuality, bool:bPreserveAttributes, String:sClassname[], String:sAttributes[]) {
+stock void TF2Items_GiveWeapon(int iClient, int iItemDefinitionIndex, int iSlot, int iLevel, int iQuality, bool bPreserveAttributes, char[] sClassname, char[] sAttributes) {
 	Log(TDLogLevel_Trace, "%d, %d, %d, %d, %d, %s, \"%s\", \"%s\"", iClient, iItemDefinitionIndex, iSlot, iLevel, iQuality, (bPreserveAttributes ? "true" : "false"), sClassname, sAttributes);
 
-	new Handle:hItem = TF2Items_CreateItem(OVERRIDE_ALL);
-	new iFlags = 0;
+	Handle hItem = TF2Items_CreateItem(OVERRIDE_ALL);
+	int iFlags = 0;
 
 	TF2Items_SetItemIndex(hItem, iItemDefinitionIndex);
 
@@ -45,15 +45,16 @@ stock TF2Items_GiveWeapon(iClient, iItemDefinitionIndex, iSlot, iLevel, iQuality
 		iFlags |= PRESERVE_ATTRIBUTES;
 	}
 
-	new String:sAttributeList[15][16], String:sAttribute[2][16];
-	new iAttributeIndex, Float:fAttributeValue;
-	new iNumAttributes = 0;
+	char sAttributeList[15][16], sAttribute[2][16];
+	int iAttributeIndex;
+	int iNumAttributes = 0;
+	float fAttributeValue;
 
 	// More than 1 attribute
 	if (FindCharInString(sAttributes, ';') != -1) {
 		ExplodeString(sAttributes, ";", sAttributeList, sizeof(sAttributeList), sizeof(sAttributeList[]));
 
-		for (new i = 0; i < sizeof(sAttributeList); i++) {
+		for (int i = 0; i < sizeof(sAttributeList); i++) {
 			if (!StrEqual(sAttributeList[i], "")) {
 				ExplodeString(sAttributeList[i], "=", sAttribute, sizeof(sAttribute), sizeof(sAttribute[]));
 
@@ -93,7 +94,7 @@ stock TF2Items_GiveWeapon(iClient, iItemDefinitionIndex, iSlot, iLevel, iQuality
 	TF2Items_SetClassname(hItem, sClassname);
 
 	TF2_RemoveWeaponSlot(iClient, iSlot);
-	new iWeapon = TF2Items_GiveNamedItem(iClient, hItem);
+	int iWeapon = TF2Items_GiveNamedItem(iClient, hItem);
 			
 	if (IsValidEntity(iWeapon)) {
 		EquipPlayerWeapon(iClient, iWeapon);
@@ -102,7 +103,7 @@ stock TF2Items_GiveWeapon(iClient, iItemDefinitionIndex, iSlot, iLevel, iQuality
 	}
 
 	if (IsTower(iClient)) {
-		new TDTowerId:iTowerId = GetTowerId(iClient);
+		TDTowerId iTowerId = GetTowerId(iClient);
 		Tower_OnWeaponChanged(iClient, iTowerId, iItemDefinitionIndex, iSlot, iWeapon);
 	}
 

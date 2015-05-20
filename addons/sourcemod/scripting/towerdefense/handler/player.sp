@@ -1,3 +1,9 @@
+/**
+
+	TODO(?): It looks like a lot of this stuff could be re-factored into methodmaps.
+
+**/
+
 #pragma semicolon 1
 
 #include <sourcemod>
@@ -16,7 +22,7 @@
  * @noreturn
  */
 
-stock Player_ServerInitializing(iUserId, iClient) {
+stock void Player_ServerInitializing(int iUserId, int iClient) {
 	if (!TF2_IsPlayerInCondition(iClient, TFCond_RestrictToMelee)) {
 		TF2_AddCondition(iClient, TFCond_RestrictToMelee);
 		SetEntPropEnt(iClient, Prop_Send, "m_hActiveWeapon", GetPlayerWeaponSlot(iClient, TFWeaponSlot_Melee));
@@ -35,8 +41,8 @@ stock Player_ServerInitializing(iUserId, iClient) {
  * @noreturn
  */
 
-stock Player_ServerInitialized(iUserId, iClient) {
-	decl String:sCommunityId[32];
+stock void Player_ServerInitialized(int iUserId, int iClient) {
+	char sCommunityId[32];
 	Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sCommunityId, sizeof(sCommunityId));
 
 	TF2_RemoveCondition(iClient, TFCond_RestrictToMelee);
@@ -56,7 +62,7 @@ stock Player_ServerInitialized(iUserId, iClient) {
  * @noreturn
  */
 
-stock Player_SyncDatabase(iUserId, iClient, const String:sCommunityId[]) {
+stock void Player_SyncDatabase(int iUserId, int iClient, const char[] sCommunityId) {
 	Database_CheckPlayer(iUserId, iClient, sCommunityId);
 }
 
@@ -72,7 +78,7 @@ stock Player_SyncDatabase(iUserId, iClient, const String:sCommunityId[]) {
  * @noreturn
  */
 
-stock Player_Connected(iUserId, iClient, const String:sName[], const String:sSteamId[], const String:sCommunityId[], const String:sIp[]) {
+stock void Player_Connected(int iUserId, int iClient, const char[] sName, const char[] sSteamId, const char[] sCommunityId, const char[] sIp) {
 	Log(TDLogLevel_Debug, "Player connected (UserId=%d, Client=%d, Name=%s, SteamId=%s, CommunityId=%s, Address=%s)", iUserId, iClient, sName, sSteamId, sCommunityId, sIp);
 
 	if (!StrEqual(sSteamId, "BOT")) {
@@ -113,7 +119,7 @@ stock Player_Connected(iUserId, iClient, const String:sName[], const String:sSte
  * @noreturn
  */
 
-stock Player_OnDisconnectPre(iUserId, iClient) {
+stock void Player_OnDisconnectPre(int iUserId, int iClient) {
 	Database_UpdatePlayerDisconnect(iUserId);
 
 	if (GetRealClientCount(true) <= 1) { // the disconnected player is counted (thus 1 not 0)
@@ -129,8 +135,8 @@ stock Player_OnDisconnectPre(iUserId, iClient) {
  * @noreturn
  */
 
-stock Player_Loaded(iUserId, iClient) {
-	decl String:sCommunityId[32];
+stock void Player_Loaded(int iUserId, int iClient) {
+	char sCommunityId[32];
 	Player_CGetString(iClient, PLAYER_COMMUNITY_ID, sCommunityId, sizeof(sCommunityId));
 
 	Log(TDLogLevel_Debug, "Player loaded (UserId=%d, Client=%d, CommunityId=%s)", iUserId, iClient, sCommunityId);
@@ -140,7 +146,7 @@ stock Player_Loaded(iUserId, iClient) {
 	}
 }
 
-public Action:InitInfoTimer(Handle:hTimer, any:iUserId) {
+public Action InitInfoTimer(Handle hTimer, any iUserId) {
 	if (g_bServerInitialized) {
 		Player_ServerInitialized(iUserId, GetClientOfUserId(iUserId));
 		return Plugin_Stop;
@@ -160,9 +166,9 @@ public Action:InitInfoTimer(Handle:hTimer, any:iUserId) {
  * @noreturn
  */
 
-stock Player_OnSpawn(iUserId, iClient) {
+stock void Player_OnSpawn(int iUserId, int iClient) {
 	ResetClientMetal(iClient);
-	SetEntProp(iClient, Prop_Data, "m_bloodColor", _:TDBlood_None);
+	SetEntProp(iClient, Prop_Data, "m_bloodColor", view_as<int>(TDBlood_None));
 
 	if (g_bReplaceWeapon[iClient][TFWeaponSlot_Primary]) {
 		TF2Items_GiveWeapon(iClient, 9, TFWeaponSlot_Primary, 5, 1, true, "tf_weapon_shotgun_primary", "");	
@@ -185,7 +191,7 @@ stock Player_OnSpawn(iUserId, iClient) {
  * @noreturn
  */
 
-stock Player_OnDeath(iUserId, iClient) {
+stock void Player_OnDeath(int iUserId, int iClient) {
 	g_bCarryingObject[iClient] = false;
 	g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
 	g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
@@ -210,7 +216,7 @@ stock Player_OnDeath(iUserId, iClient) {
  * @noreturn
  */
 
-stock Player_OnDataSet(iUserId, iClient, const String:sKey[], TDDataType:iDataType, iValue, bValue, Float:fValue, const String:sValue[]) {
+stock void Player_OnDataSet(int iUserId, int iClient, const char[] sKey, TDDataType iDataType, int iValue, int bValue, float fValue, const char[] sValue) {
 	switch (iDataType) {
 		case TDDataType_Integer: {
 			Log(TDLogLevel_Trace, "Player_OnDataSet: iUserId=%d, iClient=%d, sKey=%s, iDataType=TDDataType_Integer, iValue=%d", iUserId, iClient, sKey, iValue);
@@ -230,12 +236,12 @@ stock Player_OnDataSet(iUserId, iClient, const String:sKey[], TDDataType:iDataTy
 	}
 }
 
-stock CheckClientForUserId(iClient) {
+stock bool CheckClientForUserId(int iClient) {
 	return (iClient > 0 && iClient <= MaxClients && IsClientConnected(iClient));
 }
 
-stock Player_USetValue(iUserId, const String:sKey[], iValue) {
-	decl String:sUserIdKey[128];
+stock void Player_USetValue(int iUserId, const char[] sKey, int iValue) {
+	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
 
 	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_Integer, iValue, false, -1.0, "");
@@ -243,14 +249,14 @@ stock Player_USetValue(iUserId, const String:sKey[], iValue) {
 	SetTrieValue(g_hPlayerData, sUserIdKey, iValue);
 }
 
-stock Player_CSetValue(iClient, const String:sKey[], iValue) {
+stock void Player_CSetValue(int iClient, const char[] sKey, int iValue) {
 	if (CheckClientForUserId(iClient)) {
 		Player_USetValue(GetClientUserId(iClient), sKey, iValue);
 	}
 }
 
-stock bool:Player_UGetValue(iUserId, const String:sKey[], &iValue) {
-	decl String:sUserIdKey[128];
+stock bool Player_UGetValue(int iUserId, const char[] sKey, int &iValue) {
+	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
 
 	Log(TDLogLevel_Trace, "Player_UGetValue: iUserId=%d, sKey=%s", iUserId, sKey);
@@ -263,12 +269,12 @@ stock bool:Player_UGetValue(iUserId, const String:sKey[], &iValue) {
 	return true;
 }
 
-stock bool:Player_CGetValue(iClient, const String:sKey[], &iValue) {
+stock bool Player_CGetValue(int iClient, const char[] sKey, int &iValue) {
 	return CheckClientForUserId(iClient) && Player_UGetValue(GetClientUserId(iClient), sKey, iValue);
 }
 
-stock Player_USetBool(iUserId, const String:sKey[], bool:bValue) {
-	decl String:sUserIdKey[128];
+stock void Player_USetBool(int iUserId, const char[] sKey, bool bValue) {
+	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
 
 	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_Integer, -1, bValue, -1.0, "");
@@ -276,33 +282,33 @@ stock Player_USetBool(iUserId, const String:sKey[], bool:bValue) {
 	SetTrieValue(g_hPlayerData, sUserIdKey, (bValue ? 1 : 0));
 }
 
-stock Player_CSetBool(iClient, const String:sKey[], bool:bValue) {
+stock void Player_CSetBool(int iClient, const char[] sKey, bool bValue) {
 	if (CheckClientForUserId(iClient)) {
 		Player_USetBool(GetClientUserId(iClient), sKey, bValue);
 	}
 }
 
-stock bool:Player_UGetBool(iUserId, const String:sKey[]) {
-	decl String:sUserIdKey[128];
+stock bool Player_UGetBool(int iUserId, const char[] sKey) {
+	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
 
 	Log(TDLogLevel_Trace, "Player_UGetBool: iUserId=%d, sKey=%s", iUserId, sKey);
 	
-	new iValue = 0;
+	int iValue = 0;
 	GetTrieValue(g_hPlayerData, sUserIdKey, iValue);
 
 	return (iValue != 0);
 }
 
-stock bool:Player_CGetBool(iClient, const String:sKey[]) {
+stock bool Player_CGetBool(int iClient, const char[] sKey) {
 	return CheckClientForUserId(iClient) && Player_UGetBool(GetClientUserId(iClient), sKey);
 }
 
-stock Player_USetFloat(iUserId, const String:sKey[], Float:fValue) {
-	decl String:sUserIdKey[128];
+stock void Player_USetFloat(int iUserId, const char[] sKey, float fValue) {
+	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
 
-	decl String:sValue[64];
+	char sValue[64];
 	FloatToString(fValue, sValue, sizeof(sValue))
 
 	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_Integer, -1, false, fValue, "");
@@ -310,19 +316,19 @@ stock Player_USetFloat(iUserId, const String:sKey[], Float:fValue) {
 	SetTrieString(g_hPlayerData, sUserIdKey, sValue);
 }
 
-stock Player_CSetFloat(iClient, const String:sKey[], Float:fValue) {
+stock void Player_CSetFloat(int iClient, const char[] sKey, float fValue) {
 	if (CheckClientForUserId(iClient)) {
 		Player_USetFloat(GetClientUserId(iClient), sKey, fValue);
 	}
 }
 
-stock bool:Player_UGetFloat(iUserId, const String:sKey[], &Float:fValue) {
-	decl String:sUserIdKey[128];
+stock bool Player_UGetFloat(int iUserId, const char[] sKey, float &fValue) {
+	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
 
 	Log(TDLogLevel_Trace, "Player_UGetFloat: iUserId=%d, sKey=%s", iUserId, sKey);
 
-	decl String:sValue[64];
+	char sValue[64];
 	if (!GetTrieString(g_hPlayerData, sUserIdKey, sValue, sizeof(sValue))) {
 		fValue = -1.0;
 		return false;
@@ -332,15 +338,15 @@ stock bool:Player_UGetFloat(iUserId, const String:sKey[], &Float:fValue) {
 	return true;
 }
 
-stock bool:Player_CGetFloat(iClient, const String:sKey[], &Float:fValue) {
+stock bool Player_CGetFloat(int iClient, const char[] sKey, float &fValue) {
 	return CheckClientForUserId(iClient) && Player_UGetFloat(GetClientUserId(iClient), sKey, fValue);
 }
 
-stock Player_USetString(iUserId, const String:sKey[], const String:sValue[], any:...) {
-	decl String:sUserIdKey[128];
+stock bool Player_USetString(int iUserId, const char[] sKey, const char[] sValue, any ...) {
+	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
 
-	decl String:sFormattedValue[256];
+	char sFormattedValue[256];
 	VFormat(sFormattedValue, sizeof(sFormattedValue), sValue, 4);
 
 	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_String, -1, false, -1.0, sValue);
@@ -348,17 +354,17 @@ stock Player_USetString(iUserId, const String:sKey[], const String:sValue[], any
 	SetTrieString(g_hPlayerData, sUserIdKey, sFormattedValue);
 }
 
-stock Player_CSetString(iClient, const String:sKey[], const String:sValue[], any:...) {
+stock void Player_CSetString(int iClient, const char[] sKey, const char[] sValue, any ...) {
 	if (CheckClientForUserId(iClient)) {
-		decl String:sFormattedValue[256];
+		char sFormattedValue[256];
 		VFormat(sFormattedValue, sizeof(sFormattedValue), sValue, 4);
 
 		Player_USetString(GetClientUserId(iClient), sKey, sFormattedValue);
 	}
 }
 
-stock bool:Player_UGetString(iUserId, const String:sKey[], String:sValue[], iMaxLength) {
-	decl String:sUserIdKey[128];
+stock bool Player_UGetString(int iUserId, const char[] sKey, char[] sValue, int iMaxLength) {
+	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
 
 	Log(TDLogLevel_Trace, "Player_UGetString: iUserId=%d, sKey=%s, iMaxLength=%d", iUserId, sKey, iMaxLength);
@@ -371,7 +377,7 @@ stock bool:Player_UGetString(iUserId, const String:sKey[], String:sValue[], iMax
 	return true;
 }
 
-stock bool:Player_CGetString(iClient, const String:sKey[], String:sValue[], iMaxLength) {
+stock bool Player_CGetString(int iClient, const char[] sKey, char[] sValue, int iMaxLength) {
 	return CheckClientForUserId(iClient) && Player_UGetString(GetClientUserId(iClient), sKey, sValue, iMaxLength);
 }
 

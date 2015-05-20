@@ -8,7 +8,7 @@
 	#include "info/variables.sp"
 #endif
 
-stock RegisterCommands() {
+stock void RegisterCommands() {
 	// Commands for testing purposes
 	RegAdminCmd("sm_gm", Command_GiveMetal, ADMFLAG_ROOT);
 	RegAdminCmd("sm_r", Command_ReloadMap, ADMFLAG_ROOT);
@@ -37,12 +37,12 @@ stock RegisterCommands() {
 =            Test Commands            =
 =====================================*/
 
-public Action:Command_GiveMetal(iClient, iArgs) {
+public Action Command_GiveMetal(int iClient, int iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
 
-	new String:sTarget[MAX_NAME_LENGTH], String:sMetal[16];
+	char sTarget[MAX_NAME_LENGTH], sMetal[16];
 	
 	if (iArgs != 2) {
 		PrintToChat(iClient, "Usage: !gm <player|@me|@all> <metal>");
@@ -56,14 +56,14 @@ public Action:Command_GiveMetal(iClient, iArgs) {
 	if (StrEqual(sTarget, "@me")) {
 		AddClientMetal(iClient, StringToInt(sMetal));
 	} else if (StrEqual(sTarget, "@all")) {
-		for (new i = 1; i <= MaxClients; i++) {
+		for (int i = 1; i <= MaxClients; i++) {
 			if (IsClientInGame(i) && !IsFakeClient(i)) {
 				AddClientMetal(i, StringToInt(sMetal));
 			}
 		}
 	} else {
 		if (IsValidClient(GetClientByName(iClient, sTarget)) && IsClientInGame(GetClientByName(iClient, sTarget))) {
-			new iTarget = GetClientByName(iClient, sTarget);
+			int iTarget = GetClientByName(iClient, sTarget);
 
 			AddClientMetal(iTarget, StringToInt(sMetal));
 		}
@@ -72,7 +72,7 @@ public Action:Command_GiveMetal(iClient, iArgs) {
 	return Plugin_Handled;
 }
 
-public Action:Command_ReloadMap(iClient, iArgs) {
+public Action Command_ReloadMap(int iClient, int iArgs) {
 	ReloadMap();
 
 	return Plugin_Handled;
@@ -82,7 +82,7 @@ public Action:Command_ReloadMap(iClient, iArgs) {
 =            Start Round            =
 ===================================*/
 
-public Action:Command_PreGame(iClient, iArgs) {
+public Action Command_PreGame(int iClient, int iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
@@ -93,7 +93,7 @@ public Action:Command_PreGame(iClient, iArgs) {
 	PrintToChatAll("\x04Don't forget to pick up dropped weapons!");
 
 	// Hook func_nobuild events
-	new iEntity = -1;
+	int iEntity = -1;
 	while ((iEntity = FindEntityByClassname(iEntity, "func_nobuild")) != -1) {
 		SDKHook(iEntity, SDKHook_StartTouch, OnNobuildEnter);
 		SDKHook(iEntity, SDKHook_EndTouch, OnNobuildExit);
@@ -102,11 +102,11 @@ public Action:Command_PreGame(iClient, iArgs) {
 	return Plugin_Handled;
 }
 
-public Action:Command_Password(iClient, iArgs) {
+public Action Command_Password(int iClient, int iArgs) {
 	if (g_bLockable) {
-		decl String:sPassword[8];
+		char sPassword[8];
 
-		for (new i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			switch (GetRandomInt(0, 2)) {
 				case 0: {
 					sPassword[i] = GetRandomInt('1', '9');
@@ -136,7 +136,7 @@ public Action:Command_Password(iClient, iArgs) {
 =            Client Commands            =
 =======================================*/
 
-public Action:Command_BuildSentry(iClient, iArgs) {
+public Action Command_BuildSentry(int iClient, int iArgs) {
 	if (!CanClientBuild(iClient, TDBuilding_Sentry)) {
 		return Plugin_Handled;
 	}
@@ -146,7 +146,7 @@ public Action:Command_BuildSentry(iClient, iArgs) {
 		return Plugin_Handled;
 	}
 
-	new iSentry = CreateEntityByName("obj_sentrygun");
+	int iSentry = CreateEntityByName("obj_sentrygun");
 
 	if (DispatchSpawn(iSentry)) {
 		AcceptEntityInput(iSentry, "SetBuilder", iClient);
@@ -159,7 +159,7 @@ public Action:Command_BuildSentry(iClient, iArgs) {
 		DispatchKeyValue(iSentry, "TeamNum", "3");
 		DispatchKeyValue(iSentry, "spawnflags", "0");
 
-		new Float:fLocation[3], Float:fAngles[3];
+		float fLocation[3], fAngles[3];
 
 		GetClientAbsOrigin(iClient, fLocation);
 		GetClientEyeAngles(iClient, fAngles);
@@ -181,8 +181,8 @@ public Action:Command_BuildSentry(iClient, iArgs) {
 	return Plugin_Handled;
 }
 
-public Action:Command_DropMetal(iClient, iArgs) {
-	decl String:sPassword[256];
+public Action Command_DropMetal(int iClient, int iArgs) {
+	char sPassword[256];
 	GetRconPassword(sPassword, sizeof(sPassword));
 
 	if (!g_bEnabled) {
@@ -195,10 +195,10 @@ public Action:Command_DropMetal(iClient, iArgs) {
 		return Plugin_Handled;
 	}
 	
-	decl String:sMetal[32];
+	char sMetal[32];
 	GetCmdArg(1, sMetal, sizeof(sMetal));
 
-	new iMetal;
+	int iMetal;
 
 	if (!IsStringNumeric(sMetal)) {
 		Forbid(iClient, true, "Drop letters? Ahhh... nope.");
@@ -227,7 +227,7 @@ public Action:Command_DropMetal(iClient, iArgs) {
 		return Plugin_Handled;
 	}
 
-	new Float:fLocation[3], Float:fAngles[3];
+	float fLocation[3], fAngles[3];
 
 	GetClientEyePosition(iClient, fLocation);
 	GetClientEyeAngles(iClient, fAngles);
@@ -254,14 +254,14 @@ public Action:Command_DropMetal(iClient, iArgs) {
 	return Plugin_Handled;
 }
 
-public Action:Command_ShowMetal(iClient, iArgs) {
+public Action Command_ShowMetal(int iClient, int iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
 
 	PrintToChatAll("\x01Metal stats:");
 	
-	for (new i = 1; i <= MaxClients; i++) {
+	for (int i = 1; i <= MaxClients; i++) {
 		if (IsDefender(i)) {
 			PrintToChatAll("\x04%N - %d metal", i, GetClientMetal(i));
 		}
@@ -274,14 +274,14 @@ public Action:Command_ShowMetal(iClient, iArgs) {
 =            Command Listeners            =
 =========================================*/
 
-public Action:CommandListener_Build(iClient, const String:sCommand[], iArgs) {
+public Action CommandListener_Build(int iClient, const char[] sCommand, int iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
 
-	decl String:sBuildingType[4];
+	char sBuildingType[4];
 	GetCmdArg(1, sBuildingType, sizeof(sBuildingType));
-	new TDBuildingType:iBuildingType = TDBuildingType:StringToInt(sBuildingType);
+	TDBuildingType iBuildingType = view_as<TDBuildingType>(StringToInt(sBuildingType));
 
 	switch (iBuildingType) {
 		case TDBuilding_Sentry: {
@@ -300,7 +300,7 @@ public Action:CommandListener_Build(iClient, const String:sCommand[], iArgs) {
 	return Plugin_Continue;
 }
 
-public Action:CommandListener_ClosedMotd(iClient, const String:sCommand[], iArgs) {
+public Action CommandListener_ClosedMotd(int iClient, const char[] sCommand, int iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
@@ -313,7 +313,7 @@ public Action:CommandListener_ClosedMotd(iClient, const String:sCommand[], iArgs
 	return Plugin_Continue;
 }
 
-public Action:CommandListener_Exec(iClient, const String:sCommand[], iArgs) {
+public Action CommandListener_Exec(int iClient, const char[] sCommand, int iArgs) {
 	if (g_bConfigsExecuted && iClient == 0) {
 		Database_UpdateServer();
 	}
@@ -321,16 +321,16 @@ public Action:CommandListener_Exec(iClient, const String:sCommand[], iArgs) {
 	return Plugin_Continue;
 }
 
-public Action:CommandListener_Kill(iClient, const String:sCommand[], iArgs) {
+public Action CommandListener_Kill(int iClient, const char[] sCommand, int iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
 
 	if (IsDefender(iClient)) {
-		new iMetal = GetClientMetal(iClient);
+		int iMetal = GetClientMetal(iClient);
 
 		if (iMetal > 0) {
-			new Float:fLocation[3];
+			float fLocation[3];
 
 			GetClientEyePosition(iClient, fLocation);
 			fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;

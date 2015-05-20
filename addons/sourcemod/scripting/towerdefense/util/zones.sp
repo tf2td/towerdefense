@@ -19,8 +19,8 @@
  * @noreturn
  */
 
-stock CreateBeamLine(iClient, Float:fStart[3], Float:fEnd[3], Float:fDuration=5.0, const iColors[]={255, 0, 0, 255}) {
-	new iColors2[4];
+stock void CreateBeamLine(int iClient, float fStart[3], float fEnd[3], float fDuration=5.0, const int iColors[]={255, 0, 0, 255}) {
+	int iColors2[4];
 	iColors2[0] = iColors[0];
 	iColors2[1] = iColors[1];
 	iColors2[2] = iColors[2];
@@ -29,7 +29,7 @@ stock CreateBeamLine(iClient, Float:fStart[3], Float:fEnd[3], Float:fDuration=5.
 	TE_SetupBeamPoints(fStart, fEnd, g_iLaserMaterial, g_iHaloMaterial, 0, 0, fDuration + 0.1, 1.0, 1.0, 1, 0.0, iColors2, 0);
 
 	if (fDuration == 0.0) {
-		new Handle:hPack = CreateDataPack();
+		Handle hPack = CreateDataPack();
 
 		CreateDataTimer(fDuration, Timer_CreateBeam, hPack);
 
@@ -50,8 +50,9 @@ stock CreateBeamLine(iClient, Float:fStart[3], Float:fEnd[3], Float:fDuration=5.
 	TE_SendToAll();
 }
 
-public Action:Timer_CreateBeam(Handle:hTimer, Handle:hPack) {
-	new iClient, Float:fDuration, Float:fStart[3], Float:fEnd[3], iColors[4];
+public Action Timer_CreateBeam(Handle hTimer, Handle hPack) {
+	int iClient, iColors[4];
+	float fDuration, fStart[3], fEnd[3]; 
 	
 	ResetPack(hPack);
 	iClient = ReadPackCell(hPack);
@@ -150,16 +151,16 @@ public Action:Timer_CreateBeam2(Handle:hTimer, Handle:hPack) {
  * @noreturn
  */
 
-stock CreateBeamBox(iClient, Float:fStart[3], Float:fEnd[3], Float:fDuration=5.0, const iColors[]={255, 0, 0, 255}) {
-	new Float:fPoint[8][3];
+stock void CreateBeamBox(int iClient, float fStart[3], float fEnd[3], float fDuration=5.0, const int iColors[]={255, 0, 0, 255}) {
+	float fPoint[8][3];
 
 	CopyVector(fStart, fPoint[0]);
 	CopyVector(fEnd, fPoint[7]);
 
 	CreateZonePoints(fPoint);
 
-	for (new i = 0, i2 = 3; i2 >= 0; i += i2--) {
-		for (new j = 1; j <= 7; j += (j / 2) + 1) {
+	for (int i = 0, i2 = 3; i2 >= 0; i += i2--) {
+		for (int j = 1; j <= 7; j += (j / 2) + 1) {
 			if (j != 7 - i) {
 				CreateBeamLine(iClient, fPoint[i], fPoint[j], fDuration, iColors);
 			}
@@ -207,9 +208,9 @@ stock CreateBeamBox2(iClient, iIndex, Float:fStart[3], Float:fEnd[3], const iCol
  * @noreturn
  */
 
-stock CreateZonePoints(Float:fPoint[8][3]) {
-	for (new i = 1; i < 7; i++) {
-		for (new j = 0; j < 3; j++) {
+stock void CreateZonePoints(float fPoint[8][3]) {
+	for (int i = 1; i < 7; i++) {
+		for (int j = 0; j < 3; j++) {
 			fPoint[i][j] = fPoint[((i >> (2 - j)) & 1) * 7][j];
 		}
 	}
@@ -226,12 +227,12 @@ stock CreateZonePoints(Float:fPoint[8][3]) {
  * @noreturn
  */
 
-stock CreateBeamBoxAroundClient(iClient, Float:fDistance, bool:OnlyPlayerHeight=true, Float:fDuration=5.0, const iColors[]={255, 0, 0, 255}) {
+stock void CreateBeamBoxAroundClient(int iClient, float fDistance, bool OnlyPlayerHeight=true, float fDuration=5.0, const int iColors[]={255, 0, 0, 255}) {
 	if (!IsValidClient(iClient) || !IsClientConnected(iClient) || !IsClientInGame(iClient) || !IsPlayerAlive(iClient)) {
 		return;
 	}
 	
-	new Float:fLocation[3], Float:fStart[3], Float:fEnd[3];
+	float fLocation[3], float fStart[3], float fEnd[3];
 
 	GetClientAbsOrigin(iClient, fLocation);
 
@@ -255,7 +256,7 @@ stock CreateBeamBoxAroundClient(iClient, Float:fDistance, bool:OnlyPlayerHeight=
 
 	CreateBeamBox(iClient, fStart, fEnd, fDuration, iColors);
 
-	new Float:fPoint[8][3];
+	float fPoint[8][3];
 
 	CopyVector(fStart, fPoint[0]);
 	CopyVector(fEnd, fPoint[7]);
@@ -273,8 +274,8 @@ stock CreateBeamBoxAroundClient(iClient, Float:fDistance, bool:OnlyPlayerHeight=
  * @noreturn
  */
 
-stock CopyVector(Float:fSource[3], Float:fDestination[3]) {
-	for (new i = 0; i < sizeof(fSource); i++) {
+stock void CopyVector(float fSource[3], float fDestination[3]) {
+	for (int i = 0; i < sizeof(fSource); i++) {
 		fDestination[i] = fSource[i];
 	}
 }
@@ -287,9 +288,9 @@ stock CopyVector(Float:fSource[3], Float:fDestination[3]) {
  * @noreturn
  */
 
-stock CopyZone(Float:fSource[8][3], Float:fDestination[8][3]) {
-	for (new i = 0; i < sizeof(fSource); i++) {
-		for (new j = 0; j < sizeof(fSource[]); j++) {
+stock void CopyZone(float fSource[8][3], float fDestination[8][3]) {
+	for (int i = 0; i < sizeof(fSource); i++) {
+		for (int j = 0; j < sizeof(fSource[]); j++) {
 			fDestination[i][j] = fSource[i][j];
 		}
 	}
@@ -303,8 +304,8 @@ stock CopyZone(Float:fSource[8][3], Float:fDestination[8][3]) {
  * @return				True if inside, false otherwise.
  */
 
-stock bool:IsEntityInZone(iEntity, Float:fZone[8][3], Float:fDifferenceZ) {
-	new Float:fEntityPosition[3];
+stock bool IsEntityInZone(int iEntity, float fZone[8][3], float fDifferenceZ) {
+	float fEntityPosition[3];
 	
 	GetEntPropVector(iEntity, Prop_Send, "m_vecOrigin", fEntityPosition);
 	fEntityPosition[2] += fDifferenceZ;
@@ -320,8 +321,8 @@ stock bool:IsEntityInZone(iEntity, Float:fZone[8][3], Float:fDifferenceZ) {
  * @return				True if inside, false otherwise.
  */
 
-stock bool:IsClientInZone(iClient, Float:fPoint[8][3]) {
-	new Float:fPlayerPosition[3], Float:fPlayerPoint[8][3];
+stock bool IsClientInZone(int iClient, float fPoint[8][3]) {
+	float fPlayerPosition[3], float fPlayerPoint[8][3];
 	
 	GetEntPropVector(iClient, Prop_Send, "m_vecOrigin", fPlayerPosition);
 	fPlayerPosition[2] += 41.5;
@@ -347,8 +348,8 @@ stock bool:IsClientInZone(iClient, Float:fPoint[8][3]) {
  * @return				True if inside, false otherwise.
  */
 
-stock bool:IsClientInZone2(iClient, Float:fPoint[8][3], iID) {
-	new Float:fPlayerPosition[3], Float:fPlayerPoint[8][3];
+stock bool IsClientInZone2(int iClient, float fPoint[8][3], int iID) {
+	float fPlayerPosition[3], Float fPlayerPoint[8][3];
 	
 	GetEntPropVector(iClient, Prop_Send, "m_vecOrigin", fPlayerPosition);
 	fPlayerPosition[2] += 41.5;
@@ -372,8 +373,8 @@ stock bool:IsClientInZone2(iClient, Float:fPoint[8][3], iID) {
  * @noreturn
  */
 
-stock DrawClientBoundingBox(iClient) {
-	new Float:fPlayerPosition[3], Float:fPlayerPoint[8][3];
+stock void DrawClientBoundingBox(int iClient) {
+	float fPlayerPosition[3], fPlayerPoint[8][3];
 	
 	GetEntPropVector(iClient, Prop_Send, "m_vecOrigin", fPlayerPosition);
 	fPlayerPosition[2] += 41.5;
@@ -398,7 +399,7 @@ stock DrawClientBoundingBox(iClient) {
  * @return				True if intersects, false otherwise.
  */
 
-stock bool:Box3DIntersects(Float:fCheck[8][3], Float:fSource[8][3]) {
+stock bool Box3DIntersects(float fCheck[8][3], float fSource[8][3]) {
 	if (fCheck[0][0] > fSource[4][0] || 	// fCheck is right of fSource
 		fCheck[4][0] < fSource[0][0] ||		// fCheck is left of fSource
 		fCheck[1][2] < fSource[0][2] || 	// fCheck is below fSource
@@ -419,7 +420,7 @@ stock bool:Box3DIntersects(Float:fCheck[8][3], Float:fSource[8][3]) {
  * @return				True if inside, false otherwise.
  */
 
-stock bool:IsPointInZone(Float:fPoint[3], Float:fZone[8][3]) {
+stock bool IsPointInZone(float fPoint[3], float fZone[8][3]) {
 	if (fPoint[0] > fZone[4][0] || 		// fPoint is right of fZone
 		fPoint[0] < fZone[0][0] ||		// fPoint is left of fZone
 		fPoint[2] < fZone[0][2] || 		// fPoint is below fZone
