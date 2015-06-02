@@ -17,35 +17,27 @@
 stock void Server_Initialize() {
 	Log(TDLogLevel_Debug, "Initializing server");
 	
-	char sError[512];
-	if (Database_Connect(sError, sizeof(sError)) == INVALID_HANDLE) {
-		Log(TDLogLevel_Error, "Failed to connect to the database: %s", sError);
+	StripConVarFlag("sv_cheats", FCVAR_NOTIFY);
+	StripConVarFlag("sv_tags", FCVAR_NOTIFY);
+	StripConVarFlag("tf_bot_count", FCVAR_NOTIFY);
+	StripConVarFlag("sv_password", FCVAR_NOTIFY);
+	
+	HookButtons();
+	Server_Reset();
+	
+	int iServerIp[4];
+	Steam_GetPublicIP(iServerIp);
+	Format(g_sServerIp, sizeof(g_sServerIp), "%d.%d.%d.%d", iServerIp[0], iServerIp[1], iServerIp[2], iServerIp[3]);
+	
+	char sServerPort[6];
+	GetConVarString(FindConVar("hostport"), sServerPort, sizeof(sServerPort));
+	g_iServerPort = StringToInt(sServerPort);
+	
+	if (StrEqual(g_sServerIp, "0.0.0.0")) {
+		Log(TDLogLevel_Info, "Server has been restarted completely, reloading map for initializing");
+		ReloadMap();
 	} else {
-		Log(TDLogLevel_Info, "Successfully connected to the database");
-		
-		StripConVarFlag("sv_cheats", FCVAR_NOTIFY);
-		StripConVarFlag("sv_tags", FCVAR_NOTIFY);
-		StripConVarFlag("tf_bot_count", FCVAR_NOTIFY);
-		StripConVarFlag("sv_password", FCVAR_NOTIFY);
-		
-		HookButtons();
-		
-		Server_Reset();
-		
-		int iServerIp[4];
-		Steam_GetPublicIP(iServerIp);
-		Format(g_sServerIp, sizeof(g_sServerIp), "%d.%d.%d.%d", iServerIp[0], iServerIp[1], iServerIp[2], iServerIp[3]);
-		
-		char sServerPort[6];
-		GetConVarString(FindConVar("hostport"), sServerPort, sizeof(sServerPort));
-		g_iServerPort = StringToInt(sServerPort);
-		
-		if (StrEqual(g_sServerIp, "0.0.0.0")) {
-			Log(TDLogLevel_Info, "Server has been restarted completely, reloading map for initializing");
-			ReloadMap();
-		} else {
-			Database_CheckServer(); // Calls Database_OnServerChecked() when finished
-		}
+		Database_CheckServer(); // Calls Database_OnServerChecked() when finished
 	}
 }
 

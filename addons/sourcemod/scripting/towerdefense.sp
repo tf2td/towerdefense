@@ -34,11 +34,12 @@
 #define PLUGIN_URL		"http://www.tf2td.net/"
 #define PLUGIN_PREFIX	"[TF2TD]"
 
+/*
 #define DATABASE_HOST 	"46.38.241.137"
 #define DATABASE_NAME 	"tf2tdsql5"
 #define DATABASE_USER 	"tf2td_styria"
 #define DATABASE_PASS 	"t9J3gTiep8zbvVObSGeom09btg3Ts1Nm"
-
+*/
 /*==========================================
 =            Plugin Information            =
 ==========================================*/
@@ -62,7 +63,6 @@ public Plugin myinfo =
 #include "towerdefense/info/convars.sp"
 
 #include "towerdefense/util/log.sp"
-#include "towerdefense/util/md5.sp"
 #include "towerdefense/util/metal.sp"
 #include "towerdefense/util/steamid.sp"
 #include "towerdefense/util/tf2items.sp"
@@ -95,6 +95,17 @@ public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iMax
 		Format(sError, iMaxLength, "This mod can only run under TF2.");
 		return APLRes_Failure;
 	}
+	
+	if (SQL_CheckConfig("towerdefense")) 
+		g_hDatabase = SQL_Connect("towerdefense", true, sError, iMaxLength);	
+	else {
+		// TODO(hurp): Flatfile server cfgs
+		Format(sError, iMaxLength, "Unable to read database info from file");
+		return APLRes_Failure;
+	}
+	
+	if (g_hDatabase == null)
+		return APLRes_Failure;
 	
 	MarkNativeAsOptional("Steam_SetGameDescription");
 	return APLRes_Success;
@@ -196,7 +207,7 @@ public void OnConfigsExecuted() {
 			char sCurrentMap[PLATFORM_MAX_PATH];
 			GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 			
-			Log(TDLogLevel_Info, "Map \"%s\" is not supported, thus Tower Defense has been disabled.", sCurrentMap);
+			Log(TDLogLevel_Info, "Map \"%s\" is not supported, Tower Defense has been disabled.", sCurrentMap);
 		} else {
 			Log(TDLogLevel_Info, "Tower Defense is disabled.");
 		}
@@ -1540,10 +1551,8 @@ stock void GetRconPassword(char[] sBuffer, int iMaxLength) {
  * @param sPassword 	The password to set.
  * @param bDatabase 	Save the password in the database.
  * @param bReloadMap 	Reload map afterwards.
- * @return				True on success, false otherwise.
+ * @noreturn
  */
-
-// TODO(?): Correct return type?
 
 stock void SetPassword(const char[] sPassword, bool bDatabase = true, bool bReloadMap = false) {
 	ServerCommand("sv_password \"%s\"", sPassword);

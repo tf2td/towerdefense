@@ -8,30 +8,6 @@
 	#include "../info/variables.sp"
 #endif
 
-/**
- * Connects to the database.
- *
- * @return				The database handle, or INVALID_HANDLE on failure.
- */
-
-stock Handle Database_Connect(char[] sError, const int iMaxLength) {
-	if (g_hDatabase == INVALID_HANDLE) {
-		char sPassword[128];
-		MD5String(DATABASE_PASS, sPassword, sizeof(sPassword));
-		
-		Handle hKeyValues = CreateKeyValues("");
-		KvSetString(hKeyValues, "host", DATABASE_HOST);
-		KvSetString(hKeyValues, "database", DATABASE_NAME);
-		KvSetString(hKeyValues, "user", DATABASE_USER);
-		KvSetString(hKeyValues, "pass", sPassword);
-		
-		g_hDatabase = SQL_ConnectCustom(hKeyValues, sError, iMaxLength, true);
-		CloseHandle(hKeyValues);
-	}
-	
-	return g_hDatabase;
-}
-
 /*======================================
 =            Data Functions            =
 ======================================*/
