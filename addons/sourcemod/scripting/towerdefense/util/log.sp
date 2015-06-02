@@ -10,19 +10,19 @@
 
 enum TDLogLevel
 {
-	TDLogLevel_None = 0, 			// disables all logging
-	TDLogLevel_Error = 1, 			// is for critical errors, the plugin may no longer work correctly
-	TDLogLevel_Warning = 2, 		// is for important warnings, the plugin will continue to work correctly
-	TDLogLevel_Info = 3, 			// is for informative messages, typically used for deployment
-	TDLogLevel_Debug = 4,			// is for debug messages, this level is useful during development
-	TDLogLevel_Trace = 5			// is for trace messages, this level is usually only needed when debugging a problem
+	TDLogLevel_None = 0,	// disables all logging
+	TDLogLevel_Error = 1,	// is for critical errors, the plugin may no longer work correctly
+	TDLogLevel_Warning = 2,	// is for important warnings, the plugin will continue to work correctly
+	TDLogLevel_Info = 3,	// is for informative messages, typically used for deployment
+	TDLogLevel_Debug = 4,	// is for debug messages, this level is useful during development
+	TDLogLevel_Trace = 5	// is for trace messages, this level is usually only needed when debugging a problem
 };
 
 enum TDLogType
 {
-	TDLogType_File = 0, 			// logs to SourceMod logs
-	TDLogType_Console = 1, 			// logs to server console
-	TDLogType_FileAndConsole = 2 	// logs to SourceMod logs and server console
+	TDLogType_File = 0,				// logs to SourceMod logs
+	TDLogType_Console = 1,			// logs to server console
+	TDLogType_FileAndConsole = 2	// logs to SourceMod logs and server console
 };
 
 static TDLogLevel m_iLogLevel = TDLogLevel_Info;
@@ -33,11 +33,11 @@ stock void Log_Initialize(TDLogLevel iLogLevel = TDLogLevel_Info, TDLogType iLog
 	m_iLogType = iLogType;
 }
 
-stock void Log(TDLogLevel iLogLevel, const char[] sMessage, any ...) {
+stock void Log(TDLogLevel iLogLevel, const char[] sMessage, any...) {
 	if (m_iLogLevel >= iLogLevel) {
 		char sFormattedMessage[256];
 		VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 3);
-
+		
 		switch (m_iLogType) {
 			case TDLogType_File: {
 				switch (iLogLevel) {
@@ -105,11 +105,11 @@ stock void Log(TDLogLevel iLogLevel, const char[] sMessage, any ...) {
 	}
 }
 
-stock void LogType(TDLogLevel iLogLevel, TDLogType iLogType, const char[] sMessage, any ...) {
+stock void LogType(TDLogLevel iLogLevel, TDLogType iLogType, const char[] sMessage, any...) {
 	if (m_iLogLevel >= iLogLevel) {
 		char sFormattedMessage[256];
 		VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
-
+		
 		switch (iLogType) {
 			case TDLogType_File: {
 				switch (iLogLevel) {
@@ -175,4 +175,4 @@ stock void LogType(TDLogLevel iLogLevel, TDLogType iLogType, const char[] sMessa
 			}
 		}
 	}
-}
+} 

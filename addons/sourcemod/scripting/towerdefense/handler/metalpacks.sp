@@ -20,45 +20,45 @@ stock bool SpawnMetalPacks(TDMetalPackType iMetalPackType) {
 	if (!GetTrieValue(g_hMapMetalpacks, "quantity", iNumPacks)) {
 		return false;
 	}
-
+	
 	if (iNumPacks <= 0) {
 		return true;
 	}
-
+	
 	int iMetal = 0, iEntity;
 	float fLocation[3];
 	char sKey[32], sLocation[64], sLocationParts[6][16];
-
+	
 	for (int iMetalPackId = 0; iMetalPackId < iNumPacks; iMetalPackId++) {
 		if (Metalpack_GetType(iMetalPackId) != iMetalPackType) {
 			continue;
 		}
-
+		
 		Format(sKey, sizeof(sKey), "%d_metal", iMetalPackId);
-
+		
 		if (!GetTrieValue(g_hMapMetalpacks, sKey, iMetal)) {
 			continue;
 		}
-
+		
 		Format(sKey, sizeof(sKey), "%d_location", iMetalPackId);
-
+		
 		if (!GetTrieString(g_hMapMetalpacks, sKey, sLocation, sizeof(sLocation))) {
 			continue;
 		}
-
+		
 		ExplodeString(sLocation, " ", sLocationParts, sizeof(sLocationParts), sizeof(sLocationParts[]));
-
+		
 		fLocation[0] = StringToFloat(sLocationParts[0]);
 		fLocation[1] = StringToFloat(sLocationParts[1]);
 		fLocation[2] = StringToFloat(sLocationParts[2]);
-
+		
 		SpawnMetalPack2(TDMetalPack_Large, fLocation, iMetal, iEntity);
-
+		
 		if (Metalpack_GetType(iMetalPackId) == TDMetalPack_Boss) {
 			ShowAnnotation(EntRefToEntIndex(iEntity), fLocation, 64.0, 60.0, "A reward spawned!");
 		}
 	}
-
+	
 	return false;
 }
 
@@ -76,15 +76,15 @@ stock bool SpawnMetalPacks(TDMetalPackType iMetalPackType) {
 stock TDMetalPackType Metalpack_GetType(int iMetalpackId) {
 	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_type", iMetalpackId);
-
+	
 	char sType[64];
 	GetTrieString(g_hMapMetalpacks, sKey, sType, sizeof(sType));
-
+	
 	if (StrEqual(sType, "start")) {
 		return TDMetalPack_Start;
 	} else if (StrEqual(sType, "boss")) {
 		return TDMetalPack_Boss;
 	}
-
+	
 	return TDMetalPack_Invalid;
-}
+} 

@@ -19,10 +19,10 @@ stock bool Panel_Remove(int iWave) {
 	int iEntity = -1;
 	bool bResult = false;
 	char sName[64], sPanelName[64], sPanelTextName[64];
-
+	
 	Format(sPanelName, sizeof(sPanelName), "wavePanel%d", iWave); // TODO: Rename to panel_%d
 	Format(sPanelTextName, sizeof(sPanelTextName), "wavePanelText%d", iWave); // TODO: Rename to panel_text_%d
-
+	
 	while ((iEntity = FindEntityByClassname(iEntity, "func_movelinear")) != -1) {
 		GetEntPropString(iEntity, Prop_Data, "m_iName", sName, sizeof(sName));
 		
@@ -31,6 +31,6 @@ stock bool Panel_Remove(int iWave) {
 			bResult = true;
 		}
 	}
-
+	
 	return bResult;
-}
+} 

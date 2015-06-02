@@ -45,10 +45,10 @@
 
 public Plugin myinfo = 
 {
-	name = PLUGIN_NAME,
-	author = PLUGIN_AUTHOR,
-	description = PLUGIN_DESC,
-	version = PLUGIN_VERSION,
+	name = PLUGIN_NAME, 
+	author = PLUGIN_AUTHOR, 
+	description = PLUGIN_DESC, 
+	version = PLUGIN_VERSION, 
 	url = PLUGIN_URL
 };
 
@@ -95,28 +95,28 @@ public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iMax
 		Format(sError, iMaxLength, "This mod can only run under TF2.");
 		return APLRes_Failure;
 	}
-
+	
 	MarkNativeAsOptional("Steam_SetGameDescription");
 	return APLRes_Success;
 }
 
 public void OnPluginStart() {
 	PrintToServer("%s Loaded %s %s by %s", PLUGIN_PREFIX, PLUGIN_NAME, PLUGIN_VERSION, PLUGIN_AUTHOR);
-
+	
 	Log_Initialize(TDLogLevel_Trace, TDLogType_Console);
-
+	
 	CreateDataMap(g_hMapTowers);
 	CreateDataMap(g_hMapWeapons);
 	CreateDataMap(g_hMapWaves);
 	CreateDataMap(g_hMapMetalpacks);
-
+	
 	CreateDataMap(g_hPlayerData);
-
+	
 	HookEvents();
 	RegisterCommands();
 	LoadConVars();
 	SetConVars();
-
+	
 	SetPassword("WaitingForServerToInitialize", false);
 }
 
@@ -124,61 +124,61 @@ public void OnPluginEnd() {
 	if (g_bSteamTools) {
 		Steam_SetGameDescription("Team Fortress");
 	}
-
+	
 	if (g_hDatabase != null) {
 		CloseHandle(g_hDatabase);
 		g_hDatabase = null;
 	}
-
+	
 	if (g_hMapTowers != null) {
 		CloseHandle(g_hMapTowers);
 		g_hMapTowers = null;
 	}
-
+	
 	if (g_hMapWeapons != null) {
 		CloseHandle(g_hMapWeapons);
 		g_hMapWeapons = null;
 	}
-
+	
 	if (g_hMapWaves != null) {
 		CloseHandle(g_hMapWaves);
 		g_hMapWaves = null;
 	}
-
+	
 	if (g_hMapMetalpacks != null) {
 		CloseHandle(g_hMapMetalpacks);
 		g_hMapMetalpacks = null;
 	}
-
+	
 	if (g_hPlayerData != null) {
 		CloseHandle(g_hPlayerData);
 		g_hPlayerData = null;
 	}
-
+	
 	SetConVarInt(FindConVar("sv_cheats"), 0, true, false);
 }
 
 public void OnMapStart() {
 	g_bTowerDefenseMap = IsTowerDefenseMap();
-
+	
 	PrecacheModels();
 	PrecacheSounds();
-
+	
 	g_iHealthBar = GetHealthBar();
-
+	
 	g_bConfigsExecuted = false;
 }
 
 public void OnMapEnd() {
 	g_bMapRunning = false;
-
+	
 	bool bWasEnabled = g_bEnabled;
 	g_bEnabled = false;
-
+	
 	if (bWasEnabled) {
 		UpdateGameDescription();
 	}
-
+	
 	AddConVarFlag("sv_cheats", FCVAR_NOTIFY);
 	AddConVarFlag("sv_tags", FCVAR_NOTIFY);
 	AddConVarFlag("tf_bot_count", FCVAR_NOTIFY);
@@ -188,24 +188,24 @@ public void OnMapEnd() {
 public void OnConfigsExecuted() {
 	g_bEnabled = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap && g_bSteamTools && g_bTF2Attributes;
 	g_bMapRunning = true;
-
+	
 	UpdateGameDescription();
-
+	
 	if (!g_bEnabled) {
 		if (!g_bTowerDefenseMap) {
 			char sCurrentMap[PLATFORM_MAX_PATH];
 			GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
-
+			
 			Log(TDLogLevel_Info, "Map \"%s\" is not supported, thus Tower Defense has been disabled.", sCurrentMap);
 		} else {
 			Log(TDLogLevel_Info, "Tower Defense is disabled.");
 		}
-
+		
 		return;
 	}
-
+	
 	g_bServerInitialized = false;
-
+	
 	CreateTimer(5.0, InitializeDelay, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
 }
 
@@ -216,15 +216,15 @@ public Action InitializeDelay(Handle hTimer, any iTime) {
 
 public void OnAllPluginsLoaded() {
 	g_bSteamTools = LibraryExists("SteamTools");
-
+	
 	if (g_bSteamTools) {
 		UpdateGameDescription();
-
+		
 		Log(TDLogLevel_Debug, "Found SteamTools on startup");
 	}
-
+	
 	g_bTF2Attributes = LibraryExists("tf2attributes");
-
+	
 	if (g_bTF2Attributes) {
 		Log(TDLogLevel_Debug, "Found TF2Attributes on startup");
 	}
@@ -234,11 +234,11 @@ public void OnLibraryAdded(const char[] sName) {
 	if (StrEqual(sName, "SteamTools", false)) {
 		g_bSteamTools = true;
 		UpdateGameDescription();
-
+		
 		Log(TDLogLevel_Debug, "SteamTools loaded");
 	} else if (StrEqual(sName, "tf2attributes", false)) {
 		g_bTF2Attributes = true;
-
+		
 		Log(TDLogLevel_Debug, "TF2Attributes loaded");
 	}
 }
@@ -246,11 +246,11 @@ public void OnLibraryAdded(const char[] sName) {
 public void OnLibraryRemoved(const char[] sName) {
 	if (StrEqual(sName, "SteamTools", false)) {
 		g_bSteamTools = false;
-
+		
 		Log(TDLogLevel_Debug, "SteamTools unloaded");
 	} else if (StrEqual(sName, "tf2attributes", false)) {
 		g_bTF2Attributes = false;
-
+		
 		Log(TDLogLevel_Debug, "TF2Attributes unloaded");
 	}
 }
@@ -259,20 +259,20 @@ public void OnClientPostAdminCheck(int iClient) {
 	if (!g_bEnabled) {
 		return;
 	}
-
+	
 	char sSteamId[32];
 	GetClientAuthId(iClient, AuthId_Steam2, sSteamId, sizeof(sSteamId));
-
+	
 	if (!StrEqual(sSteamId, "BOT")) {
 		char sName[MAX_NAME_LENGTH];
 		GetClientName(iClient, sName, sizeof(sName));
-
+		
 		char sCommunityId[32];
 		GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId));
-			
+		
 		char sIp[32];
 		GetClientIP(iClient, sIp, sizeof(sIp));
-
+		
 		Player_Connected(GetClientUserId(iClient), iClient, sName, sSteamId, sCommunityId, sIp);
 	}
 }
@@ -281,20 +281,20 @@ public void OnClientDisconnect(int iClient) {
 	if (!g_bEnabled) {
 		return;
 	}
-
+	
 	if (IsTower(g_iAttachedTower[iClient])) {
 		Tower_OnCarrierDisconnected(g_iAttachedTower[iClient], iClient);
 	}
-
+	
 	if (IsDefender(iClient)) {
 		int iMetal = GetClientMetal(iClient);
-
+		
 		if (iMetal > 0) {
 			float fLocation[3];
-
+			
 			GetClientEyePosition(iClient, fLocation);
 			fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
-
+			
 			SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal);
 		}
 	}
@@ -304,11 +304,11 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
-
+	
 	// Force towers to shoot
 	if (IsTower(iClient)) {
 		TDTowerId iTowerId = GetTowerId(iClient);
-
+		
 		// Refill ammo for airblast tower
 		if (iTowerId == TDTower_Airblast_Pyro) {
 			int iOffset = FindSendPropInfo("CTFPlayer", "m_iAmmo");
@@ -316,23 +316,23 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 				SetEntData(iClient, iOffset + 4, 100);
 			}
 		}
-
+		
 		if (Tower_GetAttackPrimary(iTowerId)) {
 			iButtons |= IN_ATTACK;
 		}
-
+		
 		if (Tower_GetAttackSecondary(iTowerId)) {
 			iButtons |= IN_ATTACK2;
 		}
 	}
-
+	
 	if (IsAttacker(iClient) && g_bBoostWave) {
 		fVelocity[0] = 500.0;
 	}
-
+	
 	if (IsDefender(iClient)) {
 		// Attach/detach tower on right-click
-		if (IsButtonReleased(iClient, iButtons, IN_ATTACK2)) { 
+		if (IsButtonReleased(iClient, iButtons, IN_ATTACK2)) {
 			char sActiveWeapon[64];
 			GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
 			
@@ -344,9 +344,9 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 				}
 			}
 		}
-
+		
 		// Show tower info on left-click
-		if (IsButtonReleased(iClient, iButtons, IN_ATTACK)) { 
+		if (IsButtonReleased(iClient, iButtons, IN_ATTACK)) {
 			char sActiveWeapon[64];
 			GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
 			
@@ -354,45 +354,45 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 				Tower_ShowInfo(iClient);
 			}
 		}
-
+		
 		float fLocation[3], fViewAngles[3];
 		GetClientEyePosition(iClient, fLocation);
 		GetClientEyeAngles(iClient, fViewAngles);
-			
+		
 		TR_TraceRayFilter(fLocation, fViewAngles, MASK_VISIBLE, RayType_Infinite, TraceRayEntities, iClient);
-
+		
 		if (TR_DidHit()) {
 			int iAimEntity = TR_GetEntityIndex();
-		
+			
 			if (IsValidEntity(iAimEntity)) {
 				char sClassname[64];
 				GetEntityClassname(iAimEntity, sClassname, sizeof(sClassname));
-
+				
 				if (StrEqual(sClassname, "func_breakable")) {
 					char sName[64];
 					GetEntPropString(iAimEntity, Prop_Data, "m_iName", sName, sizeof(sName));
-
+					
 					if (StrContains(sName, "break_tower_") != -1) {
 						float fEntityLocation[3];
 						GetEntPropVector(iAimEntity, Prop_Send, "m_vecOrigin", fEntityLocation);
-
+						
 						if (GetVectorDistance(fLocation, fEntityLocation) <= 512.0) {
 							TDTowerId iTowerId;
-
+							
 							if (StrContains(sName, "break_tower_tp_") != -1) {
 								char sNameParts[4][32];
 								ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
-
+								
 								iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[3]));
 								Tower_GetName(iTowerId, sName, sizeof(sName));
 							} else {
 								char sNameParts[3][32];
 								ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
-
+								
 								iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[2]));
 								Tower_GetName(iTowerId, sName, sizeof(sName));
 							}
-
+							
 							char sDescription[1024];
 							if (Tower_GetDescription(iTowerId, sDescription, sizeof(sDescription))) {
 								char sDamagetype[64];
@@ -405,7 +405,7 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 										Number of Levels: %d \n\
 										--------------- \n\
 										%s", 
-									sName, Tower_GetPrice(iTowerId), Tower_GetPrice(iTowerId) / GetRealClientCount(true), sDamagetype, Tower_GetMaxLevel(iTowerId), sDescription);
+										sName, Tower_GetPrice(iTowerId), Tower_GetPrice(iTowerId) / GetRealClientCount(true), sDamagetype, Tower_GetMaxLevel(iTowerId), sDescription);
 								}
 							}
 						}
@@ -414,14 +414,14 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 			}
 		}
 	}
-
+	
 	if (g_bPickupSentry[iClient]) {
 		iButtons |= IN_ATTACK2;
 		g_bPickupSentry[iClient] = false;
 	}
-
+	
 	g_iLastButtons[iClient] = iButtons;
-
+	
 	return Plugin_Continue;
 }
 
@@ -429,31 +429,31 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
-
+	
 	// Block tower taking damage
 	if (IsTower(iClient)) {
 		return Plugin_Handled;
 	}
-
+	
 	if (IsDefender(iClient)) {
 		if (IsValidClient(iAttacker)) {
 			if (iClient == iAttacker || GetClientTeam(iClient) != GetClientTeam(iAttacker)) {
 				if (fDamage >= GetClientHealth(iClient)) {
 					int iMetal = GetClientMetal(iClient);
-
+					
 					if (iMetal > 0) {
 						float fLocation[3];
-
+						
 						GetClientEyePosition(iClient, fLocation);
 						fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
-
+						
 						SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal);
 					}
 				}
 			}
 		}
 	}
-
+	
 	return Plugin_Continue;
 }
 
@@ -461,7 +461,7 @@ public void OnTakeDamagePost(int iClient, int iAttacker, int iInflictor, float f
 	if (!g_bEnabled) {
 		return;
 	}
-
+	
 	if (IsAttacker(iClient)) {
 		Wave_OnTakeDamagePost(iClient, iAttacker, iInflictor, fDamage, iDamageType);
 	}
@@ -481,15 +481,15 @@ public int OnEntityCreated(int iEntity, const char[] sClassname) {
 
 public void OnWeaponSpawned(int iEntity) {
 	int iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
-
+	
 	if (IsDefender(iOwner)) {
 		AcceptEntityInput(iEntity, "Kill");
 	}
-
+	
 	char sName[64];
 	IntToString(iOwner, sName, sizeof(sName));
 	DispatchKeyValue(iEntity, "targetname", sName);
-
+	
 	SDKHook(iEntity, SDKHook_Touch, OnTouchWeapon);
 }
 
@@ -497,16 +497,16 @@ public Action OnTouchWeapon(int iEntity, int iClient) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
-
+	
 	if (IsDefender(iClient)) {
 		char sName[64];
 		GetEntPropString(iEntity, Prop_Data, "m_iName", sName, sizeof(sName));
-
+		
 		int iOwner = StringToInt(sName);
-
+		
 		if (IsValidClient(iOwner)) {
 			// Picking up weapon
-
+			
 			AcceptEntityInput(iEntity, "Kill");
 			AddClientMetal(iClient, 100);
 			ResupplyClient(iClient, true, 0.25);
@@ -517,7 +517,7 @@ public Action OnTouchWeapon(int iEntity, int iClient) {
 			EmitSoundToAll("items/ammo_pickup.wav", iClient);
 		}
 	}
-
+	
 	return Plugin_Handled;
 }
 
@@ -525,10 +525,10 @@ public void OnButtonSpawned(int iEntity) {
 	if (!g_bEnabled) {
 		return;
 	}
-
+	
 	char sName[64];
 	GetEntPropString(iEntity, Prop_Data, "m_iName", sName, sizeof(sName));
-
+	
 	if (StrEqual(sName, "wave_start")) {
 		g_iWaveStartButton = iEntity;
 		GetEntPropVector(iEntity, Prop_Send, "m_vecOrigin", g_fWaveStartButtonLocation);
@@ -539,7 +539,7 @@ public void OnProjectileSpawned(int iEntity) {
 	if (!g_bEnabled) {
 		return;
 	}
-
+	
 	SDKHook(iEntity, SDKHook_ShouldCollide, OnProjectileCollide);
 }
 
@@ -547,21 +547,21 @@ public bool OnProjectileCollide(int iEntity, int iCollisiongroup, int iContentsm
 	if (!g_bEnabled) {
 		return true;
 	}
-
+	
 	int iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
-
+	
 	if (IsValidEntity(iOwner)) {
 		int iTeam = GetEntProp(iOwner, Prop_Send, "m_iTeamNum");
-
+		
 		float fLocation[3], fAngles[3];
 		GetEntPropVector(iEntity, Prop_Data, "m_vecOrigin", fLocation);
 		GetEntPropVector(iEntity, Prop_Data, "m_angAbsRotation", fAngles);
-
+		
 		TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayPlayers);
-
+		
 		if (TR_DidHit()) {
 			int iTarget = TR_GetEntityIndex();
-
+			
 			if (IsValidClient(iTarget)) {
 				if (GetClientTeam(iTarget) != iTeam) {
 					SetEntProp(iEntity, Prop_Data, "m_CollisionGroup", 0);
@@ -571,7 +571,7 @@ public bool OnProjectileCollide(int iEntity, int iCollisiongroup, int iContentsm
 			}
 		}
 	}
-
+	
 	return true;
 }
 
@@ -579,7 +579,7 @@ public Action OnNobuildEnter(int iEntity, int iClient) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
-
+	
 	if (IsDefender(iClient)) {
 		g_bInsideNobuild[iClient] = true;
 	} else if (IsTower(iClient)) {
@@ -587,7 +587,7 @@ public Action OnNobuildEnter(int iEntity, int iClient) {
 			Tower_OnTouchNobuild(iClient);
 		}
 	}
-
+	
 	return Plugin_Continue;
 }
 
@@ -595,11 +595,11 @@ public Action OnNobuildExit(int iEntity, int iClient) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
-
+	
 	if (IsDefender(iClient)) {
 		g_bInsideNobuild[iClient] = false;
 	}
-
+	
 	return Plugin_Continue;
 }
 
@@ -661,7 +661,7 @@ stock bool IsAttacker(int iClient) {
 stock bool IsTowerDefenseMap() {
 	char sCurrentMap[PLATFORM_MAX_PATH];
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
-
+	
 	return (strncmp(sCurrentMap, "td_", 3) == 0 || strncmp(sCurrentMap, "tf2td_", 6) == 0);
 }
 
@@ -675,15 +675,15 @@ stock void UpdateGameDescription() {
 	if (!g_bSteamTools) {
 		return;
 	}
-
+	
 	char sGamemode[64];
-
+	
 	if (g_bEnabled) {
 		Format(sGamemode, sizeof(sGamemode), "%s (%s)", GAME_DESCRIPTION, PLUGIN_VERSION);
 	} else {
 		strcopy(sGamemode, sizeof(sGamemode), "Team Fortress");
 	}
-
+	
 	Steam_SetGameDescription(sGamemode);
 }
 
@@ -703,7 +703,7 @@ stock void PrecacheModels() {
 	PrecacheModel("models/bots/pyro/bot_pyro.mdl");
 	PrecacheModel("models/bots/spy/bot_spy.mdl");
 	PrecacheModel("models/bots/engineer/bot_engineer.mdl");
-
+	
 	PrecacheModel("models/items/ammopack_large.mdl");
 	PrecacheModel("models/items/ammopack_medium.mdl");
 	PrecacheModel("models/items/ammopack_small.mdl");
@@ -744,13 +744,13 @@ stock void PrecacheSounds() {
 
 stock int GetRealClientCount(bool bInGameOnly = false) {
 	int iClients = 0;
-
+	
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (((bInGameOnly) ? IsClientInGame(iClient) : IsClientConnected(iClient)) && !IsFakeClient(iClient)) {
 			iClients++;
 		}
 	}
-
+	
 	return iClients;
 }
 
@@ -763,8 +763,8 @@ stock int GetRealClientCount(bool bInGameOnly = false) {
  * @return				True if pressed, false otherwise.
  */
 
-stock bool IsButtonPressed(int iClient, int iButtons, int iButton) { 
-	return ((iButtons & iButton) == iButton && (g_iLastButtons[iClient] & iButton) != iButton); 
+stock bool IsButtonPressed(int iClient, int iButtons, int iButton) {
+	return ((iButtons & iButton) == iButton && (g_iLastButtons[iClient] & iButton) != iButton);
 }
 
 /**
@@ -776,8 +776,8 @@ stock bool IsButtonPressed(int iClient, int iButtons, int iButton) {
  * @return				True if released, false otherwise.
  */
 
-stock bool IsButtonReleased(int iClient, int iButtons, int iButton) { 
-	return ((g_iLastButtons[iClient] & iButton) == iButton && (iButtons & iButton) != iButton); 
+stock bool IsButtonReleased(int iClient, int iButtons, int iButton) {
+	return ((g_iLastButtons[iClient] & iButton) == iButton && (iButtons & iButton) != iButton);
 }
 
 /**
@@ -791,17 +791,17 @@ stock int GetAimTarget(int iClient) {
 	float fLocation[3], fAngles[3];
 	GetClientEyePosition(iClient, fLocation);
 	GetClientEyeAngles(iClient, fAngles);
-		
+	
 	TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayPlayers, iClient);
 	
 	if (TR_DidHit()) {
 		int iEntity = TR_GetEntityIndex();
-	
+		
 		if (IsValidEntity(iEntity) && IsValidClient(iEntity)) {
 			return iEntity;
 		}
 	}
-
+	
 	return -1;
 }
 
@@ -820,17 +820,17 @@ stock int GetAimEntity(int iClient) {
 	float fLocation[3], fAngles[3];
 	GetClientEyePosition(iClient, fLocation);
 	GetClientEyeAngles(iClient, fAngles);
-		
+	
 	TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayEntities, iClient);
 	
 	if (TR_DidHit()) {
 		int iEntity = TR_GetEntityIndex();
-	
+		
 		if (IsValidEntity(iEntity)) {
 			return iEntity;
 		}
 	}
-
+	
 	return -1;
 }
 
@@ -852,7 +852,7 @@ stock int GetClientByName(int iClient, char[] sName) {
 	
 	int iResults = 0;
 	int iTarget = 0;
-
+	
 	for (int i = 1; i <= MaxClients; i++) {
 		if (IsClientInGame(i)) {
 			GetClientName(i, sNameOfIndex, sizeof(sNameOfIndex));
@@ -864,7 +864,7 @@ stock int GetClientByName(int iClient, char[] sName) {
 			}
 		}
 	}
-
+	
 	if (iResults == 1) {
 		return iTarget;
 	} else if (iResults == 0) {
@@ -915,7 +915,7 @@ stock bool IsStringNumeric(char[] sText) {
 			return false;
 		}
 	}
-
+	
 	return true;
 }
 
@@ -926,17 +926,17 @@ stock bool IsStringNumeric(char[] sText) {
  * @return				Distance to the ground.
  */
 
-stock float GetDistanceToGround(float fLocation[3]) {	
+stock float GetDistanceToGround(float fLocation[3]) {
 	float fGround[3];
-
-	TR_TraceRayFilter(fLocation, view_as<float>({90.0, 0.0, 0.0}), MASK_PLAYERSOLID, RayType_Infinite, TraceRayNoPlayers, 0);
+	
+	TR_TraceRayFilter(fLocation, view_as<float>( { 90.0, 0.0, 0.0 } ), MASK_PLAYERSOLID, RayType_Infinite, TraceRayNoPlayers, 0);
 	
 	if (TR_DidHit()) {
 		TR_GetEndPosition(fGround);
-
+		
 		return GetVectorDistance(fLocation, fGround);
 	}
-
+	
 	return 0.0;
 }
 
@@ -953,7 +953,7 @@ public bool TraceRayNoPlayers(int iEntity, int iMask, any iData) {
 
 stock void SetRobotModel(int iClient) {
 	char sClass[16], sModelPath[PLATFORM_MAX_PATH];
-
+	
 	GetClientClassName(iClient, sClass, sizeof(sClass));
 	Format(sModelPath, sizeof(sModelPath), "models/bots/%s/bot_%s.mdl", sClass, sClass);
 	SetVariantString(sModelPath);
@@ -1006,38 +1006,38 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 	if (!IsValidClient(iClient)) {
 		return false;
 	}
-
+	
 	if (TF2_IsPlayerInCondition(iClient, TFCond_Taunting)) {
 		Forbid(iClient, true, "You can't build while taunting!");
 		return false;
 	}
-
+	
 	if (g_bCarryingObject[iClient]) {
 		Forbid(iClient, true, "You can not build while carrying another building or a tower!");
 		return false;
 	}
-
+	
 	switch (iType) {
 		case TDBuilding_Sentry: {
 			if (GetClientMetal(iClient) < 130) {
 				Forbid(iClient, true, "You need at least 130 metal!");
 				return false;
 			}
-
+			
 			int iEntity = -1, iCount = 0, iOwner = -1;
-
+			
 			while ((iEntity = FindEntityByClassname(iEntity, "obj_sentrygun")) != -1) {
 				iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hBuilder");
-
+				
 				if (iOwner == iClient) {
 					iCount++;
 				}
-
+				
 				if (iCount > g_iBuildingLimit[TDBuilding_Sentry]) {
 					AcceptEntityInput(iEntity, "Kill");
 				}
 			}
-
+			
 			// Client can build Sentry
 			if (iCount < g_iBuildingLimit[TDBuilding_Sentry]) {
 				return true;
@@ -1051,21 +1051,21 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 				Forbid(iClient, true, "You need at least 100 metal!");
 				return false;
 			}
-
+			
 			int iEntity = -1, iCount = 0, iOwner = -1;
-
+			
 			while ((iEntity = FindEntityByClassname(iEntity, "obj_dispenser")) != -1) {
 				iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hBuilder");
-
+				
 				if (iOwner == iClient) {
 					iCount++;
 				}
-
+				
 				if (iCount > g_iBuildingLimit[TDBuilding_Dispenser]) {
 					AcceptEntityInput(iEntity, "Kill");
 				}
 			}
-
+			
 			// Client can build Sentry
 			if (iCount < g_iBuildingLimit[TDBuilding_Dispenser]) {
 				return true;
@@ -1075,7 +1075,7 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 			}
 		}
 	}
-
+	
 	return false;
 }
 
@@ -1089,12 +1089,12 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
  * @noreturn
  */
 
-stock void Forbid(int iClient, bool bPlaySound, const char[] sMessage, any ...) {
+stock void Forbid(int iClient, bool bPlaySound, const char[] sMessage, any...) {
 	char sFormattedMessage[512];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
-
+	
 	PrintToChat(iClient, "\x07FF0000%s", sFormattedMessage);
-
+	
 	if (bPlaySound) {
 		EmitSoundToClient(iClient, "vo/engineer_no03.mp3");
 	}
@@ -1109,7 +1109,7 @@ stock void Forbid(int iClient, bool bPlaySound, const char[] sMessage, any ...) 
 stock void ReloadMap() {
 	char sCurrentMap[PLATFORM_MAX_PATH];
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
-
+	
 	ServerCommand("changelevel %s", sCurrentMap);
 }
 
@@ -1126,32 +1126,32 @@ stock void HookButtons() {
 public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, float fDelay) {
 	char sName[64];
 	GetEntPropString(iCaller, Prop_Data, "m_iName", sName, sizeof(sName));
-
+	
 	if (StrContains(sName, "break_tower_tp_") != -1) {
 		// Tower teleport
-
+		
 		char sNameParts[4][32];
 		ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
-
+		
 		TDTowerId iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[3]));
 		Tower_OnButtonTeleport(iTowerId, iCaller, iActivator);
 	} else if (StrContains(sName, "break_tower_") != -1) {
 		// Tower buy
-
+		
 		char sNameParts[3][32];
 		ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
-
+		
 		TDTowerId iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[2]));
 		Tower_OnButtonBuy(iTowerId, iCaller, iActivator);
 	} else if (StrContains(sName, "wave_start") != -1) {
 		// Wave start
-
+		
 		if (StrEqual(sName, "wave_start")) {
 			Wave_OnButtonStart(0, iCaller, iActivator);
 		} else {
 			char sNameParts[3][32];
 			ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
-
+			
 			Wave_OnButtonStart(StringToInt(sNameParts[2]), iCaller, iActivator);
 		}
 	}
@@ -1166,7 +1166,7 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 
 stock bool CanAfford(int iPrice) {
 	bool bResult = true;
-
+	
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsDefender(iClient)) {
 			if (GetClientMetal(iClient) < iPrice) {
@@ -1176,7 +1176,7 @@ stock bool CanAfford(int iPrice) {
 			}
 		}
 	}
-
+	
 	return bResult;
 }
 
@@ -1191,7 +1191,7 @@ stock bool CanAfford(int iPrice) {
 stock void StripConVarFlag(char[] sCvar, int iFlag) {
 	Handle hCvar;
 	int iFlags;
-
+	
 	hCvar = FindConVar(sCvar);
 	iFlags = GetConVarFlags(hCvar);
 	iFlags &= ~iFlag;
@@ -1209,7 +1209,7 @@ stock void StripConVarFlag(char[] sCvar, int iFlag) {
 stock void AddConVarFlag(char[] sCvar, int iFlag) {
 	Handle hCvar;
 	int iFlags;
-
+	
 	hCvar = FindConVar(sCvar);
 	iFlags = GetConVarFlags(hCvar);
 	iFlags &= iFlag;
@@ -1225,14 +1225,14 @@ stock void AddConVarFlag(char[] sCvar, int iFlag) {
 
 stock bool IsInsideClient(int iClient) {
 	float fMinBounds[3], fMaxBounds[3], fLocation[3];
-
+	
 	GetClientMins(iClient, fMinBounds);
 	GetClientMaxs(iClient, fMaxBounds);
-
+	
 	GetClientAbsOrigin(iClient, fLocation);
-
+	
 	TR_TraceHullFilter(fLocation, fLocation, fMinBounds, fMaxBounds, MASK_SOLID, TraceRayPlayers, iClient);
-
+	
 	return TR_DidHit();
 }
 
@@ -1245,7 +1245,7 @@ stock bool IsInsideClient(int iClient) {
  * @noreturn
  */
 
-stock void PrintToHud(int iClient, const char[] sMessage, any ...) {
+stock void PrintToHud(int iClient, const char[] sMessage, any...) {
 	if (!IsValidClient(iClient) || !IsClientInGame(iClient)) {
 		return;
 	}
@@ -1267,12 +1267,12 @@ stock void PrintToHud(int iClient, const char[] sMessage, any ...) {
 	
 	EndMessage();
 	*/
-
+	
 	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 3);
-
+	
 	Handle hBuffer = StartMessageOne("KeyHintText", iClient);
-
+	
 	BfWriteByte(hBuffer, 1);
 	BfWriteString(hBuffer, sFormattedMessage);
 	EndMessage();
@@ -1286,7 +1286,7 @@ stock void PrintToHud(int iClient, const char[] sMessage, any ...) {
  * @noreturn
  */
 
-stock void PrintToHudAll(const char[] sMessage, any ...) {
+stock void PrintToHudAll(const char[] sMessage, any...) {
 	char sFormattedMessage[256];
 	
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
@@ -1339,22 +1339,22 @@ stock int GetClientByNameExact(char[] sName, int iTeam = -1) {
  * @noreturn
  */
 
-stock void AttachAnnotation(int iEntity, float fLifetime, char[] sMessage, any ...) {
+stock void AttachAnnotation(int iEntity, float fLifetime, char[] sMessage, any...) {
 	Handle hEvent = CreateEvent("show_annotation");
-
+	
 	if (hEvent == INVALID_HANDLE) {
 		return;
 	}
 	
-	SetEventInt(hEvent, "follow_entindex", iEntity); 
-	SetEventInt(hEvent, "id", iEntity); 
+	SetEventInt(hEvent, "follow_entindex", iEntity);
+	SetEventInt(hEvent, "id", iEntity);
 	SetEventFloat(hEvent, "lifetime", fLifetime);
 	SetEventString(hEvent, "play_sound", "misc/null.wav");
-
+	
 	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
 	SetEventString(hEvent, "text", sFormattedMessage);
-
+	
 	FireEvent(hEvent);
 }
 
@@ -1366,13 +1366,13 @@ stock void AttachAnnotation(int iEntity, float fLifetime, char[] sMessage, any .
  */
 
 stock void HideAnnotation(int iEntity) {
-	Handle hEvent = CreateEvent("hide_annotation"); 
-
+	Handle hEvent = CreateEvent("hide_annotation");
+	
 	if (hEvent == INVALID_HANDLE) {
 		return;
 	}
-
-	SetEventInt(hEvent, "id", iEntity); 
+	
+	SetEventInt(hEvent, "id", iEntity);
 	FireEvent(hEvent);
 }
 
@@ -1387,9 +1387,9 @@ stock void HideAnnotation(int iEntity) {
  * @noreturn
  */
 
-stock void AttachAdvancedAnnotation(int iClient, int iEntity, float fLifetime, char[] sMessage, any ...) {
+stock void AttachAdvancedAnnotation(int iClient, int iEntity, float fLifetime, char[] sMessage, any...) {
 	Handle hEvent = CreateEvent("show_annotation");
-
+	
 	if (hEvent == INVALID_HANDLE) {
 		return;
 	}
@@ -1398,13 +1398,13 @@ stock void AttachAdvancedAnnotation(int iClient, int iEntity, float fLifetime, c
 	SetEventInt(hEvent, "id", iClient * iEntity);
 	SetEventFloat(hEvent, "lifetime", fLifetime);
 	SetEventString(hEvent, "play_sound", "misc/null.wav");
-
+	
 	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 5);
 	SetEventString(hEvent, "text", sFormattedMessage);
 	
 	SetEventInt(hEvent, "visibilityBitfield", GetVisibilityBitfield(iClient));
-
+	
 	FireEvent(hEvent);
 }
 
@@ -1417,13 +1417,13 @@ stock void AttachAdvancedAnnotation(int iClient, int iEntity, float fLifetime, c
  */
 
 stock void HideAdvancedAnnotation(int iClient, int iEntity) {
-	Handle hEvent = CreateEvent("hide_annotation"); 
-
+	Handle hEvent = CreateEvent("hide_annotation");
+	
 	if (hEvent == INVALID_HANDLE) {
 		return;
 	}
-
-	SetEventInt(hEvent, "id", iClient * iEntity); 
+	
+	SetEventInt(hEvent, "id", iClient * iEntity);
 	FireEvent(hEvent);
 }
 
@@ -1438,9 +1438,9 @@ stock void HideAdvancedAnnotation(int iClient, int iEntity) {
  * @noreturn
  */
 
-stock void ShowAnnotation(int iId, float fLocation[3], float fOffsetZ, float fLifetime, char[] sMessage, any ...) {
+stock void ShowAnnotation(int iId, float fLocation[3], float fOffsetZ, float fLifetime, char[] sMessage, any...) {
 	Handle hEvent = CreateEvent("show_annotation");
-
+	
 	if (hEvent == INVALID_HANDLE) {
 		return;
 	}
@@ -1451,11 +1451,11 @@ stock void ShowAnnotation(int iId, float fLocation[3], float fOffsetZ, float fLi
 	SetEventInt(hEvent, "id", iId);
 	SetEventFloat(hEvent, "lifetime", fLifetime);
 	SetEventString(hEvent, "play_sound", "misc/null.wav");
-
+	
 	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
 	SetEventString(hEvent, "text", sFormattedMessage);
-
+	
 	FireEvent(hEvent);
 }
 
@@ -1480,57 +1480,57 @@ stock int Abs(int iValue) {
 
 stock void GetRconPassword(char[] sBuffer, int iMaxLength) {
 	Handle hDirectory = OpenDirectory("cfg");
-
+	
 	if (hDirectory == INVALID_HANDLE) {
 		return;
 	}
-
+	
 	char sFile[PLATFORM_MAX_PATH], sPath[PLATFORM_MAX_PATH], sLine[256];
-	FileType iFileType; 
+	FileType iFileType;
 	int iChar;
 	Handle hFile;
-
+	
 	while (ReadDirEntry(hDirectory, sFile, sizeof(sFile), iFileType)) {
 		if (iFileType == FileType_File) {
 			iChar = FindCharInString(sFile, '.', true);
-
+			
 			if (iChar != -1) {
 				if (StrEqual(sFile[iChar + 1], "cfg", false)) {
 					Format(sPath, sizeof(sPath), "cfg/%s", sFile);
-
+					
 					hFile = OpenFile(sPath, "r");
 					
 					while (!IsEndOfFile(hFile) && ReadFileLine(hFile, sLine, sizeof(sLine))) {
-						if (StrContains(sLine, "//") == -1 && StrContains(sLine, "con_pa", false) != -1) { // rcon_password
+						if (StrContains(sLine, "//") == -1 && StrContains(sLine, "con_pa", false) != -1) {  // rcon_password
 							int iQuote1 = FindCharInString(sLine, '"');
 							int iQuote2 = FindCharInString(sLine, '"', true);
-
+							
 							if (iQuote1 == -1 || iQuote2 == -1) {
 								int iSpace = FindCharInString(sLine, ' ');
-
+								
 								if (iSpace != -1) {
 									if (sLine[strlen(sLine) - 1] == '\n' || sLine[strlen(sLine) - 1] == '\r') {
 										sLine[strlen(sLine) - 1] = '\0';
 									}
 								}
-
+								
 								strcopy(sBuffer, iMaxLength, sLine[iSpace + 1]);
 							} else if (iQuote1 != iQuote2) {
 								if (sLine[strlen(sLine) - 1] == '\n' || sLine[strlen(sLine) - 1] == '\r') {
 									sLine[strlen(sLine) - 2] = '\0';
 								}
-
+								
 								strcopy(sBuffer, iMaxLength, sLine[iQuote1 + 1]);
 							}
 						}
 					}
-
+					
 					CloseHandle(hFile);
 				}
 			}
 		}
 	}
-
+	
 	CloseHandle(hDirectory);
 }
 
@@ -1542,10 +1542,10 @@ stock void GetRconPassword(char[] sBuffer, int iMaxLength) {
  * @param bReloadMap 	Reload map afterwards.
  * @return				True on success, false otherwise.
  */
- 
+
 // TODO(?): Correct return type?
 
-stock void SetPassword(const char[] sPassword, bool bDatabase=true, bool bReloadMap=false) {
+stock void SetPassword(const char[] sPassword, bool bDatabase = true, bool bReloadMap = false) {
 	ServerCommand("sv_password \"%s\"", sPassword);
 	
 	if (bDatabase) {
@@ -1567,7 +1567,7 @@ stock void CreateDataMap(Handle &hMapHandle) {
 		CloseHandle(hMapHandle);
 		hMapHandle = INVALID_HANDLE;
 	}
-
+	
 	hMapHandle = CreateTrie();
 }
 
@@ -1587,8 +1587,8 @@ stock int GetHealthBar() {
 			DispatchSpawn(iHealthBar);
 		}
 	}
-
+	
 	SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 0);
-
+	
 	return iHealthBar;
-}
+} 

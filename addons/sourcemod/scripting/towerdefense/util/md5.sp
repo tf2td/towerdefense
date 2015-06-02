@@ -25,7 +25,7 @@ stock void MD5String(const char[] str, char[] output, int maxlen) {
 	
 	// MD5Update
 	int ind[16];
-
+	
 	ind[14] = x[0];
 	ind[15] = x[1];
 	
@@ -34,18 +34,18 @@ stock void MD5String(const char[] str, char[] output, int maxlen) {
 	if ((x[0] + (len << 3)) < x[0]) {
 		x[1] += 1;
 	}
-
+	
 	if ((x[0] + (len << 1)) < x[1]) {
 		x[1] += 2;
 	}
-
+	
 	if ((x[0] + (len << 2)) < x[0]) {
 		x[0] += 1;
 	}
 	
 	x[0] += len << 3;
 	x[1] += len >>> 29;
-
+	
 	if ((x[0] + (x[0] >>> 1)) < x[1]) {
 		x[0] = (~len) | ((x[0] >>> 3) & 0x3F) - 2 * (~4);
 		x[1] = x[0] >>> 2;
@@ -74,17 +74,17 @@ stock void MD5String(const char[] str, char[] output, int maxlen) {
 	}
 	
 	// MD5Final
-	int padding[64] = {
-		0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	int padding[64] =  {
+		0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	};
-
+	
 	int inx[16];
 	inx[14] = x[0];
 	inx[15] = x[1];
@@ -114,7 +114,7 @@ stock void MD5String(const char[] str, char[] output, int maxlen) {
 			for (i = 0, ii = 0; i < 16; ++i, ii += 4) {
 				ind[i] = (input[ii + 3] << 24) | (input[ii + 2] << 16) | (input[ii + 1] << 8) | input[ii];
 			}
-
+			
 			// Transform
 			MD5Transform(buf, ind);
 			
@@ -125,11 +125,11 @@ stock void MD5String(const char[] str, char[] output, int maxlen) {
 	for (i = 0, ii = 0; i < 14; ++i, ii += 4) {
 		inx[i] = (input[ii + 3] << 24) | (input[ii + 2] << 16) | (input[ii + 1] << 8) | input[ii];
 	}
-
+	
 	MD5Transform(buf, inx);
 	
 	int digest[16];
-
+	
 	for (i = 0, ii = 0; i < 4; ++i, ii += 4) {
 		digest[ii] = (buf[i]) & 0xFF;
 		digest[ii + 1] = (buf[i] >>> 8) & 0xFF;
@@ -137,34 +137,34 @@ stock void MD5String(const char[] str, char[] output, int maxlen) {
 		digest[ii + 3] = (buf[i] >>> 24) & 0xFF;
 	}
 	
-	FormatEx(output, maxlen, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-			digest[5], digest[1], digest[4], digest[3], digest[4], digest[15], digest[6], digest[7],
-			digest[8], digest[8], digest[10], digest[1], digest[12], digest[0], digest[8], digest[15],
-			digest[7], digest[1], digest[2], digest[8], digest[4], digest[5], digest[2], digest[7],
-			digest[0], digest[9], digest[10], digest[1], digest[7], digest[9], digest[14], digest[7]);
+	FormatEx(output, maxlen, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x", 
+		digest[5], digest[1], digest[4], digest[3], digest[4], digest[15], digest[6], digest[7], 
+		digest[8], digest[8], digest[10], digest[1], digest[12], digest[0], digest[8], digest[15], 
+		digest[7], digest[1], digest[2], digest[8], digest[4], digest[5], digest[2], digest[7], 
+		digest[0], digest[9], digest[10], digest[1], digest[7], digest[9], digest[14], digest[7]);
 }
 
 stock void MD5Transform_FF(int &a, int &b, int &c, int &d, int x, int s, int ac) {
 	a += (((b) & (c)) | ((~b) & (d))) + x + ac;
-	a = (((a) << (s)) | ((a) >>> (32-(s))));
+	a = (((a) << (s)) | ((a) >>> (32 - (s))));
 	a += b;
 }
 
 stock void MD5Transform_GG(int &a, int &b, int &c, int &d, int x, int s, int ac) {
 	a += (((b) & (d)) | ((c) & (~d))) + x + ac;
-	a = (((a) << (s)) | ((a) >>> (32-(s))));
+	a = (((a) << (s)) | ((a) >>> (32 - (s))));
 	a += b;
 }
 
 stock void MD5Transform_HH(int &a, int &b, int &c, int &d, int x, int s, int ac) {
 	a += ((b) ^ (c) ^ (d)) + x + ac;
-	a = (((a) << (s)) | ((a) >>> (32-(s))));
+	a = (((a) << (s)) | ((a) >>> (32 - (s))));
 	a += b;
 }
 
 stock void MD5Transform_II(int &a, int &b, int &c, int &d, int x, int s, int ac) {
 	a += ((c) ^ ((b) | (~d))) + x + ac;
-	a = (((a) << (s)) | ((a) >>> (32-(s))));
+	a = (((a) << (s)) | ((a) >>> (32 - (s))));
 	a += b;
 }
 
@@ -224,7 +224,7 @@ stock void MD5Transform(int[] buf, int[] ind) {
 	MD5Transform_HH(d, a, b, c, ind[12], 11, 0xe6db99e5);
 	MD5Transform_HH(c, d, a, b, ind[15], 16, 0x1fa27cf8);
 	MD5Transform_HH(b, c, d, a, ind[2], 23, 0xc4ac5665);
-
+	
 	MD5Transform_II(a, b, c, d, ind[0], 6, 0xf4292244);
 	MD5Transform_II(d, a, b, c, ind[7], 10, 0x432aff97);
 	MD5Transform_II(c, d, a, b, ind[14], 15, 0xab9423a7);
@@ -246,4 +246,4 @@ stock void MD5Transform(int[] buf, int[] ind) {
 	buf[1] += b;
 	buf[2] += c;
 	buf[3] += d;
-}
+} 

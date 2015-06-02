@@ -24,7 +24,7 @@
 stock bool Weapon_GetName(int iWeaponId, char[] sBuffer, int iMaxLength) {
 	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_name", iWeaponId);
-
+	
 	return GetTrieString(g_hMapWeapons, sKey, sBuffer, iMaxLength);
 }
 
@@ -43,7 +43,7 @@ stock int Weapon_GetIndex(int iWeaponId) {
 	if (!GetTrieValue(g_hMapWeapons, sKey, iIndex)) {
 		return -1;
 	}
-
+	
 	return iIndex;
 }
 
@@ -62,7 +62,7 @@ stock int Weapon_GetSlot(int iWeaponId) {
 	if (!GetTrieValue(g_hMapWeapons, sKey, iSlot)) {
 		return -1;
 	}
-
+	
 	return iSlot;
 }
 
@@ -81,7 +81,7 @@ stock int Weapon_GetLevel(int iWeaponId) {
 	if (!GetTrieValue(g_hMapWeapons, sKey, iLevel)) {
 		return -1;
 	}
-
+	
 	return iLevel;
 }
 
@@ -100,7 +100,7 @@ stock int Weapon_GetQuality(int iWeaponId) {
 	if (!GetTrieValue(g_hMapWeapons, sKey, iQuality)) {
 		return -1;
 	}
-
+	
 	return iQuality;
 }
 
@@ -116,7 +116,7 @@ stock int Weapon_GetQuality(int iWeaponId) {
 stock bool Weapon_GetClassname(int iWeaponId, char[] sBuffer, int iMaxLength) {
 	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_classname", iWeaponId);
-
+	
 	return GetTrieString(g_hMapWeapons, sKey, sBuffer, iMaxLength);
 }
 
@@ -132,26 +132,26 @@ stock bool Weapon_GetClassname(int iWeaponId, char[] sBuffer, int iMaxLength) {
 stock int Weapon_GetAttributes(int iWeaponId, int iAttributes[16], float iValues[16]) {
 	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_attributes", iWeaponId);
-
+	
 	char sAttributes[256];
 	if (GetTrieString(g_hMapWeapons, sKey, sAttributes, sizeof(sAttributes))) {
 		char sAttributeParts[32][6];
 		int iCount = ExplodeString(sAttributes, ";", sAttributeParts, sizeof(sAttributeParts), sizeof(sAttributeParts[]));
-
+		
 		if (iCount % 2 != 0) {
 			Log(TDLogLevel_Error, "Failed to parse weapon attributes for weapon id %d (some attribute has no value)", iWeaponId);
 			return 0;
 		}
-
+		
 		int iAttributeCount = 0;
-
-		for (int i = 0; i < iCount && iAttributeCount < 16; i += 2){
+		
+		for (int i = 0; i < iCount && iAttributeCount < 16; i += 2) {
 			iAttributes[iAttributeCount] = StringToInt(sAttributeParts[i]);
 			iValues[iAttributeCount] = StringToFloat(sAttributeParts[i + 1]);
-
+			
 			iAttributeCount++;
 		}
-
+		
 		return iAttributeCount;
 	}
 	
@@ -168,11 +168,11 @@ stock int Weapon_GetAttributes(int iWeaponId, int iAttributes[16], float iValues
 stock bool Weapon_GetPreserveAttributes(int iWeaponId) {
 	char sKey[32];
 	Format(sKey, sizeof(sKey), "%d_preserve_attributes", iWeaponId);
-
+	
 	int iPreserve = 0;
 	if (!GetTrieValue(g_hMapWeapons, sKey, iPreserve)) {
 		return false;
 	}
-
+	
 	return (iPreserve != 0);
-}
+} 

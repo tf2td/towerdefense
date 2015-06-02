@@ -10,7 +10,7 @@
 
 stock void Updater_Download(const char[] sUrl, const char[] sDestination) {
 	char sUrlPrefixed[256];
-
+	
 	// Prefix url
 	if (strncmp(sUrl, "http://", 7) != 0 && strncmp(sUrl, "https://", 8) != 0) {
 		Format(sUrlPrefixed, sizeof(sUrlPrefixed), "http://%s", sUrl);
@@ -25,7 +25,7 @@ stock void Updater_Download(const char[] sUrl, const char[] sDestination) {
 	
 	Handle hFile = OpenFile(sDestination, "wb");
 	
-	if (hFile == INVALID_HANDLE){
+	if (hFile == INVALID_HANDLE) {
 		Updater_DownloadEnded(false, "Error writing to file.");
 		return;
 	}
@@ -35,15 +35,15 @@ stock void Updater_Download(const char[] sUrl, const char[] sDestination) {
 	char sLocation[128];
 	char sFilename[64];
 	char sRequest[512];
-
+	
 	ParseURL(sUrlPrefixed, sHostname, sizeof(sHostname), sLocation, sizeof(sLocation), sFilename, sizeof(sFilename));
 	Format(sRequest, sizeof(sRequest), "GET %s/%s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\nPragma: no-cache\r\nCache-Control: no-cache\r\n\r\n", sLocation, sFilename, sHostname);
-
+	
 	Handle hPack = CreateDataPack();
-	WritePackCell(hPack, 0);						// 0 - bParsedHeader
-	WritePackCell(hPack, 0);						// 8 - iRedirects
-	WritePackCell(hPack, view_as<int>(hFile));		// 16
-	WritePackString(hPack, sRequest);				// 24
+	WritePackCell(hPack, 0);					// 0 - bParsedHeader
+	WritePackCell(hPack, 0);					// 8 - iRedirects
+	WritePackCell(hPack, view_as<int>(hFile));	// 16
+	WritePackString(hPack, sRequest);			// 24
 	
 	Handle hSocket = SocketCreate(SOCKET_TCP, OnSocketError);
 	SocketSetArg(hSocket, hPack);
@@ -53,7 +53,7 @@ stock void Updater_Download(const char[] sUrl, const char[] sDestination) {
 
 public void OnSocketConnected(Handle hSocket, any hPack) {
 	char sRequest[512];
-
+	
 	SetPackPosition(hPack, 24);
 	ReadPackString(hPack, sRequest, sizeof(sRequest));
 	
@@ -86,22 +86,22 @@ public void OnSocketReceive(Handle hSocket, char[] sData, const int iSize, any h
 						SetPackPosition(hPack, 8);
 						WritePackCell(hPack, iRedirects);
 					}
-				
+					
 					// Skip to url
 					iIndex2 += 11;
-
+					
 					char sUrl[256];
 					char sUrlPrefixed[256];
-
+					
 					strcopy(sUrl, (FindCharInString(sData[iIndex2], '\r') + 1), sData[iIndex2]);
-
+					
 					// Prefix url
 					if (strncmp(sUrl, "http://", 7) != 0 && strncmp(sUrl, "https://", 8) != 0) {
 						Format(sUrlPrefixed, sizeof(sUrlPrefixed), "http://%s", sUrl);
 					} else {
 						strcopy(sUrlPrefixed, sizeof(sUrlPrefixed), sUrl);
 					}
-
+					
 					if (strncmp(sUrlPrefixed, "https://", 8) == 0) {
 						CloseSocketHandles(hSocket, hPack);
 						Updater_DownloadEnded(false, "Socket does not support HTTPs.");
@@ -111,7 +111,7 @@ public void OnSocketReceive(Handle hSocket, char[] sData, const int iSize, any h
 					char sHostname[64], sLocation[128], sFilename[64], sRequest[512];
 					ParseURL(sUrlPrefixed, sHostname, sizeof(sHostname), sLocation, sizeof(sLocation), sFilename, sizeof(sFilename));
 					Format(sRequest, sizeof(sRequest), "GET %s/%s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\nPragma: no-cache\r\nCache-Control: no-cache\r\n\r\n", sLocation, sFilename, sHostname);
-
+					
 					SetPackPosition(hPack, 24); // sRequest
 					WritePackString(hPack, sRequest);
 					
@@ -123,14 +123,14 @@ public void OnSocketReceive(Handle hSocket, char[] sData, const int iSize, any h
 					CloseHandle(hSocket);
 					return;
 				}
-
+				
 				// Check HTTP status code
 				char sStatusCode[64];
 				strcopy(sStatusCode, (FindCharInString(sData, '\r') - 8), sData[9]);
 				
 				if (strncmp(sStatusCode, "200", 3) != 0) {
 					CloseSocketHandles(hSocket, hPack);
-				
+					
 					char sError[256];
 					Format(sError, sizeof(sError), "Socket error: %s", sStatusCode);
 					Updater_DownloadEnded(false, sError);
@@ -162,7 +162,7 @@ public void OnSocketDisconnected(Handle hSocket, any hPack) {
 
 public void OnSocketError(Handle hSocket, const int iErrorType, const int iErrorNum, any hPack) {
 	CloseSocketHandles(hSocket, hPack);
-
+	
 	char sError[256];
 	Format(sError, sizeof(sError), "Socket error: %d (Error code %d)", hPack, iErrorNum);
 	Updater_DownloadEnded(false, sError);
@@ -178,7 +178,7 @@ stock void CloseSocketHandles(Handle hSocket, Handle hPack) {
 stock void Updater_DownloadEnded(bool bSuccessful, const char sError[] = "") {
 	if (bSuccessful) {
 		Log(TDLogLevel_Info, "Successfully updated the plugin");
-
+		
 		if (Database_UpdatedServer()) {
 			char sFile[PLATFORM_MAX_PATH];
 			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
@@ -209,4 +209,4 @@ stock void ParseURL(const char[] sUrl, char[] sHost, int iMaxLengthHost, char[] 
 	
 	// Filename
 	Format(sFilename, iMaxLengthFilename, "%s", sDirs[iTotalDirs - 1]);
-}
+} 

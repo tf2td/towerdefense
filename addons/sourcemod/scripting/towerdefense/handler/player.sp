@@ -27,9 +27,9 @@ stock void Player_ServerInitializing(int iUserId, int iClient) {
 		TF2_AddCondition(iClient, TFCond_RestrictToMelee);
 		SetEntPropEnt(iClient, Prop_Send, "m_hActiveWeapon", GetPlayerWeaponSlot(iClient, TFWeaponSlot_Melee));
 	}
-
+	
 	SetEntityMoveType(iClient, MOVETYPE_NONE);
-
+	
 	PrintToHud(iClient, "INITIALIZING GAME, PLEASE WAIT A MOMENT ...");
 }
 
@@ -44,12 +44,12 @@ stock void Player_ServerInitializing(int iUserId, int iClient) {
 stock void Player_ServerInitialized(int iUserId, int iClient) {
 	char sCommunityId[32];
 	Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sCommunityId, sizeof(sCommunityId));
-
+	
 	TF2_RemoveCondition(iClient, TFCond_RestrictToMelee);
 	SetEntityMoveType(iClient, MOVETYPE_WALK);
-
+	
 	Player_SyncDatabase(iUserId, iClient, sCommunityId);
-
+	
 	Log(TDLogLevel_Debug, "Successfully initialized player %N (%s)", iClient, sCommunityId);
 }
 
@@ -80,33 +80,33 @@ stock void Player_SyncDatabase(int iUserId, int iClient, const char[] sCommunity
 
 stock void Player_Connected(int iUserId, int iClient, const char[] sName, const char[] sSteamId, const char[] sCommunityId, const char[] sIp) {
 	Log(TDLogLevel_Debug, "Player connected (UserId=%d, Client=%d, Name=%s, SteamId=%s, CommunityId=%s, Address=%s)", iUserId, iClient, sName, sSteamId, sCommunityId, sIp);
-
+	
 	if (!StrEqual(sSteamId, "BOT")) {
 		if (GetRealClientCount() > PLAYER_LIMIT) {
 			KickClient(iClient, "Maximum number of players has been reached (%d/%d)", GetRealClientCount() - 1, PLAYER_LIMIT);
 			Log(TDLogLevel_Info, "Kicked player (%N, %s) (Maximum players reached: %d/%d)", iClient, sSteamId, GetRealClientCount() - 1, PLAYER_LIMIT);
 			return;
 		}
-
+		
 		Log(TDLogLevel_Info, "Connected clients: %d/%d", GetRealClientCount(), PLAYER_LIMIT);
-
+		
 		Player_USetString(iUserId, PLAYER_STEAM_ID, sSteamId);
 		Player_USetString(iUserId, PLAYER_COMMUNITY_ID, sCommunityId);
 		Player_USetString(iUserId, PLAYER_IP_ADDRESS, sIp);
-
+		
 		SDKHook(iClient, SDKHook_OnTakeDamage, OnTakeDamage);
 		SDKHook(iClient, SDKHook_OnTakeDamagePost, OnTakeDamagePost);
-
+		
 		g_bCarryingObject[iClient] = false;
 		g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
 		g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
 		g_bReplaceWeapon[iClient][TFWeaponSlot_Melee] = false;
-
+		
 		g_iAttachedTower[iClient] = 0;
-
+		
 		ChangeClientTeam(iClient, TEAM_DEFENDER);
 		TF2_SetPlayerClass(iClient, TFClass_Engineer, false, true);
-
+		
 		Log(TDLogLevel_Debug, "Moved player %N to the Defenders team as Engineer", iClient);
 	}
 }
@@ -121,8 +121,8 @@ stock void Player_Connected(int iUserId, int iClient, const char[] sName, const 
 
 stock void Player_OnDisconnectPre(int iUserId, int iClient) {
 	Database_UpdatePlayerDisconnect(iUserId);
-
-	if (GetRealClientCount(true) <= 1) { // the disconnected player is counted (thus 1 not 0)
+	
+	if (GetRealClientCount(true) <= 1) {  // the disconnected player is counted (thus 1 not 0)
 		SetPassword(SERVER_PASS, true, true);
 	}
 }
@@ -138,9 +138,9 @@ stock void Player_OnDisconnectPre(int iUserId, int iClient) {
 stock void Player_Loaded(int iUserId, int iClient) {
 	char sCommunityId[32];
 	Player_CGetString(iClient, PLAYER_COMMUNITY_ID, sCommunityId, sizeof(sCommunityId));
-
+	
 	Log(TDLogLevel_Debug, "Player loaded (UserId=%d, Client=%d, CommunityId=%s)", iUserId, iClient, sCommunityId);
-
+	
 	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
 		CreateTimer(1.0, InitInfoTimer, iUserId, TIMER_FLAG_NO_MAPCHANGE);
 	}
@@ -151,9 +151,9 @@ public Action InitInfoTimer(Handle hTimer, any iUserId) {
 		Player_ServerInitialized(iUserId, GetClientOfUserId(iUserId));
 		return Plugin_Stop;
 	}
-
+	
 	Player_ServerInitializing(iUserId, GetClientOfUserId(iUserId));
-
+	
 	CreateTimer(1.0, InitInfoTimer, iUserId, TIMER_FLAG_NO_MAPCHANGE);
 	return Plugin_Stop;
 }
@@ -169,16 +169,16 @@ public Action InitInfoTimer(Handle hTimer, any iUserId) {
 stock void Player_OnSpawn(int iUserId, int iClient) {
 	ResetClientMetal(iClient);
 	SetEntProp(iClient, Prop_Data, "m_bloodColor", view_as<int>(TDBlood_None));
-
+	
 	if (g_bReplaceWeapon[iClient][TFWeaponSlot_Primary]) {
-		TF2Items_GiveWeapon(iClient, 9, TFWeaponSlot_Primary, 5, 1, true, "tf_weapon_shotgun_primary", "");	
+		TF2Items_GiveWeapon(iClient, 9, TFWeaponSlot_Primary, 5, 1, true, "tf_weapon_shotgun_primary", "");
 		
 		g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
 	}
-
+	
 	if (g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary]) {
 		TF2Items_GiveWeapon(iClient, 22, TFWeaponSlot_Secondary, 5, 1, true, "tf_weapon_pistol", "");
-			
+		
 		g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
 	}
 }
@@ -196,7 +196,7 @@ stock void Player_OnDeath(int iUserId, int iClient) {
 	g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
 	g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
 	g_bReplaceWeapon[iClient][TFWeaponSlot_Melee] = false;
-
+	
 	if (IsTower(g_iAttachedTower[iClient])) {
 		Tower_OnCarrierDeath(g_iAttachedTower[iClient], iClient);
 	}
@@ -221,15 +221,15 @@ stock void Player_OnDataSet(int iUserId, int iClient, const char[] sKey, TDDataT
 		case TDDataType_Integer: {
 			Log(TDLogLevel_Trace, "Player_OnDataSet: iUserId=%d, iClient=%d, sKey=%s, iDataType=TDDataType_Integer, iValue=%d", iUserId, iClient, sKey, iValue);
 		}
-
+		
 		case TDDataType_Boolean: {
 			Log(TDLogLevel_Trace, "Player_OnDataSet: iUserId=%d, iClient=%d, sKey=%s, iDataType=TDDataType_Boolean, bValue=%s", iUserId, iClient, sKey, (bValue ? "true" : "false"));
 		}
-
+		
 		case TDDataType_Float: {
 			Log(TDLogLevel_Trace, "Player_OnDataSet: iUserId=%d, iClient=%d, sKey=%s, iDataType=TDDataType_Float, fValue=%f", iUserId, iClient, sKey, fValue);
 		}
-
+		
 		case TDDataType_String: {
 			Log(TDLogLevel_Trace, "Player_OnDataSet: iUserId=%d, iClient=%d, sKey=%s, iDataType=TDDataType_String, sValue=%s", iUserId, iClient, sKey, sValue);
 		}
@@ -243,9 +243,9 @@ stock bool CheckClientForUserId(int iClient) {
 stock void Player_USetValue(int iUserId, const char[] sKey, int iValue) {
 	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
-
+	
 	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_Integer, iValue, false, -1.0, "");
-
+	
 	SetTrieValue(g_hPlayerData, sUserIdKey, iValue);
 }
 
@@ -258,14 +258,14 @@ stock void Player_CSetValue(int iClient, const char[] sKey, int iValue) {
 stock bool Player_UGetValue(int iUserId, const char[] sKey, int &iValue) {
 	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
-
+	
 	Log(TDLogLevel_Trace, "Player_UGetValue: iUserId=%d, sKey=%s", iUserId, sKey);
 	
 	if (!GetTrieValue(g_hPlayerData, sUserIdKey, iValue)) {
 		iValue = -1;
 		return false;
 	}
-
+	
 	return true;
 }
 
@@ -276,9 +276,9 @@ stock bool Player_CGetValue(int iClient, const char[] sKey, int &iValue) {
 stock void Player_USetBool(int iUserId, const char[] sKey, bool bValue) {
 	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
-
+	
 	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_Integer, -1, bValue, -1.0, "");
-
+	
 	SetTrieValue(g_hPlayerData, sUserIdKey, (bValue ? 1 : 0));
 }
 
@@ -291,12 +291,12 @@ stock void Player_CSetBool(int iClient, const char[] sKey, bool bValue) {
 stock bool Player_UGetBool(int iUserId, const char[] sKey) {
 	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
-
+	
 	Log(TDLogLevel_Trace, "Player_UGetBool: iUserId=%d, sKey=%s", iUserId, sKey);
 	
 	int iValue = 0;
 	GetTrieValue(g_hPlayerData, sUserIdKey, iValue);
-
+	
 	return (iValue != 0);
 }
 
@@ -307,12 +307,12 @@ stock bool Player_CGetBool(int iClient, const char[] sKey) {
 stock void Player_USetFloat(int iUserId, const char[] sKey, float fValue) {
 	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
-
+	
 	char sValue[64];
 	FloatToString(fValue, sValue, sizeof(sValue))
-
+	
 	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_Integer, -1, false, fValue, "");
-
+	
 	SetTrieString(g_hPlayerData, sUserIdKey, sValue);
 }
 
@@ -325,15 +325,15 @@ stock void Player_CSetFloat(int iClient, const char[] sKey, float fValue) {
 stock bool Player_UGetFloat(int iUserId, const char[] sKey, float &fValue) {
 	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
-
+	
 	Log(TDLogLevel_Trace, "Player_UGetFloat: iUserId=%d, sKey=%s", iUserId, sKey);
-
+	
 	char sValue[64];
 	if (!GetTrieString(g_hPlayerData, sUserIdKey, sValue, sizeof(sValue))) {
 		fValue = -1.0;
 		return false;
 	}
-
+	
 	fValue = StringToFloat(sValue);
 	return true;
 }
@@ -342,23 +342,23 @@ stock bool Player_CGetFloat(int iClient, const char[] sKey, float &fValue) {
 	return CheckClientForUserId(iClient) && Player_UGetFloat(GetClientUserId(iClient), sKey, fValue);
 }
 
-stock bool Player_USetString(int iUserId, const char[] sKey, const char[] sValue, any ...) {
+stock bool Player_USetString(int iUserId, const char[] sKey, const char[] sValue, any...) {
 	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
-
+	
 	char sFormattedValue[256];
 	VFormat(sFormattedValue, sizeof(sFormattedValue), sValue, 4);
-
+	
 	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_String, -1, false, -1.0, sValue);
-
+	
 	SetTrieString(g_hPlayerData, sUserIdKey, sFormattedValue);
 }
 
-stock void Player_CSetString(int iClient, const char[] sKey, const char[] sValue, any ...) {
+stock void Player_CSetString(int iClient, const char[] sKey, const char[] sValue, any...) {
 	if (CheckClientForUserId(iClient)) {
 		char sFormattedValue[256];
 		VFormat(sFormattedValue, sizeof(sFormattedValue), sValue, 4);
-
+		
 		Player_USetString(GetClientUserId(iClient), sKey, sFormattedValue);
 	}
 }
@@ -366,14 +366,14 @@ stock void Player_CSetString(int iClient, const char[] sKey, const char[] sValue
 stock bool Player_UGetString(int iUserId, const char[] sKey, char[] sValue, int iMaxLength) {
 	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
-
+	
 	Log(TDLogLevel_Trace, "Player_UGetString: iUserId=%d, sKey=%s, iMaxLength=%d", iUserId, sKey, iMaxLength);
-
+	
 	if (!GetTrieString(g_hPlayerData, sUserIdKey, sValue, iMaxLength)) {
 		Format(sValue, iMaxLength, "");
 		return false;
 	}
-
+	
 	return true;
 }
 

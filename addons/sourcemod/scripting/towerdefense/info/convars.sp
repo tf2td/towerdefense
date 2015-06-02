@@ -9,10 +9,10 @@
 #endif
 
 stock void LoadConVars() {
-	CreateConVar("towerdefense_version", PLUGIN_VERSION, "Tower Defense Version", FCVAR_PLUGIN|FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
-
-	g_hEnabled = CreateConVar("td_enabled", "1", "Enables/disables Tower Defense", FCVAR_PLUGIN|FCVAR_DONTRECORD);
-
+	CreateConVar("towerdefense_version", PLUGIN_VERSION, "Tower Defense Version", FCVAR_PLUGIN | FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
+	
+	g_hEnabled = CreateConVar("td_enabled", "1", "Enables/disables Tower Defense", FCVAR_PLUGIN | FCVAR_DONTRECORD);
+	
 	HookConVarChange(g_hEnabled, OnConVarChanged);
 }
 
@@ -38,10 +38,10 @@ public void OnConVarChanged(Handle hConVar, const char[] sOldValue, const char[]
 		if (GetConVarBool(g_hEnabled)) {
 			if (!g_bEnabled) {
 				bool bEnabled = IsTowerDefenseMap();
-
+				
 				if (bEnabled) {
 					// Basically do the same as in OnConfigsExecuted().
-
+					
 					g_bEnabled = true;
 					UpdateGameDescription();
 				}
@@ -49,10 +49,10 @@ public void OnConVarChanged(Handle hConVar, const char[] sOldValue, const char[]
 		} else {
 			if (g_bEnabled) {
 				// Basically do the same as in OnMapEnd().
-
+				
 				g_bEnabled = false;
 				UpdateGameDescription();
 			}
 		}
 	}
-}
+} 
