@@ -37,36 +37,38 @@ stock void RegisterCommands() {
 =            Test Commands            =
 =====================================*/
 
-public Action Command_GiveMetal(int iClient, int iArgs) {
+public Action Command_GiveMetal(int iClient, any iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
 	
-	char sTarget[MAX_NAME_LENGTH], sMetal[16];
+	char sMetal[16], arg[65], target_name[MAX_TARGET_LENGTH];
+	int target_list[MAXPLAYERS], target_count;
+	bool tn_is_ml;
 	
-	if (iArgs != 2) {
-		PrintToChat(iClient, "Usage: !gm <player|@me|@all> <metal>");
-		
+	if (iArgs < 2) {
+		ReplyToCommand(iClient, "[SM] Usage: sm_gm <#userid|name> <metal>");
 		return Plugin_Handled;
 	}
 	
-	GetCmdArg(1, sTarget, sizeof(sTarget));
+	GetCmdArg(1, arg, sizeof(arg));
 	GetCmdArg(2, sMetal, sizeof(sMetal));
 	
-	if (StrEqual(sTarget, "@me")) {
-		AddClientMetal(iClient, StringToInt(sMetal));
-	} else if (StrEqual(sTarget, "@all")) {
-		for (int i = 1; i <= MaxClients; i++) {
-			if (IsClientInGame(i) && !IsFakeClient(i)) {
-				AddClientMetal(i, StringToInt(sMetal));
-			}
-		}
-	} else {
-		if (IsValidClient(GetClientByName(iClient, sTarget)) && IsClientInGame(GetClientByName(iClient, sTarget))) {
-			int iTarget = GetClientByName(iClient, sTarget);
-			
-			AddClientMetal(iTarget, StringToInt(sMetal));
-		}
+	if ((target_count = ProcessTargetString(
+			arg,
+			iClient,
+			target_list,
+			MAXPLAYERS,
+			COMMAND_FILTER_ALIVE | COMMAND_FILTER_NO_BOTS | COMMAND_FILTER_CONNECTED,
+			target_name,
+			sizeof(target_name),
+			tn_is_ml)) <= 0) {
+		ReplyToCommand(iClient, "[SM] Player not found");
+		return Plugin_Handled;
+	}
+	
+	for (int i = 0; i < target_count; i++) {
+		AddClientMetal(target_list[i], StringToInt(sMetal));
 	}
 	
 	return Plugin_Handled;
@@ -201,30 +203,29 @@ public Action Command_DropMetal(int iClient, int iArgs) {
 	int iMetal;
 	
 	if (!IsStringNumeric(sMetal)) {
-		Forbid(iClient, true, "Drop letters? Ahhh... nope.");
+		Forbid(iClient, true, "Invalid input");
 		return Plugin_Handled;
 	} else {
 		iMetal = StringToInt(sMetal);
 	}
 	
 	if (iMetal <= 0) {
-		Forbid(iClient, true, "Drop at least 1 metal, ok?");
-		return Plugin_Handled;
-	}
-	
-	if (iMetal > GetClientMetal(iClient)) {
-		Forbid(iClient, true, "You can't drop more metal than you have!");
+		Forbid(iClient, true, "You must drop at least 1 metal");
 		return Plugin_Handled;
 	}
 	
 	if (!IsPlayerAlive(iClient)) {
-		Forbid(iClient, true, "You're dead, you can't drop anything now!");
+		Forbid(iClient, true, "Cannot drop metal while dead");
 		return Plugin_Handled;
 	}
 	
 	if (!(GetEntityFlags(iClient) & FL_ONGROUND)) {
-		Forbid(iClient, true, "Drop something in midair? Nope.");
+		Forbid(iClient, true, "Cannot drop metal while in the air");
 		return Plugin_Handled;
+	}
+	
+	if (iMetal > GetClientMetal(iClient)) {
+		iMetal = GetClientMetal(iClient);
 	}
 	
 	float fLocation[3], fAngles[3];
@@ -238,13 +239,13 @@ public Action Command_DropMetal(int iClient, int iArgs) {
 	
 	switch (SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal)) {
 		case TDMetalPack_InvalidMetal: {
-			Forbid(iClient, true, "Drop at least 1 metal, ok?");
+			Forbid(iClient, true, "You must drop at least 1 metal");
 		}
 		case TDMetalPack_LimitReached: {
 			Forbid(iClient, true, "Metalpack limit reached, pick some metalpacks up!");
 		}
 		case TDMetalPack_InvalidType: {
-			Forbid(iClient, true, "Couldn't drop metal.");
+			Forbid(iClient, true, "Unable to drop metal");
 		}
 		case TDMetalPack_SpawnedPack: {
 			AddClientMetal(iClient, -iMetal);
