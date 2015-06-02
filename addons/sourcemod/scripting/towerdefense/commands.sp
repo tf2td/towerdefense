@@ -55,14 +55,14 @@ public Action Command_GiveMetal(int iClient, any iArgs) {
 	GetCmdArg(2, sMetal, sizeof(sMetal));
 	
 	if ((target_count = ProcessTargetString(
-			arg,
-			iClient,
-			target_list,
-			MAXPLAYERS,
-			COMMAND_FILTER_ALIVE | COMMAND_FILTER_NO_BOTS | COMMAND_FILTER_CONNECTED,
-			target_name,
-			sizeof(target_name),
-			tn_is_ml)) <= 0) {
+				arg, 
+				iClient, 
+				target_list, 
+				MAXPLAYERS, 
+				COMMAND_FILTER_ALIVE | COMMAND_FILTER_NO_BOTS | COMMAND_FILTER_CONNECTED, 
+				target_name, 
+				sizeof(target_name), 
+				tn_is_ml)) <= 0) {
 		ReplyToCommand(iClient, "[SM] Player not found");
 		return Plugin_Handled;
 	}

@@ -96,8 +96,8 @@ public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iMax
 		return APLRes_Failure;
 	}
 	
-	if (SQL_CheckConfig("towerdefense")) 
-		g_hDatabase = SQL_Connect("towerdefense", true, sError, iMaxLength);	
+	if (SQL_CheckConfig("towerdefense"))
+		g_hDatabase = SQL_Connect("towerdefense", true, sError, iMaxLength);
 	else {
 		// TODO(hurp): Flatfile server cfgs
 		Format(sError, iMaxLength, "Unable to read database info from file");
