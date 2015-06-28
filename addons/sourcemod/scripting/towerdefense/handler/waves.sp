@@ -144,10 +144,13 @@ stock void Wave_OnTakeDamagePost(int iVictim, int iAttacker, int iInflictor, flo
  * @noreturn
  */
 
-stock void Wave_OnDeath(int iAttacker) {
+stock void Wave_OnDeath(int iAttacker, float[3] fPosition) {
 	if (!g_bEnabled) {
 		return;
 	}
+	
+	// TODO(hurp): Customize metal ammount based off the wave in config files
+	SpawnRewardPack(TDMetalPack_Small, fPosition, 100);
 	
 	CreateTimer(1.0, Delay_KickAttacker, iAttacker, TIMER_FLAG_NO_MAPCHANGE);
 	

@@ -493,7 +493,7 @@ public int OnEntityCreated(int iEntity, const char[] sClassname) {
 public void OnWeaponSpawned(int iEntity) {
 	int iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
 	
-	if (IsDefender(iOwner)) {
+	if (IsDefender(iOwner) || IsAttacker(iOwner)) {
 		AcceptEntityInput(iEntity, "Kill");
 	}
 	

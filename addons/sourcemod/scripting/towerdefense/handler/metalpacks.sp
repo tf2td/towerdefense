@@ -9,7 +9,7 @@
 #endif
 
 /**
- * Spawns all metalpacks (except the boss metalpack).
+ * Spawns all metalpacks (except the boss and reward metalpack).
  *
  * @param iMetalPackType	The metal pack type.
  * @return					True on success, false otherwiseherwise.
@@ -61,6 +61,23 @@ stock bool SpawnMetalPacks(TDMetalPackType iMetalPackType) {
 	
 	return false;
 }
+
+/**
+ * Spawns reward metal pack.
+ *
+ * @param iMetalPackType	The type of metal pack.
+ * @param fLocation			The location to place the metal pack.
+ * @param iMetal			The ammount of metal to spawn.
+ * @noreturn
+ */
+
+stock void SpawnRewardPack(TDMetalPackSpawnType iMetalPackType, float[3] fLocation, int iMetal) {
+	int iEntity;
+	SpawnMetalPack2(iMetalPackType, fLocation, iMetal, iEntity);
+	// TODO(hurp): Figure out how to add glow to the packs. This method doesn't appear to work.
+	//SetEntProp(iEntity, Prop_Send, "m_bGlowEnabled", 0);
+}
+
 
 /*======================================
 =            Data Functions            =

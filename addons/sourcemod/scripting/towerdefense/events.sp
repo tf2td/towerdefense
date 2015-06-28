@@ -111,7 +111,12 @@ public void Event_PlayerDeath(Handle hEvent, const char[] sName, bool bDontBroad
 	if (IsDefender(iClient)) {
 		Player_OnDeath(iUserId, iClient);
 	} else if (IsAttacker(iClient)) {
-		Wave_OnDeath(iClient);
+		int entity = GetEventInt(hEvent, "victim_entindex");
+		
+		float position[3];
+		GetEntPropVector(entity, Prop_Send, "m_vecOrigin", position);
+		
+		Wave_OnDeath(iClient, position);
 	}
 }
 
