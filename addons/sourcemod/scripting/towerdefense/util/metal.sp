@@ -96,7 +96,7 @@ stock TDMetalPackReturn SpawnMetalPack(TDMetalPackSpawnType iMetalPackSpawnType,
  * @return						A TDMetalPackReturn value.
  */
 
-stock TDMetalPackReturn SpawnMetalPack2(TDMetalPackSpawnType iMetalPackSpawnType, float[3] fLocation, int iMetal, int &iEntity) {
+stock TDMetalPackReturn SpawnMetalPack2(TDMetalPackSpawnType iMetalPackSpawnType, float fLocation[3], int iMetal, int &iEntity) {
 	Log(TDLogLevel_Trace, "SpawnMetalPack2: iMetalPackSpawnType=%d, fLocation=[%f, %f, %f], iMetal=%d", iMetalPackSpawnType, fLocation[0], fLocation[1], fLocation[2], iMetal);
 	
 	if (iMetal <= 0) {
