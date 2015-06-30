@@ -308,7 +308,6 @@ public Action Command_BonusMetal(int iClient, any iArgs) {
 	}
 	SpawnMetalPacksNumber(TDMetalPack_Start, 4);
 	
-	PrintToChatAll("\x04[\x03TD\x04]\x04 1800\x03 metal has been spawned!");
 	return Plugin_Continue;
 }
 

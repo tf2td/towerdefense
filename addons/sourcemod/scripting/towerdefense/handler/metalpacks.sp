@@ -63,9 +63,10 @@ stock bool SpawnMetalPacks(TDMetalPackType iMetalPackType) {
 }
 
 /**
- * Spawns certain amount of metalpacks (except the boss and reward metalpack).
+ * Spawns certain amount of metalpacks.
  *
  * @param iMetalPackType	The metal pack type.
+ * @param iNumPacks			Amount of metalpacks
  * @return					True on success, false otherwiseherwise.
  */
 
@@ -99,6 +100,7 @@ stock bool SpawnMetalPacksNumber(TDMetalPackType iMetalPackType, int iNumPacks) 
 		fLocation[2] = StringToFloat(sLocationParts[2]);
 		
 		SpawnMetalPack2(TDMetalPack_Large, fLocation, iMetal, iEntity);
+		ShowAnnotation(EntRefToEntIndex(iEntity), fLocation, 64.0, 5.0, "A Metalpack spawned!");
 	}
 }
 
