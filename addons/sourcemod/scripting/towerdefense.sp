@@ -445,6 +445,18 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 	if (IsTower(iClient)) {
 		return Plugin_Handled;
 	}
+	//Check if Sentry is inflictor
+	if (IsClientInGame(iClient)) {   
+        char sAttackerObject[128];
+        GetEdictClassname(iInflictor, sAttackerObject, sizeof(sAttackerObject));
+     
+        // Sentry damage (bullets and rockets)
+        if (StrEqual(sAttackerObject, "obj_sentrygun")) {
+            fDamage *= 1; //Placeholder
+
+            return Plugin_Changed;
+        }
+    }
 	
 	if (IsDefender(iClient)) {
 		if (IsValidClient(iAttacker)) {
@@ -1189,6 +1201,16 @@ stock bool CanAfford(int iPrice) {
 	}
 	
 	return bResult;
+}
+
+/**
+ * Lets you add to the current Building limit.
+ *
+ * @param iAddLimit		Add to Building limit
+ */
+
+stock void AddToDispenserLimit(int iAddToLimit, TDBuildingType iBuildingTypeLimit) {
+	g_iBuildingLimit[iBuildingTypeLimit] += iAddToLimit;
 }
 
 /**
