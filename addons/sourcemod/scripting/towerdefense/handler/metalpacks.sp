@@ -63,6 +63,46 @@ stock bool SpawnMetalPacks(TDMetalPackType iMetalPackType) {
 }
 
 /**
+ * Spawns certain amount of metalpacks (except the boss and reward metalpack).
+ *
+ * @param iMetalPackType	The metal pack type.
+ * @return					True on success, false otherwiseherwise.
+ */
+
+stock bool SpawnMetalPacksNumber(TDMetalPackType iMetalPackType, int iNumPacks) {
+	
+	int iMetal = 0, iEntity;
+	float fLocation[3];
+	char sKey[32], sLocation[64], sLocationParts[6][16];
+	
+	for (int iMetalPackId = 0; iMetalPackId < iNumPacks; iMetalPackId++) {
+		if (Metalpack_GetType(iMetalPackId) != iMetalPackType) {
+			continue;
+		}
+		
+		Format(sKey, sizeof(sKey), "%d_metal", iMetalPackId);
+		
+		if (!GetTrieValue(g_hMapMetalpacks, sKey, iMetal)) {
+			continue;
+		}
+		
+		Format(sKey, sizeof(sKey), "%d_location", iMetalPackId);
+		
+		if (!GetTrieString(g_hMapMetalpacks, sKey, sLocation, sizeof(sLocation))) {
+			continue;
+		}
+		
+		ExplodeString(sLocation, " ", sLocationParts, sizeof(sLocationParts), sizeof(sLocationParts[]));
+		
+		fLocation[0] = StringToFloat(sLocationParts[0]);
+		fLocation[1] = StringToFloat(sLocationParts[1]);
+		fLocation[2] = StringToFloat(sLocationParts[2]);
+		
+		SpawnMetalPack2(TDMetalPack_Large, fLocation, iMetal, iEntity);
+	}
+}
+
+/**
  * Spawns reward metal pack.
  *
  * @param iMetalPackType	The type of metal pack.

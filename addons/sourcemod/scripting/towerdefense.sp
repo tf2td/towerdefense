@@ -445,7 +445,6 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 	if (IsTower(iClient)) {
 		return Plugin_Handled;
 	}
-	//Check if Sentry is inflictor
 	if (IsClientInGame(iClient)) {   
 		char sAttackerObject[128];
 		GetEdictClassname(iInflictor, sAttackerObject, sizeof(sAttackerObject));

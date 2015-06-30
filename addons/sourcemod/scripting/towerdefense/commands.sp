@@ -28,6 +28,7 @@ stock void RegisterCommands() {
 	//Button Commands
 	RegAdminCmd("sm_increase_enabled_sentries", Command_IncreaseSentry, ADMFLAG_ROOT);
 	RegAdminCmd("sm_increase_enabled_dispensers", Command_IncreaseDispenser, ADMFLAG_ROOT);
+	RegAdminCmd("sm_bonus_metal", Command_BonusMetal, ADMFLAG_ROOT);
 	
 	// Command Listeners
 	AddCommandListener(CommandListener_Build, "build");
@@ -286,7 +287,7 @@ public Action Command_IncreaseSentry(int iClient, any iArgs) {
 	g_iBuildingLimit[TDBuilding_Sentry] += 1;
 	
 	PrintToChatAll("\x04[\x03TD\x04]\x03 Your sentry limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Sentry]);
-	PrintToChatAll("\x04[\x03TD\x04]\x03 You can build additional sentries via your PDA or with the command \x04/s");
+	PrintToChatAll("\x04[\x03TD\x04]\x03 You can build additional sentries with the command \x04/s");
 	return Plugin_Continue;
 }
 
@@ -298,6 +299,16 @@ public Action Command_IncreaseDispenser(int iClient, any iArgs) {
 	
 	PrintToChatAll("\x04[\x03TD\x04]\x03 Your dispenser limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Dispenser]);
 	PrintToChatAll("\x04[\x03TD\x04]\x03 You can build dispensers via your PDA");
+	return Plugin_Continue;
+}
+
+public Action Command_BonusMetal(int iClient, any iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+	SpawnMetalPacksNumber(TDMetalPack_Start, 4);
+	
+	PrintToChatAll("\x04[\x03TD\x04]\x04 1800\x03 metal has been spawned!");
 	return Plugin_Continue;
 }
 
