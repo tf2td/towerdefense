@@ -26,7 +26,6 @@ bool g_bTowerDefenseMap;
 /*==========  Handle  ==========*/
 
 Handle g_hEnabled;
-Handle hHintTimer;
 
 /*==========  Float  ==========*/
 
@@ -36,10 +35,9 @@ int g_iBuildingLimit[TDBuildingType];
 int g_iHaloMaterial;
 int g_iLaserMaterial;
 int g_iMetalPackCount;
-int iHint = 1;
 
 /*==========  String  ==========*/
-char PasswordListOfChar[] = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789";
+
 
 
 /*==========================================
