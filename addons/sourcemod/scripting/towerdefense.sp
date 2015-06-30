@@ -1167,8 +1167,10 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 		Tower_OnButtonBuy(iTowerId, iCaller, iActivator);
 	} else if (StrContains(sName, "break_pregame") != -1) {
 		// Start Pregame without password
-		
-		CreateTimer(60.0, Timer_Hints, hHintTimer, TIMER_REPEAT);
+		if(hHintTimer == INVALID_HANDLE)
+		{
+			hHintTimer = CreateTimer(60.0, Timer_Hints, _, TIMER_REPEAT);
+		}
 		char sNameParts[3][32];
 		ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
 	} else if (StrContains(sName, "break_pregame_password") != -1) {
