@@ -92,6 +92,8 @@ stock void Server_Reset() {
 	
 	g_iMetalPackCount = 0;
 	
+	g_bTowersLocked = false;
+	
 	g_bStartWaveEarly = false;
 	
 	g_iCurrentWave = 0;

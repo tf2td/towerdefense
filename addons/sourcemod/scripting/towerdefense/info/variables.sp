@@ -97,6 +97,7 @@ int g_iLastButtons[MAXPLAYERS + 1];
 /*==========  Boolean  ==========*/
 
 int g_bTowerBought[TDTowerId];
+bool g_bTowersLocked;
 
 /*==========  Handle  ==========*/
 

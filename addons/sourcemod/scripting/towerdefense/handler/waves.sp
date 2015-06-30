@@ -185,6 +185,9 @@ stock void Wave_OnDeathAll() {
 	
 	PrintToChatAll("\x04*** Wave %d passed ***", g_iCurrentWave);
 	PrintToChatAll("\x01You have \x04%d seconds\x01 to prepare for the next wave!", g_iRespawnWaveTime);
+	PrintToChatAll("\x01Towers have been unlocked and can now be moved!");
+	
+	g_bTowersLocked = false;
 	
 	Log(TDLogLevel_Info, "Wave %d passed", g_iCurrentWave);
 	
@@ -228,6 +231,8 @@ public void Wave_OnTouchCorner(int iCorner, int iAttacker) {
 
 stock void Wave_Spawn() {
 	PrintToChatAll("\x04Wave %d incoming!", g_iCurrentWave + 1);
+	PrintToChatAll("\x01Towers have been locked and can't be moved!");
+	g_bTowersLocked = true;
 	
 	char sName[MAX_NAME_LENGTH];
 	if (!Wave_GetName(g_iCurrentWave, sName, sizeof(sName))) {

@@ -393,6 +393,11 @@ stock void Tower_Pickup(int iClient) {
 			Forbid(iClient, true, "%N is already being moved by someone!", iTower);
 			return;
 		}
+	
+		if(g_bTowersLocked){
+			Forbid(iClient, true, "You can't move towers mid wave!");
+			return;
+		}
 		
 		TF2Attrib_SetByName(iClient, "cannot pick up buildings", 1.0);
 		
@@ -427,6 +432,11 @@ stock void Tower_Drop(int iClient) {
 		Forbid(iClient, true, "Towers aren't meant to be placed on the path!");
 		return;
 	}
+	
+	if(g_bTowersLocked){
+			Forbid(iClient, true, "You can't place towers mid wave!");
+			return;
+		}
 	
 	int iTower = g_iAttachedTower[iClient];
 	float fLocation[3], fAngles[3];
