@@ -1166,16 +1166,11 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 		TDTowerId iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[2]));
 		Tower_OnButtonBuy(iTowerId, iCaller, iActivator);
 	} else if (StrContains(sName, "break_pregame") != -1) {
-		// Start Pregame without password
+		// Pregame button
 		if(hHintTimer == INVALID_HANDLE)
 		{
 			hHintTimer = CreateTimer(60.0, Timer_Hints, _, TIMER_REPEAT);
 		}
-		char sNameParts[3][32];
-		ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
-	} else if (StrContains(sName, "break_pregame_password") != -1) {
-		// Start Pregame with password
-		//GeneratePassword();
 	} else if (StrContains(sName, "wave_start") != -1) {
 		// Wave start
 		
@@ -1213,27 +1208,6 @@ stock bool CanAfford(int iPrice) {
 	return bResult;
 }
 
-/**
- * Lets you add to the current Building limit.
- *
- * @param iAddLimit		Add to Building limit
- */
-
-stock void AddToDispenserLimit(int iAddToLimit, TDBuildingType iBuildingTypeLimit) {
-	g_iBuildingLimit[iBuildingTypeLimit] += iAddToLimit;
-}
-
-
-public void GeneratePassword()
-{
-	char Password[4];
-    
-	for(int i = 1; i <= 4; i++)
-	{
-        int randomInt = GetRandomInt(0, 62);
-        StrCat(Password, sizeof(Password), PasswordListOfChar[randomInt]);
-	}
-}
 /**
  * Removes a flag from a cvar.
  *

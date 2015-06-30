@@ -25,6 +25,10 @@ stock void RegisterCommands() {
 	RegConsoleCmd("sm_m", Command_ShowMetal);
 	RegConsoleCmd("sm_metal", Command_ShowMetal);
 	
+	//Button Commands
+	RegAdminCmd("sm_increase_enabled_sentries", Command_IncreaseSentry, ADMFLAG_ROOT);
+	RegAdminCmd("sm_increase_enabled_dispensers", Command_IncreaseDispenser, ADMFLAG_ROOT);
+	
 	// Command Listeners
 	AddCommandListener(CommandListener_Build, "build");
 	AddCommandListener(CommandListener_ClosedMotd, "closed_htmlpage");
@@ -271,6 +275,33 @@ public Action Command_ShowMetal(int iClient, int iArgs) {
 	return Plugin_Handled;
 }
 
+/*=====================================
+=            Button Commands           =
+=====================================*/
+
+public Action Command_IncreaseSentry(int iClient, any iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+	g_iBuildingLimit[TDBuilding_Sentry] += 1;
+	
+	PrintToChatAll("\x04[\x03TD\x04]\x03 Your sentry limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Sentry]);
+	PrintToChatAll("\x04[\x03TD\x04]\x03 You can build additional sentries via your PDA or with the command \x04/s");
+	return Plugin_Continue;
+}
+
+public Action Command_IncreaseDispenser(int iClient, any iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+	g_iBuildingLimit[TDBuilding_Dispenser] += 1;
+	
+	PrintToChatAll("\x04[\x03TD\x04]\x03 Your dispenser limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Dispenser]);
+	PrintToChatAll("\x04[\x03TD\x04]\x03 You can build dispensers via your PDA");
+	return Plugin_Continue;
+}
+
+	
 /*=========================================
 =            Command Listeners            =
 =========================================*/

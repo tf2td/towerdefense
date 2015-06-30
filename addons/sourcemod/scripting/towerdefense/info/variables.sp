@@ -38,7 +38,6 @@ int g_iLaserMaterial;
 int g_iMetalPackCount;
 
 /*==========  String  ==========*/
-char PasswordListOfChar[] = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789";
 
 
 /*==========================================
