@@ -286,7 +286,7 @@ public Action Command_IncreaseSentry(int iClient, any iArgs) {
 	g_iBuildingLimit[TDBuilding_Sentry] += 1;
 	
 	PrintToChatAll("\x04[\x03TD\x04]\x03 Your sentry limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Sentry]);
-	PrintToChatAll("\x04[\x03TD\x04]\x03 You can build additional sentries with the command \x04/s");
+	PrintToChatAll("\x04[\x03TD\x04]\x03 You can build additional sentries via your PDA or with the command \x04/s");
 	return Plugin_Continue;
 }
 
