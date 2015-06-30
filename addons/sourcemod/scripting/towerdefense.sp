@@ -1,7 +1,5 @@
 /**
 
-	Test
-
 	TODO:
 	- panels.sp:
 	  - Rename panels
