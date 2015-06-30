@@ -144,7 +144,7 @@ stock void Wave_OnTakeDamagePost(int iVictim, int iAttacker, int iInflictor, flo
  * @noreturn
  */
 
-stock void Wave_OnDeath(int iAttacker, float[3] fPosition) {
+stock void Wave_OnDeath(int iAttacker, float fPosition[3]) {
 	if (!g_bEnabled) {
 		return;
 	}
