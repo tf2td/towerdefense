@@ -146,6 +146,15 @@ stock void Wave_OnDeath(int iAttacker, float fPosition[3]) {
 		return;
 	}
 	
+	// TODO(hurp): Find a better way to make the ammo from air waves spawn on the ground,
+	//             This method probably wont work for all maps
+	if (Wave_GetType(g_iCurrentWave) == TDWaveType_Air) {
+		fPosition[2] = fPosition[2] - 10.0;
+	}
+	
+	// Ensure that the metal pack is on the ground
+	fPosition[2] = fPosition[2] - GetDistanceToGround(fPosition) + 10.0;
+	
 	// TODO(hurp): Customize metal ammount based off the wave in config files
 	SpawnRewardPack(TDMetalPack_Small, fPosition, 100);
 	
