@@ -286,6 +286,9 @@ public void OnClientPostAdminCheck(int iClient) {
 		
 		Player_Connected(GetClientUserId(iClient), iClient, sName, sSteamId, sCommunityId, sIp);
 	}
+	
+	SDKHook(iClient, SDKHook_OnTakeDamage, OnTakeDamage);
+	SDKHook(iClient, SDKHook_OnTakeDamagePost, OnTakeDamagePost);
 }
 
 public void OnClientDisconnect(int iClient) {

@@ -94,9 +94,6 @@ stock void Player_Connected(int iUserId, int iClient, const char[] sName, const 
 		Player_USetString(iUserId, PLAYER_COMMUNITY_ID, sCommunityId);
 		Player_USetString(iUserId, PLAYER_IP_ADDRESS, sIp);
 		
-		SDKHook(iClient, SDKHook_OnTakeDamage, OnTakeDamage);
-		SDKHook(iClient, SDKHook_OnTakeDamagePost, OnTakeDamagePost);
-		
 		g_bCarryingObject[iClient] = false;
 		g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
 		g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
