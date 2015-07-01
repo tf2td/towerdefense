@@ -152,9 +152,6 @@ stock void Wave_OnDeath(int iAttacker, float fPosition[3]) {
 		fPosition[2] = fPosition[2] - 10.0;
 	}
 	
-	// Ensure that the metal pack is on the ground
-	fPosition[2] = fPosition[2] - GetDistanceToGround(fPosition) + 10.0;
-	
 	// TODO(hurp): Customize metal ammount based off the wave in config files
 	fPosition[2] = fPosition[2] - GetDistanceToGround(fPosition) + 10.0;
 	SpawnRewardPack(TDMetalPack_Small, fPosition, 100);
@@ -237,6 +234,18 @@ public void Wave_OnTouchCorner(int iCorner, int iAttacker) {
  */
 
 stock void Wave_Spawn() {
+	// Remove reward ammo packs that have not been picked up
+	char buffer[64];
+	int entity = -1;
+	while ((entity = FindEntityByClassname(entity, "prop_dynamic")) != INVALID_ENT_REFERENCE) {
+		GetEntPropString(entity, Prop_Data, "m_ModelName", buffer, sizeof(buffer));
+		
+		if (StrEqual(buffer, "models/items/ammopack_small.mdl")) {
+			AcceptEntityInput(entity, "Kill");
+			PrintToChatAll("Killed an entity!");
+		}
+	}
+	
 	PrintToChatAll("\x04Wave %d incoming!", g_iCurrentWave + 1);
 	PrintToChatAll("\x01Towers have been locked and can't be moved!");
 	g_bTowersLocked = true;
