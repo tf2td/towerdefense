@@ -308,7 +308,7 @@ public void OnClientDisconnect(int iClient) {
 			GetClientEyePosition(iClient, fLocation);
 			fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
 			
-			SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal);
+			SpawnMetalPack(TDMetalPack_Medium, fLocation, iMetal);
 		}
 	}
 }
@@ -493,7 +493,7 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 						GetClientEyePosition(iClient, fLocation);
 						fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
 						
-						SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal);
+						SpawnMetalPack(TDMetalPack_Medium, fLocation, iMetal);
 					}
 				}
 			}

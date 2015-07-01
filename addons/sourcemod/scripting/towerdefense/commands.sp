@@ -246,7 +246,7 @@ public Action Command_DropMetal(int iClient, int iArgs) {
 	fLocation[1] = fLocation[1] + 100 * Sine(DegToRad(fAngles[1]));
 	fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
 	
-	switch (SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal)) {
+	switch (SpawnMetalPack(TDMetalPack_Medium, fLocation, iMetal)) {
 		case TDMetalPack_InvalidMetal: {
 			Forbid(iClient, true, "You must drop at least 1 metal");
 		}
@@ -505,7 +505,7 @@ public Action CommandListener_Kill(int iClient, const char[] sCommand, int iArgs
 			GetClientEyePosition(iClient, fLocation);
 			fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
 			
-			SpawnMetalPack(TDMetalPack_Small, fLocation, iMetal);
+			SpawnMetalPack(TDMetalPack_Medium, fLocation, iMetal);
 		}
 	}
 	
