@@ -55,29 +55,34 @@ public Action Command_GiveMetal(int iClient, any iArgs) {
 	int target_list[MAXPLAYERS], target_count;
 	bool tn_is_ml;
 	
-	if (iArgs < 2) {
+	if (iArgs < 1) {
 		ReplyToCommand(iClient, "[SM] Usage: sm_gm <#userid|name> <metal>");
 		return Plugin_Handled;
 	}
-	
-	GetCmdArg(1, arg, sizeof(arg));
-	GetCmdArg(2, sMetal, sizeof(sMetal));
-	
-	if ((target_count = ProcessTargetString(
-				arg, 
-				iClient, 
-				target_list, 
-				MAXPLAYERS, 
-				COMMAND_FILTER_ALIVE | COMMAND_FILTER_NO_BOTS | COMMAND_FILTER_CONNECTED, 
-				target_name, 
-				sizeof(target_name), 
-				tn_is_ml)) <= 0) {
-		ReplyToCommand(iClient, "[SM] Player not found");
-		return Plugin_Handled;
+	else if (iArgs == 1) {
+		GetCmdArg(1, sMetal, sizeof(sMetal));
+		AddClientMetal(iClient, StringToInt(sMetal));
 	}
-	
-	for (int i = 0; i < target_count; i++) {
-		AddClientMetal(target_list[i], StringToInt(sMetal));
+	else if (iArgs >= 2) {
+		GetCmdArg(1, arg, sizeof(arg));
+		GetCmdArg(2, sMetal, sizeof(sMetal));
+		
+		if ((target_count = ProcessTargetString(
+					arg, 
+					iClient, 
+					target_list, 
+					MAXPLAYERS, 
+					COMMAND_FILTER_ALIVE | COMMAND_FILTER_NO_BOTS | COMMAND_FILTER_CONNECTED, 
+					target_name, 
+					sizeof(target_name), 
+					tn_is_ml)) <= 0) {
+			ReplyToCommand(iClient, "[SM] Player not found");
+			return Plugin_Handled;
+		}
+		
+		for (int i = 0; i < target_count; i++) {
+			AddClientMetal(target_list[i], StringToInt(sMetal));
+		}
 	}
 	
 	return Plugin_Handled;
