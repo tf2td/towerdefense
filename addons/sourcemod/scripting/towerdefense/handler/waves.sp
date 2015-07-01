@@ -71,9 +71,6 @@ public void Wave_OnSpawnPost(any iAttacker) {
 		return;
 	}
 	
-	SDKHook(iAttacker, SDKHook_OnTakeDamage, OnTakeDamage);
-	SDKHook(iAttacker, SDKHook_OnTakeDamagePost, OnTakeDamagePost);
-	
 	int iMaxHealth = GetEntProp(iAttacker, Prop_Data, "m_iMaxHealth");
 	int iWaveHealth = Wave_GetHealth(g_iCurrentWave);
 	
