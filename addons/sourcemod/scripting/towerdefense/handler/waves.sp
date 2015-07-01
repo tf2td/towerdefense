@@ -147,6 +147,7 @@ stock void Wave_OnDeath(int iAttacker, float fPosition[3]) {
 	}
 	
 	// TODO(hurp): Customize metal ammount based off the wave in config files
+	fPosition[2] = fPosition[2] - GetDistanceToGround(fPosition) + 10.0;
 	SpawnRewardPack(TDMetalPack_Small, fPosition, 100);
 	
 	CreateTimer(1.0, Delay_KickAttacker, iAttacker, TIMER_FLAG_NO_MAPCHANGE);
