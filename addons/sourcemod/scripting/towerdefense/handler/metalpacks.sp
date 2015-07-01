@@ -116,10 +116,37 @@ stock bool SpawnMetalPacksNumber(TDMetalPackType iMetalPackType, int iNumPacks) 
 stock void SpawnRewardPack(TDMetalPackSpawnType iMetalPackType, float[3] fLocation, int iMetal) {
 	int iEntity;
 	SpawnMetalPack2(iMetalPackType, fLocation, iMetal, iEntity);
-	// TODO(hurp): Figure out how to add glow to the packs. This method doesn't appear to work.
-	//SetEntProp(iEntity, Prop_Send, "m_bGlowEnabled", 0);
+	
+	// Dirty hack to add outlines to the ammo packs
+	int PackRef = EntRefToEntIndex(iEntity);
+	int dispenser = CreateEntityByName("obj_dispenser");
+			
+	DispatchKeyValue(dispenser, "spawnflags", "2");
+	DispatchKeyValue(dispenser, "solid", "0");
+	DispatchKeyValue(dispenser, "teamnum", "3");
+	SetEntProp(dispenser, Prop_Send, "m_usSolidFlags", (GetEntProp(dispenser, Prop_Send, "m_usSolidFlags") | (1 << 1)));
+	
+	char model[PLATFORM_MAX_PATH];
+	float pos[3], ang[3];
+	
+	GetEntPropString(PackRef, Prop_Data, "m_ModelName", model, sizeof(model));
+	GetEntPropVector(PackRef, Prop_Send, "m_vecOrigin", pos);
+	GetEntPropVector(PackRef, Prop_Send, "m_angRotation", ang);
+	SetEntProp(dispenser, Prop_Send, "m_bGlowEnabled", 1);
+	
+	TeleportEntity(dispenser, pos, ang, NULL_VECTOR);
+	DispatchSpawn(dispenser);
+	SetEntityModel(dispenser, model);
+	SetVariantString("!activator");
+	AcceptEntityInput(dispenser, "SetParent", PackRef);
+	
+	SDKHook(dispenser, SDKHook_OnTakeDamage, OnTakeDamage_Dispenser);
 }
 
+public Action OnTakeDamage_Dispenser(int victim, int &attacker, int &inflictor, float &damage, int &damagetype, int &weapon, float damageForce[3], float damagePosition[3])
+{
+	return Plugin_Stop;
+}
 
 /*======================================
 =            Data Functions            =
