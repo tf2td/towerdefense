@@ -30,12 +30,23 @@ Handle hHintTimer;
 
 /*==========  Float  ==========*/
 
+float fSentryDamageMultiplier = 1.0;
+float fBlastDamageMultiplier = 1.0;
+float fBurnDamageMultiplier = 1.0;
+float fBulletDamageMultiplier = 1.0;
+
 /*==========  Integer  ==========*/
 
 int g_iBuildingLimit[TDBuildingType];
 int g_iHaloMaterial;
 int g_iLaserMaterial;
 int g_iMetalPackCount;
+//Multiplier cost. This cost will be multiplied by the multiplier itself
+int g_iBlastMultiplierCost = 1000;
+int g_iBurnMultiplierCost = 1000;
+int g_iBulletMultiplierCost = 1000;
+int g_iSentryMultiplierCost = 1000;
+
 
 /*==========  String  ==========*/
 

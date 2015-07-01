@@ -29,6 +29,10 @@ stock void RegisterCommands() {
 	RegAdminCmd("sm_increase_enabled_sentries", Command_IncreaseSentry, ADMFLAG_ROOT);
 	RegAdminCmd("sm_increase_enabled_dispensers", Command_IncreaseDispenser, ADMFLAG_ROOT);
 	RegAdminCmd("sm_bonus_metal", Command_BonusMetal, ADMFLAG_ROOT);
+	RegAdminCmd("sm_explosiondamage", Command_ExplosionDamageMultiplier, ADMFLAG_ROOT);
+	RegAdminCmd("sm_firedamage", Command_FireDamageMultiplier, ADMFLAG_ROOT);
+	RegAdminCmd("sm_bulletdamage", Command_BulletDamageMultiplier, ADMFLAG_ROOT);
+	RegAdminCmd("sm_sentrydamage", Command_SentryDamageMultiplier, ADMFLAG_ROOT);
 	
 	// Command Listeners
 	AddCommandListener(CommandListener_Build, "build");
@@ -277,7 +281,7 @@ public Action Command_ShowMetal(int iClient, int iArgs) {
 }
 
 /*=====================================
-=            Button Commands           =
+=            Button Commands          =
 =====================================*/
 
 public Action Command_IncreaseSentry(int iClient, any iArgs) {
@@ -307,6 +311,130 @@ public Action Command_BonusMetal(int iClient, any iArgs) {
 		return Plugin_Continue;
 	}
 	SpawnMetalPacksNumber(TDMetalPack_Start, 4);
+	
+	return Plugin_Continue;
+}
+
+public Action Command_SentryDamageMultiplier(int iClient, any iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+	int iPriceToPay = g_iSentryMultiplierCost * RoundToZero(fSentryDamageMultiplier);
+	
+	int iClients = GetRealClientCount(true);
+		
+	if (iClients <= 0) {
+		iClients = 1;
+	}
+		
+	iPriceToPay /= iClients;
+	
+	if(CanAfford(iPriceToPay)) {
+	
+		for (int iLoopClient = 1; iLoopClient <= MaxClients; iLoopClient++) {
+				if (IsDefender(iLoopClient)) {
+					AddClientMetal(iLoopClient, -iPriceToPay);
+			}
+		}
+		fSentryDamageMultiplier += 1.0;
+		PrintToChatAll("\x04[\x03TD\x04]\x03 Fire damage is now multiplied by:\x04 %i.0",RoundToZero(fSentryDamageMultiplier));
+		
+		int iNextPrice = g_iSentryMultiplierCost * RoundToZero(fSentryDamageMultiplier);
+		PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal",iNextPrice);
+	}
+	
+	return Plugin_Continue;
+}
+
+public Action Command_ExplosionDamageMultiplier(int iClient, any iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+	int iPriceToPay = g_iBlastMultiplierCost * RoundToZero(fBlastDamageMultiplier);
+	
+	int iClients = GetRealClientCount(true);
+		
+	if (iClients <= 0) {
+		iClients = 1;
+	}
+		
+	iPriceToPay /= iClients;
+	
+	if(CanAfford(iPriceToPay)) {
+	
+		for (int iLoopClient = 1; iLoopClient <= MaxClients; iLoopClient++) {
+				if (IsDefender(iLoopClient)) {
+					AddClientMetal(iLoopClient, -iPriceToPay);
+			}
+		}
+		fBlastDamageMultiplier += 1.0;
+		PrintToChatAll("\x04[\x03TD\x04]\x03 Explosion damage is now multiplied by:\x04 %i.0",RoundToZero(fBlastDamageMultiplier));
+		
+		int iNextPrice = g_iBlastMultiplierCost * RoundToZero(fBlastDamageMultiplier);
+		PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal",iNextPrice);
+	}
+	
+	return Plugin_Continue;
+}
+
+public Action Command_FireDamageMultiplier(int iClient, any iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+	int iPriceToPay = g_iBurnMultiplierCost * RoundToZero(fBurnDamageMultiplier);
+	
+	int iClients = GetRealClientCount(true);
+		
+	if (iClients <= 0) {
+		iClients = 1;
+	}
+		
+	iPriceToPay /= iClients;
+	
+	if(CanAfford(iPriceToPay)) {
+	
+		for (int iLoopClient = 1; iLoopClient <= MaxClients; iLoopClient++) {
+				if (IsDefender(iLoopClient)) {
+					AddClientMetal(iLoopClient, -iPriceToPay);
+			}
+		}
+		fBurnDamageMultiplier += 1.0;
+		PrintToChatAll("\x04[\x03TD\x04]\x03 Fire damage is now multiplied by:\x04 %i.0",RoundToZero(fBurnDamageMultiplier));
+		
+		int iNextPrice = g_iBurnMultiplierCost * RoundToZero(fBurnDamageMultiplier);
+		PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal",iNextPrice);
+	}
+	
+	return Plugin_Continue;
+}
+
+public Action Command_BulletDamageMultiplier(int iClient, any iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+	int iPriceToPay = g_iBulletMultiplierCost * RoundToZero(fBulletDamageMultiplier);
+	
+	int iClients = GetRealClientCount(true);
+		
+	if (iClients <= 0) {
+		iClients = 1;
+	}
+		
+	iPriceToPay /= iClients;
+	
+	if(CanAfford(iPriceToPay)) {
+	
+		for (int iLoopClient = 1; iLoopClient <= MaxClients; iLoopClient++) {
+				if (IsDefender(iLoopClient)) {
+					AddClientMetal(iLoopClient, -iPriceToPay);
+			}
+		}
+		fBulletDamageMultiplier += 1.0;
+		PrintToChatAll("\x04[\x03TD\x04]\x03 Bullet damage is now multiplied by:\x04 %i.0",RoundToZero(fBulletDamageMultiplier));
+		
+		int iNextPrice = g_iBulletMultiplierCost * RoundToZero(fBulletDamageMultiplier);
+		PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal",iNextPrice);
+	}
 	
 	return Plugin_Continue;
 }

@@ -447,13 +447,36 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 	if (IsTower(iClient)) {
 		return Plugin_Handled;
 	}
+	
 	if (IsClientInGame(iClient)) {   
 		char sAttackerObject[128];
 		GetEdictClassname(iInflictor, sAttackerObject, sizeof(sAttackerObject));
-     
+		
+		//Sentry Damage
 		if (StrEqual(sAttackerObject, "obj_sentrygun")) {
-			fDamage *= 1; //Placeholder
+			fDamage *= fSentryDamageMultiplier;
 
+			return Plugin_Changed;
+		}
+		
+		//Blast Damage
+		if(iDamageType & DMG_BLAST) {
+			fDamage *= fBlastDamageMultiplier;
+			
+			return Plugin_Changed;
+		}
+		
+		//Fire Damage
+		if(iDamageType & DMG_BURN) {
+			fDamage *= fBurnDamageMultiplier;
+			
+			return Plugin_Changed;
+		}
+		
+		//Bullet Damage
+		if(iDamageType & DMG_BULLET) {
+			fDamage *= fBulletDamageMultiplier;
+			
 			return Plugin_Changed;
 		}
 	}

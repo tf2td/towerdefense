@@ -93,6 +93,16 @@ stock void Server_Reset() {
 	g_iMetalPackCount = 0;
 	
 	g_bTowersLocked = false;
+	//Reset Multipliers
+	fSentryDamageMultiplier = 1.0;
+	fBlastDamageMultiplier = 1.0;
+	fBurnDamageMultiplier = 1.0;
+	fBulletDamageMultiplier = 1.0;
+	//Reset Prices
+	g_iBlastMultiplierCost = 1000;
+	g_iBurnMultiplierCost = 1000;
+	g_iBulletMultiplierCost = 1000;
+	g_iSentryMultiplierCost = 1000;
 	
 	g_bStartWaveEarly = false;
 	
