@@ -242,6 +242,7 @@ stock void Wave_Spawn() {
 		
 		if (StrEqual(buffer, "models/items/ammopack_small.mdl")) {
 			AcceptEntityInput(entity, "Kill");
+			g_iMetalPackCount--;
 		}
 	}
 	
