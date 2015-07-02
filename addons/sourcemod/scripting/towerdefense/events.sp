@@ -285,7 +285,7 @@ public Action TF2_CalcIsAttackCritical(int iClient, int iWeapon, char[] sClassna
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
-	
+	//If hitting with Wrench
 	if (StrEqual(sClassname, "tf_weapon_wrench") || StrEqual(sClassname, "tf_weapon_robot_arm")) {
 		float fLocation[3], fAngles[3];
 		
@@ -315,6 +315,16 @@ public Action TF2_CalcIsAttackCritical(int iClient, int iWeapon, char[] sClassna
 		SetEntData(iClient, FindSendPropInfo("CTFPlayer", "m_iAmmo") + 8, 100);
 		SetEntData(iClient, FindDataMapOffs(iClient, "m_iAmmo") + (3 * 4), 100);
 	}
+	
+	//Calculate crit chances
+	if (fCritChanceMultiplier == 0.0) {
+		bResult = false;
+	}
+
+	if (fCritChanceMultiplier * 100 >= GetRandomInt(0, 100)) {
+		bResult = true;		
+	}
+	
 	
 	return Plugin_Handled;
 }

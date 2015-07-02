@@ -98,11 +98,15 @@ stock void Server_Reset() {
 	fBlastDamageMultiplier = 1.0;
 	fBurnDamageMultiplier = 1.0;
 	fBulletDamageMultiplier = 1.0;
+	fCritChanceMultiplier = 0.0;
 	//Reset Prices
 	g_iBlastMultiplierCost = 1000;
 	g_iBurnMultiplierCost = 1000;
 	g_iBulletMultiplierCost = 1000;
 	g_iSentryMultiplierCost = 1000;
+	g_iCritMultiplierCost = 1000;
+	//Reset Upgrade Count (Crits Only)
+	g_iCritUpgradeCount = 1;
 	
 	g_bStartWaveEarly = false;
 	

@@ -33,6 +33,7 @@ stock void RegisterCommands() {
 	RegAdminCmd("sm_firedamage", Command_FireDamageMultiplier, ADMFLAG_ROOT);
 	RegAdminCmd("sm_bulletdamage", Command_BulletDamageMultiplier, ADMFLAG_ROOT);
 	RegAdminCmd("sm_sentrydamage", Command_SentryDamageMultiplier, ADMFLAG_ROOT);
+	RegAdminCmd("sm_critchance", Command_CritChanceMultiplier, ADMFLAG_ROOT);
 	
 	// Command Listeners
 	AddCommandListener(CommandListener_Build, "build");
@@ -439,6 +440,49 @@ public Action Command_BulletDamageMultiplier(int iClient, any iArgs) {
 		
 		int iNextPrice = g_iBulletMultiplierCost * RoundToZero(fBulletDamageMultiplier);
 		PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal",iNextPrice);
+	}
+	
+	return Plugin_Continue;
+}
+
+public Action Command_CritChanceMultiplier(int iClient, any iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Continue;
+	}
+	
+	if(fCritChanceMultiplier >= 1.0) {
+		Forbid(iClient, true, "You already have a 100% crit chance!");
+		return Plugin_Continue;
+	}
+	
+	int iPriceToPay = g_iCritMultiplierCost * g_iCritUpgradeCount;
+	
+	int iClients = GetRealClientCount(true);
+		
+	if (iClients <= 0) {
+		iClients = 1;
+	}
+		
+	iPriceToPay /= iClients;
+	
+	if(CanAfford(iPriceToPay)) {
+	
+		for (int iLoopClient = 1; iLoopClient <= MaxClients; iLoopClient++) {
+				if (IsDefender(iLoopClient)) {
+					AddClientMetal(iLoopClient, -iPriceToPay);
+			}
+		}
+		fCritChanceMultiplier += 0.05;
+		g_iCritUpgradeCount += 1;
+		PrintToChatAll("\x04[\x03TD\x04]\x03 Crit chance is now:\x04 %i%", RoundToZero(fCritChanceMultiplier * 100.0));
+		
+		if(fCritChanceMultiplier >= 1.0) {
+			PrintToChatAll("\x04[\x03TD\x04]\x03 You can't increase crit chance anymore.");
+		}
+		else {
+			int iNextPrice = g_iCritMultiplierCost * g_iCritUpgradeCount;
+			PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal",iNextPrice);
+		}
 	}
 	
 	return Plugin_Continue;
