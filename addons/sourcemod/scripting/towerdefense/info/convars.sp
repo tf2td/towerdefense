@@ -17,7 +17,11 @@ stock void LoadConVars() {
 }
 
 stock void SetConVars() {
-	SetConVarInt(FindConVar("sv_cheats"), 1, true, false);
+	
+}
+
+stock void SetPregameConVars() {
+	FindConVar("sv_cheats").SetInt(1, true, false);
 }
 
 /**

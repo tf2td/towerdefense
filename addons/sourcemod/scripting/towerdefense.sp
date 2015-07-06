@@ -164,8 +164,8 @@ public void OnPluginEnd() {
 		CloseHandle(g_hPlayerData);
 		g_hPlayerData = null;
 	}
-	
-	SetConVarInt(FindConVar("sv_cheats"), 0, true, false);
+
+	FindConVar("sv_cheats").SetInt(0, true, false);
 }
 
 public void OnMapStart() {
@@ -1189,8 +1189,9 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 		
 		TDTowerId iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[2]));
 		Tower_OnButtonBuy(iTowerId, iCaller, iActivator);
-	} else if (StrContains(sName, "break_pregame") != -1) {
+	} else if (StrEqual(sName, "break_pregame")) {
 		// Pregame button
+
 		if(hHintTimer == INVALID_HANDLE)
 		{
 			hHintTimer = CreateTimer(60.0, Timer_Hints, _, TIMER_REPEAT);

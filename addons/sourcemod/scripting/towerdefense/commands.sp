@@ -103,6 +103,8 @@ public Action Command_PreGame(int iClient, int iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
+
+	SetPregameConVars();
 	
 	SpawnMetalPacks(TDMetalPack_Start);
 	
