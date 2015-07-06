@@ -168,6 +168,7 @@ public void OnMetalPackPickup(int iMetalPack, int iClient) {
 	int iMetal = StringToInt(sMetal);
 	
 	AddClientMetal(iClient, iMetal);
+	ResupplyClient(iClient, true, 0.25);
 	EmitSoundToClient(iClient, "items/gunpickup2.wav");
 	HideAnnotation(iMetalPack);
 	
