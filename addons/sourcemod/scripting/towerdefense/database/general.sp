@@ -337,6 +337,48 @@ public void Database_OnLoadWaves(Handle hDriver, Handle hResult, const char[] sE
 		hResult = INVALID_HANDLE;
 	}
 	
+	Database_LoadAirWaveSpawn();
+}
+
+/**
+ * Loads the spawn location of air waves (for anti-air towers).
+ *
+ * @noreturn
+ */
+
+stock void Database_LoadAirWaveSpawn() {
+	char sQuery[512];
+	
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `teleport_air` \
+		FROM `map` \
+		WHERE (`map_id` = %d) \
+	", g_iServerMap);
+	
+	SQL_TQuery(g_hDatabase, Database_OnLoadAirWaveSpawn, sQuery);
+}
+
+public void Database_OnLoadAirWaveSpawn(Handle hDriver, Handle hResult, const char[] sError, any iData) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_LoadAirWaveSpawn > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
+		SQL_FetchRow(hResult);
+
+		SQL_FetchString(hResult, 0, g_sAirWaveSpawn, sizeof(g_sAirWaveSpawn));
+
+		char sLocationParts[6][16];
+		ExplodeString(g_sAirWaveSpawn, " ", sLocationParts, sizeof(sLocationParts), sizeof(sLocationParts[]));
+
+		g_fAirWaveSpawn[0] = StringToFloat(sLocationParts[0]);
+		g_fAirWaveSpawn[1] = StringToFloat(sLocationParts[1]);
+		g_fAirWaveSpawn[2] = StringToFloat(sLocationParts[2]);
+	}
+	
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+	
 	Database_LoadMetalpacks();
 }
 

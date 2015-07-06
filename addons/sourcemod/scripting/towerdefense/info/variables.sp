@@ -139,6 +139,7 @@ bool g_bStartWaveEarly;
 
 /*==========  Float  ==========*/
 
+float g_fAirWaveSpawn[3];
 float g_fWaveStartButtonLocation[3];
 
 /*==========  Integer  ==========*/
@@ -150,3 +151,5 @@ int g_iRespawnWaveTime;
 int g_iWaveStartButton;
 
 /*==========  String  ==========*/
+
+char g_sAirWaveSpawn[64];

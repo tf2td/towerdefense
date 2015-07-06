@@ -67,6 +67,7 @@ public Plugin myinfo =
 #include "towerdefense/util/tf2items.sp"
 #include "towerdefense/util/zones.sp"
 
+#include "towerdefense/handler/antiair.sp"
 #include "towerdefense/handler/corners.sp"
 #include "towerdefense/handler/metalpacks.sp"
 #include "towerdefense/handler/panels.sp"
@@ -518,6 +519,8 @@ public void OnEntityCreated(int iEntity, const char[] sClassname) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnEntitySpawnKill);
 	} else if (StrEqual(sClassname, "func_breakable")) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnButtonSpawned);
+	} else if (StrEqual(sClassname, "tf_projectile_rocket") || StrEqual(sClassname, "tf_projectile_flare")) {
+		SDKHook(iEntity, SDKHook_SpawnPost, OnAntiAirProjectileSpawned);
 	} else if (StrContains(sClassname, "tf_projectile_") != -1) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnProjectileSpawned);
 	} else if (StrEqual(sClassname, "trigger_multiple")) {
@@ -540,6 +543,18 @@ public void OnButtonSpawned(int iEntity) {
 	if (StrEqual(sName, "wave_start")) {
 		g_iWaveStartButton = iEntity;
 		GetEntPropVector(iEntity, Prop_Send, "m_vecOrigin", g_fWaveStartButtonLocation);
+	}
+}
+
+public void OnAntiAirProjectileSpawned(int iEntity) {
+	if (!g_bEnabled) {
+		return;
+	}
+	
+	int iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
+
+	if (IsTower(iOwner)) {
+		AntiAir_ProjectileTick(iEntity, iOwner);
 	}
 }
 
