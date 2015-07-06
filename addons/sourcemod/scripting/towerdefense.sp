@@ -514,8 +514,8 @@ public void OnTakeDamagePost(int iClient, int iAttacker, int iInflictor, float f
 }
 
 public void OnEntityCreated(int iEntity, const char[] sClassname) {
-	if (StrEqual(sClassname, "tf_ammo_pack")) {
-		SDKHook(iEntity, SDKHook_SpawnPost, OnWeaponSpawned);
+	if (StrEqual(sClassname, "tf_ammo_pack") || StrEqual(sClassname, "tf_dropped_weapon")) {
+		SDKHook(iEntity, SDKHook_SpawnPost, OnEntitySpawnKill);
 	} else if (StrEqual(sClassname, "func_breakable")) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnButtonSpawned);
 	} else if (StrContains(sClassname, "tf_projectile_") != -1) {
@@ -525,46 +525,8 @@ public void OnEntityCreated(int iEntity, const char[] sClassname) {
 	}
 }
 
-public void OnWeaponSpawned(int iEntity) {
-	int iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
-	
-	if (IsDefender(iOwner) || IsAttacker(iOwner)) {
-		AcceptEntityInput(iEntity, "Kill");
-	}
-	
-	char sName[64];
-	IntToString(iOwner, sName, sizeof(sName));
-	DispatchKeyValue(iEntity, "targetname", sName);
-	
-	SDKHook(iEntity, SDKHook_Touch, OnTouchWeapon);
-}
-
-public Action OnTouchWeapon(int iEntity, int iClient) {
-	if (!g_bEnabled) {
-		return Plugin_Continue;
-	}
-	
-	if (IsDefender(iClient)) {
-		char sName[64];
-		GetEntPropString(iEntity, Prop_Data, "m_iName", sName, sizeof(sName));
-		
-		int iOwner = StringToInt(sName);
-		
-		if (IsValidClient(iOwner)) {
-			// Picking up weapon
-			
-			AcceptEntityInput(iEntity, "Kill");
-			AddClientMetal(iClient, 100);
-			ResupplyClient(iClient, true, 0.25);
-			EmitSoundToAll("items/ammo_pickup.wav", iClient);
-		} else {
-			AcceptEntityInput(iEntity, "Kill");
-			AddClientMetal(iClient, 15);
-			EmitSoundToAll("items/ammo_pickup.wav", iClient);
-		}
-	}
-	
-	return Plugin_Handled;
+public void OnEntitySpawnKill(int iEntity) {
+	AcceptEntityInput(iEntity, "Kill");
 }
 
 public void OnButtonSpawned(int iEntity) {
