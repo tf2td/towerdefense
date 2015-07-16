@@ -33,12 +33,6 @@
 #define PLUGIN_URL		"http://www.tf2td.net/"
 #define PLUGIN_PREFIX	"[TF2TD]"
 
-/*
-#define DATABASE_HOST 	"46.38.241.137"
-#define DATABASE_NAME 	"tf2tdsql5"
-#define DATABASE_USER 	"tf2td_styria"
-#define DATABASE_PASS 	"t9J3gTiep8zbvVObSGeom09btg3Ts1Nm"
-*/
 /*==========================================
 =            Plugin Information            =
 ==========================================*/
