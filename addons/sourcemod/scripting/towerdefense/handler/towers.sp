@@ -128,10 +128,9 @@ stock void Tower_AoeSetup(int iTower, TDTowerId iTowerId) {
 		return;
 	}
 	
-	char sName[50];
-	Tower_GetName(iTowerId, sName, sizeof(sName));
-	if(StrEqual(sName,"AoEEngineerTower") || StrEqual(sName,"MedicTower")) {
-		hAoETimer = CreateTimer(0.2, Timer_ClientNearAoETower, iTower, TIMER_REPEAT);
+	if(iTowerId == TDTower_AoE_Engineer || iTowerId == TDTower_Medic)  {
+		if(hAoETimer == INVALID_HANDLE)
+		hAoETimer = CreateTimer(0.2, Timer_ClientNearAoETower, _, TIMER_REPEAT);
 	}
 }
 

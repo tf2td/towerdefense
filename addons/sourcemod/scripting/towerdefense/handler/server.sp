@@ -90,14 +90,17 @@ stock void Server_Reset() {
 		hHintTimer = INVALID_HANDLE;
 	}
 	//Reset AoE Timer
-	if (hHintTimer != INVALID_HANDLE) {
-		CloseHandle(hAoETimer);
-		hHintTimer = INVALID_HANDLE;
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
+		if (hAoETimer != INVALID_HANDLE) {
+			CloseHandle(hAoETimer);
+			hAoETimer = INVALID_HANDLE;
+		}
 	}
 	
 	g_iMetalPackCount = 0;
 	
 	g_bTowersLocked = false;
+	g_bAoEEngineerAttack = false;
 	//Reset Multipliers
 	fSentryDamageMultiplier = 1.0;
 	fBlastDamageMultiplier = 1.0;
@@ -117,6 +120,8 @@ stock void Server_Reset() {
 	
 	g_iCurrentWave = 0;
 	g_iNextWaveType = 0;
+	
+	iAoEEngineerTimer = 0;
 	
 	g_iHealthBar = GetHealthBar();
 	

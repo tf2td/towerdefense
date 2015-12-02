@@ -27,7 +27,6 @@ bool g_bTowerDefenseMap;
 
 Handle g_hEnabled;
 Handle hHintTimer;
-Handle hAoETimer;
 
 /*==========  Float  ==========*/
 
@@ -114,8 +113,11 @@ int g_iHealBeamIndex[MAXPLAYERS + 1][2];
 
 int g_bTowerBought[TDTowerId];
 bool g_bTowersLocked;
+bool g_bAoEEngineerAttack;
 
 /*==========  Handle  ==========*/
+
+Handle hAoETimer;
 
 /*==========  Float  ==========*/
 
@@ -124,6 +126,7 @@ bool g_bTowersLocked;
 int g_iLastMover[MAXPLAYERS + 1];
 int g_iUpgradeLevel[MAXPLAYERS + 1];
 int g_iUpgradeMetal[MAXPLAYERS + 1];
+int iAoEEngineerTimer;
 
 /*==========  String  ==========*/
 

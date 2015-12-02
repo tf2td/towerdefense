@@ -5,29 +5,22 @@
  * @param iTower 		The tower
  * @noreturn
  */
-public Action Timer_ClientNearAoETower(Handle hTimer, any iTower) {
-	if (!IsTower(iTower)) {
-		return;
-	}
-	
+public Action Timer_ClientNearAoETower(Handle hTimer) {
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsClientInGame(iClient) && IsPlayerAlive(iClient)) {
-			if (iClient == iTower)
-				continue;
-			if(IsTower(iClient))
-				return;
-			char sName[50];
-			Tower_GetName(GetTowerId(iTower), sName, sizeof(sName));
-			if(StrEqual(sName,"AoEEngineerTower")) {
-				CreateBeamBoxAroundClient(iTower, 80.0, true, 0.7, {255, 0, 0, 25});
-			} else if(StrEqual(sName,"MedicTower")) {
-				CreateBeamBoxAroundClient(iTower, 160.0, true, 0.6, {0, 255, 0, 25});
-			}
-					
-			if (IsClientInZone(iClient, g_fBeamPoints[iTower])) {
-				Tower_ObjectNearAoEMedic(iTower, iClient);
-			} else {
-				Tower_ObjectNotNearAoEMedic(iClient);
+			if (IsTower(iClient)){
+				int iTower = iClient;
+				TDTowerId iTowerId = GetTowerId(iTower);
+			
+				if(iTowerId == TDTower_AoE_Engineer) {
+					CreateBeamBoxAroundClient(iTower, 80.0, true, 0.2, {255, 0, 0, 25});
+					Tower_ObjectNearAoEEngineer(iTower, iClient);
+				}
+				if(iTowerId == TDTower_Medic) {
+					CreateBeamBoxAroundClient(iTower, 160.0, true, 0.2, {0, 255, 0, 25});
+					Tower_ObjectNearAoEMedic(iTower);
+				}	
+				
 			}
 		}
 	}
@@ -40,14 +33,23 @@ public Action Timer_ClientNearAoETower(Handle hTimer, any iTower) {
  * @param iClient 		The player
  * @noreturn
  */
-public void Tower_ObjectNearAoEMedic(int iTower, int iClient) {
-	Player_AddHealth(iClient, 5);
+public void Tower_ObjectNearAoEMedic(int iTower) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
+		if (IsClientInGame(iClient) && IsPlayerAlive(iClient) && !IsFakeClient(iClient) && IsClientInZone(iClient, g_fBeamPoints[iTower])) {
+			Player_AddHealth(iClient, 5);
 	
-	//Check if there is no Beam
-	if(g_iHealBeamIndex[iClient][0] == 0 && g_iHealBeamIndex[iClient][1] == 0) {
-		AttachHealBeam(iTower, iClient);
+			//Check if there is no Beam
+			if(g_iHealBeamIndex[iClient][0] == 0 && g_iHealBeamIndex[iClient][1] == 0) {
+				AttachHealBeam(iTower, iClient);
+			}
+			
+		} else {
+			Tower_ObjectNotNearAoEMedic(iClient);
+		}
 	}
 }
+
+
 
 /**
  * Player isn't close to AoEMedic
@@ -67,6 +69,235 @@ public void Tower_ObjectNotNearAoEMedic(int iClient) {
 		RemoveEdict(g_iHealBeamIndex[iClient][1]);
 		g_iHealBeamIndex[iClient][1] = 0;
 	}
+}
+
+/**
+ * Player is close to AoEEngineer
+ * 
+ * @param iTower 		The tower
+ * @param iClient 		The player
+ * @noreturn
+ */
+public void Tower_ObjectNearAoEEngineer(int iTower, int iClient) {
+	
+	if(iAoEEngineerTimer < 3 && !IsTowerAttached(iTower)) {
+		iAoEEngineerTimer++;
+		return;
+	} else if(!IsTowerAttached(iTower)) {
+		iAoEEngineerTimer = 0;
+	}
+	int iSentry = -1, iDispenser = -1;
+	float fLocation[3];
+	
+	//Sentries
+	while ((iSentry = FindEntityByClassname(iSentry, "obj_sentrygun")) != -1) {
+		if (!IsValidEntity(iSentry)) {
+			continue;
+		}
+		
+		GetEntPropVector(iSentry, Prop_Send, "m_vecOrigin", fLocation);
+		fLocation[2] += 20.0;
+	
+		if (!IsPointInZone(fLocation, g_fBeamPoints[iTower]))
+			return;
+	
+		int iShellsMax, iHealthMax, iRocketsMax, iMetalMax;
+
+		if (IsMiniSentry(iSentry)) {
+			iShellsMax =   150;
+			iHealthMax =   150;
+			iRocketsMax =    0;
+			iMetalMax =      0;
+		} else {
+			switch (GetBuildingLevel(iSentry)) {
+				case 1: {
+					iShellsMax =   150;
+					iHealthMax =   150;
+					iRocketsMax =    0;
+					iMetalMax =    200;
+				}
+
+				case 2: {
+					iShellsMax =   200;
+					iHealthMax =   180;
+					iRocketsMax =    0;
+					iMetalMax =    200;
+				}
+
+				case 3: {
+					iShellsMax =   200;
+					iHealthMax =   216;
+					iRocketsMax =   20;
+					iMetalMax =      0;
+				}
+			}
+		}
+			
+		int iState = GetEntProp(iSentry, Prop_Send, "m_iState");
+
+		// If is not building up
+		if (iState != 0) {
+			int iShells = GetEntProp(iSentry, Prop_Send, "m_iAmmoShells");
+			int iHealth = GetEntProp(iSentry, Prop_Send, "m_iHealth");
+			int iRockets = GetEntProp(iSentry, Prop_Send, "m_iAmmoRockets");
+			int iMetal = GetEntProp(iSentry, Prop_Send, "m_iUpgradeMetal");
+			
+			if (IsMiniSentry(iSentry)) {
+				int iShellsPerHit = 20; 	// Default: 40
+					
+				if (iShells + iShellsPerHit < iShellsMax) {
+					SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", iShells + iShellsPerHit);
+				} else if (iShells < iShellsMax) {
+					SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", iShellsMax);
+				}
+			} else {
+				int iMetalPerHit = 10; 		// Default: 25
+				int iHealthPerHit = 50; 	// Default: 105
+				int iShellsPerHit = 20; 	// Default: 40
+				int iRocketsPerHit = 4; 	// Default: 8
+
+				if (iMetal < iMetalMax) {
+					SetEntProp(iSentry, Prop_Send, "m_iUpgradeMetal", iMetal + iMetalPerHit);
+					
+				// Upgrade to the next level
+				} else if (iMetalMax != 0 && !g_bAoEEngineerAttack) { 
+					
+					float fLocationTower[3];
+					GetClientAbsOrigin(iTower, fLocationTower);
+
+					TeleportEntity(iTower, fLocation, NULL_VECTOR, NULL_VECTOR);
+
+					g_bAoEEngineerAttack = true;
+				
+					Handle hPack = CreateDataPack();
+					WritePackFloat(hPack, float(iTower));
+					WritePackFloat(hPack, fLocationTower[0]);
+					WritePackFloat(hPack, fLocationTower[1]);
+					WritePackFloat(hPack, fLocationTower[2]);
+
+					CreateTimer(0.2, Timer_TeleportAoEEngineerBack, hPack, _);				
+				}
+
+				if (iHealth + iHealthPerHit < iHealthMax) {
+					SetEntProp(iSentry, Prop_Send, "m_iHealth", iHealth + iHealthPerHit);
+				} else if (iHealth < iHealthMax) {
+					SetEntProp(iSentry, Prop_Send, "m_iHealth", iHealthMax);
+				}
+
+				if (iShells + iShellsPerHit < iShellsMax) {
+					SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", iShells + iShellsPerHit);
+				} else if (iShells < iShellsMax) {
+					SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", iShellsMax);
+				}
+				if (iRockets + iRocketsPerHit < iRocketsMax) {
+					SetEntProp(iSentry, Prop_Send, "m_iAmmoRockets", iRockets + iRocketsPerHit);
+				} else if (iRockets < iRocketsMax) {
+					SetEntProp(iSentry, Prop_Send, "m_iAmmoRockets", iRocketsMax);
+				}
+			}
+		}
+	}
+	
+	//Dispensers
+	while ((iDispenser = FindEntityByClassname(iDispenser, "obj_dispenser")) != -1) {
+		if (!IsValidEntity(iDispenser)) {
+			continue;
+		}
+
+		GetEntPropVector(iDispenser, Prop_Send, "m_vecOrigin", fLocation);
+
+		fLocation[2] += 20.0;
+
+		if (IsPointInZone(fLocation, g_fBeamPoints[iTower])) {
+			int iHealthMax, iMetalMax;
+
+			switch (GetBuildingLevel(iDispenser)) {
+				case 1: {
+					iHealthMax = 150;
+					iMetalMax =  200;
+				}
+
+				case 2: {
+					iHealthMax = 180;
+					iMetalMax =  200;
+				}
+
+				case 3: {
+					iHealthMax = 216;
+					iMetalMax =    0;
+				}
+			}
+
+			int iBuildingUp = GetEntProp(iDispenser, Prop_Send, "m_bBuilding");
+
+			if (iBuildingUp != 1) { // Is not building up
+				int iHealth = GetEntProp(iDispenser, Prop_Send, "m_iHealth");
+				int iMetal = GetEntProp(iDispenser, Prop_Send, "m_iUpgradeMetal");
+
+				int iMetalPerHit = 10; 		// Default: 25
+				int iHealthPerHit = 50; 	// Default: 105
+
+				if (iMetal < iMetalMax) {
+					SetEntProp(iDispenser, Prop_Send, "m_iUpgradeMetal", iMetal + iMetalPerHit);
+				} else if (iMetalMax != 0 && !g_bAoEEngineerAttack) { // Upgrade to the next level
+					float fLocationTower[3];
+					GetClientAbsOrigin(iTower, fLocationTower);
+
+					TeleportEntity(iTower, fLocation, NULL_VECTOR, NULL_VECTOR);
+
+					g_bAoEEngineerAttack = true;
+
+					Handle hPack = CreateDataPack();
+					WritePackFloat(hPack, float(iTower));
+					WritePackFloat(hPack, fLocationTower[0]);
+					WritePackFloat(hPack, fLocationTower[1]);
+					WritePackFloat(hPack, fLocationTower[2]);
+
+					CreateTimer(0.5, Timer_TeleportAoEEngineerBack, hPack, _);
+				}
+
+				if (iHealth + iHealthPerHit < iHealthMax) {
+					SetEntProp(iDispenser, Prop_Send, "m_iHealth", iHealth + iHealthPerHit);
+				} else if (iHealth < iHealthMax) {
+					SetEntProp(iDispenser, Prop_Send, "m_iHealth", iHealthMax);
+				}
+			}
+		}
+	}
+}
+
+public Action Timer_TeleportAoEEngineerBack(Handle hTimer, any hPack) {
+	ResetPack(hPack);
+	
+	int iTower = RoundToZero(ReadPackFloat(hPack));
+
+	float fLocation[3];
+	fLocation[0] = ReadPackFloat(hPack);
+	fLocation[1] = ReadPackFloat(hPack);
+	fLocation[2] = ReadPackFloat(hPack);
+	TeleportEntity(iTower, fLocation, NULL_VECTOR, NULL_VECTOR);
+}
+
+/**
+ * Gets the level of an building.
+ *
+ * @param iEntity		The buildings entity index.
+ * @return				The buildings level.
+ */
+
+public int GetBuildingLevel(int iEntity) {
+	return GetEntProp(iEntity, Prop_Send, "m_iUpgradeLevel");	
+}
+
+/**
+ * Checks wheter a sentry is a Mini-Sentry or not.
+ *
+ * @param iSentry		The sentries entity index.
+ * @return				True if mini, false otherwise.
+ */
+
+public bool IsMiniSentry(int iSentry) {
+	return ((GetEntProp(iSentry, Prop_Send, "m_bMiniBuilding") == 0) ? false : true);	
 }
 
 /**
