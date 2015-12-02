@@ -62,6 +62,7 @@ public Plugin myinfo =
 #include "towerdefense/util/zones.sp"
 
 #include "towerdefense/handler/antiair.sp"
+#include "towerdefense/handler/aoe.sp"
 #include "towerdefense/handler/corners.sp"
 #include "towerdefense/handler/metalpacks.sp"
 #include "towerdefense/handler/panels.sp"
@@ -257,6 +258,14 @@ public void OnLibraryRemoved(const char[] sName) {
 		g_bTF2Attributes = false;
 		
 		Log(TDLogLevel_Debug, "TF2Attributes unloaded");
+	}
+}
+
+public void OnClientPutInServer(int iClient) {
+	for (int i = 0; i < sizeof(g_fBeamPoints[]); i++) {
+		g_fBeamPoints[iClient][i][0] = -1.0;
+		g_fBeamPoints[iClient][i][1] = -1.0;
+		g_fBeamPoints[iClient][i][2] = -1.0;
 	}
 }
 
@@ -508,7 +517,7 @@ public void OnTakeDamagePost(int iClient, int iAttacker, int iInflictor, float f
 	}
 }
 
-public void OnEntityCreated(int iEntity, const char[] sClassname) {
+public int OnEntityCreated(int iEntity, const char[] sClassname) {
 	if (StrEqual(sClassname, "tf_ammo_pack") || StrEqual(sClassname, "tf_dropped_weapon")) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnEntitySpawnKill);
 	} else if (StrEqual(sClassname, "func_breakable")) {
@@ -1171,7 +1180,7 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 		// Wave start
 		
 		if (StrEqual(sName, "wave_start")) {
-			Wave_OnButtonStart(0, iCaller, iActivator);
+			Wave_OnButtonStart(g_iCurrentWave, iCaller, iActivator);
 		} else {
 			char sNameParts[3][32];
 			ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));

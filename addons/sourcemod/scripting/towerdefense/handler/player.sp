@@ -378,6 +378,18 @@ stock bool Player_CGetString(int iClient, const char[] sKey, char[] sValue, int 
 	return CheckClientForUserId(iClient) && Player_UGetString(GetClientUserId(iClient), sKey, sValue, iMaxLength);
 }
 
+stock void Player_AddHealth(int iClient, int iHealth, bool ignoreMax=false) {
+		if(ignoreMax) {
+			SetEntityHealth(iClient, GetClientHealth(iClient) + iHealth);
+		} else {
+			int iCurrentHealth = GetEntProp(iClient, Prop_Send, "m_iHealth");
+			int iMaxHealth = GetEntData(iClient, FindDataMapOffs(iClient, "m_iMaxHealth"));
+			if(iCurrentHealth < iMaxHealth) {
+				SetEntityHealth(iClient, GetClientHealth(iClient) + iHealth);
+			}
+		}
+}
+
 /*==========  May not be of use  ==========*/
 /*
 stock Player_USetArray(iUserId, const String:sKey[], const any:aArray[], iNumItems) {

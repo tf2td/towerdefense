@@ -27,6 +27,7 @@ bool g_bTowerDefenseMap;
 
 Handle g_hEnabled;
 Handle hHintTimer;
+Handle hAoETimer;
 
 /*==========  Float  ==========*/
 
@@ -99,6 +100,7 @@ Handle g_hPlayerData;
 
 int g_iAttachedTower[MAXPLAYERS + 1];
 int g_iLastButtons[MAXPLAYERS + 1];
+int g_iHealBeamIndex[MAXPLAYERS + 1][2];
 
 /*==========  String  ==========*/
 
@@ -141,6 +143,7 @@ bool g_bStartWaveEarly;
 
 float g_fAirWaveSpawn[3];
 float g_fWaveStartButtonLocation[3];
+float g_fBeamPoints[MAXPLAYERS + 1][8][3];
 
 /*==========  Integer  ==========*/
 

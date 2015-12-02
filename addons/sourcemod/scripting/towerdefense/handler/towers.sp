@@ -110,6 +110,29 @@ stock void Tower_OnSpawn(int iTower, TDTowerId iTowerId) {
 	
 	// Teleport
 	Tower_TeleportToSpawn(iTower);
+	
+	//Check for AoE
+	Tower_AoeSetup(iTower, iTowerId);
+}
+
+/**
+ * Check if Tower is AoE and execute timer if this is true
+ *
+ * @param iTower		The tower.
+ * @param iTowerId		The tower id.
+ * @noreturn
+ */
+
+stock void Tower_AoeSetup(int iTower, TDTowerId iTowerId) {	 
+	if (!IsTower(iTower)) {
+		return;
+	}
+	
+	char sName[50];
+	Tower_GetName(iTowerId, sName, sizeof(sName));
+	if(StrEqual(sName,"AoEEngineerTower") || StrEqual(sName,"MedicTower")) {
+		hAoETimer = CreateTimer(0.2, Timer_ClientNearAoETower, iTower, TIMER_REPEAT);
+	}
 }
 
 /**

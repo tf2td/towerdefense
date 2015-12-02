@@ -232,7 +232,9 @@ stock void CreateBeamBoxAroundClient(int iClient, float fDistance, bool OnlyPlay
 		return;
 	}
 	
-	float fLocation[3], float fStart[3], float fEnd[3];
+	float fLocation[3]; 
+	float fStart[3];
+	float fEnd[3];
 	
 	GetClientAbsOrigin(iClient, fLocation);
 	
@@ -322,7 +324,8 @@ stock bool IsEntityInZone(int iEntity, float fZone[8][3], float fDifferenceZ) {
  */
 
 stock bool IsClientInZone(int iClient, float fPoint[8][3]) {
-	float fPlayerPosition[3], float fPlayerPoint[8][3];
+	float fPlayerPosition[3];
+	float fPlayerPoint[8][3];
 	
 	GetEntPropVector(iClient, Prop_Send, "m_vecOrigin", fPlayerPosition);
 	fPlayerPosition[2] += 41.5;

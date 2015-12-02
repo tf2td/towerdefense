@@ -89,6 +89,11 @@ stock void Server_Reset() {
 		CloseHandle(hHintTimer);
 		hHintTimer = INVALID_HANDLE;
 	}
+	//Reset AoE Timer
+	if (hHintTimer != INVALID_HANDLE) {
+		CloseHandle(hAoETimer);
+		hHintTimer = INVALID_HANDLE;
+	}
 	
 	g_iMetalPackCount = 0;
 	
