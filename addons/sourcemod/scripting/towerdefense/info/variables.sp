@@ -49,6 +49,7 @@ int g_iBulletMultiplierCost = 1000;
 int g_iSentryMultiplierCost = 1000;
 int g_iCritMultiplierCost = 1000;
 int g_iCritUpgradeCount = 1;
+int iMaxWaves;
 
 
 /*==========  String  ==========*/

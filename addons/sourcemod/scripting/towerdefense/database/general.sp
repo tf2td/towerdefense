@@ -256,7 +256,7 @@ public void Database_OnLoadWeapons(Handle hDriver, Handle hResult, const char[] 
 }
 
 /**
- * Loads waves to its map.
+ * Loads maxmimum Wave
  *
  * @noreturn
  */
@@ -445,6 +445,31 @@ public void Database_OnLoadMetalpacks(Handle hDriver, Handle hResult, const char
 		CloseHandle(hResult);
 		hResult = INVALID_HANDLE;
 	}
+
+	Database_LoadMaxWaves();
+	
+} 
+
+stock void Database_LoadMaxWaves() {
+	char sQuery[512];
+	
+	Format(sQuery, sizeof(sQuery), "SELECT `wave_id`  FROM `wave`");
+	
+	SQL_TQuery(g_hDatabase, Database_OnLoadMaxWaves, sQuery);
+}
+
+/**
+ * Loads waves to its map.
+ *
+ * @noreturn
+ */
+ 
+ public void Database_OnLoadMaxWaves(Handle hDriver, Handle hResult, const char[] sError, any iData) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_LoadMaxWaves > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
+		iMaxWaves = SQL_GetRowCount(hResult);
+	}
 	
 	Database_OnDataLoaded();
-} 
+}

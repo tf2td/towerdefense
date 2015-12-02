@@ -173,14 +173,20 @@ stock void Wave_OnDeathAll() {
 	if (!g_bEnabled) {
 		return;
 	}
-	
 	if (g_iNextWaveType & TDWaveType_Boss) {
 		SpawnMetalPacks(TDMetalPack_Boss);
+	}
+	
+	if (g_iCurrentWave + 1 >= iMaxWaves) {
+		PrintToServer("[TF2TD] Round won (Wave: %d)", g_iCurrentWave + 1);
+		Wave_Win(TEAM_DEFENDER);
+		return;
 	}
 	
 	g_bStartWaveEarly = false;
 	
 	g_iCurrentWave++;
+	
 	g_iNextWaveType = Wave_GetType(g_iCurrentWave);
 	
 	TeleportEntity(g_iWaveStartButton, g_fWaveStartButtonLocation, NULL_VECTOR, view_as<float>( { 0.0, 0.0, 0.0 } ));
@@ -335,6 +341,23 @@ public Action TeleportWaveDelay(Handle hTimer, any iNumber) {
 	}
 	
 	return Plugin_Stop;
+}
+
+public void Wave_Win(int iTeam) {
+	int iEntity = -1;
+	
+	iEntity = FindEntityByClassname2(iEntity, "team_control_point_master");
+	
+	if (iEntity == -1 || !IsValidEntity(iEntity)) {
+		// No team_control_point_master either... lets create one.
+		iEntity = CreateEntityByName("team_control_point_master");
+		DispatchKeyValue(iEntity, "targetname", "master_control_point");
+		DispatchKeyValue(iEntity, "StartDisabled", "0");
+		DispatchSpawn(iEntity);
+	}
+	
+	SetVariantInt(iTeam);
+	AcceptEntityInput(iEntity, "SetWinner");
 }
 
 /*=========================================
@@ -665,3 +688,17 @@ stock bool Wave_GetAngles(int iWave, float fAngles[3]) {
 	
 	return false;
 } 
+
+/**
+ * Finds an entity by using its classname.
+ *
+ * @param iStartEnt 	The start entity entity index.
+ * @param sClassname 	The entity classname to look for.
+ * @return				The entitys entity index, or -1 on failure.
+ */
+
+public int FindEntityByClassname2(int iStartEnt, const char[] sClassname) {
+	/* If iStartEnt isn't valid shifting it back to the nearest valid one */
+	while (iStartEnt > -1 && !IsValidEntity(iStartEnt)) iStartEnt--;
+	return FindEntityByClassname(iStartEnt, sClassname);
+}

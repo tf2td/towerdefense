@@ -13,11 +13,13 @@ public Action Timer_ClientNearAoETower(Handle hTimer) {
 				TDTowerId iTowerId = GetTowerId(iTower);
 			
 				if(iTowerId == TDTower_AoE_Engineer) {
-					CreateBeamBoxAroundClient(iTower, 80.0, true, 0.2, {255, 0, 0, 25});
+					float fAreaScale = 80.0 * Tower_GetAreaScale(GetTowerId(iTower));
+					CreateBeamBoxAroundClient(iTower, fAreaScale, true, 0.2, {255, 0, 0, 25});
 					Tower_ObjectNearAoEEngineer(iTower, iClient);
 				}
 				if(iTowerId == TDTower_Medic) {
-					CreateBeamBoxAroundClient(iTower, 160.0, true, 0.2, {0, 255, 0, 25});
+					float fAreaScale = 160.0 * Tower_GetAreaScale(GetTowerId(iTower));
+					CreateBeamBoxAroundClient(iTower, fAreaScale, true, 0.2, {0, 255, 0, 25});
 					Tower_ObjectNearAoEMedic(iTower);
 				}	
 				
@@ -114,14 +116,14 @@ public void Tower_ObjectNearAoEEngineer(int iTower, int iClient) {
 					iShellsMax =   150;
 					iHealthMax =   150;
 					iRocketsMax =    0;
-					iMetalMax =    200;
+					iMetalMax =    1000;
 				}
 
 				case 2: {
 					iShellsMax =   200;
 					iHealthMax =   180;
 					iRocketsMax =    0;
-					iMetalMax =    200;
+					iMetalMax =    1000;
 				}
 
 				case 3: {
@@ -214,12 +216,12 @@ public void Tower_ObjectNearAoEEngineer(int iTower, int iClient) {
 			switch (GetBuildingLevel(iDispenser)) {
 				case 1: {
 					iHealthMax = 150;
-					iMetalMax =  200;
+					iMetalMax =  500;
 				}
 
 				case 2: {
 					iHealthMax = 180;
-					iMetalMax =  200;
+					iMetalMax =  500;
 				}
 
 				case 3: {

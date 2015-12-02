@@ -270,6 +270,15 @@ public Database_OnLoadWeapons(Handle:hDriver, Handle:hResult, const String:sErro
 	}
 
 	Database_LoadWaves();
+	Database_LoadMaxWaves();
+}
+
+stock Database_LoadWaves() {
+	decl String:sQuery[128];
+	
+	Format(sQuery, sizeof(sQuery), "CALL GetWaves(%d)", g_iServerMap);
+	
+	SQL_TQuery(g_hDatabase, Database_OnLoadMaxWaves, sQuery);
 }
 
 /**

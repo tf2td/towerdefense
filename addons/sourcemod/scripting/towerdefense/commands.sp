@@ -12,6 +12,7 @@ stock void RegisterCommands() {
 	// Commands for testing purposes
 	RegAdminCmd("sm_gm", Command_GiveMetal, ADMFLAG_ROOT);
 	RegAdminCmd("sm_r", Command_ReloadMap, ADMFLAG_ROOT);
+	RegAdminCmd("sm_sw", Command_SetWave, ADMFLAG_ROOT);
 	
 	// Temporary commands
 	RegAdminCmd("sm_pregame", Command_PreGame, ADMFLAG_ROOT);
@@ -94,6 +95,25 @@ public Action Command_ReloadMap(int iClient, int iArgs) {
 	
 	return Plugin_Handled;
 }
+
+public Action Command_SetWave(int iClient, int iArgs) {
+	if (iArgs != 1) {
+		PrintToChat(iClient, "Usage: !sw <wave>");
+		return Plugin_Handled;
+	}
+
+	char sWave[6];
+	GetCmdArg(1, sWave, sizeof(sWave));
+	if(StringToInt(sWave) - 1 >= iMaxWaves)
+		PrintToChat(iClient, "[SM] The highest wave is %i. Please choose a lower value than that!", iMaxWaves);
+	else {
+	g_iCurrentWave = StringToInt(sWave) - 1;
+	PrintToChat(iClient, "[SM] Wave set to %i.", g_iCurrentWave);
+	}
+
+	return Plugin_Handled;
+}
+
 
 /*===================================
 =            Start Round            =
