@@ -329,7 +329,7 @@ public void OnClientDisconnect(int iClient) {
 	}
 }
 
-public Action OnPlayerRunCmdCmd(int iClient, int &iButtons, int &iImpulse, float fVelocity[3], float fAngles[3], int &iWeapon) {
+public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fVelocity[3], float fAngles[3], int &iWeapon) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
