@@ -529,7 +529,6 @@ public Action CommandListener_Multiplier(int iClient, const char[] sCommand, int
 				}
 			} 
 			else if(StrContains(sCommand, sMultiplier) != -1) {
-				PrintToChatAll("%i", i);
 				int iPriceToPay = Multiplier_GetPrice(i) + Multiplier_GetIncrease(i) * RoundToZero(fMultiplier[i]);
 	
 				int iClients = GetRealClientCount(true);
