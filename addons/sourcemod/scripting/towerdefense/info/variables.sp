@@ -6,6 +6,8 @@ Handle g_hMapTowers;
 Handle g_hMapWeapons;
 Handle g_hMapWaves;
 Handle g_hMapMetalpacks;
+Handle g_hMultiplierType;
+Handle g_hMultiplier;
 
 
 /*=========================================
@@ -30,11 +32,7 @@ Handle hHintTimer;
 
 /*==========  Float  ==========*/
 
-float fBlastDamageMultiplier = 1.0;
-float fBurnDamageMultiplier = 1.0;
-float fBulletDamageMultiplier = 1.0;
-float fSentryDamageMultiplier = 1.0;
-float fCritChanceMultiplier = 0.0;
+float fMultiplier[50];
 
 /*==========  Integer  ==========*/
 
@@ -42,14 +40,8 @@ int g_iBuildingLimit[TDBuildingType];
 int g_iHaloMaterial;
 int g_iLaserMaterial;
 int g_iMetalPackCount;
-//Multiplier cost. This cost will be multiplied by the multiplier itself
-int g_iBlastMultiplierCost = 1000;
-int g_iBurnMultiplierCost = 1000;
-int g_iBulletMultiplierCost = 1000;
-int g_iSentryMultiplierCost = 1000;
-int g_iCritMultiplierCost = 1000;
-int g_iCritUpgradeCount = 1;
 int iMaxWaves;
+int iMaxMultiplierTypes;
 
 
 /*==========  String  ==========*/

@@ -115,6 +115,8 @@ public void OnPluginStart() {
 	CreateDataMap(g_hMapWeapons);
 	CreateDataMap(g_hMapWaves);
 	CreateDataMap(g_hMapMetalpacks);
+	CreateDataMap(g_hMultiplierType);
+	CreateDataMap(g_hMultiplier);
 	
 	CreateDataMap(g_hPlayerData);
 	
@@ -154,6 +156,16 @@ public void OnPluginEnd() {
 	if (g_hMapMetalpacks != null) {
 		CloseHandle(g_hMapMetalpacks);
 		g_hMapMetalpacks = null;
+	}
+	
+	if (g_hMultiplierType != null) {
+		CloseHandle(g_hMultiplierType);
+		g_hMultiplierType = null;
+	}
+	
+	if (g_hMultiplier != null) {
+		CloseHandle(g_hMultiplier);
+		g_hMultiplier = null;
 	}
 	
 	if (g_hPlayerData != null) {
@@ -317,7 +329,7 @@ public void OnClientDisconnect(int iClient) {
 	}
 }
 
-public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fVelocity[3], float fAngles[3], int &iWeapon) {
+public Action OnPlayerRunCmdCmd(int iClient, int &iButtons, int &iImpulse, float fVelocity[3], float fAngles[3], int &iWeapon) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
@@ -462,28 +474,28 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 		
 		//Sentry Damage
 		if (StrEqual(sAttackerObject, "obj_sentrygun")) {
-			fDamage *= fSentryDamageMultiplier;
+			fDamage *= fMultiplier[Multiplier_GetInt("sentry")] + 1.0;
 
 			return Plugin_Changed;
 		}
 		
 		//Blast Damage
 		if(iDamageType & DMG_BLAST) {
-			fDamage *= fBlastDamageMultiplier;
+			fDamage *= fMultiplier[Multiplier_GetInt("explosion")] + 1.0;
 			
 			return Plugin_Changed;
 		}
 		
 		//Fire Damage
 		if(iDamageType & DMG_BURN) {
-			fDamage *= fBurnDamageMultiplier;
+			fDamage *= fMultiplier[Multiplier_GetInt("fire")] + 1.0;
 			
 			return Plugin_Changed;
 		}
 		
 		//Bullet Damage
 		if(iDamageType & DMG_BULLET) {
-			fDamage *= fBulletDamageMultiplier;
+			fDamage *= fMultiplier[Multiplier_GetInt("bullet")] + 1.0;
 			
 			return Plugin_Changed;
 		}

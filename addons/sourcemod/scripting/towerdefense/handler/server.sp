@@ -96,25 +96,15 @@ stock void Server_Reset() {
 			hAoETimer = INVALID_HANDLE;
 		}
 	}
+	//Reset Multipliers
+	for (int i = 1; i <= iMaxMultiplierTypes; i++) {
+		fMultiplier[i] = 0.0;
+	}
 	
 	g_iMetalPackCount = 0;
 	
 	g_bTowersLocked = false;
 	g_bAoEEngineerAttack = false;
-	//Reset Multipliers
-	fSentryDamageMultiplier = 1.0;
-	fBlastDamageMultiplier = 1.0;
-	fBurnDamageMultiplier = 1.0;
-	fBulletDamageMultiplier = 1.0;
-	fCritChanceMultiplier = 0.0;
-	//Reset Prices
-	g_iBlastMultiplierCost = 1000;
-	g_iBurnMultiplierCost = 1000;
-	g_iBulletMultiplierCost = 1000;
-	g_iSentryMultiplierCost = 1000;
-	g_iCritMultiplierCost = 1000;
-	//Reset Upgrade Count (Crits Only)
-	g_iCritUpgradeCount = 1;
 	
 	g_bStartWaveEarly = false;
 	

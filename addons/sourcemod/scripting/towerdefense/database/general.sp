@@ -256,7 +256,7 @@ public void Database_OnLoadWeapons(Handle hDriver, Handle hResult, const char[] 
 }
 
 /**
- * Loads maxmimum Wave
+ * Loads waves to its map.
  *
  * @noreturn
  */
@@ -282,6 +282,8 @@ public void Database_OnLoadWaves(Handle hDriver, Handle hResult, const char[] sE
 	} else if (SQL_GetRowCount(hResult)) {
 		int iWaveId = 0;
 		char sKey[64], sBuffer[128];
+		
+		iMaxWaves = 0;
 		
 		// Type Name      Class Quantiy Health Location
 		// 0    WeakScout Scout 4       125    560 -1795 -78 0 90 0
@@ -329,6 +331,7 @@ public void Database_OnLoadWaves(Handle hDriver, Handle hResult, const char[] sE
 			// PrintToServer("%s => %s", sKey, sBuffer);
 			
 			iWaveId++;
+			iMaxWaves++;
 		}
 	}
 	
@@ -446,29 +449,84 @@ public void Database_OnLoadMetalpacks(Handle hDriver, Handle hResult, const char
 		hResult = INVALID_HANDLE;
 	}
 
-	Database_LoadMaxWaves();
+	Database_LoadMultipliersTypes();
 	
 } 
 
-stock void Database_LoadMaxWaves() {
+stock void Database_LoadMultipliersTypes() {
 	char sQuery[512];
 	
-	Format(sQuery, sizeof(sQuery), "SELECT `wave_id`  FROM `wave`");
+	Format(sQuery, sizeof(sQuery), "SELECT type FROM multipliertype ORDER BY `multipliertype_id` ASC", g_iServerMap);
 	
-	SQL_TQuery(g_hDatabase, Database_OnLoadMaxWaves, sQuery);
+	SQL_TQuery(g_hDatabase, Database_OnLoadMultipliersTypes, sQuery);
 }
 
 /**
- * Loads waves to its map.
+ * Load Multiplier Types
  *
  * @noreturn
  */
  
- public void Database_OnLoadMaxWaves(Handle hDriver, Handle hResult, const char[] sError, any iData) {
+ public void Database_OnLoadMultipliersTypes(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_LoadMaxWaves > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
-		iMaxWaves = SQL_GetRowCount(hResult);
+		// type	
+		// bullet
+		int iMultiplierTypeId = 1;
+		while (SQL_FetchRow(hResult)) {
+			char sKey[64], sBuffer[128];
+			
+			// Save type
+			Format(sKey, sizeof(sKey), "%d_type", iMultiplierTypeId);
+			SQL_FetchString(hResult, 0, sBuffer, sizeof(sBuffer));
+			SetTrieString(g_hMultiplierType, sKey, sBuffer);
+			
+			iMultiplierTypeId++;
+		}
+	}
+	
+	Database_LoadMultipliers();
+}
+
+stock void Database_LoadMultipliers() {
+	char sQuery[512];
+	
+	Format(sQuery, sizeof(sQuery), "SELECT price,increase FROM `multiplier` WHERE map_id=%d ORDER BY `multipliertype_id` ASC", g_iServerMap);
+	
+	SQL_TQuery(g_hDatabase, Database_OnLoadMultipliers, sQuery);
+}
+
+/**
+ * Load Multipliers
+ *
+ * @noreturn
+ */
+ 
+ public void Database_OnLoadMultipliers(Handle hDriver, Handle hResult, const char[] sError, any iData) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_LoadMaxWaves > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult)) {
+		// multipliertype_id	price	increase 
+		// 1					1000	1000
+		
+		iMaxMultiplierTypes = 0;
+		int iMultiplierTypeId = 1;
+		
+		while (SQL_FetchRow(hResult)) {
+			char sKey[64];
+			
+			// Save price
+			Format(sKey, sizeof(sKey), "%d_price", iMultiplierTypeId);
+			SetTrieValue(g_hMultiplier, sKey, SQL_FetchInt(hResult, 0));
+			
+			// Save increase
+			Format(sKey, sizeof(sKey), "%d_increase", iMultiplierTypeId);
+			SetTrieValue(g_hMultiplier, sKey, SQL_FetchInt(hResult, 1));
+			
+			iMultiplierTypeId++;
+			iMaxMultiplierTypes++;
+		}
 	}
 	
 	Database_OnDataLoaded();

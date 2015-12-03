@@ -317,11 +317,11 @@ public Action TF2_CalcIsAttackCritical(int iClient, int iWeapon, char[] sClassna
 	}
 	
 	//Calculate crit chances
-	if (fCritChanceMultiplier == 0.0) {
+	if (fMultiplier[Multiplier_GetInt("crit")] == 0.0) {
 		bResult = false;
 	}
 
-	if (fCritChanceMultiplier * 100 >= GetRandomInt(0, 100)) {
+	if (fMultiplier[Multiplier_GetInt("crit")] * 0.05 * 100 >= GetRandomInt(0, 100)) {
 		bResult = true;		
 	}
 	
