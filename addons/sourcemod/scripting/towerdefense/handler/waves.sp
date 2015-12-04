@@ -160,6 +160,12 @@ stock void Wave_OnDeath(int iAttacker, float fPosition[3]) {
 	
 	if (GetAliveAttackerCount() <= 1) {
 		Wave_OnDeathAll();
+		for (int iClient = 1; iClient <= MaxClients; iClient++) {
+			if(IsDefender(iClient)) {
+				Player_CAddValue(iClient, PLAYER_WAVES_PLAYED, g_iCurrentWave);
+				Player_CSetValue(iClient, PLAYER_WAVE_REACHED, g_iCurrentWave);
+			}
+		}
 	}
 }
 
@@ -179,6 +185,11 @@ stock void Wave_OnDeathAll() {
 	
 	if (g_iCurrentWave + 1 >= iMaxWaves) {
 		PrintToServer("[TF2TD] Round won (Wave: %d)", g_iCurrentWave + 1);
+		for (int iClient = 1; iClient <= MaxClients; iClient++) {
+			if(IsDefender(iClient)) {
+				Player_CSetValue(iClient, PLAYER_ROUNDS_WON, 1);
+			}
+		}
 		Wave_Win(TEAM_DEFENDER);
 		return;
 	}
@@ -355,7 +366,6 @@ public void Wave_Win(int iTeam) {
 		DispatchKeyValue(iEntity, "StartDisabled", "0");
 		DispatchSpawn(iEntity);
 	}
-	
 	SetVariantInt(iTeam);
 	AcceptEntityInput(iEntity, "SetWinner");
 }

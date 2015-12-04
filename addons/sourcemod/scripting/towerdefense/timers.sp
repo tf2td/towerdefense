@@ -16,6 +16,8 @@ public Action Timer_Hints(Handle hTimer) {
 	else if(iRandom  == 2)
 	PrintToChatAll("\x04[\x03TD\x04]\x04 /d <amount> \x03to drop metal for other players.");
 	else if(iRandom  == 3)
-	PrintToChatAll("\x04[\x03TD\x04]\x03 Check everyone's metal status with \x04/m ");
-		
+	PrintToChatAll("\x04[\x03TD\x04]\x03 Check everyone's metal status with \x04/m ");	
+}
+public Action Timer_Reset(Handle hTimer) {
+	SetPassword(SERVER_PASS, true, true);
 }

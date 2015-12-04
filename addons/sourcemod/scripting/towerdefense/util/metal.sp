@@ -67,7 +67,7 @@ stock bool AddClientMetal(int iClient, int iMetal) {
 			return false;
 		}
 	}
-	
+	Player_CAddValue(iClient, PLAYER_METAL_PICK, iMetal);
 	SetClientMetal(iClient, GetClientMetal(iClient) + iMetal);
 	return true;
 }

@@ -48,7 +48,7 @@ stock void Tower_OnButtonBuy(TDTowerId iTowerId, int iButton, int iActivator) {
 				if (IsDefender(iClient)) {
 					AddClientMetal(iClient, -iPrice);
 					
-					// tdSQL_RefreshPlayerStats_TowersBought(iClient);
+					Player_CAddValue(iClient, PLAYER_TOWERS_BOUGHT, 1);
 				}
 			}
 			

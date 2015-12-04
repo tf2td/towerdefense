@@ -118,9 +118,10 @@ stock void Player_Connected(int iUserId, int iClient, const char[] sName, const 
 
 stock void Player_OnDisconnectPre(int iUserId, int iClient) {
 	Database_UpdatePlayerDisconnect(iUserId);
+	Player_CSetValue(iClient, PLAYER_PLAYTIME, RoundToZero(GetClientTime(iClient)));
 	
 	if (GetRealClientCount(true) <= 1) {  // the disconnected player is counted (thus 1 not 0)
-		SetPassword(SERVER_PASS, true, true);
+		CreateTimer(5.0, Timer_Reset); //Give Queries time to send
 	}
 }
 
@@ -193,6 +194,7 @@ stock void Player_OnDeath(int iUserId, int iClient) {
 	g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
 	g_bReplaceWeapon[iClient][TFWeaponSlot_Secondary] = false;
 	g_bReplaceWeapon[iClient][TFWeaponSlot_Melee] = false;
+	Player_CAddValue(iClient, PLAYER_DEATHS, 1);
 	
 	if (IsTower(g_iAttachedTower[iClient])) {
 		Tower_OnCarrierDeath(g_iAttachedTower[iClient], iClient);
@@ -235,6 +237,26 @@ stock void Player_OnDataSet(int iUserId, int iClient, const char[] sKey, TDDataT
 
 stock bool CheckClientForUserId(int iClient) {
 	return (iClient > 0 && iClient <= MaxClients && IsClientConnected(iClient));
+}
+
+stock void Player_UAddValue(int iUserId, const char[] sKey, int iValue) {
+	char sUserIdKey[128];
+	int iOldValue;
+	Player_UGetValue(iUserId, sKey, iOldValue);
+	if(iOldValue != -1)
+		iValue = iValue + iOldValue;
+	
+	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
+	
+	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_Integer, iValue, false, -1.0, "");
+	
+	SetTrieValue(g_hPlayerData, sUserIdKey, iValue);
+}
+
+stock void Player_CAddValue(int iClient, const char[] sKey, int iValue) {
+	if (CheckClientForUserId(iClient)) {
+		Player_UAddValue(GetClientUserId(iClient), sKey, iValue);
+	}
 }
 
 stock void Player_USetValue(int iUserId, const char[] sKey, int iValue) {

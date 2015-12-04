@@ -107,6 +107,18 @@ public void Event_PlayerDeath(Handle hEvent, const char[] sName, bool bDontBroad
 	
 	int iUserId = GetEventInt(hEvent, "userid");
 	int iClient = GetClientOfUserId(iUserId);
+	int iAttackerId = GetEventInt(hEvent, "attacker");
+	//Check if attacker is a Defender
+	if(IsValidClient(GetClientOfUserId(iAttackerId)) && IsDefender(GetClientOfUserId(iAttackerId))) {
+		int iAttacker = GetClientOfUserId(iAttackerId);
+		Player_CAddValue(iAttacker, PLAYER_KILLS, 1);
+	}
+	//Check if assister is a Defender
+	int iAssisterId = GetEventInt(hEvent, "assister");
+	if(IsValidClient(GetClientOfUserId(iAssisterId)) && IsDefender(GetClientOfUserId(iAssisterId))) {
+		int iAssister = GetClientOfUserId(iAssisterId);
+		Player_CAddValue(iAssister, PLAYER_ASSISTS, 1);
+	}
 	
 	if (IsDefender(iClient)) {
 		Player_OnDeath(iUserId, iClient);

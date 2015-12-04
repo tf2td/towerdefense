@@ -25,6 +25,8 @@ stock void RegisterCommands() {
 	RegConsoleCmd("sm_drop", Command_DropMetal);
 	RegConsoleCmd("sm_m", Command_ShowMetal);
 	RegConsoleCmd("sm_metal", Command_ShowMetal);
+	RegConsoleCmd("sm_w", Command_ShowWave);
+	RegConsoleCmd("sm_wave", Command_ShowWave);
 	
 	//Button Commands
 	RegAdminCmd("sm_increase_enabled_sentries", Command_IncreaseSentry, ADMFLAG_ROOT);
@@ -292,6 +294,7 @@ public Action Command_DropMetal(int iClient, int iArgs) {
 		}
 		case TDMetalPack_SpawnedPack: {
 			AddClientMetal(iClient, -iMetal);
+			Player_CAddValue(iClient, PLAYER_METAL_DROP, iMetal);
 		}
 	}
 	
@@ -303,13 +306,23 @@ public Action Command_ShowMetal(int iClient, int iArgs) {
 		return Plugin_Handled;
 	}
 	
-	PrintToChatAll("\x01Metal stats:");
+	PrintToChatAll("\x04[\x03TD\x04]\x03 Metal stats:");
 	
 	for (int i = 1; i <= MaxClients; i++) {
 		if (IsDefender(i)) {
 			PrintToChatAll("\x04%N - %d metal", i, GetClientMetal(i));
 		}
 	}
+	
+	return Plugin_Handled;
+}
+
+public Action Command_ShowWave(int iClient, int iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Handled;
+	}
+	
+	PrintToChatAll("\x04[\x03TD\x04]\x03 Currently on Wave %i out of %i", g_iCurrentWave, iMaxWaves);
 	
 	return Plugin_Handled;
 }

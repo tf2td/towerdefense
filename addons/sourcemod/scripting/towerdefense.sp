@@ -501,6 +501,10 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 		}
 	}
 	
+	if(IsValidClient(iAttacker) && IsDefender(iAttacker)) {
+		Player_CAddValue(iAttacker, PLAYER_DAMAGE, RoundToZero(fDamage));
+	}
+	
 	if (IsDefender(iClient)) {
 		if (IsValidClient(iAttacker)) {
 			if (iClient == iAttacker || GetClientTeam(iClient) != GetClientTeam(iAttacker)) {
@@ -1082,6 +1086,7 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 			
 			// Client can build Sentry
 			if (iCount < g_iBuildingLimit[TDBuilding_Sentry]) {
+				Player_CAddValue(iClient, PLAYER_OBJECTS_BUILT, 1);
 				return true;
 			} else {
 				Forbid(iClient, true, "Sentry limit reached! (Limit: %d)", g_iBuildingLimit[TDBuilding_Sentry]);
@@ -1108,8 +1113,9 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 				}
 			}
 			
-			// Client can build Sentry
+			// Client can build Dispenser
 			if (iCount < g_iBuildingLimit[TDBuilding_Dispenser]) {
+				Player_CAddValue(iClient, PLAYER_OBJECTS_BUILT, 1);
 				return true;
 			} else {
 				Forbid(iClient, true, "Dispenser limit reached! (Limit: %d)", g_iBuildingLimit[TDBuilding_Dispenser]);
