@@ -188,6 +188,8 @@ stock void Wave_OnDeathAll() {
 		for (int iClient = 1; iClient <= MaxClients; iClient++) {
 			if(IsDefender(iClient)) {
 				Player_CSetValue(iClient, PLAYER_ROUNDS_WON, 1);
+				int iUserId = GetClientUserId(iClient);
+				Database_UpdatePlayerDisconnect(iUserId);
 			}
 		}
 		Wave_Win(TEAM_DEFENDER);

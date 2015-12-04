@@ -116,7 +116,7 @@ public Action Command_SetWave(int iClient, int iArgs) {
 		PrintToChat(iClient, "[SM] The highest wave is %i. Please choose a lower value than that!", iMaxWaves);
 	else {
 	g_iCurrentWave = StringToInt(sWave) - 1;
-	PrintToChat(iClient, "[SM] Wave set to %i.", g_iCurrentWave);
+	PrintToChat(iClient, "[SM] Wave set to %i.", g_iCurrentWave + 1);
 	}
 
 	return Plugin_Handled;

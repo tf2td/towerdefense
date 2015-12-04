@@ -458,16 +458,10 @@ public void Database_OnUpdatePlayerDisconnect_3(Handle hDriver, Handle hResult, 
 	if (hResult == INVALID_HANDLE) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
 	} else {
-		char sSteamId[32];
-		Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sSteamId, sizeof(sSteamId));
 		
-		Log(TDLogLevel_Info, "Updated disconnected player in database (%s)", sSteamId);
-		
-		int iPlayerId;
-		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 		
 		//Get Saved Player Info
-		int iKills, iAssists, iDeaths, iDamage, iObjects_Built, iTowers_Bought, iMetal_Pick, iMetal_Drop, iWaves_Played, iRounds_Won, iPlayTime;
+		int iKills, iAssists, iDeaths, iDamage, iObjects_Built, iTowers_Bought, iMetal_Pick, iMetal_Drop, iWaves_Played, iWaves_Reached, iRounds_Won, iPlayTime, iPlayerId;
 		Player_UGetValue(iUserId, PLAYER_KILLS, iKills);
 		Player_UGetValue(iUserId, PLAYER_ASSISTS, iAssists);
 		Player_UGetValue(iUserId, PLAYER_DEATHS, iDeaths);
@@ -477,7 +471,9 @@ public void Database_OnUpdatePlayerDisconnect_3(Handle hDriver, Handle hResult, 
 		Player_UGetValue(iUserId, PLAYER_METAL_PICK, iMetal_Pick);
 		Player_UGetValue(iUserId, PLAYER_METAL_DROP, iMetal_Drop);
 		Player_UGetValue(iUserId, PLAYER_WAVES_PLAYED, iWaves_Played);
+		Player_UGetValue(iUserId, PLAYER_WAVES_PLAYED, iWaves_Reached);
 		Player_UGetValue(iUserId, PLAYER_ROUNDS_WON, iRounds_Won);
+		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 		if(iKills == -1)
 			iKills = 0;
 		if(iAssists == -1)
@@ -496,20 +492,38 @@ public void Database_OnUpdatePlayerDisconnect_3(Handle hDriver, Handle hResult, 
 			iMetal_Drop = 0;
 		if(iWaves_Played == -1)
 			iWaves_Played = 0;
+		if(iWaves_Reached == -1)
+			iWaves_Reached = 0;
 		if(iRounds_Won == -1)
 			iRounds_Won = 0;
+		if(iPlayerId == -1)
+			iPlayerId = 0;
 			
 		//Update Player info based on saved info	
-		char sQuery[255];
+		char sQuery[512];
 		Format(sQuery, sizeof(sQuery), "\
 			UPDATE `player_stats` \
 			SET `kills` = kills + %d, `assists` = assists + %d, `deaths` = deaths + %d, `damage` = damage + %d, \
 			`objects_built` = objects_built + %d, `towers_bought` = towers_bought + %d, `metal_pick` = metal_pick + %d, \
-			`metal_drop` = metal_drop + %d, `waves_played` = waves_played + %d, `rounds_won` = rounds_won + %d, `playtime` = playtime + %d  \
+			`metal_drop` = metal_drop + %d, `waves_played` = waves_played + %d, `wave_reached` =  IF(wave_reached < %d, wave_reached =%d, wave_reached), `rounds_won` = rounds_won + %d, `playtime` = playtime + %d  \
 			WHERE `player_id` = %d AND map_id = %d \
-		", iKills, iAssists, iDeaths, iDamage, iObjects_Built, iTowers_Bought, iMetal_Pick, iMetal_Drop, iWaves_Played, iRounds_Won, iPlayTime, iPlayerId, g_iServerMap);
+		", iKills, iAssists, iDeaths, iDamage, iObjects_Built, iTowers_Bought, iMetal_Pick, iMetal_Drop, iWaves_Played, iWaves_Reached, iWaves_Reached, iRounds_Won, iPlayTime, iPlayerId, g_iServerMap);
 		
 		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayerDisconnect_4, sQuery, iUserId);
+		
+		//Reset Values
+		Player_USetValue(iUserId, PLAYER_KILLS, 0);
+		Player_USetValue(iUserId, PLAYER_ASSISTS, 0);
+		Player_USetValue(iUserId, PLAYER_DEATHS, 0);
+		Player_USetValue(iUserId, PLAYER_DAMAGE, 0);
+		Player_USetValue(iUserId, PLAYER_OBJECTS_BUILT, 0);
+		Player_USetValue(iUserId, PLAYER_TOWERS_BOUGHT, 0);
+		Player_USetValue(iUserId, PLAYER_METAL_PICK, 0);
+		Player_USetValue(iUserId, PLAYER_METAL_DROP, 0);
+		Player_USetValue(iUserId, PLAYER_WAVES_PLAYED, 0);
+		Player_USetValue(iUserId, PLAYER_WAVES_PLAYED, 0);
+		Player_USetValue(iUserId, PLAYER_ROUNDS_WON, 0);
+		Player_USetValue(iUserId, PLAYER_DATABASE_ID, 0);
 	}
 	
 	if (hResult != INVALID_HANDLE) {

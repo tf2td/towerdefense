@@ -149,7 +149,6 @@ public void Event_PlayerDropObject(Handle hEvent, const char[] sName, bool bDont
 	if (!g_bEnabled) {
 		return;
 	}
-	
 	int iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
 	
 	if (IsDefender(iClient)) {
@@ -185,6 +184,12 @@ public Action Event_RoundWin(Handle hEvent, const char[] sName, bool bDontBroadc
 	
 	if (iTeam == TEAM_ATTACKER) {
 		PrintToChatAll("\x07FF0000Game over! Resetting the map...");
+		for (int iClient = 1; iClient <= MaxClients; iClient++) {
+			if(IsDefender(iClient)) {
+				int iUserId = GetClientUserId(iClient);
+				Database_UpdatePlayerDisconnect(iUserId);
+			}
+		}
 	}
 	
 	Server_Reset();
