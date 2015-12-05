@@ -344,6 +344,31 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 	if (IsTower(iClient)) {
 		TDTowerId iTowerId = GetTowerId(iClient);
 		
+		
+		if(Tower_GetRotate(iTowerId)) {
+		
+			float fClientEyePosition[3];
+			GetClientEyePosition(iClient, fClientEyePosition);
+			
+			int iClosest = GetClosestClient(iClient);
+			if(!IsValidClient(iClosest) || !IsClientConnected(iClosest) || !IsClientInGame(iClosest))
+				return Plugin_Continue;
+
+			float fClosestLocation[3];
+			GetClientAbsOrigin(iClosest, fClosestLocation);
+
+			float fVector[3];
+			MakeVectorFromPoints(fClosestLocation, fClientEyePosition, fVector);
+
+			float fAngle[3];
+			GetVectorAngles(fVector, fAngle);
+			fAngle[0] *= -1.0;
+			fAngle[1] += 180.0;
+			fAngle[2] *= -0.5; //Modify This
+
+			TeleportEntity(iClient, NULL_VECTOR, fAngle, NULL_VECTOR);
+		}
+	
 		// Refill ammo for airblast tower
 		if (iTowerId == TDTower_Airblast_Pyro) {
 			int iOffset = FindSendPropInfo("CTFPlayer", "m_iAmmo");
@@ -363,6 +388,7 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 		if (Tower_GetAttackSecondary(iTowerId)) {
 			iButtons |= IN_ATTACK2;
 		}
+		
 	}
 	
 	if (IsAttacker(iClient) && g_bBoostWave) {
@@ -1664,3 +1690,24 @@ stock int GetHealthBar() {
 	
 	return iHealthBar;
 } 
+
+stock int GetClosestClient(int iClient)
+{
+	float fClientLocation[3];
+	GetClientAbsOrigin(iClient, fClientLocation);
+	float fEntityOrigin[3];
+
+	int iClosestEntity = -1;
+	float fClosestDistance = -1.0;
+	for(int i = 1; i < MaxClients; i++) if(IsValidClient(i)) {
+		if(IsClientConnected(i) && IsClientInGame(i) && GetClientTeam(i) != GetClientTeam(iClient) && i > 0) {
+			GetClientAbsOrigin(i, fEntityOrigin);
+			float fEntityDistance = GetVectorDistance(fClientLocation, fEntityOrigin);
+			if((fEntityDistance < fClosestDistance) || fClosestDistance == -1.0) {
+				fClosestDistance = fEntityDistance;
+				iClosestEntity = i;
+			}
+		}
+	}
+	return iClosestEntity;
+}

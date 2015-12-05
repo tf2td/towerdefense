@@ -865,7 +865,7 @@ stock bool Tower_GetRotate(TDTowerId iTowerId) {
 			return false;
 		}
 		
-		return (iRotate != 0);
+		return true;
 	}
 	
 	return false;
