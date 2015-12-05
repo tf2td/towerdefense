@@ -96,10 +96,11 @@ public void Wave_OnSpawnPost(any iAttacker) {
 	if (g_iNextWaveType & TDWaveType_Air) {
 		TF2Attrib_SetByName(iAttacker, "damage force reduction", 0.0);
 	}
-	
-	if (g_iNextWaveType & TDWaveType_JarateImmune) {
-		// TODO(?)
-	}
+}
+
+public int TF2_OnConditionAdded(int iClient, TFCond Condition) {
+	if (Condition == TFCond_Jarated && g_iNextWaveType & TDWaveType_JarateImmune)
+		TF2_RemoveCondition(iClient, TFCond_Jarated);
 }
 
 /**

@@ -89,12 +89,17 @@ stock void Server_Reset() {
 		CloseHandle(hHintTimer);
 		hHintTimer = INVALID_HANDLE;
 	}
-	//Reset AoE Timer
+	
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
-		if (hAoETimer != INVALID_HANDLE) {
-			CloseHandle(hAoETimer);
-			hAoETimer = INVALID_HANDLE;
+		if(IsTower(iClient)) {
+			TDTowerId iTowerId = GetTowerId(iClient);
+			g_bTowerBought[view_as<int>(iTowerId)] = false;
 		}
+	}
+	//Reset AoE Timer
+	if (hAoETimer != INVALID_HANDLE) {
+		CloseHandle(hAoETimer);
+		hAoETimer = INVALID_HANDLE;
 	}
 	//Reset Multipliers
 	for (int i = 1; i <= iMaxMultiplierTypes; i++) {
