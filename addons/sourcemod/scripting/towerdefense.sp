@@ -345,29 +345,7 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 		TDTowerId iTowerId = GetTowerId(iClient);
 		
 		
-		if(Tower_GetRotate(iTowerId)) {
 		
-			float fClientEyePosition[3];
-			GetClientEyePosition(iClient, fClientEyePosition);
-			
-			int iClosest = GetClosestClient(iClient);
-			if(!IsValidClient(iClosest) || !IsClientConnected(iClosest) || !IsClientInGame(iClosest))
-				return Plugin_Continue;
-
-			float fClosestLocation[3];
-			GetClientAbsOrigin(iClosest, fClosestLocation);
-
-			float fVector[3];
-			MakeVectorFromPoints(fClosestLocation, fClientEyePosition, fVector);
-
-			float fAngle[3];
-			GetVectorAngles(fVector, fAngle);
-			fAngle[0] *= -1.0;
-			fAngle[1] += 180.0;
-			fAngle[2] *= -0.5; //Modify This
-
-			TeleportEntity(iClient, NULL_VECTOR, fAngle, NULL_VECTOR);
-		}
 	
 		// Refill ammo for airblast tower
 		if (iTowerId == TDTower_Airblast_Pyro) {
@@ -389,6 +367,28 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 			iButtons |= IN_ATTACK2;
 		}
 		
+		if(Tower_GetRotate(iTowerId) && g_bTowersLocked) {
+		
+			float fClientEyePosition[3];
+			GetClientEyePosition(iClient, fClientEyePosition);
+			
+			int iClosest = GetClosestClient(iClient);
+			if(!IsValidClient(iClosest) || !IsClientConnected(iClosest) || !IsClientInGame(iClosest))
+				return Plugin_Continue;
+
+			float fClosestLocation[3];
+			GetClientAbsOrigin(iClosest, fClosestLocation);
+
+			float fVector[3];
+			MakeVectorFromPoints(fClosestLocation, fClientEyePosition, fVector);
+
+			float fAngle[3];
+			GetVectorAngles(fVector, fAngle);
+			fAngle[0] = (fAngle[0] * -1.0) + 355;
+			fAngle[1] += 180.0;
+
+			TeleportEntity(iClient, NULL_VECTOR, fAngle, NULL_VECTOR);
+		}
 	}
 	
 	if (IsAttacker(iClient) && g_bBoostWave) {

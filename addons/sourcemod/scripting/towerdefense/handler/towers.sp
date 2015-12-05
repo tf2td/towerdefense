@@ -175,8 +175,8 @@ stock void Tower_OnUpgrade(int iTower, int iClient) {
 		g_iUpgradeMetal[iTower] += 50;
 		
 		if (g_iUpgradeMetal[iTower] >= Tower_GetMetal(iTowerId)) {
-			int iWeapon = Tower_GetWeapon(iTowerId);
 			
+			int iWeapon = Tower_GetWeapon(iTowerId);
 			g_iUpgradeMetal[iTower] = 0;
 			g_iUpgradeLevel[iTower]++;
 			
@@ -189,13 +189,20 @@ stock void Tower_OnUpgrade(int iTower, int iClient) {
 			PrintToChatAll("\x04%N\x01 reached level \x04%d", iTower, g_iUpgradeLevel[iTower]);
 			
 			float fDamageScale = Tower_GetDamageScale(iTowerId);
-			if (fDamageScale != 1.0) {
+			if (fDamageScale > 1.0) {
 				PrintToChatAll("\x04%N\x01 gained \x04%d%% damage bonus", iTower, RoundFloat(fDamageScale * 100 - 100));
+			} else if(fDamageScale < 1.0) {
+				PrintToChatAll("\x04%N\x01 gained \x04%d%% attackspeed", iTower, RoundFloat(fDamageScale * 100));
 			}
 			
 			float fAttackspeedScale = Tower_GetAttackspeedScale(iTowerId);
-			if (fAttackspeedScale != 1.0) {
+			if (fAttackspeedScale > 1.0) {
 				PrintToChatAll("\x04%N\x01 gained \x04%d%% attackspeed", iTower, RoundFloat(fAttackspeedScale * 100 - 100));
+			} else if(fAttackspeedScale < 1.0) {
+				PrintToChatAll("\x04%N\x01 gained \x04%d%% attackspeed", iTower, RoundFloat(fAttackspeedScale * 100));
+			}
+			if (Tower_GetRotate(iTowerId)) {
+				PrintToChatAll("\x04%N\x01 can now rotate", iTower);
 			}
 		}
 	}
@@ -789,7 +796,6 @@ stock int Tower_GetWeapon(TDTowerId iTowerId) {
 		if (!GetTrieValue(g_hMapTowers, sKey, iWeapon)) {
 			return -1;
 		}
-		
 		return iWeapon;
 	}
 	
@@ -864,8 +870,8 @@ stock bool Tower_GetRotate(TDTowerId iTowerId) {
 		if (!GetTrieValue(g_hMapTowers, sKey, iRotate)) {
 			return false;
 		}
-		
-		return true;
+		if(iRotate != 0)
+			return true;
 	}
 	
 	return false;
