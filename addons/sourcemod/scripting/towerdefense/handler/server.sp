@@ -124,7 +124,7 @@ stock void Server_Reset() {
 	
 	Format(g_sPassword, sizeof(g_sPassword), "");
 	
-	SetPassword(SERVER_PASS, false); //Change upon release
+	SetPassword(g_sPassword, false); //Change upon release
 } 
 
 /**
