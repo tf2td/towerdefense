@@ -461,53 +461,47 @@ public void Database_OnUpdatePlayerDisconnect_3(Handle hDriver, Handle hResult, 
 		
 		
 		//Get Saved Player Info
-		int iKills, iAssists, iDeaths, iDamage, iObjects_Built, iTowers_Bought, iMetal_Pick, iMetal_Drop, iWaves_Played, iWaves_Reached, iRounds_Won, iPlayTime, iPlayerId;
-		Player_UGetValue(iUserId, PLAYER_KILLS, iKills);
-		Player_UGetValue(iUserId, PLAYER_ASSISTS, iAssists);
-		Player_UGetValue(iUserId, PLAYER_DEATHS, iDeaths);
-		Player_UGetValue(iUserId, PLAYER_DAMAGE, iDamage);
-		Player_UGetValue(iUserId, PLAYER_OBJECTS_BUILT, iObjects_Built);
-		Player_UGetValue(iUserId, PLAYER_TOWERS_BOUGHT, iTowers_Bought);
-		Player_UGetValue(iUserId, PLAYER_METAL_PICK, iMetal_Pick);
-		Player_UGetValue(iUserId, PLAYER_METAL_DROP, iMetal_Drop);
-		Player_UGetValue(iUserId, PLAYER_WAVES_PLAYED, iWaves_Played);
-		Player_UGetValue(iUserId, PLAYER_WAVES_PLAYED, iWaves_Reached);
-		Player_UGetValue(iUserId, PLAYER_ROUNDS_WON, iRounds_Won);
-		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
-		if(iKills == -1)
+		int iKills, iAssists, iDeaths, iDamage, iObjects_Built, iTowers_Bought, iMetal_Pick, iMetal_Drop, iWaves_Played, iWaves_Reached, iRounds_Played, iRounds_Won, iPlayTime, iPlayerId;
+		
+		if(!Player_UGetValue(iUserId, PLAYER_KILLS, iKills))
 			iKills = 0;
-		if(iAssists == -1)
+		if(!Player_UGetValue(iUserId, PLAYER_ASSISTS, iAssists))
 			iAssists = 0;
-		if(iDeaths == -1)
+		if(!Player_UGetValue(iUserId, PLAYER_DEATHS, iDeaths))
 			iDeaths = 0;
-		if(iDamage == -1)
+		if(!Player_UGetValue(iUserId, PLAYER_DAMAGE, iDamage))
 			iDamage = 0;
-		if(iObjects_Built == -1)
+		if(!Player_UGetValue(iUserId, PLAYER_OBJECTS_BUILT, iObjects_Built))
 			iObjects_Built = 0;
-		if(iTowers_Bought == -1)
+		if(!Player_UGetValue(iUserId, PLAYER_TOWERS_BOUGHT, iTowers_Bought))
 			iTowers_Bought = 0;
-		if(iMetal_Pick == -1)
+		if(!Player_UGetValue(iUserId, PLAYER_METAL_PICK, iMetal_Pick))
 			iMetal_Pick = 0;
-		if(iMetal_Drop == -1)
+		if(!Player_UGetValue(iUserId, PLAYER_METAL_DROP, iMetal_Drop))
 			iMetal_Drop = 0;
-		if(iWaves_Played == -1)
+		if(!Player_UGetValue(iUserId, PLAYER_WAVES_PLAYED, iWaves_Played))
 			iWaves_Played = 0;
-		if(iWaves_Reached == -1)
+		if(!Player_UGetValue(iUserId, PLAYER_WAVE_REACHED, iWaves_Reached))
 			iWaves_Reached = 0;
-		if(iRounds_Won == -1)
+		if(!Player_UGetValue(iUserId, PLAYER_ROUNDS_PLAYED, iRounds_Played))
+			iRounds_Played = 0;
+		if(!Player_UGetValue(iUserId, PLAYER_ROUNDS_WON, iRounds_Won))
 			iRounds_Won = 0;
-		if(iPlayerId == -1)
+		if(!Player_UGetValue(iUserId, PLAYER_PLAYTIME, iPlayTime))
+			iPlayTime = 0;
+		if(!Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId))
 			iPlayerId = 0;
 			
 		//Update Player info based on saved info	
-		char sQuery[512];
+		char sQuery[1024];
 		Format(sQuery, sizeof(sQuery), "\
 			UPDATE `player_stats` \
 			SET `kills` = kills + %d, `assists` = assists + %d, `deaths` = deaths + %d, `damage` = damage + %d, \
 			`objects_built` = objects_built + %d, `towers_bought` = towers_bought + %d, `metal_pick` = metal_pick + %d, \
-			`metal_drop` = metal_drop + %d, `waves_played` = waves_played + %d, `wave_reached` =  IF(wave_reached < %d, wave_reached =%d, wave_reached), `rounds_won` = rounds_won + %d, `playtime` = playtime + %d  \
+			`metal_drop` = metal_drop + %d, `waves_played` = waves_played + %d, `wave_reached` =  IF(wave_reached < %d, wave_reached = %d, wave_reached), \
+			`rounds_played` = rounds_played + %d, `rounds_won` = rounds_won + %d, `playtime` = playtime + %d  \
 			WHERE `player_id` = %d AND map_id = %d \
-		", iKills, iAssists, iDeaths, iDamage, iObjects_Built, iTowers_Bought, iMetal_Pick, iMetal_Drop, iWaves_Played, iWaves_Reached, iWaves_Reached, iRounds_Won, iPlayTime, iPlayerId, g_iServerMap);
+		", iKills, iAssists, iDeaths, iDamage, iObjects_Built, iTowers_Bought, iMetal_Pick, iMetal_Drop, iWaves_Played, iWaves_Reached, iWaves_Reached, iRounds_Played, iRounds_Won, iPlayTime, iPlayerId, g_iServerMap);
 		
 		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayerDisconnect_4, sQuery, iUserId);
 		
@@ -523,6 +517,7 @@ public void Database_OnUpdatePlayerDisconnect_3(Handle hDriver, Handle hResult, 
 		Player_USetValue(iUserId, PLAYER_WAVES_PLAYED, 0);
 		Player_USetValue(iUserId, PLAYER_WAVES_PLAYED, 0);
 		Player_USetValue(iUserId, PLAYER_ROUNDS_WON, 0);
+		Player_USetValue(iUserId, PLAYER_PLAYTIME, 0);
 		Player_USetValue(iUserId, PLAYER_DATABASE_ID, 0);
 	}
 	

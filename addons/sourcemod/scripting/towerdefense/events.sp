@@ -178,20 +178,26 @@ public void Event_PostInventoryApplication(Handle hEvent, const char[] sName, bo
 
 public Action Event_RoundWin(Handle hEvent, const char[] sName, bool bDontBroadcast) {
 	int iTeam = GetEventInt(hEvent, "team");
+	Server_UAddValue(g_iServerId, SERVER_ROUNDS_PLAYED, 1);
+	
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
+			if(IsDefender(iClient)) {
+				int iUserId = GetClientUserId(iClient);
+				float fTime = GetClientTime(iClient);
+				Player_CSetValue(iClient, PLAYER_PLAYTIME, RoundToZero(fTime));
+				Player_CSetValue(iClient, PLAYER_ROUNDS_PLAYED, 1);
+				Database_UpdatePlayerDisconnect(iUserId);
+			}
+		}
+		
+	Database_ServerStatsUpdate();
 	
 	ServerCommand("bot_kick all");
 	ServerCommand("mp_autoteambalance 0");
 	
 	if (iTeam == TEAM_ATTACKER) {
 		PrintToChatAll("\x07FF0000Game over! Resetting the map...");
-		for (int iClient = 1; iClient <= MaxClients; iClient++) {
-			if(IsDefender(iClient)) {
-				int iUserId = GetClientUserId(iClient);
-				Database_UpdatePlayerDisconnect(iUserId);
-			}
-		}
 	}
-	
 	Server_Reset();
 	
 	return Plugin_Handled;

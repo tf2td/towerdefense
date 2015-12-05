@@ -32,7 +32,7 @@ stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 	
 	TeleportEntity(iButton, view_as<float>( { 0.0, 0.0, -9192.0 } ), NULL_VECTOR, view_as<float>( { 0.0, 0.0, 0.0 } ));
 	
-	PrintToChatAll("%N started \x04Wave %d", iActivator, iWave + 1);
+	PrintToChatAll("%N started\x04 Wave %d", iActivator, g_iCurrentWave + 1);
 	
 	if (iWave == 0) {
 		Timer_NextWaveCountdown(null, 5);
@@ -183,13 +183,18 @@ stock void Wave_OnDeathAll() {
 		SpawnMetalPacks(TDMetalPack_Boss);
 	}
 	
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
+			if(IsDefender(iClient)) {
+				Player_CAddValue(iClient, PLAYER_WAVES_PLAYED, 1);
+			}
+	}
+	
 	if (g_iCurrentWave + 1 >= iMaxWaves) {
 		PrintToServer("[TF2TD] Round won (Wave: %d)", g_iCurrentWave + 1);
+		Server_UAddValue(g_iServerId, SERVER_ROUNDS_WON, 1);
 		for (int iClient = 1; iClient <= MaxClients; iClient++) {
 			if(IsDefender(iClient)) {
 				Player_CSetValue(iClient, PLAYER_ROUNDS_WON, 1);
-				int iUserId = GetClientUserId(iClient);
-				Database_UpdatePlayerDisconnect(iUserId);
 			}
 		}
 		Wave_Win(TEAM_DEFENDER);

@@ -29,7 +29,7 @@
 #define PLUGIN_NAME		"TF2 Tower Defense"
 #define PLUGIN_AUTHOR	"floube"
 #define PLUGIN_DESC		"Stop enemies from crossing a map by buying towers and building up defenses."
-#define PLUGIN_VERSION	"1.0.0"
+#define PLUGIN_VERSION	"2.0.0"
 #define PLUGIN_URL		"http://www.tf2td.net/"
 #define PLUGIN_PREFIX	"[TF2TD]"
 
@@ -118,6 +118,7 @@ public void OnPluginStart() {
 	CreateDataMap(g_hMultiplierType);
 	CreateDataMap(g_hMultiplier);
 	
+	CreateDataMap(g_hServerData);
 	CreateDataMap(g_hPlayerData);
 	
 	HookEvents();
@@ -166,6 +167,11 @@ public void OnPluginEnd() {
 	if (g_hMultiplier != null) {
 		CloseHandle(g_hMultiplier);
 		g_hMultiplier = null;
+	}
+	
+	if (g_hServerData != null) {
+		CloseHandle(g_hServerData);
+		g_hServerData = null;
 	}
 	
 	if (g_hPlayerData != null) {
@@ -475,28 +481,40 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 		//Sentry Damage
 		if (StrEqual(sAttackerObject, "obj_sentrygun")) {
 			fDamage *= fMultiplier[Multiplier_GetInt("sentry")] + 1.0;
-
+			//Register Damage For Stats
+			if(IsValidClient(iAttacker) && IsDefender(iAttacker)) {
+				Player_CAddValue(iAttacker, PLAYER_DAMAGE, RoundToZero(fDamage));
+			}
 			return Plugin_Changed;
 		}
 		
 		//Blast Damage
 		if(iDamageType & DMG_BLAST) {
 			fDamage *= fMultiplier[Multiplier_GetInt("explosion")] + 1.0;
-			
+			//Register Damage For Stats
+			if(IsValidClient(iAttacker) && IsDefender(iAttacker)) {
+				Player_CAddValue(iAttacker, PLAYER_DAMAGE, RoundToZero(fDamage));
+			}
 			return Plugin_Changed;
 		}
 		
 		//Fire Damage
 		if(iDamageType & DMG_BURN) {
 			fDamage *= fMultiplier[Multiplier_GetInt("fire")] + 1.0;
-			
+			//Register Damage For Stats
+			if(IsValidClient(iAttacker) && IsDefender(iAttacker)) {
+				Player_CAddValue(iAttacker, PLAYER_DAMAGE, RoundToZero(fDamage));
+			}
 			return Plugin_Changed;
 		}
 		
 		//Bullet Damage
 		if(iDamageType & DMG_BULLET) {
 			fDamage *= fMultiplier[Multiplier_GetInt("bullet")] + 1.0;
-			
+			//Register Damage For Stats
+			if(IsValidClient(iAttacker) && IsDefender(iAttacker)) {
+				Player_CAddValue(iAttacker, PLAYER_DAMAGE, RoundToZero(fDamage));
+			}
 			return Plugin_Changed;
 		}
 	}
@@ -574,6 +592,7 @@ public void OnAntiAirProjectileSpawned(int iEntity) {
 		return;
 	}
 	
+	SDKHook(iEntity, SDKHook_ShouldCollide, OnProjectileCollide);
 	int iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
 
 	if (IsTower(iOwner)) {

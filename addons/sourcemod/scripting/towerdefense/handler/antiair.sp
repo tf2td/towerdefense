@@ -4,7 +4,7 @@ public void AntiAir_ProjectileTick(int iProjectile, int iTower) {
 	char sEntityName[50];
 	GetEntPropString(iProjectile, Prop_Data, "m_iName", sEntityName, sizeof(sEntityName));
 
-	if (fLocation[2] >= g_fAirWaveSpawn[2] && fLocation[2] <= g_fAirWaveSpawn[2] + 80.0) {
+	if (fLocation[2] >= g_fAirWaveSpawn[2] && fLocation[2] <= g_fAirWaveSpawn[2] + 95.0) {
 		float fAngles[3];
 		GetEntPropVector(iProjectile, Prop_Data, "m_angRotation", fAngles);
 		

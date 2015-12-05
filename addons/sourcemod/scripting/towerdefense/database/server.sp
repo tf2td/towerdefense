@@ -373,6 +373,8 @@ public void Database_OnCheckServerVerified(Handle hDriver, Handle hResult, const
 		}
 	}
 	
+	Database_CheckServerStats();
+	
 	if (hResult != INVALID_HANDLE) {
 		CloseHandle(hResult);
 		hResult = INVALID_HANDLE;
@@ -582,3 +584,102 @@ public void Database_OnSetServerPassword(Handle hDriver, Handle hResult, const c
 		hResult = INVALID_HANDLE;
 	}
 } 
+
+/**
+ * Checks if server stats does already exist.
+ *
+ * @noreturn
+ */
+
+stock void Database_CheckServerStats() {
+	char sQuery[128];
+	
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `playtime` \
+		FROM `server_stats` \
+		WHERE `server_id` = %d \
+		LIMIT 1 \
+	", g_iServerId);
+	
+	SQL_TQuery(g_hDatabase, Database_OnCheckServerStats, sQuery);
+}
+
+public void Database_OnCheckServerStats(Handle hDriver, Handle hResult, const char[] sError, any iData) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_CheckServerStats > Error: %s", sError);
+	} else if (SQL_GetRowCount(hResult) == 0) {
+		// No server found, add it
+		
+		Database_AddServerStats();
+	}
+	
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+stock void Database_AddServerStats() {
+	char sQuery[256];
+	
+	Format(sQuery, sizeof(sQuery), "\
+		INSERT INTO `server_stats` (`server_id`) \
+		VALUES (%d) \
+	", g_iServerId);
+	
+	SQL_TQuery(g_hDatabase, Database_OnAddServer, sQuery, 0);
+}
+
+public void Database_OnAddServerStats(Handle hDriver, Handle hResult, const char[] sError, any iData) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_AddServerStats > Error: %s", sError);
+	} else {
+		Log(TDLogLevel_Info, "Added server stats (%i)", g_iServerId);
+	}
+	
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}
+
+stock void Database_ServerStatsUpdate() {
+	char sQuery[1024];
+	
+	int iConnections, iRounds_Played, iRounds_Won, iPlaytime;
+	
+	if(!Server_UGetValue(g_iServerId, SERVER_CONNECTIONS, iConnections))
+		iConnections = 0;
+	if(!Server_UGetValue(g_iServerId, SERVER_ROUNDS_PLAYED, iRounds_Played))
+		iRounds_Played = 0;
+	if(!Server_UGetValue(g_iServerId, SERVER_ROUNDS_WON, iRounds_Won))
+		iRounds_Won = 0;
+	if(!Server_UGetValue(g_iServerId, SERVER_PLAYTIME, iPlaytime))
+		iRounds_Won = 0;
+	
+	Format(sQuery, sizeof(sQuery), "\
+			UPDATE `server_stats` \
+			SET `connections` = connections + %d, `rounds_played` = rounds_played + %d, `rounds_won` = rounds_won + %d, `playtime` = playtime + %d \
+			WHERE `server_id` = %d \
+		", iConnections, iRounds_Played, iRounds_Won, iPlaytime, g_iServerId);
+	
+	Server_USetValue(g_iServerId, SERVER_CONNECTIONS, 0);
+	Server_USetValue(g_iServerId, SERVER_ROUNDS_PLAYED, 0);
+	Server_USetValue(g_iServerId, SERVER_ROUNDS_WON, 0);
+	Server_USetValue(g_iServerId, SERVER_PLAYTIME, 0);
+	
+	SQL_TQuery(g_hDatabase, Database_OnServerStatsUpdate, sQuery);
+}
+
+public void Database_OnServerStatsUpdate(Handle hDriver, Handle hResult, const char[] sError, any hPack) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_ServerStatsUpdate > Error: %s", sError);
+	} else {
+		Log(TDLogLevel_Info, "Updated server stats in database (%i)", g_iServerId);
+	}
+	
+	if (hResult != INVALID_HANDLE) {
+		CloseHandle(hResult);
+		hResult = INVALID_HANDLE;
+	}
+}

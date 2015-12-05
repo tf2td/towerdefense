@@ -93,6 +93,7 @@ stock void Player_Connected(int iUserId, int iClient, const char[] sName, const 
 		Player_USetString(iUserId, PLAYER_STEAM_ID, sSteamId);
 		Player_USetString(iUserId, PLAYER_COMMUNITY_ID, sCommunityId);
 		Player_USetString(iUserId, PLAYER_IP_ADDRESS, sIp);
+		Server_UAddValue(g_iServerId, SERVER_CONNECTIONS, 1);
 		
 		g_bCarryingObject[iClient] = false;
 		g_bReplaceWeapon[iClient][TFWeaponSlot_Primary] = false;
@@ -118,10 +119,13 @@ stock void Player_Connected(int iUserId, int iClient, const char[] sName, const 
 
 stock void Player_OnDisconnectPre(int iUserId, int iClient) {
 	Database_UpdatePlayerDisconnect(iUserId);
-	Player_CSetValue(iClient, PLAYER_PLAYTIME, RoundToZero(GetClientTime(iClient)));
+	float fTime = GetClientTime(iClient);
+	Player_CSetValue(iClient, PLAYER_PLAYTIME, RoundToZero(fTime));
+	Server_UAddValue(g_iServerId, SERVER_PLAYTIME, RoundToZero(fTime));
 	
 	if (GetRealClientCount(true) <= 1) {  // the disconnected player is counted (thus 1 not 0)
-		CreateTimer(5.0, Timer_Reset); //Give Queries time to send
+		Database_ServerStatsUpdate();
+		CreateTimer(10.0, Timer_Reset); //Give Queries time to send
 	}
 }
 
@@ -142,6 +146,8 @@ stock void Player_Loaded(int iUserId, int iClient) {
 	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
 		CreateTimer(1.0, InitInfoTimer, iUserId, TIMER_FLAG_NO_MAPCHANGE);
 	}
+	
+	
 }
 
 public Action InitInfoTimer(Handle hTimer, any iUserId) {

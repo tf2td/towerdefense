@@ -115,5 +115,154 @@ stock void Server_Reset() {
 	
 	g_iHealthBar = GetHealthBar();
 	
-	SetPassword(SERVER_PASS, false);
+	g_bLockable = true;
+	
+	Format(g_sPassword, sizeof(g_sPassword), "");
+	
+	SetPassword(g_sPassword, false);
 } 
+
+/**
+ * Called when a servers data was set.
+ *
+ * @param iServerId		The server id (unique for every server).
+ * @param sKey				The set key.
+ * @param iDataType			The datatype of the set data.
+ * @param iValue			The value if the set data is an integer, -1 otherwise.
+ * @param bValue			The value if the set data is a boolean, false otherwise.
+ * @param fValue			The value if the set data is a float, -1.0 otherwise.
+ * @param sValue			The value if the set data is a string, empty string ("") otherwise.
+ * @noreturn
+ */
+
+stock void Server_OnDataSet(int iServerId, const char[] sKey, TDDataType iDataType, int iValue, int bValue, float fValue, const char[] sValue) {
+	switch (iDataType) {
+		case TDDataType_Integer: {
+			Log(TDLogLevel_Trace, "Server_OnDataSet: iServerId=%d, sKey=%s, iDataType=TDDataType_Integer, iValue=%d", iServerId, sKey, iValue);
+		}
+		
+		case TDDataType_Boolean: {
+			Log(TDLogLevel_Trace, "Server_OnDataSet: iServerId=%d, sKey=%s, iDataType=TDDataType_Boolean, bValue=%s", iServerId, sKey, (bValue ? "true" : "false"));
+		}
+		
+		case TDDataType_Float: {
+			Log(TDLogLevel_Trace, "Server_OnDataSet: iServerId=%d, sKey=%s, iDataType=TDDataType_Float, fValue=%f", iServerId, sKey, fValue);
+		}
+		
+		case TDDataType_String: {
+			Log(TDLogLevel_Trace, "Server_OnDataSet: iServerId=%d, sKey=%s, iDataType=TDDataType_String, sValue=%s", iServerId, sKey, sValue);
+		}
+	}
+}
+
+stock void Server_UAddValue(int iServerId, const char[] sKey, int iValue) {
+	char sServerIdKey[128];
+	int iOldValue;
+	Server_UGetValue(iServerId, sKey, iOldValue);
+	if(iOldValue != -1)
+		iValue = iValue + iOldValue;
+	
+	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
+	
+	Server_OnDataSet(iServerId, sKey, TDDataType_Integer, iValue, false, -1.0, "");
+	
+	SetTrieValue(g_hServerData, sServerIdKey, iValue);
+}
+
+stock void Server_USetValue(int iServerId, const char[] sKey, int iValue) {
+	char sServerIdKey[128];
+	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
+	
+	Server_OnDataSet(iServerId, sKey, TDDataType_Integer, iValue, false, -1.0, "");
+	
+	SetTrieValue(g_hServerData, sServerIdKey, iValue);
+}
+
+stock bool Server_UGetValue(int iServerId, const char[] sKey, int &iValue) {
+	char sServerIdKey[128];
+	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
+	
+	Log(TDLogLevel_Trace, "Server_UGetValue: iServerId=%d, sKey=%s", iServerId, sKey);
+	
+	if (!GetTrieValue(g_hServerData, sServerIdKey, iValue)) {
+		iValue = -1;
+		return false;
+	}
+	
+	return true;
+}
+
+stock void Server_USetBool(int iServerId, const char[] sKey, bool bValue) {
+	char sServerIdKey[128];
+	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
+	
+	Server_OnDataSet(iServerId, sKey, TDDataType_Integer, -1, bValue, -1.0, "");
+	
+	SetTrieValue(g_hServerData, sServerIdKey, (bValue ? 1 : 0));
+}
+
+stock bool Server_UGetBool(int iServerId, const char[] sKey) {
+	char sServerIdKey[128];
+	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
+	
+	Log(TDLogLevel_Trace, "Server_UGetBool: iServerId=%d, sKey=%s", iServerId, sKey);
+	
+	int iValue = 0;
+	GetTrieValue(g_hServerData, sServerIdKey, iValue);
+	
+	return (iValue != 0);
+}
+
+stock void Server_USetFloat(int iServerId, const char[] sKey, float fValue) {
+	char sServerIdKey[128];
+	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
+	
+	char sValue[64];
+	FloatToString(fValue, sValue, sizeof(sValue))
+	
+	Server_OnDataSet(iServerId, sKey, TDDataType_Integer, -1, false, fValue, "");
+	
+	SetTrieString(g_hServerData, sServerIdKey, sValue);
+}
+
+stock bool Server_UGetFloat(int iServerId, const char[] sKey, float &fValue) {
+	char sServerIdKey[128];
+	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
+	
+	Log(TDLogLevel_Trace, "Server_UGetFloat: iServerId=%d, sKey=%s", iServerId, sKey);
+	
+	char sValue[64];
+	if (!GetTrieString(g_hServerData, sServerIdKey, sValue, sizeof(sValue))) {
+		fValue = -1.0;
+		return false;
+	}
+	
+	fValue = StringToFloat(sValue);
+	return true;
+}
+
+stock bool Server_USetString(int iServerId, const char[] sKey, const char[] sValue, any...) {
+	char sServerIdKey[128];
+	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
+	
+	char sFormattedValue[256];
+	VFormat(sFormattedValue, sizeof(sFormattedValue), sValue, 4);
+	
+	Server_OnDataSet(iServerId, sKey, TDDataType_String, -1, false, -1.0, sValue);
+	
+	SetTrieString(g_hServerData, sServerIdKey, sFormattedValue);
+}
+
+stock bool Server_UGetString(int iServerId, const char[] sKey, char[] sValue, int iMaxLength) {
+	char sServerIdKey[128];
+	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
+	
+	Log(TDLogLevel_Trace, "Server_UGetString: iServerId=%d, sKey=%s, iMaxLength=%d", iServerId, sKey, iMaxLength);
+	
+	if (!GetTrieString(g_hServerData, sServerIdKey, sValue, iMaxLength)) {
+		Format(sValue, iMaxLength, "");
+		return false;
+	}
+	
+	return true;
+}

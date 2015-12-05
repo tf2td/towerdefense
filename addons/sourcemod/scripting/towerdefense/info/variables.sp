@@ -8,6 +8,7 @@ Handle g_hMapWaves;
 Handle g_hMapMetalpacks;
 Handle g_hMultiplierType;
 Handle g_hMultiplier;
+Handle g_hServerData;
 
 
 /*=========================================
@@ -46,6 +47,7 @@ int iMaxMultiplierTypes;
 
 /*==========  String  ==========*/
 
+char g_sPassword[8];
 
 /*==========================================
 =            Database Variables            =

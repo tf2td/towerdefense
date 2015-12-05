@@ -7,6 +7,18 @@
 #define TEAM_ATTACKER 2
 
 /*========================================
+=            Server Data Keys            =
+========================================*/
+
+#define SERVER_CONNECTIONS		"SERVER_CONNECTIONS"
+#define SERVER_ROUNDS_PLAYED	"SERVER_ROUNDS_PLAYED"
+#define SERVER_ROUNDS_WON		"SERVER_ROUNDS_WON"
+#define SERVER_PLAYTIME			"SERVER_PLAYTIME"
+
+/*-----  End of Server Data Keys  ------*/
+
+
+/*========================================
 =            Player Data Keys            =
 ========================================*/
 
@@ -25,6 +37,7 @@
 #define PLAYER_METAL_DROP		"PLAYER_METAL_DROP"
 #define PLAYER_WAVES_PLAYED		"PLAYER_WAVES_PLAYED"
 #define PLAYER_WAVE_REACHED		"PLAYER_WAVE_REACHED"
+#define PLAYER_ROUNDS_PLAYED	"PLAYER_ROUNDS_PLAYED"
 #define PLAYER_ROUNDS_WON		"PLAYER_ROUNDS_WON"
 #define PLAYER_PLAYTIME			"PLAYER_PLAYTIME"
 

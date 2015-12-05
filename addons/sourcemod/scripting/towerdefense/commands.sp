@@ -19,6 +19,7 @@ stock void RegisterCommands() {
 	RegAdminCmd("sm_password", Command_Password, ADMFLAG_ROOT);
 	
 	// Client Commands
+	RegConsoleCmd("sm_p", Command_GetPassword);
 	RegConsoleCmd("sm_s", Command_BuildSentry);
 	RegConsoleCmd("sm_sentry", Command_BuildSentry);
 	RegConsoleCmd("sm_d", Command_DropMetal);
@@ -27,6 +28,8 @@ stock void RegisterCommands() {
 	RegConsoleCmd("sm_metal", Command_ShowMetal);
 	RegConsoleCmd("sm_w", Command_ShowWave);
 	RegConsoleCmd("sm_wave", Command_ShowWave);
+	RegConsoleCmd("sm_t", Command_TransferMetal);
+	RegConsoleCmd("sm_transfer", Command_TransferMetal);
 	
 	//Button Commands
 	RegAdminCmd("sm_increase_enabled_sentries", Command_IncreaseSentry, ADMFLAG_ROOT);
@@ -137,7 +140,7 @@ public Action Command_PreGame(int iClient, int iArgs) {
 	SpawnMetalPacks(TDMetalPack_Start);
 	
 	PrintToChatAll("\x04Have fun playing!");
-	PrintToChatAll("\x04Don't forget to pick up dropped weapons!");
+	PrintToChatAll("\x04Don't forget to pick up dropped metal packs!");
 	
 	// Hook func_nobuild events
 	int iEntity = -1;
@@ -151,27 +154,26 @@ public Action Command_PreGame(int iClient, int iArgs) {
 
 public Action Command_Password(int iClient, int iArgs) {
 	if (g_bLockable) {
-		char sPassword[8];
 		
 		for (int i = 0; i < 4; i++) {
 			switch (GetRandomInt(0, 2)) {
 				case 0: {
-					sPassword[i] = GetRandomInt('1', '9');
+					g_sPassword[i] = GetRandomInt('1', '9');
 				}
 				
 				case 1, 2: {
-					sPassword[i] = GetRandomInt('a', 'z');
+					g_sPassword[i] = GetRandomInt('a', 'z');
 				}
 			}
 		}
 		
-		sPassword[4] = '\0';
+		g_sPassword[4] = '\0';
 		
-		PrintToChatAll("\x01Set the server password to \x04%s", sPassword);
+		PrintToChatAll("\x01Set the server password to \x04%s", g_sPassword);
 		PrintToChatAll("\x01If you want your friends to join, tell them the password.");
 		PrintToChatAll("\x01Write \x04!p\x01 to see the password again.");
 		
-		SetPassword(sPassword);
+		SetPassword(g_sPassword);
 	} else {
 		PrintToChatAll("This server can't be locked!");
 	}
@@ -182,6 +184,19 @@ public Action Command_Password(int iClient, int iArgs) {
 /*=======================================
 =            Client Commands            =
 =======================================*/
+
+public Action Command_GetPassword(int iClient, int iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Handled;
+	}
+	if(!StrEqual(g_sPassword, ""))
+		PrintToChatAll("\x01The server password is \x04%s", g_sPassword);
+	else
+		Forbid(iClient, true, "There is no password set!");
+		
+	return Plugin_Continue;
+}
+
 
 public Action Command_BuildSentry(int iClient, int iArgs) {
 	if (!CanClientBuild(iClient, TDBuilding_Sentry)) {
@@ -322,9 +337,62 @@ public Action Command_ShowWave(int iClient, int iArgs) {
 		return Plugin_Handled;
 	}
 	
-	PrintToChatAll("\x04[\x03TD\x04]\x03 Currently on Wave %i out of %i", g_iCurrentWave, iMaxWaves);
+	PrintToChatAll("\x04[\x03TD\x04]\x03 Currently on Wave %i out of %i", g_iCurrentWave + 1, iMaxWaves);
 	
 	return Plugin_Handled;
+}
+
+public Action Command_TransferMetal(int iClient, int iArgs) {
+	
+	if (!g_bEnabled) {
+		return Plugin_Handled;
+	}
+	
+	if (iArgs != 2) {
+		PrintToChat(iClient, "\x01Usage: !t <target> <amount>");
+		
+		return Plugin_Handled;
+	}
+	
+	char sTarget[64];
+	GetCmdArg(1, sTarget, sizeof(sTarget));
+	char sMetal[32];
+	GetCmdArg(2, sMetal, sizeof(sMetal));
+	
+	int iMetal;
+	int iTarget = GetClientByName(iClient, sTarget);
+	
+	if (!IsStringNumeric(sMetal)) {
+		Forbid(iClient, true, "Invalid input");
+		return Plugin_Handled;
+	} else {
+		iMetal = StringToInt(sMetal);
+	}
+
+	if (iMetal > GetClientMetal(iClient) || GetClientMetal(iClient) <= 0) {
+		Forbid(iClient, true, "You can't transfer more metal then you have!");
+		return Plugin_Handled;
+	}
+
+	if (iMetal < 0) {
+		Forbid(iClient, true, "Can't transfer negative amounts!");
+		return Plugin_Handled;
+	}
+
+	if (!IsPlayerAlive(iClient)) {
+		Forbid(iClient, true, "Can't transfer while dead!");
+		return Plugin_Handled;
+	}
+
+	if (IsDefender(iTarget) && IsPlayerAlive(iTarget)) {
+		AddClientMetal(iTarget, iMetal);
+		AddClientMetal(iClient, -iMetal);
+
+		PrintToChat(iTarget, "\x04You received \x01%d metal \x04from \x01%N\x04.", iMetal, iClient);
+		PrintToChat(iClient, "\x01%N \x04received \x01%d metal \x04from you.", iTarget, iMetal);
+	}
+	
+	return Plugin_Continue;
 }
 
 /*=====================================
@@ -457,7 +525,7 @@ public Action CommandListener_ClosedMotd(int iClient, const char[] sCommand, int
 	}
 	
 	if (GetClientMetal(iClient) <= 0) {
-		SetClientMetal(iClient, 1); // for resetting HUD
+		AddClientMetal(iClient, 1); // for resetting HUD
 		ResetClientMetal(iClient);
 	}
 	
@@ -534,7 +602,7 @@ public Action CommandListener_Multiplier(int iClient, const char[] sCommand, int
 					} else {
 					
 						int iNextPrice = iPriceToPay + Multiplier_GetIncrease(i);
-						PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal",iNextPrice);
+						PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal per Player",iNextPrice);
 					}
 					
 					
@@ -563,7 +631,7 @@ public Action CommandListener_Multiplier(int iClient, const char[] sCommand, int
 					PrintToChatAll("\x04[\x03TD\x04]\x03 Multiplier set to:\x04 %i.0",RoundToZero(fMultiplier[i] + 1.0));
 		
 					int iNextPrice = iPriceToPay + Multiplier_GetIncrease(i);
-					PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal",iNextPrice);
+					PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal per Player",iNextPrice);
 				}
 				return Plugin_Continue;
 			}
