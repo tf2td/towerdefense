@@ -4,12 +4,12 @@
 #endif
 #define _auto_version_included
 
-#define SOURCEMOD_V_TAG		""
-#define SOURCEMOD_V_CSET	"255e2ef"
+#define SOURCEMOD_V_TAG		"dev"
+#define SOURCEMOD_V_CSET	"08f359e"
 #define SOURCEMOD_V_MAJOR	1
 #define SOURCEMOD_V_MINOR	7
-#define SOURCEMOD_V_RELEASE	2
-#define SOURCEMOD_V_REV		5208
+#define SOURCEMOD_V_RELEASE	3
+#define SOURCEMOD_V_REV		5275
 
-#define SOURCEMOD_VERSION	"1.7.2"
+#define SOURCEMOD_VERSION	"1.7.3-dev+5275"
     
