@@ -356,7 +356,6 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 		}
 		if(iTowerId == TDTower_AoE_Engineer && g_bAoEEngineerAttack) {
 			iButtons |= IN_ATTACK;
-			g_bAoEEngineerAttack = false;
 		}
 		
 		if (Tower_GetAttackPrimary(iTowerId)) {

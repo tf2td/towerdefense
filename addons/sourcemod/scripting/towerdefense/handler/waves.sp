@@ -32,7 +32,22 @@ stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 	
 	TeleportEntity(iButton, view_as<float>( { 0.0, 0.0, -9192.0 } ), NULL_VECTOR, view_as<float>( { 0.0, 0.0, 0.0 } ));
 	
-	PrintToChatAll("%N started\x04 Wave %d", iActivator, g_iCurrentWave + 1);
+	PrintToChatAll("%N started\x03 Wave %d", iActivator, g_iCurrentWave + 1);
+	
+	//Wave Health
+	int iWaveHealth;
+	int iPlayerCount = GetRealClientCount();
+	if(iPlayerCount > 1)
+		iWaveHealth = RoundToZero(float(Wave_GetHealth(g_iCurrentWave)) * (float(iPlayerCount)* 0.15 + 1.0));
+	else
+		iWaveHealth = Wave_GetHealth(g_iCurrentWave);
+		
+	SetHudTextParams(-1.0, 0.6, 3.1, 255, 255, 255, 255, 1, 2.0);
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
+		if (IsDefender(iClient)) {
+			ShowHudText(iClient, -1, "Wave (%d) with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
+		}
+	}
 	
 	if (iWave == 0) {
 		Timer_NextWaveCountdown(null, 5);
@@ -72,7 +87,12 @@ public void Wave_OnSpawnPost(any iAttacker) {
 	}
 	
 	int iMaxHealth = GetEntProp(iAttacker, Prop_Data, "m_iMaxHealth");
-	int iWaveHealth = Wave_GetHealth(g_iCurrentWave);
+	int iWaveHealth;
+	int iPlayerCount = GetRealClientCount();
+	if(iPlayerCount > 1)
+		iWaveHealth = RoundToZero(float(Wave_GetHealth(g_iCurrentWave)) * (float(iPlayerCount)* 0.15 + 1.0));
+	else
+		iWaveHealth = Wave_GetHealth(g_iCurrentWave);
 	
 	TF2Attrib_SetByName(iAttacker, "max health additive bonus", float(iWaveHealth - iMaxHealth));
 	SetEntityHealth(iAttacker, iWaveHealth);
@@ -406,7 +426,13 @@ public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
 		case 5: {
 			SetHudTextParams(-1.0, 0.6, 5.1, 255, 255, 255, 255, 2, 2.0);
 			
-			int iWaveHealth = Wave_GetHealth(g_iCurrentWave);
+			//Wave Health
+			int iWaveHealth;
+			int iPlayerCount = GetRealClientCount();
+			if(iPlayerCount > 1)
+				iWaveHealth = RoundToZero(float(Wave_GetHealth(g_iCurrentWave)) * (float(iPlayerCount)* 0.15 + 1.0));
+			else
+				iWaveHealth = Wave_GetHealth(g_iCurrentWave);
 			
 			char sType[256];
 			strcopy(sType, sizeof(sType), "");

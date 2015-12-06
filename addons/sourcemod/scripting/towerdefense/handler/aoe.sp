@@ -231,7 +231,6 @@ public void Tower_ObjectNearAoEEngineer(int iTower, int iClient) {
 			}
 
 			int iBuildingUp = GetEntProp(iDispenser, Prop_Send, "m_bBuilding");
-
 			if (iBuildingUp != 1) { // Is not building up
 				int iHealth = GetEntProp(iDispenser, Prop_Send, "m_iHealth");
 				int iMetal = GetEntProp(iDispenser, Prop_Send, "m_iUpgradeMetal");
@@ -271,8 +270,8 @@ public void Tower_ObjectNearAoEEngineer(int iTower, int iClient) {
 public Action Timer_TeleportAoEEngineerBack(Handle hTimer, any hPack) {
 	ResetPack(hPack);
 	
+	g_bAoEEngineerAttack = false;
 	int iTower = RoundToZero(ReadPackFloat(hPack));
-
 	float fLocation[3];
 	fLocation[0] = ReadPackFloat(hPack);
 	fLocation[1] = ReadPackFloat(hPack);
