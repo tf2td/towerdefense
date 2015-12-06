@@ -552,7 +552,7 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 		if (IsValidClient(iAttacker)) {
 			if (iClient == iAttacker || GetClientTeam(iClient) != GetClientTeam(iAttacker)) {
 				if (fDamage >= GetClientHealth(iClient)) {
-					int iMetal = GetClientMetal(iClient);
+					int iMetal = GetClientMetal(iClient) / 2;
 					
 					if (iMetal > 0) {
 						float fLocation[3];
