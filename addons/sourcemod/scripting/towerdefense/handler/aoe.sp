@@ -100,101 +100,102 @@ public void Tower_ObjectNearAoEEngineer(int iTower, int iClient) {
 		GetEntPropVector(iSentry, Prop_Send, "m_vecOrigin", fLocation);
 		fLocation[2] += 20.0;
 	
-		if (!IsPointInZone(fLocation, g_fBeamPoints[iTower]))
-			return;
+		if (IsPointInZone(fLocation, g_fBeamPoints[iTower])) {
+		
 	
-		int iShellsMax, iHealthMax, iRocketsMax, iMetalMax;
+			int iShellsMax, iHealthMax, iRocketsMax, iMetalMax;
 
-		if (IsMiniSentry(iSentry)) {
-			iShellsMax =   150;
-			iHealthMax =   150;
-			iRocketsMax =    0;
-			iMetalMax =      0;
-		} else {
-			switch (GetBuildingLevel(iSentry)) {
-				case 1: {
-					iShellsMax =   150;
-					iHealthMax =   150;
-					iRocketsMax =    0;
-					iMetalMax =    1000;
-				}
+			if (IsMiniSentry(iSentry)) {
+				iShellsMax =   150;
+				iHealthMax =   150;
+				iRocketsMax =    0;
+				iMetalMax =      0;
+			} else {
+				switch (GetBuildingLevel(iSentry)) {
+					case 1: {
+						iShellsMax =   150;
+						iHealthMax =   150;
+						iRocketsMax =    0;
+						iMetalMax =    1000;
+					}
 
-				case 2: {
-					iShellsMax =   200;
-					iHealthMax =   180;
-					iRocketsMax =    0;
-					iMetalMax =    1000;
-				}
+					case 2: {
+						iShellsMax =   200;
+						iHealthMax =   180;
+						iRocketsMax =    0;
+						iMetalMax =    1000;
+					}
 
-				case 3: {
-					iShellsMax =   200;
-					iHealthMax =   216;
-					iRocketsMax =   20;
-					iMetalMax =      0;
+					case 3: {
+						iShellsMax =   200;
+						iHealthMax =   216;
+						iRocketsMax =   20;
+						iMetalMax =      0;
+					}
 				}
 			}
-		}
 			
-		int iState = GetEntProp(iSentry, Prop_Send, "m_iState");
+			int iState = GetEntProp(iSentry, Prop_Send, "m_iState");
 
-		// If is not building up
-		if (iState != 0) {
-			int iShells = GetEntProp(iSentry, Prop_Send, "m_iAmmoShells");
-			int iHealth = GetEntProp(iSentry, Prop_Send, "m_iHealth");
-			int iRockets = GetEntProp(iSentry, Prop_Send, "m_iAmmoRockets");
-			int iMetal = GetEntProp(iSentry, Prop_Send, "m_iUpgradeMetal");
+			// If is not building up
+			if (iState != 0) {
+				int iShells = GetEntProp(iSentry, Prop_Send, "m_iAmmoShells");
+				int iHealth = GetEntProp(iSentry, Prop_Send, "m_iHealth");
+				int iRockets = GetEntProp(iSentry, Prop_Send, "m_iAmmoRockets");
+				int iMetal = GetEntProp(iSentry, Prop_Send, "m_iUpgradeMetal");
 			
-			if (IsMiniSentry(iSentry)) {
-				int iShellsPerHit = 20; 	// Default: 40
+				if (IsMiniSentry(iSentry)) {
+					int iShellsPerHit = 20; 	// Default: 40
 					
-				if (iShells + iShellsPerHit < iShellsMax) {
-					SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", iShells + iShellsPerHit);
-				} else if (iShells < iShellsMax) {
-					SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", iShellsMax);
-				}
-			} else {
-				int iMetalPerHit = 10; 		// Default: 25
-				int iHealthPerHit = 50; 	// Default: 105
-				int iShellsPerHit = 20; 	// Default: 40
-				int iRocketsPerHit = 4; 	// Default: 8
+					if (iShells + iShellsPerHit < iShellsMax) {
+						SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", iShells + iShellsPerHit);
+					} else if (iShells < iShellsMax) {
+						SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", iShellsMax);
+					}
+				} else {
+					int iMetalPerHit = 10; 		// Default: 25
+					int iHealthPerHit = 50; 	// Default: 105
+					int iShellsPerHit = 20; 	// Default: 40
+					int iRocketsPerHit = 4; 	// Default: 8
 
-				if (iMetal < iMetalMax) {
-					SetEntProp(iSentry, Prop_Send, "m_iUpgradeMetal", iMetal + iMetalPerHit);
+					if (iMetal < iMetalMax) {
+						SetEntProp(iSentry, Prop_Send, "m_iUpgradeMetal", iMetal + iMetalPerHit);
 					
-				// Upgrade to the next level
-				} else if (iMetalMax != 0 && !g_bAoEEngineerAttack) { 
+					// Upgrade to the next level
+					} else if (iMetalMax != 0 && !g_bAoEEngineerAttack) { 
 					
-					float fLocationTower[3];
-					GetClientAbsOrigin(iTower, fLocationTower);
+						float fLocationTower[3];
+						GetClientAbsOrigin(iTower, fLocationTower);
 
-					TeleportEntity(iTower, fLocation, NULL_VECTOR, NULL_VECTOR);
+						TeleportEntity(iTower, fLocation, NULL_VECTOR, NULL_VECTOR);
 
-					g_bAoEEngineerAttack = true;
+						g_bAoEEngineerAttack = true;
 				
-					Handle hPack = CreateDataPack();
-					WritePackFloat(hPack, float(iTower));
-					WritePackFloat(hPack, fLocationTower[0]);
-					WritePackFloat(hPack, fLocationTower[1]);
-					WritePackFloat(hPack, fLocationTower[2]);
+						Handle hPack = CreateDataPack();
+						WritePackFloat(hPack, float(iTower));
+						WritePackFloat(hPack, fLocationTower[0]);
+						WritePackFloat(hPack, fLocationTower[1]);
+						WritePackFloat(hPack, fLocationTower[2]);
 
-					CreateTimer(0.2, Timer_TeleportAoEEngineerBack, hPack, _);				
-				}
+						CreateTimer(0.2, Timer_TeleportAoEEngineerBack, hPack, _);				
+					}
 
-				if (iHealth + iHealthPerHit < iHealthMax) {
-					SetEntProp(iSentry, Prop_Send, "m_iHealth", iHealth + iHealthPerHit);
-				} else if (iHealth < iHealthMax) {
-					SetEntProp(iSentry, Prop_Send, "m_iHealth", iHealthMax);
-				}
-
-				if (iShells + iShellsPerHit < iShellsMax) {
-					SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", iShells + iShellsPerHit);
-				} else if (iShells < iShellsMax) {
-					SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", iShellsMax);
-				}
-				if (iRockets + iRocketsPerHit < iRocketsMax) {
-					SetEntProp(iSentry, Prop_Send, "m_iAmmoRockets", iRockets + iRocketsPerHit);
-				} else if (iRockets < iRocketsMax) {
-					SetEntProp(iSentry, Prop_Send, "m_iAmmoRockets", iRocketsMax);
+					if (iHealth + iHealthPerHit < iHealthMax) {
+						SetEntProp(iSentry, Prop_Send, "m_iHealth", iHealth + iHealthPerHit);
+					} else if (iHealth < iHealthMax) {
+						SetEntProp(iSentry, Prop_Send, "m_iHealth", iHealthMax);
+					}
+	
+					if (iShells + iShellsPerHit < iShellsMax) {
+						SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", iShells + iShellsPerHit);
+					} else if (iShells < iShellsMax) {
+						SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", iShellsMax);
+					}
+					if (iRockets + iRocketsPerHit < iRocketsMax) {
+						SetEntProp(iSentry, Prop_Send, "m_iAmmoRockets", iRockets + iRocketsPerHit);
+					} else if (iRockets < iRocketsMax) {
+						SetEntProp(iSentry, Prop_Send, "m_iAmmoRockets", iRocketsMax);
+					}
 				}
 			}
 		}
@@ -234,7 +235,6 @@ public void Tower_ObjectNearAoEEngineer(int iTower, int iClient) {
 			if (iBuildingUp != 1) { // Is not building up
 				int iHealth = GetEntProp(iDispenser, Prop_Send, "m_iHealth");
 				int iMetal = GetEntProp(iDispenser, Prop_Send, "m_iUpgradeMetal");
-
 				int iMetalPerHit = 10; 		// Default: 25
 				int iHealthPerHit = 50; 	// Default: 105
 
