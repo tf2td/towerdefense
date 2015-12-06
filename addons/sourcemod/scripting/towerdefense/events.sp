@@ -164,7 +164,10 @@ public void Event_PostInventoryApplication(Handle hEvent, const char[] sName, bo
 	int iUserId = GetEventInt(hEvent, "userid");
 	int iClient = GetClientOfUserId(iUserId);
 	
-	if (IsDefender(iClient)) {
+	if(IsValidClient(iClient) && IsClientConnected(iClient) && IsClientInGame(iClient) && !IsFakeClient(iClient) && GetClientTeam(iClient) == TEAM_ATTACKER) {
+		ChangeClientTeam(iClient, TEAM_DEFENDER);
+		CreateTimer(0.5, RespawnPlayer, iClient);
+	} else if (IsDefender(iClient)) {
 		Player_OnSpawn(iUserId, iClient);
 	} else if (IsTower(iClient)) {
 		Tower_OnSpawn(iClient, GetTowerId(iClient));

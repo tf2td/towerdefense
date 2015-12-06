@@ -23,3 +23,8 @@ public Action Timer_Hints(Handle hTimer) {
 public Action Timer_Reset(Handle hTimer) {
 	SetPassword("", true, true);
 }
+
+public Action RespawnPlayer(Handle hTimer, any iClient) {
+	if(IsValidClient(iClient))
+		TF2_RespawnPlayer(iClient);
+}
