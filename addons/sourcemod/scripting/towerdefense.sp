@@ -526,7 +526,7 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 		//Fire Damage
 		if(iDamageType & DMG_BURN) {
 			fDamage *= fMultiplier[Multiplier_GetInt("fire")] + 1.0;
-			//Register Damage For Stats
+			//Register Damage For stats
 			if(IsValidClient(iAttacker) && IsDefender(iAttacker)) {
 				Player_CAddValue(iAttacker, PLAYER_DAMAGE, RoundToZero(fDamage));
 			}
