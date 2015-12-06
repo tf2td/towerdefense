@@ -38,7 +38,7 @@ stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 	int iWaveHealth;
 	int iPlayerCount = GetRealClientCount();
 	if(iPlayerCount > 1)
-		iWaveHealth = RoundToZero(float(Wave_GetHealth(g_iCurrentWave)) * (float(iPlayerCount)* 0.15 + 1.0));
+		iWaveHealth = RoundToZero(float(Wave_GetHealth(g_iCurrentWave)) * (float(iPlayerCount)* 0.125 + 1.0));
 	else
 		iWaveHealth = Wave_GetHealth(g_iCurrentWave);
 		
@@ -90,7 +90,7 @@ public void Wave_OnSpawnPost(any iAttacker) {
 	int iWaveHealth;
 	int iPlayerCount = GetRealClientCount();
 	if(iPlayerCount > 1)
-		iWaveHealth = RoundToZero(float(Wave_GetHealth(g_iCurrentWave)) * (float(iPlayerCount)* 0.15 + 1.0));
+		iWaveHealth = RoundToZero(float(Wave_GetHealth(g_iCurrentWave)) * (float(iPlayerCount)* 0.125 + 1.0));
 	else
 		iWaveHealth = Wave_GetHealth(g_iCurrentWave);
 	
@@ -430,7 +430,7 @@ public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
 			int iWaveHealth;
 			int iPlayerCount = GetRealClientCount();
 			if(iPlayerCount > 1)
-				iWaveHealth = RoundToZero(float(Wave_GetHealth(g_iCurrentWave)) * (float(iPlayerCount)* 0.15 + 1.0));
+				iWaveHealth = RoundToZero(float(Wave_GetHealth(g_iCurrentWave)) * (float(iPlayerCount)* 0.125 + 1.0));
 			else
 				iWaveHealth = Wave_GetHealth(g_iCurrentWave);
 			
