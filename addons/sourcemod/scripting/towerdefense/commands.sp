@@ -544,9 +544,12 @@ public Action CommandListener_Kill(int iClient, const char[] sCommand, int iArgs
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
+	if(iArgs > 0) {
+		return Plugin_Continue;
+	}
 	
 	if (IsDefender(iClient)) {
-		int iMetal = GetClientMetal(iClient);
+		int iMetal = GetClientMetal(iClient) / 2;
 		
 		if (iMetal > 0) {
 			float fLocation[3];
@@ -584,8 +587,6 @@ public Action CommandListener_Multiplier(int iClient, const char[] sCommand, int
 				if (iClients <= 0) {
 					iClients = 1;
 				}
-		
-				iPriceToPay /= iClients;
 	
 				if(CanAfford(iPriceToPay)) {
 	

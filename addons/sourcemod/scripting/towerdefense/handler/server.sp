@@ -105,13 +105,15 @@ stock void Server_Reset() {
 	for (int i = 1; i <= iMaxMultiplierTypes; i++) {
 		fMultiplier[i] = 0.0;
 	}
-	
+	g_iTime = GetTime();
 	g_iMetalPackCount = 0;
 	
 	g_bTowersLocked = false;
 	g_bAoEEngineerAttack = false;
 	
 	g_bStartWaveEarly = false;
+	g_iBotsToSpawn = 0;
+	g_iTotalBotsLeft = 0;
 	
 	g_iCurrentWave = 0;
 	g_iNextWaveType = 0;

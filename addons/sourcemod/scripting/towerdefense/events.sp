@@ -96,7 +96,7 @@ public Action Event_PlayerConnectPre(Handle hEvent, const char[] sName, bool bDo
 	}
 	
 	SetEventBroadcast(hEvent, true); // Block the original chat output (Player ... has joined the game)
-	
+	Database_UpdateServerPlayerCount();
 	return Plugin_Continue;
 }
 
@@ -138,6 +138,7 @@ public Action Event_PlayerDisconnectPre(Handle hEvent, const char[] sName, bool 
 	
 	if (IsDefender(iClient)) {
 		Player_OnDisconnectPre(iUserId, iClient);
+		Database_UpdateServerPlayerCount();
 	} else {
 		return Plugin_Handled;
 	}
@@ -186,8 +187,9 @@ public Action Event_RoundWin(Handle hEvent, const char[] sName, bool bDontBroadc
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 			if(IsDefender(iClient)) {
 				int iUserId = GetClientUserId(iClient);
-				float fTime = GetClientTime(iClient);
-				Player_CSetValue(iClient, PLAYER_PLAYTIME, RoundToZero(fTime));
+				int iTime = GetTime() - g_iTime;
+				Player_CSetValue(iClient, PLAYER_PLAYTIME, iTime);
+				Server_UAddValue(g_iServerId, SERVER_PLAYTIME, iTime);
 				Player_CSetValue(iClient, PLAYER_ROUNDS_PLAYED, 1);
 				Database_UpdatePlayerDisconnect(iUserId);
 			}

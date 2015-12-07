@@ -106,6 +106,25 @@ public void Database_OnAddServer(Handle hDriver, Handle hResult, const char[] sE
 	}
 }
 
+stock void Database_UpdateServerPlayerCount() {
+	char sQuery[512];
+	
+	Format(sQuery, sizeof(sQuery), "\
+		UPDATE `server` \
+		SET `players` = %d, \
+		WHERE `server_id` = %d \
+		LIMIT 1 \
+	", GetRealClientCount(), g_iServerId);
+	
+	SQL_TQuery(g_hDatabase, Database_OnUpdateServerPlayerCount, sQuery, 0);
+}
+
+public void Database_OnUpdateServerPlayerCount(Handle hDriver, Handle hResult, const char[] sError, any iData) {
+	if (hResult == INVALID_HANDLE) {
+		Log(TDLogLevel_Error, "Query failed at Database_UpdateServer > Error: %s", sError);
+	}
+}
+
 /**
  * Updates a servers info.
  *

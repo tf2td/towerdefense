@@ -119,9 +119,9 @@ stock void Player_Connected(int iUserId, int iClient, const char[] sName, const 
 
 stock void Player_OnDisconnectPre(int iUserId, int iClient) {
 	Database_UpdatePlayerDisconnect(iUserId);
-	float fTime = GetClientTime(iClient);
-	Player_CSetValue(iClient, PLAYER_PLAYTIME, RoundToZero(fTime));
-	Server_UAddValue(g_iServerId, SERVER_PLAYTIME, RoundToZero(fTime));
+	int iTime = GetTime() - g_iTime;
+	Player_CSetValue(iClient, PLAYER_PLAYTIME, iTime);
+	Server_UAddValue(g_iServerId, SERVER_PLAYTIME, iTime);
 	
 	if (GetRealClientCount(true) <= 1) {  // the disconnected player is counted (thus 1 not 0)
 		Database_ServerStatsUpdate();

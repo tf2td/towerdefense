@@ -32,7 +32,7 @@ stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 	
 	TeleportEntity(iButton, view_as<float>( { 0.0, 0.0, -9192.0 } ), NULL_VECTOR, view_as<float>( { 0.0, 0.0, 0.0 } ));
 	
-	PrintToChatAll("%N started\x03 Wave %d", iActivator, g_iCurrentWave + 1);
+	PrintToChatAll("%N started\x04 Wave %d", iActivator, g_iCurrentWave + 1);
 	
 	//Wave Health
 	int iWaveHealth;
@@ -140,16 +140,21 @@ stock void Wave_OnTakeDamagePost(int iVictim, int iAttacker, int iInflictor, flo
 	}
 	
 	if (IsValidEntity(g_iHealthBar)) {
-		int iTotalHealth = 0;
-		
+		int iWaveHealth;
+		int iPlayerCount = GetRealClientCount();
+		if(iPlayerCount > 1)
+			iWaveHealth = RoundToZero(float(Wave_GetHealth(g_iCurrentWave)) * (float(iPlayerCount)* 0.125 + 1.0));
+		else
+			iWaveHealth = Wave_GetHealth(g_iCurrentWave);
+		int iTotalHealth = iWaveHealth * g_iTotalBotsLeft;
 		for (int iClient = 1; iClient <= MaxClients; iClient++) {
 			if (IsAttacker(iClient)) {
-				iTotalHealth += GetClientHealth(iClient);
+				iTotalHealth -= GetClientHealth(iClient);
 			}
 		}
 		
-		int iTotalHealthMax = Wave_GetHealth(g_iCurrentWave) * Wave_GetQuantity(g_iCurrentWave);
-		float fPercentage = float(iTotalHealth) / float(iTotalHealthMax);
+		int iTotalHealthMax = iWaveHealth * Wave_GetQuantity(g_iCurrentWave);
+		float fPercentage = float(-iTotalHealth) / float(iTotalHealthMax);
 		
 		SetEntProp(g_iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", RoundToFloor(fPercentage * 255));
 	}
@@ -178,8 +183,9 @@ stock void Wave_OnDeath(int iAttacker, float fPosition[3]) {
 	SpawnRewardPack(TDMetalPack_Small, fPosition, 100);
 	
 	CreateTimer(1.0, Delay_KickAttacker, iAttacker, TIMER_FLAG_NO_MAPCHANGE);
-	
-	if (GetAliveAttackerCount() <= 1) {
+	if(g_iBotsToSpawn >= 1) {
+		Wave_SpawnBots();
+	} else if (GetAliveAttackerCount() <= 1 && g_iBotsToSpawn <= 0) {
 		Wave_OnDeathAll();
 		for (int iClient = 1; iClient <= MaxClients; iClient++) {
 			if(IsDefender(iClient)) {
@@ -221,6 +227,8 @@ stock void Wave_OnDeathAll() {
 		Wave_Win(TEAM_DEFENDER);
 		return;
 	}
+	
+	g_iTotalBotsLeft = 0;
 	
 	g_bStartWaveEarly = false;
 	
@@ -295,6 +303,18 @@ stock void Wave_Spawn() {
 	PrintToChatAll("\x01Towers have been locked and can't be moved!");
 	g_bTowersLocked = true;
 	
+	g_iBotsToSpawn = Wave_GetQuantity(g_iCurrentWave);
+	
+	SetEntProp(g_iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 255);
+	g_iTotalBotsLeft = Wave_GetQuantity(g_iCurrentWave);
+	Wave_SpawnBots();
+}
+
+stock void Wave_SpawnBots() {
+	if(g_iBotsToSpawn <= 0) {
+		return;
+	}
+	
 	char sName[MAX_NAME_LENGTH];
 	if (!Wave_GetName(g_iCurrentWave, sName, sizeof(sName))) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to spawn wave %d, could not read name!", g_iCurrentWave);
@@ -307,51 +327,57 @@ stock void Wave_Spawn() {
 		return;
 	}
 	
-	int iWaveQuantity = Wave_GetQuantity(g_iCurrentWave);
+	int iTotalBots = Wave_GetQuantity(g_iCurrentWave);
+	int iAliveBots = GetAliveAttackerCount();
 	
-	if (iWaveQuantity > 1) {
-		for (int i = 1; i <= iWaveQuantity; i++) {
-			ServerCommand("bot -team red -class %s -name %s%d", sClass, sName, i);
+	//If only less than g_iMaxBotsOnField bots in total
+	if(iTotalBots <= g_iMaxBotsOnField) {
+		if (iTotalBots > 1) {
+			for (int i = 1; i <= iTotalBots; i++) {
+				ServerCommand("bot -team red -class %s -name %s%d", sClass, sName, i);
+				g_iBotsToSpawn--;
+			}
+		//If only 1 bot
+		} else {
+			ServerCommand("bot -team red -class %s -name %s", sClass, sName);
+			g_iBotsToSpawn = 0;
 		}
+		CreateTimer(1.0, TeleportWaveDelay, iTotalBots, TIMER_FLAG_NO_MAPCHANGE);
+	//Else more than g_iMaxBotsOnField bots
 	} else {
-		ServerCommand("bot -team red -class %s -name %s", sClass, sName);
-	}
-	
-	SetEntProp(g_iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 255);
-	
-	Wave_TeleportToSpawn(iWaveQuantity);
-}
-
-/**
- * Starts to teleport all wave attackers.
- *
- * @param iWaveQuantity			The waves quantiy.
- * @noreturn
- */
-
-stock void Wave_TeleportToSpawn(int iWaveQuantity) {
-	Log(TDLogLevel_Info, "Spawned wave %d (%d attackers)", g_iCurrentWave + 1, iWaveQuantity);
-	
-	if (iWaveQuantity > 1) {
-		CreateTimer(1.0, TeleportWaveDelay, 1, TIMER_FLAG_NO_MAPCHANGE);
-	} else {
-		CreateTimer(1.0, TeleportWaveDelay, 0, TIMER_FLAG_NO_MAPCHANGE);
+		//If no bot alive
+		if(iAliveBots <= 0) {
+			for (int i = 1; i <= g_iMaxBotsOnField; i++) {
+				g_iBotsToSpawn--;
+				ServerCommand("bot -team red -class %s -name %s%d", sClass, sName, -(g_iBotsToSpawn - iTotalBots));
+			}
+			CreateTimer(1.0, TeleportWaveDelay, g_iMaxBotsOnField, TIMER_FLAG_NO_MAPCHANGE);
+		//If bots alive
+		} else {
+			int iBotsToSpawn = g_iMaxBotsOnField - iAliveBots;
+			for(int i = 1; i <= iBotsToSpawn; i++) {
+				g_iBotsToSpawn--;
+				ServerCommand("bot -team red -class %s -name %s%d", sClass, sName, -(g_iBotsToSpawn - iTotalBots));
+			}
+			CreateTimer(1.0, TeleportWaveDelay, iBotsToSpawn, TIMER_FLAG_NO_MAPCHANGE);
+		}
 	}
 }
 
 public Action TeleportWaveDelay(Handle hTimer, any iNumber) {
-	if (iNumber > Wave_GetQuantity(g_iCurrentWave)) {
-		Log(TDLogLevel_Debug, "Teleported wave %d (%d attackers)", g_iCurrentWave + 1, Wave_GetQuantity(g_iCurrentWave));
+	if (iNumber <= 0) {
 		return Plugin_Stop;
 	}
-	
+	int iTotalBots = Wave_GetQuantity(g_iCurrentWave);
 	char sName[MAX_NAME_LENGTH];
 	if (!Wave_GetName(g_iCurrentWave, sName, sizeof(sName))) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to teleport wave %d, could not read name!", g_iCurrentWave);
 		return Plugin_Stop;
 	}
-	
-	if (iNumber > 0) {
+	if(iTotalBots > g_iMaxBotsOnField){
+		g_iTotalBotsLeft--;
+		Format(sName, sizeof(sName), "%s%d", sName, -(g_iTotalBotsLeft - iTotalBots));
+	} else if (iNumber > 0) {
 		Format(sName, sizeof(sName), "%s%d", sName, iNumber);
 	}
 	
@@ -375,8 +401,7 @@ public Action TeleportWaveDelay(Handle hTimer, any iNumber) {
 		TeleportEntity(iAttacker, fLocation, fAngles, view_as<float>( { 0.0, 0.0, 0.0 } ));
 		
 		Log(TDLogLevel_Trace, " -> Teleported attacker");
-		
-		CreateTimer(1.0, TeleportWaveDelay, iNumber + 1, TIMER_FLAG_NO_MAPCHANGE);
+		CreateTimer(1.0, TeleportWaveDelay, iNumber - 1, TIMER_FLAG_NO_MAPCHANGE);
 	}
 	
 	return Plugin_Stop;
