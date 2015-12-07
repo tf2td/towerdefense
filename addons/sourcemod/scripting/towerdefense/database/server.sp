@@ -111,7 +111,7 @@ stock void Database_UpdateServerPlayerCount() {
 	
 	Format(sQuery, sizeof(sQuery), "\
 		UPDATE `server` \
-		SET `players` = %d, \
+		SET `players` = %d \
 		WHERE `server_id` = %d \
 		LIMIT 1 \
 	", GetRealClientCount(), g_iServerId);
