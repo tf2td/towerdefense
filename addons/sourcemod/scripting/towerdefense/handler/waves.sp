@@ -374,7 +374,9 @@ public Action TeleportWaveDelay(Handle hTimer, any iNumber) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to teleport wave %d, could not read name!", g_iCurrentWave);
 		return Plugin_Stop;
 	}
-	if(iTotalBots > g_iMaxBotsOnField){
+	if(iTotalBots <= 1){
+		Format(sName, sizeof(sName), "%s", sName);
+	} else if(iTotalBots > g_iMaxBotsOnField){
 		g_iTotalBotsLeft--;
 		Format(sName, sizeof(sName), "%s%d", sName, -(g_iTotalBotsLeft - iTotalBots));
 	} else if (iNumber > 0) {

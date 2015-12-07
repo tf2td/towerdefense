@@ -43,14 +43,16 @@ stock void Player_ServerInitializing(int iUserId, int iClient) {
 
 stock void Player_ServerInitialized(int iUserId, int iClient) {
 	char sCommunityId[32];
-	Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sCommunityId, sizeof(sCommunityId));
+	if(IsValidClient(iClient)) {
+		Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sCommunityId, sizeof(sCommunityId));
 	
-	TF2_RemoveCondition(iClient, TFCond_RestrictToMelee);
-	SetEntityMoveType(iClient, MOVETYPE_WALK);
+		TF2_RemoveCondition(iClient, TFCond_RestrictToMelee);
+		SetEntityMoveType(iClient, MOVETYPE_WALK);
+		
+		Player_SyncDatabase(iUserId, iClient, sCommunityId);
 	
-	Player_SyncDatabase(iUserId, iClient, sCommunityId);
-	
-	Log(TDLogLevel_Debug, "Successfully initialized player %N (%s)", iClient, sCommunityId);
+		Log(TDLogLevel_Debug, "Successfully initialized player %N (%s)", iClient, sCommunityId);
+	}
 }
 
 /**

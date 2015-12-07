@@ -544,6 +544,11 @@ public Action CommandListener_Kill(int iClient, const char[] sCommand, int iArgs
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
+	
+	if(!IsPlayerAlive(iClient)) {
+		return Plugin_Continue;
+	}
+	
 	if(iArgs > 0) {
 		return Plugin_Continue;
 	}

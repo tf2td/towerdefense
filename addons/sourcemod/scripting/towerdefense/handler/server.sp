@@ -96,11 +96,12 @@ stock void Server_Reset() {
 			g_bTowerBought[view_as<int>(iTowerId)] = false;
 		}
 	}
-	//Reset AoE Timer
-	if (hAoETimer != INVALID_HANDLE) {
-		CloseHandle(hAoETimer);
-		hAoETimer = INVALID_HANDLE;
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
+		if(IsDefender(iClient)) {
+			g_bCarryingObject[iClient] = false;
+		}
 	}
+	
 	//Reset Multipliers
 	for (int i = 1; i <= iMaxMultiplierTypes; i++) {
 		fMultiplier[i] = 0.0;
@@ -123,6 +124,12 @@ stock void Server_Reset() {
 	g_iHealthBar = GetHealthBar();
 	
 	g_bLockable = true;
+	
+	//Reset AoE Timer
+	if (hAoETimer != INVALID_HANDLE) {
+		CloseHandle(hAoETimer);
+		hAoETimer = INVALID_HANDLE;
+	}
 	
 	Format(g_sPassword, sizeof(g_sPassword), "");
 	

@@ -18,7 +18,7 @@ public Action Timer_Hints(Handle hTimer) {
 	else if(iRandom  == 3)
 		PrintToChatAll("\x04[\x03TD\x04]\x03 Check everyone's metal status with \x04/m ");
 	else if(iRandom  == 4)
-		PrintToChatAll("\x04[\x03TD\x04]\x03 Transfer metal with between your comrades \x04/t <target> <amount> ");
+		PrintToChatAll("\x04[\x03TD\x04]\x03 Transfer metal between your comrades \x04/t <target> <amount> ");
 	else if(iRandom  == 5)
 		PrintToChatAll("\x04[\x03TD\x04]\x03 Check on what wave you're on with \x04/w ");
 	else if(iRandom  == 6)
