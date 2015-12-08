@@ -31,6 +31,7 @@ stock void RegisterCommands() {
 	RegConsoleCmd("sm_wave", Command_ShowWave);
 	RegConsoleCmd("sm_t", Command_TransferMetal);
 	RegConsoleCmd("sm_transfer", Command_TransferMetal);
+	RegConsoleCmd("sm_givemetal", Command_TransferMetal);
 	
 	//Button Commands
 	RegAdminCmd("sm_increase_enabled_sentries", Command_IncreaseSentry, ADMFLAG_ROOT);
