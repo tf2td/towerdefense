@@ -9,9 +9,9 @@
 #endif
 
 stock void LoadConVars() {
-	CreateConVar("towerdefense_version", PLUGIN_VERSION, "Tower Defense Version", FCVAR_PLUGIN | FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
+	CreateConVar("towerdefense_version", PLUGIN_VERSION, "Tower Defense Version", FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
 	
-	g_hEnabled = CreateConVar("td_enabled", "1", "Enables/disables Tower Defense", FCVAR_PLUGIN | FCVAR_DONTRECORD);
+	g_hEnabled = CreateConVar("td_enabled", "1", "Enables/disables Tower Defense", FCVAR_DONTRECORD);
 	
 	HookConVarChange(g_hEnabled, OnConVarChanged);
 }
