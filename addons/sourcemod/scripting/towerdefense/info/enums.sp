@@ -68,6 +68,7 @@ enum TDTowerId
 	TDTower_Airblast_Pyro = 24, 
 	TDTower_AoE_Engineer = 25, 
 	TDTower_Kritz_Medic = 26, 
+	TDTower_Slow_Spy = 27, 
 	TDTower_Quantity
 };
 
