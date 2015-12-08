@@ -29,44 +29,44 @@ stock void CreateBeamLine(int iClient, float fStart[3], float fEnd[3], float fDu
 	TE_SetupBeamPoints(fStart, fEnd, g_iLaserMaterial, g_iHaloMaterial, 0, 0, fDuration + 0.1, 1.0, 1.0, 1, 0.0, iColors2, 0);
 	
 	if (fDuration == 0.0) {
-		Handle hPack = CreateDataPack();
+		DataPack hPack = new DataPack();
 		
 		CreateDataTimer(fDuration, Timer_CreateBeam, hPack);
 		
-		WritePackCell(hPack, iClient);
-		WritePackFloat(hPack, fDuration);
-		WritePackFloat(hPack, fStart[0]);
-		WritePackFloat(hPack, fStart[1]);
-		WritePackFloat(hPack, fStart[2]);
-		WritePackFloat(hPack, fEnd[0]);
-		WritePackFloat(hPack, fEnd[1]);
-		WritePackFloat(hPack, fEnd[2]);
-		WritePackCell(hPack, iColors[0]);
-		WritePackCell(hPack, iColors[1]);
-		WritePackCell(hPack, iColors[2]);
-		WritePackCell(hPack, iColors[3]);
+		hPack.WriteCell(iClient);
+		hPack.WriteFloat(fDuration);
+		hPack.WriteFloat(fStart[0]);
+		hPack.WriteFloat(fStart[1]);
+		hPack.WriteFloat(fStart[2]);
+		hPack.WriteFloat(fEnd[0]);
+		hPack.WriteFloat(fEnd[1]);
+		hPack.WriteFloat(fEnd[2]);
+		hPack.WriteCell(iColors[0]);
+		hPack.WriteCell(iColors[1]);
+		hPack.WriteCell(iColors[2]);
+		hPack.WriteCell(iColors[3]);
 	}
 	
 	TE_SendToAll();
 }
 
-public Action Timer_CreateBeam(Handle hTimer, Handle hPack) {
+public Action Timer_CreateBeam(Handle hTimer, DataPack hPack) {
 	int iClient, iColors[4];
 	float fDuration, fStart[3], fEnd[3];
 	
-	ResetPack(hPack);
-	iClient = ReadPackCell(hPack);
-	fDuration = ReadPackFloat(hPack);
-	fStart[0] = ReadPackFloat(hPack);
-	fStart[1] = ReadPackFloat(hPack);
-	fStart[2] = ReadPackFloat(hPack);
-	fEnd[0] = ReadPackFloat(hPack);
-	fEnd[1] = ReadPackFloat(hPack);
-	fEnd[2] = ReadPackFloat(hPack);
-	iColors[0] = ReadPackCell(hPack);
-	iColors[1] = ReadPackCell(hPack);
-	iColors[2] = ReadPackCell(hPack);
-	iColors[3] = ReadPackCell(hPack);
+	hPack.Reset();
+	iClient = hPack.ReadCell();
+	fDuration = hPack.ReadFloat();
+	fStart[0] = hPack.ReadFloat();
+	fStart[1] = hPack.ReadFloat();
+	fStart[2] = hPack.ReadFloat();
+	fEnd[0] = hPack.ReadFloat();
+	fEnd[1] = hPack.ReadFloat();
+	fEnd[2] = hPack.ReadFloat();
+	iColors[0] = hPack.ReadCell();
+	iColors[1] = hPack.ReadCell();
+	iColors[2] = hPack.ReadCell();
+	iColors[3] = hPack.ReadCell();
 	
 	CreateBeamLine(iClient, fStart, fEnd, fDuration, iColors);
 	

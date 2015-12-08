@@ -180,11 +180,11 @@ public void Tower_ObjectNearAoEEngineer(int iTower, int iClient) {
 
 						g_bAoEEngineerAttack = true;
 				
-						Handle hPack = CreateDataPack();
-						WritePackFloat(hPack, float(iTower));
-						WritePackFloat(hPack, fLocationTower[0]);
-						WritePackFloat(hPack, fLocationTower[1]);
-						WritePackFloat(hPack, fLocationTower[2]);
+						DataPack hPack = new DataPack();
+						hPack.WriteFloat(float(iTower));
+						hPack.WriteFloat(fLocationTower[0]);
+						hPack.WriteFloat(fLocationTower[1]);
+						hPack.WriteFloat(fLocationTower[2]);
 
 						CreateTimer(0.2, Timer_TeleportAoEEngineerBack, hPack, _);				
 					}
@@ -257,11 +257,11 @@ public void Tower_ObjectNearAoEEngineer(int iTower, int iClient) {
 
 					g_bAoEEngineerAttack = true;
 
-					Handle hPack = CreateDataPack();
-					WritePackFloat(hPack, float(iTower));
-					WritePackFloat(hPack, fLocationTower[0]);
-					WritePackFloat(hPack, fLocationTower[1]);
-					WritePackFloat(hPack, fLocationTower[2]);
+					DataPack hPack = new DataPack();
+					hPack.WriteFloat(float(iTower));
+					hPack.WriteFloat(fLocationTower[0]);
+					hPack.WriteFloat(fLocationTower[1]);
+					hPack.WriteFloat(fLocationTower[2]);
 
 					CreateTimer(0.5, Timer_TeleportAoEEngineerBack, hPack, _);
 				}
@@ -276,15 +276,15 @@ public void Tower_ObjectNearAoEEngineer(int iTower, int iClient) {
 	}
 }
 
-public Action Timer_TeleportAoEEngineerBack(Handle hTimer, any hPack) {
-	ResetPack(hPack);
+public Action Timer_TeleportAoEEngineerBack(Handle hTimer, DataPack hPack) {
+	hPack.Reset();
 	
 	g_bAoEEngineerAttack = false;
 	int iTower = RoundToZero(ReadPackFloat(hPack));
 	float fLocation[3];
-	fLocation[0] = ReadPackFloat(hPack);
-	fLocation[1] = ReadPackFloat(hPack);
-	fLocation[2] = ReadPackFloat(hPack);
+	fLocation[0] = hPack.ReadFloat();
+	fLocation[1] = hPack.ReadFloat();
+	fLocation[2] = hPack.ReadFloat();
 	TeleportEntity(iTower, fLocation, NULL_VECTOR, NULL_VECTOR);
 }
 

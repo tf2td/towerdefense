@@ -39,11 +39,11 @@ stock void Updater_Download(const char[] sUrl, const char[] sDestination) {
 	ParseURL(sUrlPrefixed, sHostname, sizeof(sHostname), sLocation, sizeof(sLocation), sFilename, sizeof(sFilename));
 	Format(sRequest, sizeof(sRequest), "GET %s/%s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\nPragma: no-cache\r\nCache-Control: no-cache\r\n\r\n", sLocation, sFilename, sHostname);
 	
-	Handle hPack = CreateDataPack();
-	WritePackCell(hPack, 0);					// 0 - bParsedHeader
-	WritePackCell(hPack, 0);					// 8 - iRedirects
-	WritePackCell(hPack, view_as<int>(hFile));	// 16
-	WritePackString(hPack, sRequest);			// 24
+	DataPack hPack = new DataPack();
+	hPack.WriteCell(0);						// 0 - bParsedHeader
+	hPack.WriteCell(0);						// 8 - iRedirects
+	hPack.WriteCell(view_as<int>(hFile));	// 16
+	hPack.WriteString(sRequest);			// 24
 	
 	Handle hSocket = SocketCreate(SOCKET_TCP, OnSocketError);
 	SocketSetArg(hSocket, hPack);
@@ -51,22 +51,22 @@ stock void Updater_Download(const char[] sUrl, const char[] sDestination) {
 	SocketConnect(hSocket, OnSocketConnected, OnSocketReceive, OnSocketDisconnected, sHostname, 80);
 }
 
-public void OnSocketConnected(Handle hSocket, any hPack) {
+public void OnSocketConnected(Handle hSocket, DataPack hPack) {
 	char sRequest[512];
 	
-	SetPackPosition(hPack, 24);
-	ReadPackString(hPack, sRequest, sizeof(sRequest));
+	hPack.Position = 24;
+	hPack.ReadString(sRequest, sizeof(sRequest));
 	
 	SocketSend(hSocket, sRequest);
 }
 
-public void OnSocketReceive(Handle hSocket, char[] sData, const int iSize, any hPack) {
+public void OnSocketReceive(Handle hSocket, char[] sData, const int iSize, DataPack hPack) {
 	int iIndex = 0;
 	
 	// Check if the HTTP header has already been parsed.
-	SetPackPosition(hPack, 0);
-	bool bParsedHeader = view_as<bool>(ReadPackCell(hPack));
-	int iRedirects = ReadPackCell(hPack);
+	hPack.Reset();
+	bool bParsedHeader = view_as<bool>(hPack.ReadCell());
+	int iRedirects = hPack.ReadCell();
 	
 	if (!bParsedHeader) {
 		// Parse header data.
@@ -83,8 +83,8 @@ public void OnSocketReceive(Handle hSocket, char[] sData, const int iSize, any h
 						Updater_DownloadEnded(false, "Socket error: Too many redirects.");
 						return;
 					} else {
-						SetPackPosition(hPack, 8);
-						WritePackCell(hPack, iRedirects);
+						hPack.Position = 8;
+						hPack.WriteCell(iRedirects);
 					}
 					
 					// Skip to url
@@ -112,8 +112,8 @@ public void OnSocketReceive(Handle hSocket, char[] sData, const int iSize, any h
 					ParseURL(sUrlPrefixed, sHostname, sizeof(sHostname), sLocation, sizeof(sLocation), sFilename, sizeof(sFilename));
 					Format(sRequest, sizeof(sRequest), "GET %s/%s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\nPragma: no-cache\r\nCache-Control: no-cache\r\n\r\n", sLocation, sFilename, sHostname);
 					
-					SetPackPosition(hPack, 24); // sRequest
-					WritePackString(hPack, sRequest);
+					hPack.Position = 24; // sRequest
+					hPack.WriteString(sRequest);
 					
 					Handle hNewSocket = SocketCreate(SOCKET_TCP, OnSocketError);
 					SocketSetArg(hNewSocket, hPack);
@@ -141,13 +141,13 @@ public void OnSocketReceive(Handle hSocket, char[] sData, const int iSize, any h
 			iIndex += 4;
 		}
 		
-		SetPackPosition(hPack, 0);
-		WritePackCell(hPack, 1); // bParsedHeader
+		hPack.Reset();
+		hPack.WriteCell(1); // bParsedHeader
 	}
 	
 	// Write data to file.
-	SetPackPosition(hPack, 16);
-	Handle hFile = view_as<Handle>(ReadPackCell(hPack));
+	hPack.Position = 16;
+	Handle hFile = view_as<Handle>(hPack.ReadCell());
 	
 	while (iIndex < iSize) {
 		WriteFileCell(hFile, sData[iIndex++], 1);
@@ -168,10 +168,10 @@ public void OnSocketError(Handle hSocket, const int iErrorType, const int iError
 	Updater_DownloadEnded(false, sError);
 }
 
-stock void CloseSocketHandles(Handle hSocket, Handle hPack) {
-	SetPackPosition(hPack, 16);
-	CloseHandle(view_as<Handle>(ReadPackCell(hPack))); // hFile
-	CloseHandle(hPack);
+stock void CloseSocketHandles(Handle hSocket, DataPack hPack) {
+	hPack.Position = 16;
+	CloseHandle(view_as<Handle>(hPack.ReadCell())); // hFile
+	delete hPack;
 	CloseHandle(hSocket);
 }
 

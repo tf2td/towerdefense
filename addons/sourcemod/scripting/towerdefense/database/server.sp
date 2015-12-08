@@ -572,24 +572,24 @@ stock void Database_SetServerPassword(const char[] sPassword, bool bReloadMap) {
 		LIMIT 1 \
 	", sPasswordSave, g_iServerId);
 	
-	Handle hPack = CreateDataPack();
+	DataPack hPack = new DataPack();
 	
-	WritePackCell(hPack, bReloadMap ? 1 : 0);
-	WritePackString(hPack, sPassword);
+	hPack.WriteCell(bReloadMap ? 1 : 0);
+	hPack.WriteString(sPassword);
 	
 	SQL_TQuery(g_hDatabase, Database_OnSetServerPassword, sQuery, hPack);
 }
 
-public void Database_OnSetServerPassword(Handle hDriver, Handle hResult, const char[] sError, any hPack) {
+public void Database_OnSetServerPassword(Handle hDriver, Handle hResult, const char[] sError, DataPack hPack) {
 	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_SetServerPassword > Error: %s", sError);
 	} else {
 		ResetPack(hPack);
 		
-		bool bReloadMap = (ReadPackCell(hPack) == 0 ? false : true);
+		bool bReloadMap = (hPack.ReadCell() == 0 ? false : true);
 		
 		char sPassword[32];
-		ReadPackString(hPack, sPassword, sizeof(sPassword));
+		hPack.ReadString(sPassword, sizeof(sPassword));
 		
 		Log(TDLogLevel_Debug, "Set server password to \"%s\"", sPassword);
 		
@@ -690,7 +690,7 @@ stock void Database_ServerStatsUpdate() {
 	SQL_TQuery(g_hDatabase, Database_OnServerStatsUpdate, sQuery);
 }
 
-public void Database_OnServerStatsUpdate(Handle hDriver, Handle hResult, const char[] sError, any hPack) {
+public void Database_OnServerStatsUpdate(Handle hDriver, Handle hResult, const char[] sError, DataPack hPack) {
 	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_ServerStatsUpdate > Error: %s", sError);
 	} else {
