@@ -139,6 +139,7 @@ int iAoEEngineerTimer;
 
 bool g_bBoostWave;
 bool g_bStartWaveEarly;
+bool g_iSlowAttacker[MAXPLAYERS + 1];
 
 /*==========  Handle  ==========*/
 

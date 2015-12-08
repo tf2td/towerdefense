@@ -393,6 +393,9 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 	if (IsAttacker(iClient) && g_bBoostWave) {
 		fVelocity[0] = 500.0;
 	}
+	if (IsAttacker(iClient) && g_iSlowAttacker[iClient]) {
+		fVelocity[0] = -10000.0;
+	}
 	
 	if (IsDefender(iClient)) {
 		// Attach/detach tower on right-click

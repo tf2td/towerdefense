@@ -22,6 +22,11 @@ public Action Timer_ClientNearAoETower(Handle hTimer) {
 					CreateBeamBoxAroundClient(iTower, fAreaScale, true, 0.2, {0, 255, 0, 25});
 					Tower_ObjectNearAoEMedic(iTower);
 				}	
+				if(iTowerId == TDTower_Slow_Spy) {
+					float fAreaScale = 100.0 * Tower_GetAreaScale(GetTowerId(iTower));
+					CreateBeamBoxAroundClient(iTower, fAreaScale, false, 0.2, {0, 255, 0, 25});
+					Tower_ObjectNearAoESpy(iTower);
+				}
 				
 			}
 		}
@@ -37,7 +42,7 @@ public Action Timer_ClientNearAoETower(Handle hTimer) {
  */
 public void Tower_ObjectNearAoEMedic(int iTower) {
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
-		if (IsClientInGame(iClient) && IsPlayerAlive(iClient) && !IsFakeClient(iClient) && IsClientInZone(iClient, g_fBeamPoints[iTower])) {
+		if (IsDefender(iClient) && IsClientInZone(iClient, g_fBeamPoints[iTower])) {
 			Player_AddHealth(iClient, 5);
 	
 			//Check if there is no Beam
@@ -63,13 +68,17 @@ public void Tower_ObjectNearAoEMedic(int iTower) {
 public void Tower_ObjectNotNearAoEMedic(int iClient) {
 	//Remove Beam if there is one
 	if (g_iHealBeamIndex[iClient][0] != 0) {
-		RemoveEdict(g_iHealBeamIndex[iClient][0]);
-		g_iHealBeamIndex[iClient][0] = 0;
+		if(IsValidEdict(g_iHealBeamIndex[iClient][0])) {
+			RemoveEdict(g_iHealBeamIndex[iClient][0]);
+			g_iHealBeamIndex[iClient][0] = 0;
+		}
 	}
 			
 	if (g_iHealBeamIndex[iClient][1] != 0) {
-		RemoveEdict(g_iHealBeamIndex[iClient][1]);
-		g_iHealBeamIndex[iClient][1] = 0;
+		if(IsValidEdict(g_iHealBeamIndex[iClient][1])) {
+			RemoveEdict(g_iHealBeamIndex[iClient][1]);
+			g_iHealBeamIndex[iClient][1] = 0;
+		}
 	}
 }
 
@@ -279,6 +288,23 @@ public Action Timer_TeleportAoEEngineerBack(Handle hTimer, any hPack) {
 	TeleportEntity(iTower, fLocation, NULL_VECTOR, NULL_VECTOR);
 }
 
+/**
+ * Player is close to AoESpy
+ * 
+ * @param iTower 		The tower
+ * @param iClient 		The player
+ * @noreturn
+ */
+public void Tower_ObjectNearAoESpy(int iTower) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
+		if (IsAttacker(iClient) && IsClientInZone(iClient, g_fBeamPoints[iTower]) && !g_iSlowAttacker[iClient])
+			g_iSlowAttacker[iClient] = true;
+		else if(g_iSlowAttacker[iClient] && IsClientInZone(iClient, g_fBeamPoints[iTower]))
+			TF2_AddCondition(iClient, TFCond_TeleportedGlow, 1.0);
+		else if (g_iSlowAttacker[iClient])
+			g_iSlowAttacker[iClient] = false;
+	}
+}
 /**
  * Gets the level of an building.
  *

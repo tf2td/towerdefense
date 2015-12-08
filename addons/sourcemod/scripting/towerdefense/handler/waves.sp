@@ -45,7 +45,9 @@ stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 	SetHudTextParams(-1.0, 0.6, 3.1, 255, 255, 255, 255, 1, 2.0);
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsDefender(iClient)) {
-			ShowHudText(iClient, -1, "Wave (%d) with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
+			if(Wave_GetType(g_iCurrentWave) == 0) {
+				ShowHudText(iClient, -1, "Wave (%d) with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
+			}
 		}
 	}
 	

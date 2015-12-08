@@ -95,10 +95,25 @@ stock void Server_Reset() {
 			TDTowerId iTowerId = GetTowerId(iClient);
 			g_bTowerBought[view_as<int>(iTowerId)] = false;
 		}
-	}
-	for (int iClient = 1; iClient <= MaxClients; iClient++) {
+		if(IsAttacker(iClient) && g_iSlowAttacker[iClient]) {
+			g_iSlowAttacker[iClient] = false;
+		}
 		if(IsDefender(iClient)) {
 			g_bCarryingObject[iClient] = false;
+			//Remove Beam if there is one
+			if (g_iHealBeamIndex[iClient][0] != 0) {
+				if(IsValidEdict(g_iHealBeamIndex[iClient][0])) {
+					RemoveEdict(g_iHealBeamIndex[iClient][0]);
+					g_iHealBeamIndex[iClient][0] = 0;
+				}
+			}
+			
+			if (g_iHealBeamIndex[iClient][1] != 0) {
+				if(IsValidEdict(g_iHealBeamIndex[iClient][1])) {
+					RemoveEdict(g_iHealBeamIndex[iClient][1]);
+					g_iHealBeamIndex[iClient][1] = 0;
+				}
+			}
 		}
 	}
 	
