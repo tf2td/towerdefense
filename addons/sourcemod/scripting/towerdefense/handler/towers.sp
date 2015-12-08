@@ -127,10 +127,13 @@ stock void Tower_AoeSetup(int iTower, TDTowerId iTowerId) {
 	if (!IsTower(iTower)) {
 		return;
 	}
-	
-	if(iTowerId == TDTower_AoE_Engineer || iTowerId == TDTower_Medic)  {
-		if(hAoETimer == null)
-		hAoETimer = CreateTimer(0.2, Timer_ClientNearAoETower, _, TIMER_REPEAT);
+	char sDamagetype[20];
+	if(Tower_GetDamagetype(iTowerId, sDamagetype, sizeof(sDamagetype)))
+	{
+		if(StrEqual(sDamagetype, "AoE")) {
+			if(hAoETimer == null)
+				hAoETimer = CreateTimer(0.2, Timer_ClientNearAoETower, _, TIMER_REPEAT);
+		}
 	}
 }
 

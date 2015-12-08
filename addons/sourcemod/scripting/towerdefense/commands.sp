@@ -13,6 +13,7 @@ stock void RegisterCommands() {
 	RegAdminCmd("sm_gm", Command_GiveMetal, ADMFLAG_ROOT);
 	RegAdminCmd("sm_r", Command_ReloadMap, ADMFLAG_ROOT);
 	RegAdminCmd("sm_sw", Command_SetWave, ADMFLAG_ROOT);
+	RegAdminCmd("sm_bt", Command_BuyTower, ADMFLAG_ROOT);
 	
 	// Temporary commands
 	RegAdminCmd("sm_pregame", Command_PreGame, ADMFLAG_ROOT);
@@ -30,6 +31,7 @@ stock void RegisterCommands() {
 	RegConsoleCmd("sm_wave", Command_ShowWave);
 	RegConsoleCmd("sm_t", Command_TransferMetal);
 	RegConsoleCmd("sm_transfer", Command_TransferMetal);
+	RegConsoleCmd("sm_givemetal", Command_TransferMetal);
 	
 	//Button Commands
 	RegAdminCmd("sm_increase_enabled_sentries", Command_IncreaseSentry, ADMFLAG_ROOT);
@@ -122,6 +124,29 @@ public Action Command_SetWave(int iClient, int iArgs) {
 	PrintToChat(iClient, "[SM] Wave set to %i.", g_iCurrentWave + 1);
 	}
 
+	return Plugin_Handled;
+}
+
+public Action Command_BuyTower(int iClient, int iArgs) {
+	if (iArgs != 1) {
+		return Plugin_Handled;
+	}
+	
+	char sTower[6];
+	GetCmdArg(1, sTower, sizeof(sTower));
+	TDTowerId iTowerId = view_as<TDTowerId>(StringToInt(sTower));
+	
+	if (!g_bTowerBought[view_as<int>(iTowerId)]) {
+		char sName[MAX_NAME_LENGTH];
+		Tower_GetName(iTowerId, sName, sizeof(sName));
+		
+		Tower_Spawn(iTowerId);
+			
+		PrintToChatAll("\x01%N bought \x04%s", iClient, sName);
+			
+		g_bTowerBought[view_as<int>(iTowerId)] = true;
+	}
+	
 	return Plugin_Handled;
 }
 
