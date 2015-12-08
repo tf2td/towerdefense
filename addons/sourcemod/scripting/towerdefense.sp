@@ -580,7 +580,7 @@ public void OnTakeDamagePost(int iClient, int iAttacker, int iInflictor, float f
 	}
 }
 
-public int OnEntityCreated(int iEntity, const char[] sClassname) {
+public void OnEntityCreated(int iEntity, const char[] sClassname) {
 	if (StrEqual(sClassname, "tf_ammo_pack") || StrEqual(sClassname, "tf_dropped_weapon")) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnEntitySpawnKill);
 	} else if (StrEqual(sClassname, "func_breakable")) {

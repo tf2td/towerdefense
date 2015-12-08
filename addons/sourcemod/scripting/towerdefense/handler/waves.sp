@@ -118,7 +118,7 @@ public void Wave_OnSpawnPost(any iAttacker) {
 	}
 }
 
-public int TF2_OnConditionAdded(int iClient, TFCond Condition) {
+public void TF2_OnConditionAdded(int iClient, TFCond Condition) {
 	if (Condition == TFCond_Jarated && g_iNextWaveType & TDWaveType_JarateImmune)
 		TF2_RemoveCondition(iClient, TFCond_Jarated);
 }
