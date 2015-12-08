@@ -238,7 +238,7 @@ stock void Wave_OnDeathAll() {
 	
 	TeleportEntity(g_iWaveStartButton, g_fWaveStartButtonLocation, NULL_VECTOR, view_as<float>( { 0.0, 0.0, 0.0 } ));
 	
-	Timer_NextWaveCountdown(INVALID_HANDLE, g_iRespawnWaveTime);
+	Timer_NextWaveCountdown(null, g_iRespawnWaveTime);
 	
 	PrintToChatAll("\x04*** Wave %d passed ***", g_iCurrentWave);
 	PrintToChatAll("\x01You have \x04%d seconds\x01 to prepare for the next wave!", g_iRespawnWaveTime);

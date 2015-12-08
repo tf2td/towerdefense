@@ -45,7 +45,7 @@ stock void Database_LoadTowers() {
 }
 
 public void Database_OnLoadTowers(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_LoadTowers > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		int iTowerId = 0, iTowerLevel = 0;
@@ -155,9 +155,9 @@ public void Database_OnLoadTowers(Handle hDriver, Handle hResult, const char[] s
 		}
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 	
 	Database_LoadWeapons();
@@ -182,7 +182,7 @@ stock void Database_LoadWeapons() {
 }
 
 public void Database_OnLoadWeapons(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_LoadWeapons > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		int iWeaponId = 1;
@@ -247,9 +247,9 @@ public void Database_OnLoadWeapons(Handle hDriver, Handle hResult, const char[] 
 		}
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 	
 	Database_LoadWaves();
@@ -277,7 +277,7 @@ stock void Database_LoadWaves() {
 }
 
 public void Database_OnLoadWaves(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_LoadWaves > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		int iWaveId = 0;
@@ -335,9 +335,9 @@ public void Database_OnLoadWaves(Handle hDriver, Handle hResult, const char[] sE
 		}
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 	
 	Database_LoadAirWaveSpawn();
@@ -362,7 +362,7 @@ stock void Database_LoadAirWaveSpawn() {
 }
 
 public void Database_OnLoadAirWaveSpawn(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_LoadAirWaveSpawn > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
@@ -377,9 +377,9 @@ public void Database_OnLoadAirWaveSpawn(Handle hDriver, Handle hResult, const ch
 		g_fAirWaveSpawn[2] = StringToFloat(sLocationParts[2]);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 	
 	Database_LoadMetalpacks();
@@ -407,7 +407,7 @@ stock void Database_LoadMetalpacks() {
 }
 
 public void Database_OnLoadMetalpacks(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_LoadMetalpacks > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		int iMetalpackId = 0;
@@ -444,9 +444,9 @@ public void Database_OnLoadMetalpacks(Handle hDriver, Handle hResult, const char
 		SetTrieValue(g_hMapMetalpacks, "quantity", iMetalpackId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 
 	Database_LoadMultipliersTypes();
@@ -468,7 +468,7 @@ stock void Database_LoadMultipliersTypes() {
  */
  
  public void Database_OnLoadMultipliersTypes(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_LoadMaxWaves > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		// type	
@@ -504,7 +504,7 @@ stock void Database_LoadMultipliers() {
  */
  
  public void Database_OnLoadMultipliers(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_LoadMaxWaves > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		// multipliertype_id	price	increase 

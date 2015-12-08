@@ -129,7 +129,7 @@ stock void Tower_AoeSetup(int iTower, TDTowerId iTowerId) {
 	}
 	
 	if(iTowerId == TDTower_AoE_Engineer || iTowerId == TDTower_Medic)  {
-		if(hAoETimer == INVALID_HANDLE)
+		if(hAoETimer == null)
 		hAoETimer = CreateTimer(0.2, Timer_ClientNearAoETower, _, TIMER_REPEAT);
 	}
 }

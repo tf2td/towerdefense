@@ -25,7 +25,7 @@ stock void Updater_Download(const char[] sUrl, const char[] sDestination) {
 	
 	Handle hFile = OpenFile(sDestination, "wb");
 	
-	if (hFile == INVALID_HANDLE) {
+	if (hFile == null) {
 		Updater_DownloadEnded(false, "Error writing to file.");
 		return;
 	}
@@ -181,7 +181,7 @@ stock void Updater_DownloadEnded(bool bSuccessful, const char sError[] = "") {
 		
 		if (Database_UpdatedServer()) {
 			char sFile[PLATFORM_MAX_PATH];
-			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
+			GetPluginFilename(null, sFile, sizeof(sFile));
 			ServerCommand("sm plugins reload %s", sFile);
 		}
 	} else {

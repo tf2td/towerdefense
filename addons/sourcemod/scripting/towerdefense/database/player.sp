@@ -35,7 +35,7 @@ stock void Database_CheckPlayer(int iUserId, int iClient, const char[] sCommunit
 }
 
 public void Database_OnCheckPlayer(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult) == 0) {
 		// No player found, add it
@@ -49,9 +49,9 @@ public void Database_OnCheckPlayer(Handle hDriver, Handle hResult, const char[] 
 		Database_UpdatePlayer(iUserId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -77,7 +77,7 @@ stock void Database_AddPlayer(int iUserId) {
 }
 
 public void Database_OnAddPlayer_1(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_AddPlayer > Error: %s", sError);
 	} else {
 		char sQuery[32];
@@ -86,14 +86,14 @@ public void Database_OnAddPlayer_1(Handle hDriver, Handle hResult, const char[] 
 		SQL_TQuery(g_hDatabase, Database_OnAddPlayer_2, sQuery, iUserId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
 public void Database_OnAddPlayer_2(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_AddPlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		char sSteamId[32];
@@ -108,9 +108,9 @@ public void Database_OnAddPlayer_2(Handle hDriver, Handle hResult, const char[] 
 		Database_UpdatePlayer(iUserId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -155,7 +155,7 @@ stock void Database_UpdatePlayer(int iUserId) {
 }
 
 public void Database_OnUpdatePlayer_1(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else {
 		char sQuery[512];
@@ -176,14 +176,14 @@ public void Database_OnUpdatePlayer_1(Handle hDriver, Handle hResult, const char
 		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_2, sQuery, iUserId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
 public void Database_OnUpdatePlayer_2(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else {
 		char sQuery[128];
@@ -201,14 +201,14 @@ public void Database_OnUpdatePlayer_2(Handle hDriver, Handle hResult, const char
 		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_3, sQuery, iUserId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
 public void Database_OnUpdatePlayer_3(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		char sQuery[128];
@@ -223,14 +223,14 @@ public void Database_OnUpdatePlayer_3(Handle hDriver, Handle hResult, const char
 		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayer_4, sQuery, iUserId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
 public void Database_OnUpdatePlayer_4(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
@@ -243,9 +243,9 @@ public void Database_OnUpdatePlayer_4(Handle hDriver, Handle hResult, const char
 		Database_CheckPlayerBanned(iUserId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -272,7 +272,7 @@ stock void Database_CheckPlayerBanned(int iUserId) {
 }
 
 public void Database_OnCheckPlayerBanned_1(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerBanned > Error: %s", sError);
 	} else {
 		char sQuery[512];
@@ -292,14 +292,14 @@ public void Database_OnCheckPlayerBanned_1(Handle hDriver, Handle hResult, const
 		SQL_TQuery(g_hDatabase, Database_OnCheckPlayerBanned_2, sQuery, iUserId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
 public void Database_OnCheckPlayerBanned_2(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerBanned > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		bool bDontProceed = false;
@@ -328,9 +328,9 @@ public void Database_OnCheckPlayerBanned_2(Handle hDriver, Handle hResult, const
 		Database_CheckPlayerImmunity(iUserId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -358,7 +358,7 @@ stock void Database_CheckPlayerImmunity(int iUserId) {
 }
 
 public void Database_OnCheckPlayerImmunity(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerImmunity > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		int iClient = GetClientOfUserId(iUserId);
@@ -378,9 +378,9 @@ public void Database_OnCheckPlayerImmunity(Handle hDriver, Handle hResult, const
 		Player_USetValue(iUserId, PLAYER_IMMUNITY, 0);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -408,7 +408,7 @@ stock void Database_UpdatePlayerDisconnect(int iUserId) {
 }
 
 public void Database_OnUpdatePlayerDisconnect_1(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
 	} else {
 		char sQuery[128];
@@ -426,14 +426,14 @@ public void Database_OnUpdatePlayerDisconnect_1(Handle hDriver, Handle hResult, 
 		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayerDisconnect_2, sQuery, iUserId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
 public void Database_OnUpdatePlayerDisconnect_2(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
 	} else {
 		char sQuery[128];
@@ -448,14 +448,14 @@ public void Database_OnUpdatePlayerDisconnect_2(Handle hDriver, Handle hResult, 
 		SQL_TQuery(g_hDatabase, Database_OnUpdatePlayerDisconnect_3, sQuery, iUserId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
 public void Database_OnUpdatePlayerDisconnect_3(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
 	} else {
 		
@@ -521,14 +521,14 @@ public void Database_OnUpdatePlayerDisconnect_3(Handle hDriver, Handle hResult, 
 		Player_USetValue(iUserId, PLAYER_DATABASE_ID, 0);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
 public void Database_OnUpdatePlayerDisconnect_4(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
 	} else {
 		char sSteamId[32];
@@ -537,8 +537,8 @@ public void Database_OnUpdatePlayerDisconnect_4(Handle hDriver, Handle hResult, 
 		Log(TDLogLevel_Info, "Updated disconnected player in database (%s)", sSteamId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 } 

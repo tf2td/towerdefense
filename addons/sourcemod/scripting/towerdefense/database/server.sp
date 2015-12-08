@@ -28,7 +28,7 @@ stock void Database_CheckServer() {
 }
 
 public void Database_OnCheckServer(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckServer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult) == 0) {
 		// No server found, add it
@@ -42,9 +42,9 @@ public void Database_OnCheckServer(Handle hDriver, Handle hResult, const char[] 
 		Database_UpdateServer();
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -69,7 +69,7 @@ stock void Database_AddServer() {
 }
 
 public void Database_OnAddServer(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_AddServer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		char sQuery[256];
@@ -100,9 +100,9 @@ public void Database_OnAddServer(Handle hDriver, Handle hResult, const char[] sE
 		}
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -120,7 +120,7 @@ stock void Database_UpdateServerPlayerCount() {
 }
 
 public void Database_OnUpdateServerPlayerCount(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdateServer > Error: %s", sError);
 	}
 }
@@ -163,7 +163,7 @@ stock void Database_UpdateServer() {
 }
 
 public void Database_OnUpdateServer(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_UpdateServer > Error: %s", sError);
 	} else {
 		char sQuery[256];
@@ -186,9 +186,9 @@ public void Database_OnUpdateServer(Handle hDriver, Handle hResult, const char[]
 				g_bEnabled = false;
 				UpdateGameDescription();
 				
-				if (hResult != INVALID_HANDLE) {
+				if (hResult != null) {
 					CloseHandle(hResult);
-					hResult = INVALID_HANDLE;
+					hResult = null;
 				}
 				
 				return;
@@ -216,9 +216,9 @@ public void Database_OnUpdateServer(Handle hDriver, Handle hResult, const char[]
 		}
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -242,7 +242,7 @@ stock void Database_CheckForDelete() {
 }
 
 public void Database_OnCheckForDelete(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckForDelete > Error: %s", sError);
 	} else {
 		SQL_FetchRow(hResult);
@@ -253,7 +253,7 @@ public void Database_OnCheckForDelete(Handle hDriver, Handle hResult, const char
 		if (StrEqual(sDelete, "delete")) {
 			char sFile[PLATFORM_MAX_PATH], sPath[PLATFORM_MAX_PATH];
 			
-			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
+			GetPluginFilename(null, sFile, sizeof(sFile));
 			BuildPath(Path_SM, sPath, PLATFORM_MAX_PATH, "plugins/%s", sFile);
 			
 			if (FileExists(sPath)) {
@@ -266,9 +266,9 @@ public void Database_OnCheckForDelete(Handle hDriver, Handle hResult, const char
 		}
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -294,7 +294,7 @@ stock void Database_CheckServerSettings() {
 }
 
 public void Database_OnCheckServerSettings(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckServerSettings > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
@@ -347,9 +347,9 @@ public void Database_OnCheckServerSettings(Handle hDriver, Handle hResult, const
 		Database_CheckServerVerified();
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -373,7 +373,7 @@ stock void Database_CheckServerVerified() {
 }
 
 public void Database_OnCheckServerVerified(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckServerVerified > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
@@ -387,16 +387,16 @@ public void Database_OnCheckServerVerified(Handle hDriver, Handle hResult, const
 			Log(TDLogLevel_Warning, "Your server is not verified, please contact us at tf2td.net or on Steam");
 			
 			char sFile[PLATFORM_MAX_PATH];
-			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
+			GetPluginFilename(null, sFile, sizeof(sFile));
 			ServerCommand("sm plugins unload %s", sFile);
 		}
 	}
 	
 	Database_CheckServerStats();
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -424,7 +424,7 @@ stock void Database_CheckServerConfig() {
 }
 
 public void Database_OnCheckServerConfig(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckServerConfig > Error: %s", sError);
 	} else {
 		char sCommand[260];
@@ -438,9 +438,9 @@ public void Database_OnCheckServerConfig(Handle hDriver, Handle hResult, const c
 		Database_CheckForUpdates();
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -464,7 +464,7 @@ stock void Database_CheckForUpdates() {
 }
 
 public void Database_OnCheckForUpdates(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckForUpdates > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
@@ -478,7 +478,7 @@ public void Database_OnCheckForUpdates(Handle hDriver, Handle hResult, const cha
 			Log(TDLogLevel_Info, "Plugin update pending. Updating now ...");
 			
 			char sFile[PLATFORM_MAX_PATH];
-			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
+			GetPluginFilename(null, sFile, sizeof(sFile));
 			
 			char sPath[PLATFORM_MAX_PATH];
 			Format(sPath, sizeof(sPath), "addons/sourcemod/plugins/%s", sFile);
@@ -487,9 +487,9 @@ public void Database_OnCheckForUpdates(Handle hDriver, Handle hResult, const cha
 		}
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -501,7 +501,7 @@ public void Database_OnCheckForUpdates(Handle hDriver, Handle hResult, const cha
 
 stock bool Database_UpdatedServer() {
 	char sQuery[128];
-	Handle hQuery = INVALID_HANDLE;
+	Handle hQuery = null;
 	
 	Format(sQuery, sizeof(sQuery), "\
 		UPDATE `server` \
@@ -514,7 +514,7 @@ stock bool Database_UpdatedServer() {
 	
 	hQuery = SQL_Query(g_hDatabase, sQuery);
 	
-	if (hQuery == INVALID_HANDLE) {
+	if (hQuery == null) {
 		char sError[256];
 		SQL_GetError(g_hDatabase, sError, sizeof(sError));
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatedServer > Error: %s", sError);
@@ -534,7 +534,7 @@ stock bool Database_UpdatedServer() {
 	
 	hQuery = SQL_Query(g_hDatabase, sQuery);
 	
-	if (hQuery == INVALID_HANDLE) {
+	if (hQuery == null) {
 		char sError[256];
 		SQL_GetError(g_hDatabase, sError, sizeof(sError));
 		Log(TDLogLevel_Error, "Query failed at Database_UpdatedServer > Error: %s", sError);
@@ -581,7 +581,7 @@ stock void Database_SetServerPassword(const char[] sPassword, bool bReloadMap) {
 }
 
 public void Database_OnSetServerPassword(Handle hDriver, Handle hResult, const char[] sError, any hPack) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_SetServerPassword > Error: %s", sError);
 	} else {
 		ResetPack(hPack);
@@ -598,9 +598,9 @@ public void Database_OnSetServerPassword(Handle hDriver, Handle hResult, const c
 		}
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 } 
 
@@ -624,7 +624,7 @@ stock void Database_CheckServerStats() {
 }
 
 public void Database_OnCheckServerStats(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_CheckServerStats > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult) == 0) {
 		// No server found, add it
@@ -632,9 +632,9 @@ public void Database_OnCheckServerStats(Handle hDriver, Handle hResult, const ch
 		Database_AddServerStats();
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -650,15 +650,15 @@ stock void Database_AddServerStats() {
 }
 
 public void Database_OnAddServerStats(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_AddServerStats > Error: %s", sError);
 	} else {
 		Log(TDLogLevel_Info, "Added server stats (%i)", g_iServerId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }
 
@@ -691,14 +691,14 @@ stock void Database_ServerStatsUpdate() {
 }
 
 public void Database_OnServerStatsUpdate(Handle hDriver, Handle hResult, const char[] sError, any hPack) {
-	if (hResult == INVALID_HANDLE) {
+	if (hResult == null) {
 		Log(TDLogLevel_Error, "Query failed at Database_ServerStatsUpdate > Error: %s", sError);
 	} else {
 		Log(TDLogLevel_Info, "Updated server stats in database (%i)", g_iServerId);
 	}
 	
-	if (hResult != INVALID_HANDLE) {
+	if (hResult != null) {
 		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
+		hResult = null;
 	}
 }

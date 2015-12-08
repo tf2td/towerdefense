@@ -1238,7 +1238,7 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 	} else if (StrEqual(sName, "break_pregame")) {
 		// Pregame button
 
-		if(hHintTimer == INVALID_HANDLE)
+		if(hHintTimer == null)
 		{
 			hHintTimer = CreateTimer(60.0, Timer_Hints, _, TIMER_REPEAT);
 		}
@@ -1441,7 +1441,7 @@ stock int GetClientByNameExact(char[] sName, int iTeam = -1) {
 stock void AttachAnnotation(int iEntity, float fLifetime, char[] sMessage, any...) {
 	Handle hEvent = CreateEvent("show_annotation");
 	
-	if (hEvent == INVALID_HANDLE) {
+	if (hEvent == null) {
 		return;
 	}
 	
@@ -1467,7 +1467,7 @@ stock void AttachAnnotation(int iEntity, float fLifetime, char[] sMessage, any..
 stock void HideAnnotation(int iEntity) {
 	Handle hEvent = CreateEvent("hide_annotation");
 	
-	if (hEvent == INVALID_HANDLE) {
+	if (hEvent == null) {
 		return;
 	}
 	
@@ -1489,7 +1489,7 @@ stock void HideAnnotation(int iEntity) {
 stock void AttachAdvancedAnnotation(int iClient, int iEntity, float fLifetime, char[] sMessage, any...) {
 	Handle hEvent = CreateEvent("show_annotation");
 	
-	if (hEvent == INVALID_HANDLE) {
+	if (hEvent == null) {
 		return;
 	}
 	
@@ -1518,7 +1518,7 @@ stock void AttachAdvancedAnnotation(int iClient, int iEntity, float fLifetime, c
 stock void HideAdvancedAnnotation(int iClient, int iEntity) {
 	Handle hEvent = CreateEvent("hide_annotation");
 	
-	if (hEvent == INVALID_HANDLE) {
+	if (hEvent == null) {
 		return;
 	}
 	
@@ -1540,7 +1540,7 @@ stock void HideAdvancedAnnotation(int iClient, int iEntity) {
 stock void ShowAnnotation(int iId, float fLocation[3], float fOffsetZ, float fLifetime, char[] sMessage, any...) {
 	Handle hEvent = CreateEvent("show_annotation");
 	
-	if (hEvent == INVALID_HANDLE) {
+	if (hEvent == null) {
 		return;
 	}
 	
@@ -1580,7 +1580,7 @@ stock int Abs(int iValue) {
 stock void GetRconPassword(char[] sBuffer, int iMaxLength) {
 	Handle hDirectory = OpenDirectory("cfg");
 	
-	if (hDirectory == INVALID_HANDLE) {
+	if (hDirectory == null) {
 		return;
 	}
 	
@@ -1660,9 +1660,9 @@ stock void SetPassword(const char[] sPassword, bool bDatabase = true, bool bRelo
  */
 
 stock void CreateDataMap(Handle &hMapHandle) {
-	if (hMapHandle != INVALID_HANDLE) {
+	if (hMapHandle != null) {
 		CloseHandle(hMapHandle);
-		hMapHandle = INVALID_HANDLE;
+		hMapHandle = null;
 	}
 	
 	hMapHandle = CreateTrie();

@@ -85,9 +85,9 @@ stock void Server_Reset() {
 	g_iBuildingLimit[TDBuilding_TeleporterEntry] = 1;
 	g_iBuildingLimit[TDBuilding_TeleporterExit] = 1;
 	//Reset Hint Timer
-	if (hHintTimer != INVALID_HANDLE) {
+	if (hHintTimer != null) {
 		CloseHandle(hHintTimer);
-		hHintTimer = INVALID_HANDLE;
+		hHintTimer = null;
 	}
 	
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
@@ -126,9 +126,9 @@ stock void Server_Reset() {
 	g_bLockable = true;
 	
 	//Reset AoE Timer
-	if (hAoETimer != INVALID_HANDLE) {
+	if (hAoETimer != null) {
 		CloseHandle(hAoETimer);
-		hAoETimer = INVALID_HANDLE;
+		hAoETimer = null;
 	}
 	
 	Format(g_sPassword, sizeof(g_sPassword), "");
