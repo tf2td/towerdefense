@@ -838,7 +838,10 @@ stock void PrecacheSounds() {
 	PrecacheSound("vo/engineer_no01.mp3");
 	PrecacheSound("vo/engineer_no02.mp3");
 	PrecacheSound("vo/engineer_no03.mp3");
-}
+	PrecacheSound("music/mvm_start_mid_wave.wav");
+	PrecacheSound("music/mvm_start_last_wave.wav");
+	PrecacheSound("music/mvm_end_last_wave.wav");
+	}
 
 /**
  * Counts non-fake clients connected to the game.

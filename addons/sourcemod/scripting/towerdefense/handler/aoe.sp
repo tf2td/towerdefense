@@ -14,22 +14,22 @@ public Action Timer_ClientNearAoETower(Handle hTimer) {
 			
 				if(iTowerId == TDTower_AoE_Engineer) {
 					float fAreaScale = 80.0 * Tower_GetAreaScale(GetTowerId(iTower));
-					CreateBeamBoxAroundClient(iTower, fAreaScale, true, 0.2, {255, 0, 0, 25});
+					CreateBeamBoxAroundClient(iTower, fAreaScale, true, 0.2, {231, 76, 60, 25});
 					Tower_ObjectNearAoEEngineer(iTower, iClient);
 				}
 				if(iTowerId == TDTower_Medic) {
 					float fAreaScale = 160.0 * Tower_GetAreaScale(GetTowerId(iTower));
-					CreateBeamBoxAroundClient(iTower, fAreaScale, true, 0.2, {0, 255, 0, 25});
+					CreateBeamBoxAroundClient(iTower, fAreaScale, true, 0.2, {46, 204, 113, 25});
 					Tower_ObjectNearAoEMedic(iTower);
 				}
 				if(iTowerId == TDTower_Kritz_Medic) {
 					float fAreaScale = 60.0 * Tower_GetAreaScale(GetTowerId(iTower));
-					CreateBeamBoxAroundClient(iTower, fAreaScale, true, 0.2, {0, 255, 0, 25});
+					CreateBeamBoxAroundClient(iTower, fAreaScale, true, 0.2, {41, 128, 185, 25});
 					Tower_ObjectNearKritzMedic(iTower);
 				}	
 				if(iTowerId == TDTower_Slow_Spy) {
 					float fAreaScale = 100.0 * Tower_GetAreaScale(GetTowerId(iTower));
-					CreateBeamBoxAroundClient(iTower, fAreaScale, false, 0.2, {0, 255, 0, 25});
+					CreateBeamBoxAroundClient(iTower, fAreaScale, false, 0.2, {44, 62, 80, 25});
 					Tower_ObjectNearAoESpy(iTower);
 				}
 				

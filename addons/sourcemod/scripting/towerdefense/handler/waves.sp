@@ -544,6 +544,7 @@ public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
 			TeleportEntity(g_iWaveStartButton, view_as<float>( { 0.0, 0.0, -9192.0 } ), NULL_VECTOR, view_as<float>( { 0.0, 0.0, 0.0 } ));
 		}
 		case 0: {
+			PlaySound("Music", 0);
 			Wave_Spawn();
 			
 			return Plugin_Stop;
