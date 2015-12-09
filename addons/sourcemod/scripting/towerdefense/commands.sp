@@ -428,6 +428,13 @@ public Action Command_IncreaseSentry(int iClient, any iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
+	if(!g_bCanGetUnlocks) {
+		return Plugin_Continue;
+	}
+	
+	g_bCanGetUnlocks = false;
+	CreateTimer(1.0, Timer_EnableUnlockButton);
+	
 	g_iBuildingLimit[TDBuilding_Sentry] += 1;
 	
 	PrintToChatAll("\x04[\x03TD\x04]\x03 Your sentry limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Sentry]);
@@ -439,6 +446,13 @@ public Action Command_IncreaseDispenser(int iClient, any iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
+	if(!g_bCanGetUnlocks) {
+		return Plugin_Continue;
+	}
+	
+	g_bCanGetUnlocks = false;
+	CreateTimer(1.0, Timer_EnableUnlockButton);
+	
 	g_iBuildingLimit[TDBuilding_Dispenser] += 1;
 	
 	PrintToChatAll("\x04[\x03TD\x04]\x03 Your dispenser limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Dispenser]);
@@ -450,6 +464,13 @@ public Action Command_BonusMetal(int iClient, any iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
+	if(!g_bCanGetUnlocks) {
+		return Plugin_Continue;
+	}
+	
+	g_bCanGetUnlocks = false;
+	CreateTimer(1.0, Timer_EnableUnlockButton);
+	
 	SpawnMetalPacksNumber(TDMetalPack_Start, 4);
 	
 	return Plugin_Continue;

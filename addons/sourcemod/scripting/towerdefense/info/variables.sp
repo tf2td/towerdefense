@@ -28,6 +28,7 @@ bool g_bServerInitialized;
 bool g_bSteamTools;
 bool g_bTF2Attributes;
 bool g_bTowerDefenseMap;
+bool g_bCanGetUnlocks;
 
 /*==========  Handle  ==========*/
 
@@ -114,6 +115,7 @@ int g_iHealBeamIndex[MAXPLAYERS + 1][2];
 int g_bTowerBought[TDTowerId];
 bool g_bTowersLocked;
 bool g_bAoEEngineerAttack;
+bool g_bKritzMedicCharged;
 
 /*==========  Handle  ==========*/
 
@@ -127,6 +129,7 @@ int g_iLastMover[MAXPLAYERS + 1];
 int g_iUpgradeLevel[MAXPLAYERS + 1];
 int g_iUpgradeMetal[MAXPLAYERS + 1];
 int iAoEEngineerTimer;
+int iAoEKritzMedicTimer;
 
 /*==========  String  ==========*/
 

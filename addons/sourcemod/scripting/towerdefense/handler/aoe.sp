@@ -21,12 +21,18 @@ public Action Timer_ClientNearAoETower(Handle hTimer) {
 					float fAreaScale = 160.0 * Tower_GetAreaScale(GetTowerId(iTower));
 					CreateBeamBoxAroundClient(iTower, fAreaScale, true, 0.2, {0, 255, 0, 25});
 					Tower_ObjectNearAoEMedic(iTower);
+				}
+				if(iTowerId == TDTower_Kritz_Medic) {
+					float fAreaScale = 60.0 * Tower_GetAreaScale(GetTowerId(iTower));
+					CreateBeamBoxAroundClient(iTower, fAreaScale, true, 0.2, {0, 255, 0, 25});
+					Tower_ObjectNearKritzMedic(iTower);
 				}	
 				if(iTowerId == TDTower_Slow_Spy) {
 					float fAreaScale = 100.0 * Tower_GetAreaScale(GetTowerId(iTower));
 					CreateBeamBoxAroundClient(iTower, fAreaScale, false, 0.2, {0, 255, 0, 25});
 					Tower_ObjectNearAoESpy(iTower);
 				}
+				
 				
 			}
 		}
@@ -289,6 +295,42 @@ public Action Timer_TeleportAoEEngineerBack(Handle hTimer, any hPack) {
 }
 
 /**
+ * Player is close to KritzMedic
+ * 
+ * @param iTower 		The tower
+ * @noreturn
+ */
+public void Tower_ObjectNearKritzMedic(int iTower) {
+
+	//If Kritz Time is up
+	if(TF2_GetUberLevel(iTower) <= 0.0)
+		g_bKritzMedicCharged = false;
+		
+	//If Bot is fully charged, charge player	
+	if(g_bKritzMedicCharged && TF2_GetUberLevel(iTower) > 0.0) {
+		TF2_SetUberLevel(iTower, TF2_GetUberLevel(iTower) - 0.02);
+		for (int iClient = 1; iClient <= MaxClients; iClient++) {
+			if(IsValidClient(iClient))
+				TF2_AddCondition(iClient, TFCond_Kritzkrieged, 0.3);
+		}
+	//If Bot is fully charged	
+	} else if(TF2_GetUberLevel(iTower) >= 1.0) {
+		g_bKritzMedicCharged = true;	
+	} else if(iAoEKritzMedicTimer < 3 && !IsTowerAttached(iTower)) {
+		iAoEKritzMedicTimer++;
+		return;
+	} else if(!IsTowerAttached(iTower)) {
+		iAoEKritzMedicTimer = 0;
+	}
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
+		if(IsDefender(iClient) && IsClientInZone(iClient, g_fBeamPoints[iTower])) {
+			float fUberLevel = TF2_GetUberLevel(iTower);
+			TF2_SetUberLevel(iTower, fUberLevel + 0.01);
+		}
+	}
+}
+
+/**
  * Player is close to AoESpy
  * 
  * @param iTower 		The tower
@@ -305,6 +347,7 @@ public void Tower_ObjectNearAoESpy(int iTower) {
 			g_iSlowAttacker[iClient] = false;
 	}
 }
+
 /**
  * Gets the level of an building.
  *
@@ -379,3 +422,19 @@ stock void AttachHealBeam(int iEntity, int iTarget) {
 		g_iHealBeamIndex[iTarget][1] = iParticleIndex2;
  	}
 }
+
+stock float TF2_GetUberLevel(int iClient)
+{
+	int iIndex = GetPlayerWeaponSlot(iClient, 1);
+	if (iIndex > 0)
+		return GetEntPropFloat(iIndex, Prop_Send, "m_flChargeLevel");
+	else
+		return 0.0;
+}
+
+stock void TF2_SetUberLevel(int iClient, float fUberLevel)
+{
+	int iIndex = GetPlayerWeaponSlot(iClient, 1);
+	if (iIndex > 0)
+		SetEntPropFloat(iIndex, Prop_Send, "m_flChargeLevel", fUberLevel);
+    }

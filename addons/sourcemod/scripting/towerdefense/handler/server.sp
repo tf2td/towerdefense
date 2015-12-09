@@ -135,6 +135,7 @@ stock void Server_Reset() {
 	g_iNextWaveType = 0;
 	
 	iAoEEngineerTimer = 0;
+	iAoEKritzMedicTimer = 0;
 	
 	g_iHealthBar = GetHealthBar();
 	
@@ -148,7 +149,7 @@ stock void Server_Reset() {
 	
 	Format(g_sPassword, sizeof(g_sPassword), "");
 	
-	SetPassword(g_sPassword, false); //Change upon release
+	SetPassword(SERVER_PASS, false); //Change upon release
 } 
 
 /**
