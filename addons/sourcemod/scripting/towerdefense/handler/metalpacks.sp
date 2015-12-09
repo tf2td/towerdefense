@@ -124,7 +124,10 @@ stock void SpawnRewardPack(TDMetalPackSpawnType iMetalPackType, float[3] fLocati
 	DispatchKeyValue(dispenser, "spawnflags", "2");
 	DispatchKeyValue(dispenser, "solid", "0");
 	DispatchKeyValue(dispenser, "teamnum", "3");
-	SetEntProp(dispenser, Prop_Send, "m_usSolidFlags", (GetEntProp(dispenser, Prop_Send, "m_usSolidFlags") | (1 << 1)));
+	
+	SetEntProp(dispenser, Prop_Send, "m_usSolidFlags", 12); // FSOLID_TRIGGER|FSOLID_NOT_SOLID
+	SetEntProp(dispenser, Prop_Data, "m_nSolidType", 6); // SOLID_VPHYSICS
+	SetEntProp(dispenser, Prop_Data, "m_CollisionGroup", 1); //COLLISION_GROUP_DEBRIS 
 	
 	char model[PLATFORM_MAX_PATH];
 	float pos[3], ang[3];
