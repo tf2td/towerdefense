@@ -27,18 +27,18 @@ public void AntiAir_ProjectileTick(int iProjectile, int iTower) {
 
 			TeleportEntity(iProjectile, NULL_VECTOR, fNewAngles, fBounceVec);
 		} else {
-			Handle hPack = CreateDataPack(); 
+			DataPack hPack = new DataPack(); 
 
-			WritePackCell(hPack, iProjectile);
-			WritePackCell(hPack, iTower);
+			hPack.WriteCell(iProjectile);
+			hPack.WriteCell(iTower);
 
 			RequestFrame(AntiAir_ProjectileTick2, hPack);
 		}
 	}
 }
 
-public void AntiAir_ProjectileTick2(any iData) {
-	ResetPack(iData);
-	AntiAir_ProjectileTick(ReadPackCell(iData), ReadPackCell(iData));
-	CloseHandle(iData);
+public void AntiAir_ProjectileTick2(DataPack iData) {
+	iData.Reset();
+	AntiAir_ProjectileTick(iData.ReadCell(), iData.ReadCell());
+	delete iData;
 }
