@@ -1253,7 +1253,7 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 			
 			Wave_OnButtonStart(StringToInt(sNameParts[2]), iCaller, iActivator);
 		}
-	} else if (StrContains(sName, "enable") != -1 || StrContains(sName, "bonus_metal") != -1) {
+	} else if (StrContains(sName, "enable") != -1) {
 		// Sentry/dispenser wave rewards
 		
 		if (StrContains(sName, "sentry") != -1) {
