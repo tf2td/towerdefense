@@ -7,7 +7,7 @@ stock void PlaySound(char[] sSoundName, int iClient) {
 				case 2: {EmitSoundToAll("vo/mvm_mannup_wave_end02.mp3");}
 			}
 		} else if (StrEqual(sSoundName, "WaveComplete")) {
-			int iRandom = GetRandomInt(1, 7);
+			int iRandom = GetRandomInt(1, 21);
 			switch(iRandom) {
 				case 1: {EmitSoundToAll("vo/mvm_wave_end01.mp3");}
 				case 2: {EmitSoundToAll("vo/mvm_wave_end02.mp3");}
@@ -16,6 +16,13 @@ stock void PlaySound(char[] sSoundName, int iClient) {
 				case 5: {EmitSoundToAll("vo/mvm_wave_end05.mp3");}
 				case 6: {EmitSoundToAll("vo/mvm_wave_end06.mp3");}
 				case 7: {EmitSoundToAll("vo/mvm_wave_end07.mp3");}
+			}
+		} else if (StrEqual(sSoundName, "Music")) {
+			int iRandom = GetRandomInt(1, 15);
+			switch(iRandom) {
+				case 1: {EmitSoundToAll("music/mvm_start_mid_wave.wav");}
+				case 2: {EmitSoundToAll("music/mvm_start_last_wave.wav");}
+				case 3: {EmitSoundToAll("music/mvm_end_last_wave.wav");}
 			}
 		}
 	} else {
