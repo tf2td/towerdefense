@@ -212,10 +212,10 @@ stock void Wave_OnDeathAll() {
 		SpawnMetalPacks(TDMetalPack_Boss);
 	}
 	
+			
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
-			if(IsDefender(iClient)) {
-				Player_CAddValue(iClient, PLAYER_WAVES_PLAYED, 1);
-			}
+		if(IsDefender(iClient))
+			Player_CAddValue(iClient, PLAYER_WAVES_PLAYED, 1);
 	}
 	
 	if (g_iCurrentWave + 1 >= iMaxWaves) {
@@ -226,8 +226,11 @@ stock void Wave_OnDeathAll() {
 				Player_CSetValue(iClient, PLAYER_ROUNDS_WON, 1);
 			}
 		}
+		PlaySound("Win", 0);
 		Wave_Win(TEAM_DEFENDER);
 		return;
+	} else {
+		PlaySound("WaveComplete", 0);
 	}
 	
 	g_iTotalBotsLeft = 0;

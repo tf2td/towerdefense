@@ -68,6 +68,7 @@ public Plugin myinfo =
 #include "towerdefense/handler/panels.sp"
 #include "towerdefense/handler/player.sp"
 #include "towerdefense/handler/server.sp"
+#include "towerdefense/handler/sounds.sp"
 #include "towerdefense/handler/towers.sp"
 #include "towerdefense/handler/waves.sp"
 #include "towerdefense/handler/weapons.sp"
@@ -825,6 +826,17 @@ stock void PrecacheSounds() {
 	PrecacheSound("vo/announcer_begins_3sec.mp3");
 	PrecacheSound("vo/announcer_begins_2sec.mp3");
 	PrecacheSound("vo/announcer_begins_1sec.mp3");
+	PrecacheSound("vo/mannup_wave_end01.mp3");
+	PrecacheSound("vo/mannup_wave_end02.mp3");
+	PrecacheSound("vo/mvm_wave_end01.mp3");
+	PrecacheSound("vo/mvm_wave_end02.mp3");
+	PrecacheSound("vo/mvm_wave_end03.mp3");
+	PrecacheSound("vo/mvm_wave_end04.mp3");
+	PrecacheSound("vo/mvm_wave_end05.mp3");
+	PrecacheSound("vo/mvm_wave_end06.mp3");
+	PrecacheSound("vo/mvm_wave_end07.mp3");
+	PrecacheSound("vo/engineer_no01.mp3");
+	PrecacheSound("vo/engineer_no02.mp3");
 	PrecacheSound("vo/engineer_no03.mp3");
 }
 
@@ -1191,7 +1203,7 @@ stock void Forbid(int iClient, bool bPlaySound, const char[] sMessage, any...) {
 	PrintToChat(iClient, "\x07FF0000%s", sFormattedMessage);
 	
 	if (bPlaySound) {
-		EmitSoundToClient(iClient, "vo/engineer_no03.mp3");
+		PlaySound("Forbid", iClient);
 	}
 }
 
