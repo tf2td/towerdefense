@@ -28,7 +28,6 @@ bool g_bServerInitialized;
 bool g_bSteamTools;
 bool g_bTF2Attributes;
 bool g_bTowerDefenseMap;
-bool g_bCanGetUnlocks;
 
 /*==========  Handle  ==========*/
 

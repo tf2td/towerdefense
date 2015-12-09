@@ -150,7 +150,7 @@ stock void Tower_OnTouchNobuild(int iTower) {
 		return;
 	}
 	
-	Forbid(g_iLastMover[iTower], true, "Don't you dare to place towers on the path again! Did you think you can trick me?");
+	Forbid(g_iLastMover[iTower], true, "Can't place a tower there.");
 	Tower_TeleportToSpawn(iTower);
 }
 
