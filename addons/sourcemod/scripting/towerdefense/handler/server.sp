@@ -140,6 +140,7 @@ stock void Server_Reset() {
 	g_iHealthBar = GetHealthBar();
 	
 	g_bLockable = true;
+	g_bCanGetUnlocks = true;
 	
 	//Reset AoE Timer
 	if (hAoETimer != null) {
