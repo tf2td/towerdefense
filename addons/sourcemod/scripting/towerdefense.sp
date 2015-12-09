@@ -826,8 +826,8 @@ stock void PrecacheSounds() {
 	PrecacheSound("vo/announcer_begins_3sec.mp3");
 	PrecacheSound("vo/announcer_begins_2sec.mp3");
 	PrecacheSound("vo/announcer_begins_1sec.mp3");
-	PrecacheSound("vo/mannup_wave_end01.mp3");
-	PrecacheSound("vo/mannup_wave_end02.mp3");
+	PrecacheSound("vo/mvm_mannup_wave_end01.mp3");
+	PrecacheSound("vo/mvm_mannup_wave_end02.mp3");
 	PrecacheSound("vo/mvm_wave_end01.mp3");
 	PrecacheSound("vo/mvm_wave_end02.mp3");
 	PrecacheSound("vo/mvm_wave_end03.mp3");

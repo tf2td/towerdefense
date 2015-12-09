@@ -3,8 +3,8 @@ stock void PlaySound(char[] sSoundName, int iClient) {
 		if (StrEqual(sSoundName, "Win")) {
 			int iRandom = GetRandomInt(1, 2);
 			switch(iRandom) {
-				case 1: {EmitSoundToAll("vo/mannup_wave_end01.mp3");}
-				case 2: {EmitSoundToAll("vo/mannup_wave_end02.mp3");}
+				case 1: {EmitSoundToAll("vo/mvm_mannup_wave_end01.mp3");}
+				case 2: {EmitSoundToAll("vo/mvm_mannup_wave_end02.mp3");}
 			}
 		} else if (StrEqual(sSoundName, "WaveComplete")) {
 			int iRandom = GetRandomInt(1, 7);
