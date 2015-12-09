@@ -1253,29 +1253,31 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 			
 			Wave_OnButtonStart(StringToInt(sNameParts[2]), iCaller, iActivator);
 		}
-	} else if (StrContains(sName, "enable_") != -1 || StrContains(sName, "bonus_metal") != -1) {
-		// Metal or Sentry/Dispenser wave rewards
+	} else if (StrContains(sName, "enable") != -1 || StrContains(sName, "bonus_metal") != -1) {
+		// Sentry/dispenser wave rewards
 		
-		if (StrContains(sName, "enable_sentry") != -1) {
+		if (StrContains(sName, "sentry") != -1) {
 			// Allow another sentry
 			
 			g_iBuildingLimit[TDBuilding_Sentry] += 1;
 			
 			PrintToChatAll("\x04[\x03TD\x04]\x03 Your sentry limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Sentry]);
 			PrintToChatAll("\x04[\x03TD\x04]\x03 You can build additional sentries with the command \x04/s");
-		} else if (StrEqual(sName, "enable_dispenser_1")) {
-			// Enable Dispenser
+		} else if (StrContains(sName, "dispenser") != -1) {
+			// Enable dispenser
 			
 			g_iBuildingLimit[TDBuilding_Dispenser] += 1;
 			
 			PrintToChatAll("\x04[\x03TD\x04]\x03 Your dispenser limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Dispenser]);
 			PrintToChatAll("\x04[\x03TD\x04]\x03 You can build dispensers via your PDA");
-		} else if (StrEqual(sName, "bonus_metal_1")) {
-			// Give bonus metal reward
-			
-			SpawnMetalPacksNumber(TDMetalPack_Start, 4);	
 		}
-	} else if (StrContains(sName, "multiplier_") != -1) {
+	} else if (StrContains(sName, "bonus") != -1) {
+		// Metal bonus reward
+		
+		if (StrContains(sName, "metal") != -1) {
+			SpawnMetalPacksNumber(TDMetalPack_Start, 4);
+		}
+	} else if (StrContains(sName, "multiplier") != -1) {
 		// Damage multipliers
 		
 		for (int i = 1; i <= iMaxMultiplierTypes; i++) {
