@@ -9,8 +9,8 @@ Handle g_hMapMetalpacks;
 Handle g_hMultiplierType;
 Handle g_hMultiplier;
 Handle g_hServerData;
-int g_iTime;
 
+int g_iTime;
 int g_iMaxBotsOnField = 8; //TODO: Make this configurable through server settings
 
 
@@ -28,6 +28,7 @@ bool g_bServerInitialized;
 bool g_bSteamTools;
 bool g_bTF2Attributes;
 bool g_bTowerDefenseMap;
+bool g_bCanGetUnlocks;
 
 /*==========  Handle  ==========*/
 
@@ -48,7 +49,6 @@ int iMaxWaves;
 int iMaxMultiplierTypes;
 int g_iBotsToSpawn;
 int g_iTotalBotsLeft;
-
 
 /*==========  String  ==========*/
 

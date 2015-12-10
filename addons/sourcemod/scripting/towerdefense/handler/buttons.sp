@@ -19,6 +19,7 @@ stock void HookButtons() {
 }
 
 public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, float fDelay) {
+	
 	char sName[64];
 	GetEntPropString(iCaller, Prop_Data, "m_iName", sName, sizeof(sName));
 	
@@ -32,6 +33,13 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 		Tower_OnButtonTeleport(iTowerId, iCaller, iActivator);
 	} else if (StrContains(sName, "break_tower_") != -1) {
 		// Tower buy
+		
+		if(!g_bCanGetUnlocks) {
+			return;
+		}
+		
+		g_bCanGetUnlocks = false;
+		CreateTimer(0.5, Timer_EnableUnlockButton);
 		
 		char sNameParts[3][32];
 		ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
@@ -56,38 +64,69 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 			
 			Wave_OnButtonStart(StringToInt(sNameParts[2]), iCaller, iActivator);
 		}
-	} else if (StrContains(sName, "enable") != -1) {
-		// Sentry/dispenser wave rewards
+	} else if (StrContains(sName, "enable_sentry") != -1) {
+		// Allow another sentry
 		
-		if (StrContains(sName, "sentry") != -1) {
-			// Allow another sentry
-			
-			g_iBuildingLimit[TDBuilding_Sentry] += 1;
-			
-			PrintToChatAll("\x04[\x03TD\x04]\x03 Your sentry limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Sentry]);
-			PrintToChatAll("\x04[\x03TD\x04]\x03 You can build additional sentries with the command \x04/s");
-		} else if (StrContains(sName, "dispenser") != -1) {
-			// Enable dispenser
-			
-			g_iBuildingLimit[TDBuilding_Dispenser] += 1;
-			
-			PrintToChatAll("\x04[\x03TD\x04]\x03 Your dispenser limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Dispenser]);
-			PrintToChatAll("\x04[\x03TD\x04]\x03 You can build dispensers via your PDA");
+		if(!g_bCanGetUnlocks) {
+			return;
 		}
-	} else if (StrContains(sName, "bonus") != -1) {
+		
+		g_bCanGetUnlocks = false;
+		CreateTimer(0.5, Timer_EnableUnlockButton);
+		
+		g_iBuildingLimit[TDBuilding_Sentry] += 1;
+		
+		PrintToChatAll("\x04[\x03TD\x04]\x03 Your sentry limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Sentry]);
+		PrintToChatAll("\x04[\x03TD\x04]\x03 You can build additional sentries with the command \x04/s");
+		
+		AcceptEntityInput(iCaller, "Break");
+	} else if (StrContains(sName, "enable_dispenser") != -1) {
+		// Enable dispenser
+		
+		if(!g_bCanGetUnlocks) {
+			return;
+		}
+		
+		g_bCanGetUnlocks = false;
+		CreateTimer(0.5, Timer_EnableUnlockButton);
+		
+		g_iBuildingLimit[TDBuilding_Dispenser] += 1;
+		
+		PrintToChatAll("\x04[\x03TD\x04]\x03 Your dispenser limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Dispenser]);
+		PrintToChatAll("\x04[\x03TD\x04]\x03 You can build dispensers via your PDA");
+		
+		AcceptEntityInput(iCaller, "Break");
+	} else if (StrContains(sName, "bonus_metal") != -1) {
 		// Metal bonus reward
 		
-		if (StrContains(sName, "metal") != -1) {
-			SpawnMetalPacksNumber(TDMetalPack_Start, 4);
+		if(!g_bCanGetUnlocks) {
+			return;
 		}
+		
+		g_bCanGetUnlocks = false;
+		CreateTimer(0.5, Timer_EnableUnlockButton);
+		
+		SpawnMetalPacksNumber(TDMetalPack_Start, 4);
+		
+		AcceptEntityInput(iCaller, "Break");
 	} else if (StrContains(sName, "multiplier") != -1) {
 		// Damage multipliers
+		
+		if(!g_bCanGetUnlocks) {
+			return;
+		}
+		
+		g_bCanGetUnlocks = false;
+		CreateTimer(0.5, Timer_EnableUnlockButton);
 		
 		for (int i = 1; i <= iMaxMultiplierTypes; i++) {
 			char sKey[32], sMultiplier[32];
 			Format(sKey, sizeof(sKey), "%d_type", i);
 	
 			if (GetTrieString(g_hMultiplierType, sKey, sMultiplier, sizeof(sMultiplier))) {
+				
+				PrintToChatAll(sMultiplier);
+				
 				if(StrContains(sName, "crit") != -1) {
 					// Crit chance
 					
@@ -121,13 +160,12 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 							PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal per Player",iNextPrice);
 						}
 					}
-				}
-				else if(StrContains(sName, sMultiplier) != -1) {
-					// Other damage modifiers
+				} else if(StrContains(sName, sMultiplier) != -1) {
+					// Damage modifiers
 					
 					int iPriceToPay = Multiplier_GetPrice(i) + Multiplier_GetIncrease(i) * RoundToZero(fMultiplier[i]);
 					int iClients = GetRealClientCount(true);
-			
+					
 					if (iClients <= 0) {
 						iClients = 1;
 					}

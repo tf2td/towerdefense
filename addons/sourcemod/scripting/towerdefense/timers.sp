@@ -32,3 +32,7 @@ public Action RespawnPlayer(Handle hTimer, any iClient) {
 	if(IsValidClient(iClient))
 		TF2_RespawnPlayer(iClient);
 }
+
+public Action Timer_EnableUnlockButton(Handle hTimer) {
+	g_bCanGetUnlocks = true;
+}
