@@ -148,15 +148,15 @@ stock void Wave_OnTakeDamagePost(int iVictim, int iAttacker, int iInflictor, flo
 			iWaveHealth = RoundToZero(float(Wave_GetHealth(g_iCurrentWave)) * (float(iPlayerCount)* 0.125 + 1.0));
 		else
 			iWaveHealth = Wave_GetHealth(g_iCurrentWave);
-		int iTotalHealth = iWaveHealth * g_iTotalBotsLeft;
+		int iTotalHealth = iWaveHealth * g_iBotsToSpawn;
 		for (int iClient = 1; iClient <= MaxClients; iClient++) {
 			if (IsAttacker(iClient)) {
-				iTotalHealth -= GetClientHealth(iClient);
+				iTotalHealth += GetClientHealth(iClient);
 			}
 		}
 		
 		int iTotalHealthMax = iWaveHealth * Wave_GetQuantity(g_iCurrentWave);
-		float fPercentage = float(-iTotalHealth) / float(iTotalHealthMax);
+		float fPercentage = float(iTotalHealth) / float(iTotalHealthMax);
 		
 		SetEntProp(g_iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", RoundToFloor(fPercentage * 255));
 	}
