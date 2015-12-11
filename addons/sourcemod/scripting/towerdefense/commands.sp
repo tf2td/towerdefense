@@ -47,8 +47,6 @@ stock void RegisterCommands() {
 	AddCommandListener(CommandListener_Build, "build");
 	AddCommandListener(CommandListener_ClosedMotd, "closed_htmlpage");
 	AddCommandListener(CommandListener_Exec, "exec");
-	AddCommandListener(CommandListener_Kill, "kill");
-	AddCommandListener(CommandListener_Kill, "explode");
 	//Multipliers
 	AddCommandListener(CommandListener_Multiplier, "sm_explosiondamage");
 	AddCommandListener(CommandListener_Multiplier, "sm_firedamage");
@@ -235,7 +233,8 @@ public Action Command_BuildSentry(int iClient, int iArgs) {
 	
 	int iSentry = CreateEntityByName("obj_sentrygun");
 	
-	if (DispatchSpawn(iSentry)) {
+	if (DispatchSpawn(iSentry) && IsValidEntity(iSentry)) {
+		Player_CAddValue(iClient, PLAYER_OBJECTS_BUILT, 1);
 		AcceptEntityInput(iSentry, "SetBuilder", iClient);
 		
 		SetEntProp(iSentry, Prop_Send, "m_iAmmoShells", 150);
@@ -585,35 +584,6 @@ public Action CommandListener_Exec(int iClient, const char[] sCommand, int iArgs
 	
 	return Plugin_Continue;
 }
-
-public Action CommandListener_Kill(int iClient, const char[] sCommand, int iArgs) {
-	if (!g_bEnabled) {
-		return Plugin_Continue;
-	}
-	
-	if(!IsPlayerAlive(iClient)) {
-		return Plugin_Continue;
-	}
-	
-	if(iArgs > 0) {
-		return Plugin_Continue;
-	}
-	
-	if (IsDefender(iClient)) {
-		int iMetal = GetClientMetal(iClient) / 2;
-		
-		if (iMetal > 0) {
-			float fLocation[3];
-			
-			GetClientEyePosition(iClient, fLocation);
-			fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
-			
-			SpawnMetalPack(TDMetalPack_Medium, fLocation, iMetal);
-		}
-	}
-	
-	return Plugin_Continue;
-} 
 
 public Action CommandListener_Multiplier(int iClient, const char[] sCommand, int iArgs) {
 	if (!g_bEnabled) {

@@ -100,8 +100,6 @@ stock void Server_Reset() {
 		}
 		if(IsDefender(iClient)) {
 			g_bCarryingObject[iClient] = false;
-			if (GetClientMetal(iClient) <= 0)
-				ResetClientMetal(iClient);
 			//Remove Beam if there is one
 			if (g_iHealBeamIndex[iClient][0] != 0) {
 				if(IsValidEdict(g_iHealBeamIndex[iClient][0])) {

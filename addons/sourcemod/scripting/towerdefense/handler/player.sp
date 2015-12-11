@@ -204,6 +204,19 @@ stock void Player_OnDeath(int iUserId, int iClient) {
 	g_bReplaceWeapon[iClient][TFWeaponSlot_Melee] = false;
 	Player_CAddValue(iClient, PLAYER_DEATHS, 1);
 	
+	if (IsDefender(iClient) && g_iCurrentWave > 0) {
+		int iMetal = GetClientMetal(iClient) / 2;
+		
+		if (iMetal > 0) {
+			float fLocation[3];
+			
+			GetClientEyePosition(iClient, fLocation);
+			fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
+			
+			SpawnMetalPack(TDMetalPack_Medium, fLocation, iMetal);
+		}
+	}
+	
 	if (IsTower(g_iAttachedTower[iClient])) {
 		Tower_OnCarrierDeath(g_iAttachedTower[iClient], iClient);
 	}
