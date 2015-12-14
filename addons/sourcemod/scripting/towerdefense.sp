@@ -55,6 +55,7 @@ public Plugin myinfo =
 #include "towerdefense/info/variables.sp"
 #include "towerdefense/info/convars.sp"
 
+#include "towerdefense/util/annotations.sp"
 #include "towerdefense/util/log.sp"
 #include "towerdefense/util/metal.sp"
 #include "towerdefense/util/steamid.sp"
@@ -66,6 +67,7 @@ public Plugin myinfo =
 #include "towerdefense/handler/buttons.sp"
 #include "towerdefense/handler/corners.sp"
 #include "towerdefense/handler/metalpacks.sp"
+#include "towerdefense/handler/hud.sp"
 #include "towerdefense/handler/panels.sp"
 #include "towerdefense/handler/player.sp"
 #include "towerdefense/handler/server.sp"
@@ -180,6 +182,8 @@ public void OnPluginEnd() {
 		CloseHandle(g_hPlayerData);
 		g_hPlayerData = null;
 	}
+	
+	DestroyMetalHud();
 
 	FindConVar("sv_cheats").SetInt(0, true, false);
 }
@@ -1277,67 +1281,6 @@ stock bool IsInsideClient(int iClient) {
 }
 
 /**
- * Shows a custom HUD message to a client.
- *
- * @param iClient		The client.
- * @param sMessage		The message to show.
- * @param ...			Message formatting parameters.
- * @noreturn
- */
-
-stock void PrintToHud(int iClient, const char[] sMessage, any...) {
-	if (!IsValidClient(iClient) || !IsClientInGame(iClient)) {
-		return;
-	}
-	
-	/*
-	char sBuffer[256];
-	
-	SetGlobalTransTarget(iClient);
-	VFormat(sBuffer, sizeof(sBuffer), sMessage, 3);
-	ReplaceString(sBuffer, sizeof(sBuffer), "\"", "“");
-	
-	decl iParams[] = {0x76, 0x6F, 0x69, 0x63, 0x65, 0x5F, 0x73, 0x65, 0x6C, 0x66, 0x00, 0x00};
-	new Handle:hMessage = StartMessageOne("HudNotifyCustom", iClient);
-	BfWriteString(hMessage, sBuffer);
-	
-	for (new i = 0; i < sizeof(iParams); i++) {
-		BfWriteByte(hMessage, iParams[i]);
-	}
-	
-	EndMessage();
-	*/
-	
-	char sFormattedMessage[256];
-	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 3);
-	
-	Handle hBuffer = StartMessageOne("KeyHintText", iClient);
-	
-	BfWriteByte(hBuffer, 1);
-	BfWriteString(hBuffer, sFormattedMessage);
-	EndMessage();
-}
-
-/**
- * Shows a custom HUD message to all clients.
- *
- * @param sMessage		The message to show.
- * @param ...			Message formatting parameters.
- * @noreturn
- */
-
-stock void PrintToHudAll(const char[] sMessage, any...) {
-	char sFormattedMessage[256];
-	
-	for (int iClient = 1; iClient <= MaxClients; iClient++) {
-		if (IsClientInGame(iClient) && !IsFakeClient(iClient)) {
-			VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 2);
-			PrintToHud(iClient, sFormattedMessage);
-		}
-	}
-}
-
-/**
  * Gets a client by name.
  *
  * @param sName			The clients name.
@@ -1367,136 +1310,6 @@ stock int GetClientByNameExact(char[] sName, int iTeam = -1) {
 	}
 	
 	return -1;
-}
-
-/**
- * Attaches a annotation to an entity.
- *
- * @param iEntity		The entity.
- * @param fLifetime		The lifetime of the annotation.
- * @param sMessage		The message to show.
- * @param ...			Message formatting parameters.
- * @noreturn
- */
-
-stock void AttachAnnotation(int iEntity, float fLifetime, char[] sMessage, any...) {
-	Handle hEvent = CreateEvent("show_annotation");
-	
-	if (hEvent == null) {
-		return;
-	}
-	
-	SetEventInt(hEvent, "follow_entindex", iEntity);
-	SetEventInt(hEvent, "id", iEntity);
-	SetEventFloat(hEvent, "lifetime", fLifetime);
-	SetEventString(hEvent, "play_sound", "misc/null.wav");
-	
-	char sFormattedMessage[256];
-	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
-	SetEventString(hEvent, "text", sFormattedMessage);
-	
-	FireEvent(hEvent);
-}
-
-/**
- * Hides the annotation which is attached to an entity.
- *
- * @param iEntity		The entity.
- * @noreturn
- */
-
-stock void HideAnnotation(int iEntity) {
-	Handle hEvent = CreateEvent("hide_annotation");
-	
-	if (hEvent == null) {
-		return;
-	}
-	
-	SetEventInt(hEvent, "id", iEntity);
-	FireEvent(hEvent);
-}
-
-/**
- * Attaches a annotation to an entity.
- *
- * @param iClient		The client.
- * @param iEntity		The entity.
- * @param fLifetime		The lifetime of the annotation.
- * @param sMessage		The message to show.
- * @param ...			Message formatting parameters.
- * @noreturn
- */
-
-stock void AttachAdvancedAnnotation(int iClient, int iEntity, float fLifetime, char[] sMessage, any...) {
-	Handle hEvent = CreateEvent("show_annotation");
-	
-	if (hEvent == null) {
-		return;
-	}
-	
-	SetEventInt(hEvent, "follow_entindex", iEntity);
-	SetEventInt(hEvent, "id", iClient * iEntity);
-	SetEventFloat(hEvent, "lifetime", fLifetime);
-	SetEventString(hEvent, "play_sound", "misc/null.wav");
-	
-	char sFormattedMessage[256];
-	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 5);
-	SetEventString(hEvent, "text", sFormattedMessage);
-	
-	SetEventInt(hEvent, "visibilityBitfield", GetVisibilityBitfield(iClient));
-	
-	FireEvent(hEvent);
-}
-
-/**
- * Hides the annotation which is attached to an entity.
- *
- * @param iEntity		The client.
- * @param iEntity		The entity.
- * @noreturn
- */
-
-stock void HideAdvancedAnnotation(int iClient, int iEntity) {
-	Handle hEvent = CreateEvent("hide_annotation");
-	
-	if (hEvent == null) {
-		return;
-	}
-	
-	SetEventInt(hEvent, "id", iClient * iEntity);
-	FireEvent(hEvent);
-}
-
-/**
- * Shows an annotation at a given location.
- *
- * @param iId			The id (use this to hide).
- * @param fLocation		The location vector.
- * @param fLifetime		The lifetime of the annotation.
- * @param sMessage		The message to show.
- * @param ...			Message formatting parameters.
- * @noreturn
- */
-
-stock void ShowAnnotation(int iId, float fLocation[3], float fOffsetZ, float fLifetime, char[] sMessage, any...) {
-	Handle hEvent = CreateEvent("show_annotation");
-	
-	if (hEvent == null) {
-		return;
-	}
-	
-	SetEventFloat(hEvent, "worldPosX", fLocation[0]);
-	SetEventFloat(hEvent, "worldPosY", fLocation[1]);
-	SetEventFloat(hEvent, "worldPosZ", fLocation[2] + fOffsetZ);
-	SetEventInt(hEvent, "id", iId);
-	SetEventFloat(hEvent, "lifetime", fLifetime);
-	SetEventString(hEvent, "play_sound", "misc/null.wav");
-	
-	char sFormattedMessage[256];
-	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
-	SetEventString(hEvent, "text", sFormattedMessage);
-	
-	FireEvent(hEvent);
 }
 
 /**

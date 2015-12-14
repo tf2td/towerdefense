@@ -44,9 +44,10 @@ stock void Tower_OnButtonBuy(TDTowerId iTowerId, int iButton, int iActivator) {
 		if (CanAfford(iPrice)) {
 			Tower_Spawn(iTowerId);
 			
+			AddGlobalMetal(-iPrice);
+			
 			for (int iClient = 1; iClient <= MaxClients; iClient++) {
 				if (IsDefender(iClient)) {
-					AddClientMetal(iClient, -iPrice);
 					
 					Player_CAddValue(iClient, PLAYER_TOWERS_BOUGHT, 1);
 				}

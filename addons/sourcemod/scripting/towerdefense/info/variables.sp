@@ -34,6 +34,7 @@ bool g_bCanGetUnlocks;
 
 Handle g_hEnabled;
 Handle hHintTimer;
+Handle g_hMetalHud;
 
 /*==========  Float  ==========*/
 
@@ -49,6 +50,7 @@ int iMaxWaves;
 int iMaxMultiplierTypes;
 int g_iBotsToSpawn;
 int g_iTotalBotsLeft;
+int g_iSharedMetal;
 
 /*==========  String  ==========*/
 

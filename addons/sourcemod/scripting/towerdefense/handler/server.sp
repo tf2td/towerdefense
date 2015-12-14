@@ -23,6 +23,7 @@ stock void Server_Initialize() {
 	StripConVarFlag("sv_password", FCVAR_NOTIFY);
 	
 	HookButtons();
+	InitializeMetalHud();
 	Server_Reset();
 	
 	int iServerIp[4];
@@ -148,6 +149,10 @@ stock void Server_Reset() {
 		CloseHandle(hAoETimer);
 		hAoETimer = null;
 	}
+	
+	//Reset global metal
+	g_iSharedMetal = 0;
+	HideMetalHud();
 	
 	Format(g_sPassword, sizeof(g_sPassword), "");
 	

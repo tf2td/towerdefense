@@ -136,18 +136,15 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 					
 					int iPriceToPay = Multiplier_GetPrice(i) + Multiplier_GetIncrease(i) * RoundToZero(fMultiplier[i]);
 					int iClients = GetRealClientCount(true);
-			
+					
 					if (iClients <= 0) {
 						iClients = 1;
 					}
 		
 					if(CanAfford(iPriceToPay)) {
 						
-						for (int iLoopClient = 1; iLoopClient <= MaxClients; iLoopClient++) {
-							if (IsDefender(iLoopClient)) {
-								AddClientMetal(iLoopClient, -iPriceToPay);
-							}
-						}
+						AddGlobalMetal(-iPriceToPay);
+						
 						fMultiplier[i] += 1.0;
 						PrintToChatAll("\x04[\x03TD\x04]\x03 Crit Chance set to:\x04 %i%", RoundToZero(fMultiplier[i] * 5.0));
 						
@@ -172,11 +169,8 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 		
 					if(CanAfford(iPriceToPay)) {
 		
-						for (int iLoopClient = 1; iLoopClient <= MaxClients; iLoopClient++) {
-							if (IsDefender(iLoopClient)) {
-								AddClientMetal(iLoopClient, -iPriceToPay);
-							}
-						}
+						AddGlobalMetal(-iPriceToPay);
+						
 						fMultiplier[i] += 1.0;
 						PrintToChatAll("\x04[\x03TD\x04]\x03 Multiplier set to:\x04 %i.0",RoundToZero(fMultiplier[i] + 1.0));
 			
@@ -248,7 +242,7 @@ stock int Multiplier_GetInt(const char[] sDamageType) {
 }
 
 /**
- * Checks if all clients have enough metal to pay a price.
+ * Checks if players have enough shared metal to pay a price.
  *
  * @param iPrice		The price to pay.
  * @return				True if affordable, false otherwise.
@@ -259,8 +253,8 @@ stock bool CanAfford(int iPrice) {
 	
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsDefender(iClient)) {
-			if (GetClientMetal(iClient) < iPrice) {
-				PrintToChatAll("\x07FF0000%N needs %d metal", iClient, iPrice - GetClientMetal(iClient));
+			if (g_iSharedMetal < iPrice) {
+				PrintToChatAll("\x07FF0000You need %d more metal!", iClient, iPrice - g_iSharedMetal);
 				
 				bResult = false;
 			}
