@@ -160,13 +160,15 @@ public void OnMetalPackPickup(int iMetalPack, int iClient) {
 		return;
 	}
 	
-	// TODO(hurp): Disperse / give metal to each client instead of just one.
-	
 	char sMetal[32];
 	GetEntPropString(iMetalPack, Prop_Data, "m_iName", sMetal, sizeof(sMetal));
 	
 	int iMetal = StringToInt(sMetal);
 	
+	// Add metal to the global pool
+	AddGlobalMetal(iMetal);
+	
+	// Add metal to the client
 	AddClientMetal(iClient, iMetal);
 	ResupplyClient(iClient, true, 0.25);
 	EmitSoundToClient(iClient, "items/gunpickup2.wav");

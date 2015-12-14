@@ -209,6 +209,11 @@ stock void Wave_OnDeathAll() {
 		return;
 	}
 	if (g_iNextWaveType & TDWaveType_Boss) {
+		
+		// Give a bonus for defating the boss
+		PrintToChatAll("\x04Recieved 500 bonus metal for defating the boss!");
+		AddGlobalMetal(500);
+		
 		SpawnMetalPacks(TDMetalPack_Boss);
 	}
 	
