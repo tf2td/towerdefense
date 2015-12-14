@@ -122,12 +122,10 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 		for (int i = 1; i <= iMaxMultiplierTypes; i++) {
 			char sKey[32], sMultiplier[32];
 			Format(sKey, sizeof(sKey), "%d_type", i);
-	
+			
 			if (GetTrieString(g_hMultiplierType, sKey, sMultiplier, sizeof(sMultiplier))) {
 				
-				PrintToChatAll(sMultiplier);
-				
-				if(StrContains(sName, "crit") != -1) {
+				if(StrContains(sMultiplier, "crit") != -1 && StrContains(sName, "crit") != -1) {
 					// Crit chance
 					
 					//Check if already has 100% crits
