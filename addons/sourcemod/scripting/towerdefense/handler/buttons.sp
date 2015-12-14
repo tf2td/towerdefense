@@ -251,14 +251,10 @@ stock int Multiplier_GetInt(const char[] sDamageType) {
 stock bool CanAfford(int iPrice) {
 	bool bResult = true;
 	
-	for (int iClient = 1; iClient <= MaxClients; iClient++) {
-		if (IsDefender(iClient)) {
-			if (g_iSharedMetal < iPrice) {
-				PrintToChatAll("\x07FF0000You need %d more metal!", iClient, iPrice - g_iSharedMetal);
-				
-				bResult = false;
-			}
-		}
+	if (g_iSharedMetal < iPrice) {
+		PrintToChatAll("\x07FF0000The team needs %d more metal!", iPrice - g_iSharedMetal);
+		
+		bResult = false;
 	}
 	
 	return bResult;

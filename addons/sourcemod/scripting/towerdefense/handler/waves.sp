@@ -180,7 +180,7 @@ stock void Wave_OnDeath(int iAttacker, float fPosition[3]) {
 		fPosition[2] = fPosition[2] - 10.0;
 	}
 	
-	// TODO(hurp): Customize metal ammount based off the wave in config files
+	// TODO(hurp): Customize metal ammount based off the wave
 	fPosition[2] = fPosition[2] - GetDistanceToGround(fPosition) + 10.0;
 	SpawnRewardPack(TDMetalPack_Small, fPosition, 100);
 	
@@ -448,6 +448,8 @@ public Action Delay_KickAttacker(Handle hTimer, any iAttacker) {
 }
 
 public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
+	UpdateMetalHud();
+	
 	if (g_bStartWaveEarly) {
 		for (int iClient = 1; iClient <= MaxClients; iClient++) {
 			if (IsDefender(iClient)) {

@@ -11,6 +11,7 @@
 stock void RegisterCommands() {
 	// Commands for testing purposes
 	RegAdminCmd("sm_gm", Command_GiveMetal, ADMFLAG_ROOT);
+	RegAdminCmd("sm_gtm", Command_GiveTeamMetal, ADMFLAG_ROOT);
 	RegAdminCmd("sm_r", Command_ReloadMap, ADMFLAG_ROOT);
 	RegAdminCmd("sm_sw", Command_SetWave, ADMFLAG_ROOT);
 	RegAdminCmd("sm_bt", Command_BuyTower, ADMFLAG_ROOT);
@@ -81,6 +82,24 @@ public Action Command_GiveMetal(int iClient, any iArgs) {
 			AddClientMetal(target_list[i], StringToInt(sMetal));
 		}
 	}
+	
+	return Plugin_Handled;
+}
+
+public Action Command_GiveTeamMetal(int iClient, any iArgs) {
+	if (!g_bEnabled) {
+		return Plugin_Handled;
+	}
+	
+	char sMetal[16];
+	
+	if (iArgs < 1) {
+		ReplyToCommand(iClient, "[SM] Usage: sm_gm <#userid|name> <metal>");
+		return Plugin_Handled;
+	}
+	
+	GetCmdArg(1, sMetal, sizeof(sMetal));
+	AddGlobalMetal(StringToInt(sMetal));
 	
 	return Plugin_Handled;
 }

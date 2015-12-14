@@ -16,7 +16,7 @@
 
 stock void InitializeMetalHud() {
 	g_hMetalHud = CreateHudSynchronizer();
-	SetHudTextParams(-1.0, 0.2, 1000.0, 255, 0, 0, 255);
+	SetHudTextParams(0.8, 0.9, 999999.0, 255, 255, 255, 255);
 }
 
 /**
@@ -32,6 +32,8 @@ stock void UpdateMetalHud() {
 	
 	char cHudText[20];
 	Format(cHudText, sizeof(cHudText), "Team Metal: %d", g_iSharedMetal);
+	
+	SetHudTextParams(0.8, 0.9, 999999.0, 255, 255, 255, 255);
 	
 	for (int i = 1; i < MaxClients; i++) {
 		if (IsDefender(i)) {

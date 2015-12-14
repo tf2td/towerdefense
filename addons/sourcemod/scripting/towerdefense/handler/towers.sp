@@ -39,8 +39,6 @@ stock void Tower_OnButtonBuy(TDTowerId iTowerId, int iButton, int iActivator) {
 			iClients = 1;
 		}
 		
-		iPrice /= iClients;
-		
 		if (CanAfford(iPrice)) {
 			Tower_Spawn(iTowerId);
 			
