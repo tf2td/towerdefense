@@ -169,7 +169,7 @@ public void OnMetalPackPickup(int iMetalPack, int iClient) {
 	AddGlobalMetal(iMetal);
 	
 	// Add metal to the client
-	AddClientMetal(iClient, iMetal);
+	AddClientMetal(iClient, iMetal / 2);
 	ResupplyClient(iClient, true, 0.25);
 	EmitSoundToClient(iClient, "items/gunpickup2.wav");
 	HideAnnotation(iMetalPack);
