@@ -63,6 +63,7 @@ public Plugin myinfo =
 
 #include "towerdefense/handler/antiair.sp"
 #include "towerdefense/handler/aoe.sp"
+#include "towerdefense/handler/buttons.sp"
 #include "towerdefense/handler/corners.sp"
 #include "towerdefense/handler/metalpacks.sp"
 #include "towerdefense/handler/panels.sp"
@@ -344,9 +345,6 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 	// Force towers to shoot
 	if (IsTower(iClient)) {
 		TDTowerId iTowerId = GetTowerId(iClient);
-		
-		
-		
 	
 		// Refill ammo for airblast tower
 		if (iTowerId == TDTower_Airblast_Pyro) {
@@ -1220,80 +1218,6 @@ stock void ReloadMap() {
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 	
 	ServerCommand("changelevel %s", sCurrentMap);
-}
-
-/**
- * Hooks buttons.
- *
- * @noreturn
- */
-
-stock void HookButtons() {
-	HookEntityOutput("func_breakable", "OnHealthChanged", OnButtonShot);
-}
-
-public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, float fDelay) {
-	char sName[64];
-	GetEntPropString(iCaller, Prop_Data, "m_iName", sName, sizeof(sName));
-	
-	if (StrContains(sName, "break_tower_tp_") != -1) {
-		// Tower teleport
-		
-		char sNameParts[4][32];
-		ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
-		
-		TDTowerId iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[3]));
-		Tower_OnButtonTeleport(iTowerId, iCaller, iActivator);
-	} else if (StrContains(sName, "break_tower_") != -1) {
-		// Tower buy
-		
-		char sNameParts[3][32];
-		ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
-		
-		TDTowerId iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[2]));
-		Tower_OnButtonBuy(iTowerId, iCaller, iActivator);
-	} else if (StrEqual(sName, "break_pregame")) {
-		// Pregame button
-
-		if(hHintTimer == null)
-		{
-			hHintTimer = CreateTimer(60.0, Timer_Hints, _, TIMER_REPEAT);
-		}
-	} else if (StrContains(sName, "wave_start") != -1) {
-		// Wave start
-		
-		if (StrEqual(sName, "wave_start")) {
-			Wave_OnButtonStart(g_iCurrentWave, iCaller, iActivator);
-		} else {
-			char sNameParts[3][32];
-			ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
-			
-			Wave_OnButtonStart(StringToInt(sNameParts[2]), iCaller, iActivator);
-		}
-	}
-}
-
-/**
- * Checks if all clients have enough metal to pay a price.
- *
- * @param iPrice		The price to pay.
- * @return				True if affordable, false otherwise.
- */
-
-stock bool CanAfford(int iPrice) {
-	bool bResult = true;
-	
-	for (int iClient = 1; iClient <= MaxClients; iClient++) {
-		if (IsDefender(iClient)) {
-			if (GetClientMetal(iClient) < iPrice) {
-				PrintToChatAll("\x07FF0000%N needs %d metal", iClient, iPrice - GetClientMetal(iClient));
-				
-				bResult = false;
-			}
-		}
-	}
-	
-	return bResult;
 }
 
 /**

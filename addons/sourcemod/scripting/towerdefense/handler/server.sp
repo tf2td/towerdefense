@@ -84,6 +84,7 @@ stock void Server_Reset() {
 	g_iBuildingLimit[TDBuilding_Dispenser] = 0;
 	g_iBuildingLimit[TDBuilding_TeleporterEntry] = 1;
 	g_iBuildingLimit[TDBuilding_TeleporterExit] = 1;
+	
 	//Reset Hint Timer
 	if (hHintTimer != null) {
 		CloseHandle(hHintTimer);
