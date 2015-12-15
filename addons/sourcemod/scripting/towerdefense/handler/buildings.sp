@@ -21,11 +21,18 @@ public MRESReturn DispenseMetal(int thisp, Handle hReturn, Handle hParams)
 	{
 		int level = GetEntProp(thisp, Prop_Send, "m_iUpgradeLevel");
 		int metal = GetEntProp(thisp, Prop_Send, "m_iAmmoMetal");
+		int client = DHookGetParam(hParams, 1);
 		
-		if (metal > 0)
-		{
-			switch (level)
-			{
+		if (IsTower(client)) {
+			// Block towers from taking metal from the dispenser
+			DHookSetReturn(hReturn, false);
+			return MRES_Supercede;	
+		}
+		
+		// TODO(hurp): fix dispeners not draining metal when clients have
+		//			   >5000 metal, this hack isn't that great
+		if (metal > 0 && GetClientMetal(client) >= 5000) {
+			switch (level) {
 				case 1: { AddGlobalMetal(10); }
 				case 2: { AddGlobalMetal(15); }
 				case 3: { AddGlobalMetal(20); }
