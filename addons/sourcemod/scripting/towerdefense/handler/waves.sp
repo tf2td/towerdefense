@@ -453,8 +453,9 @@ public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
 	if (g_bStartWaveEarly) {
 		for (int iClient = 1; iClient <= MaxClients; iClient++) {
 			if (IsDefender(iClient)) {
-				PrintToChat(iClient, "\x04Everyone has received %d metal for starting %d seconds earlier!", (iTime + 1) * 10, iTime + 1);
+				PrintToChat(iClient, "\x04Received %d metal for starting %d seconds earlier!", (iTime + 1) * 10, iTime + 1);
 				AddClientMetal(iClient, (iTime + 1) * 10);
+				AddGlobalMetal((iTime + 1) * 10);
 			}
 		}
 		
