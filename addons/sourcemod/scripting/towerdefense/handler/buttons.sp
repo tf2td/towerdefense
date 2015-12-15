@@ -152,7 +152,7 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 							PrintToChatAll("\x04[\x03TD\x04]\x03 You can't increase crit chance anymore.");
 						} else {
 							int iNextPrice = iPriceToPay + Multiplier_GetIncrease(i);
-							PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal per Player",iNextPrice);
+							PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal",iNextPrice);
 						}
 					}
 				} else if(StrContains(sName, sMultiplier) != -1) {
@@ -175,7 +175,7 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 						PrintToChatAll("\x04[\x03TD\x04]\x03 Multiplier set to:\x04 %i.0",RoundToZero(fMultiplier[i] + 1.0));
 			
 						int iNextPrice = iPriceToPay + Multiplier_GetIncrease(i);
-						PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal per Player",iNextPrice);
+						PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal",iNextPrice);
 					}
 				}
 			}
