@@ -29,9 +29,14 @@ public MRESReturn DispenseMetal(int thisp, Handle hReturn, Handle hParams)
 			return MRES_Supercede;	
 		}
 		
-		// TODO(hurp): fix dispeners not draining metal when clients have
-		//			   >5000 metal, this hack isn't that great
-		if (metal > 0 && GetClientMetal(client) >= 5000) {
+		if (GetClientMetal(client) >= 5000) {
+			SDKCall(hDispenseMetalCall, thisp, 0);
+			// Forces the dispenser to drain metal if the client
+			// has 5000 or more. The metal just disappears in this case,
+			// but we still add to the global pool below.
+		}
+		
+		if (metal > 0) {
 			switch (level) {
 				case 1: { AddGlobalMetal(10); }
 				case 2: { AddGlobalMetal(15); }
