@@ -38,6 +38,7 @@ stock void Database_LoadTowers() {
 			ON (`map`.`map_id` = %d) \
 		INNER JOIN `towerlevel` \
 			ON (`tower`.`tower_id` = `towerlevel`.`tower_id`) \
+		GROUP BY `tower`.`tower_id` \
 		ORDER BY `tower`.`name` ASC, `level` ASC \
 	", g_iServerMap);
 	
@@ -267,8 +268,11 @@ stock void Database_LoadWaves() {
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `wavetype`, `wave`.`name`, `class`, `quantity`, `health`, IF(`wavetype` & (SELECT `bit_value` FROM `wavetype` WHERE `wavetype`.`type` = 'air'), `teleport_air`, `teleport_ground`) \
 		FROM `wave` \
-		INNER JOIN `map` \
-			ON (`map`.`map_id` = %d) \
+		INNER JOIN ( \
+			SELECT `map_id`, `teleport_air`, `teleport_ground`, `wave_start`, `wave_end` \
+			FROM `map` \
+			GROUP BY `map_id` \
+		) m ON (m.`map_id` = %d) \
 		WHERE `wave_id` >= `wave_start` AND `wave_id` <= `wave_end` \
 		ORDER BY `wave_id` ASC \
 	", g_iServerMap);
