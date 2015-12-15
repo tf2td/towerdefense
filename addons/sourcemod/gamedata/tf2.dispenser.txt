@@ -1,0 +1,15 @@
+"Games"
+{
+    "tf"
+    {
+        "Offsets"
+        {
+            "CObjectDispenser::DispenseMetal"
+            {
+                "linux"        "406"
+                "mac"        "406"
+                "windows"    "392"
+            }
+        }
+    }
+}  

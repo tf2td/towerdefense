@@ -7,6 +7,7 @@
 
 #pragma semicolon 1
 
+#include <dhooks>
 #include <sourcemod>
 #include <sdkhooks>
 #include <sdktools>
@@ -56,6 +57,7 @@ public Plugin myinfo =
 #include "towerdefense/info/convars.sp"
 
 #include "towerdefense/util/annotations.sp"
+#include "towerdefense/util/dhooks.sp"
 #include "towerdefense/util/log.sp"
 #include "towerdefense/util/metal.sp"
 #include "towerdefense/util/steamid.sp"
@@ -64,6 +66,7 @@ public Plugin myinfo =
 
 #include "towerdefense/handler/antiair.sp"
 #include "towerdefense/handler/aoe.sp"
+#include "towerdefense/handler/buildings.sp"
 #include "towerdefense/handler/buttons.sp"
 #include "towerdefense/handler/corners.sp"
 #include "towerdefense/handler/metalpacks.sp"
@@ -129,6 +132,7 @@ public void OnPluginStart() {
 	RegisterCommands();
 	LoadConVars();
 	SetConVars();
+	InitDhooks();
 	
 	SetPassword("WaitingForServerToInitialize", false);
 }
@@ -597,6 +601,8 @@ public void OnEntityCreated(int iEntity, const char[] sClassname) {
 		SDKHook(iEntity, SDKHook_SpawnPost, OnProjectileSpawned);
 	} else if (StrEqual(sClassname, "trigger_multiple")) {
 		SDKHook(iEntity, SDKHook_StartTouchPost, Wave_OnTouchCorner);
+	} else if (StrEqual(sClassname, "obj_dispenser", false)) {
+		SDKHook(iEntity, SDKHook_SpawnPost, Dispenser_OnSpawnPost);
 	}
 }
 

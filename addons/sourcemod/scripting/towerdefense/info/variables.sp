@@ -164,3 +164,13 @@ int g_iWaveStartButton;
 /*==========  String  ==========*/
 
 char g_sAirWaveSpawn[64];
+
+
+/*======================================
+=         Extention Variables          =
+======================================*/
+
+/*==========  Handle  ==========*/
+
+Handle hDispenseMetal;
+Handle hDispenseMetalCall;
