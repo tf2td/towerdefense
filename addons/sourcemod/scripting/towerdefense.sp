@@ -187,7 +187,7 @@ public void OnPluginEnd() {
 		g_hPlayerData = null;
 	}
 	
-	DestroyMetalHud();
+	DestroyHud();
 
 	FindConVar("sv_cheats").SetInt(0, true, false);
 }

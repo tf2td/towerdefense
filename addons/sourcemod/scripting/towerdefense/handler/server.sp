@@ -23,7 +23,7 @@ stock void Server_Initialize() {
 	StripConVarFlag("sv_password", FCVAR_NOTIFY);
 	
 	HookButtons();
-	InitializeMetalHud();
+	InitializeHud();
 	Server_Reset();
 	
 	int iServerIp[4];

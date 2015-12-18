@@ -9,14 +9,15 @@
 #endif
 
 /**
- * Initializes a hud indicator for the global metal amount.
+ * Initializes hud indicators
  *
  * @noreturn
  */
 
-stock void InitializeMetalHud() {
+stock void InitializeHud() {
 	g_hMetalHud = CreateHudSynchronizer();
-	SetHudTextParams(0.8, 0.9, 999999.0, 255, 255, 255, 255);
+	g_hWaveStartHud = CreateHudSynchronizer();
+	g_hWaveCountdownHud = CreateHudSynchronizer();
 }
 
 /**
@@ -33,10 +34,9 @@ stock void UpdateMetalHud() {
 	char cHudText[20];
 	Format(cHudText, sizeof(cHudText), "Team Metal: %d", g_iSharedMetal);
 	
-	SetHudTextParams(0.8, 0.9, 999999.0, 255, 255, 255, 255);
-	
 	for (int i = 1; i < MaxClients; i++) {
 		if (IsDefender(i)) {
+			SetHudTextParams(0.8, 0.9, 999999.0, 255, 255, 255, 255);
 			ShowSyncHudText(i, g_hMetalHud, cHudText);
 		}
 	}
@@ -55,7 +55,7 @@ stock void HideMetalHud() {
 	
 	for (int i = 1; i < MaxClients; i++) {
 		if (IsDefender(i)) {
-			ShowSyncHudText(i, g_hMetalHud, "");
+			ClearSyncHud(i, g_hMetalHud);
 		}
 	}
 }
@@ -79,11 +79,19 @@ stock void AddGlobalMetal(int iMetal)
  * @return					True on success, false otherwise.
  */
 
-stock void DestroyMetalHud() {
+stock void DestroyHud() {
 	
 	if (g_hMetalHud != null) {
 		delete g_hMetalHud;
 		g_hMetalHud = null;
+	}
+	if (g_hWaveStartHud != null) {
+		delete g_hWaveStartHud;
+		g_hWaveStartHud = null;
+	}
+	if (g_hWaveCountdownHud != null) {
+		delete g_hWaveCountdownHud;
+		g_hWaveCountdownHud = null;
 	}
 }
 

@@ -41,12 +41,12 @@ stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 		iWaveHealth = RoundToZero(float(Wave_GetHealth(g_iCurrentWave)) * (float(iPlayerCount)* 0.125 + 1.0));
 	else
 		iWaveHealth = Wave_GetHealth(g_iCurrentWave);
-		
-	SetHudTextParams(-1.0, 0.6, 3.1, 255, 255, 255, 255, 1, 2.0);
+	
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsDefender(iClient)) {
 			if(Wave_GetType(g_iCurrentWave) == 0) {
-				ShowHudText(iClient, -1, "Wave (%d) with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
+				SetHudTextParams(-1.0, 0.6, 3.1, 255, 255, 255, 255, 1, 2.0);
+				ShowSyncHudText(iClient, g_hWaveStartHud, "Wave (%d) with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
 			}
 		}
 	}
@@ -448,7 +448,6 @@ public Action Delay_KickAttacker(Handle hTimer, any iAttacker) {
 }
 
 public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
-	UpdateMetalHud();
 	
 	if (g_bStartWaveEarly) {
 		for (int iClient = 1; iClient <= MaxClients; iClient++) {
@@ -464,7 +463,6 @@ public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
 	
 	switch (iTime) {
 		case 5: {
-			SetHudTextParams(-1.0, 0.6, 5.1, 255, 255, 255, 255, 2, 2.0);
 			
 			//Wave Health
 			int iWaveHealth;
@@ -527,10 +525,11 @@ public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
 			
 			for (int iClient = 1; iClient <= MaxClients; iClient++) {
 				if (IsDefender(iClient)) {
+					SetHudTextParams(-1.0, 0.6, 5.1, 255, 255, 255, 255, 2, 2.0);
 					if (StrEqual(sType, "")) {
-						ShowHudText(iClient, -1, "Wave (%d) with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
+						ShowSyncHudText(iClient, g_hWaveStartHud, "Wave (%d) with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
 					} else {
-						ShowHudText(iClient, -1, "%s Wave (%d) with %d HP incoming!", sType, g_iCurrentWave + 1, iWaveHealth);
+						ShowSyncHudText(iClient, g_hWaveStartHud, "%s Wave (%d) with %d HP incoming!", sType, g_iCurrentWave + 1, iWaveHealth);
 					}
 				}
 			}
@@ -559,11 +558,10 @@ public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
 		}
 	}
 	
-	SetHudTextParams(-1.0, 0.85, 1.1, 255, 255, 255, 255);
-	
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsDefender(iClient)) {
-			ShowHudText(iClient, -1, "Next wave arrives in: %02d", iTime);
+			SetHudTextParams(-1.0, 0.85, 1.1, 255, 255, 255, 255);
+			ShowSyncHudText(iClient, g_hWaveCountdownHud, "Next wave arrives in: %02d", iTime);
 		}
 	}
 	

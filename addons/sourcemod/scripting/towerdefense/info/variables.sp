@@ -34,7 +34,10 @@ bool g_bCanGetUnlocks;
 
 Handle g_hEnabled;
 Handle hHintTimer;
+
 Handle g_hMetalHud;
+Handle g_hWaveStartHud;
+Handle g_hWaveCountdownHud;
 
 /*==========  Float  ==========*/
 
