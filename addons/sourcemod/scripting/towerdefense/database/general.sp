@@ -34,11 +34,13 @@ stock void Database_LoadTowers() {
 	Format(sQuery, sizeof(sQuery), "\
 		SELECT `tower`.`tower_id`, `level`, `tower`.`name`, `class`, `price`, `teleport_tower`, `damagetype`, `description`, `metal`, `weapon_id`, `attack`, `rotate`, `pitch`, `damage`, `attackspeed`, `area` \
 		FROM `tower` \
-		INNER JOIN `map` \
-			ON (`map`.`map_id` = %d) \
+		INNER JOIN ( \
+			SELECT `map_id`, `teleport_tower` \
+			FROM `map` \
+			GROUP BY `map_id` \
+		) m ON (m.`map_id` = %d) \
 		INNER JOIN `towerlevel` \
 			ON (`tower`.`tower_id` = `towerlevel`.`tower_id`) \
-		GROUP BY `tower`.`tower_id` \
 		ORDER BY `tower`.`name` ASC, `level` ASC \
 	", g_iServerMap);
 	
