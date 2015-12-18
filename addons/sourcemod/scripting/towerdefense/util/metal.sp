@@ -161,15 +161,21 @@ public void OnMetalPackPickup(int iMetalPack, int iClient) {
 	}
 	
 	char sMetal[32];
+	char sModelName[PLATFORM_MAX_PATH];
 	GetEntPropString(iMetalPack, Prop_Data, "m_iName", sMetal, sizeof(sMetal));
+	GetEntPropString(iMetalPack, Prop_Data, "m_ModelName", sModelName, sizeof(sModelName));
 	
 	int iMetal = StringToInt(sMetal);
 	
-	// Add metal to the global pool
-	AddGlobalMetal(iMetal);
+	// Don't add to global metal if the client dropped metal
+	if (StrEqual(sModelName, "models/items/ammopack_medium.mdl")) {
+		AddClientMetal(iClient, iMetal);
+	}
+	else {
+		AddGlobalMetal(iMetal);
+		AddClientMetal(iClient, iMetal / 2);
+	}
 	
-	// Add metal to the client
-	AddClientMetal(iClient, iMetal / 2);
 	ResupplyClient(iClient, true, 0.25);
 	EmitSoundToClient(iClient, "items/gunpickup2.wav");
 	HideAnnotation(iMetalPack);
