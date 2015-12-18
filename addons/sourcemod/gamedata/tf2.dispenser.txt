@@ -6,9 +6,9 @@
         {
             "CObjectDispenser::DispenseMetal"
             {
-                "linux"        "406"
-                "mac"        "406"
-                "windows"    "392"
+                "linux"        "407"
+                "mac"        "407"
+                "windows"    "393"
             }
         }
     }
