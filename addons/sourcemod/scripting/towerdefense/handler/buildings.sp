@@ -29,11 +29,17 @@ public MRESReturn DispenseMetal(int thisp, Handle hReturn, Handle hParams)
 			return MRES_Supercede;	
 		}
 		
-		if (GetClientMetal(client) >= 5000) {
-			SDKCall(hDispenseMetalCall, thisp, 0);
-			// Forces the dispenser to drain metal if the client
-			// has 5000 or more. The metal just disappears in this case,
-			// but we still add to the global pool below.
+		if (GetClientMetal(client) >= 5000 && metal >= 40) {
+			// Force the dispenser to drain metal if the client
+			// has 5000 or more. The metal that would go to players just
+			// disappears in this case, but we still add to the global pool below.
+			int toRemove = 0;
+			switch (level) {
+				case 1: { toRemove = 40; }
+				case 2: { toRemove = 50; }
+				case 3: { toRemove = 60; }
+			}
+			SetEntProp(thisp, Prop_Send, "m_iAmmoMetal", metal - toRemove);
 		}
 		
 		if (metal > 0) {
