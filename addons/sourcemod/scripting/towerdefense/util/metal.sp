@@ -135,9 +135,9 @@ stock TDMetalPackReturn SpawnMetalPack2(TDMetalPackSpawnType iMetalPackSpawnType
 	
 	if (DispatchSpawn(iMetalPack)) {
 		// Make it not solid, but still "collidable"
-		SetEntProp(iMetalPack, Prop_Send, "m_usSolidFlags", 0x0008 | 0x0010); // FSOLID_TRIGGER|FSOLID_NOT_STANDABLE
+		SetEntProp(iMetalPack, Prop_Send, "m_usSolidFlags", 12); // FSOLID_TRIGGER|FSOLID_NOT_SOLID
 		SetEntProp(iMetalPack, Prop_Data, "m_nSolidType", 6); // SOLID_VPHYSICS
-		SetEntProp(iMetalPack, Prop_Data, "m_CollisionGroup", 2); // COLLISION_GROUP_DEBRIS_TRIGGER
+		SetEntProp(iMetalPack, Prop_Data, "m_CollisionGroup", 1); // COLLISION_GROUP_DEBRIS
 		
 		SetVariantString("idle");
 		AcceptEntityInput(iMetalPack, "SetAnimation");
