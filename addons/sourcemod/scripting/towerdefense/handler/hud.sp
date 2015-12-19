@@ -31,9 +31,10 @@ stock void UpdateMetalHud() {
 		return;
 	}
 	
+	SetHudTextParams(0.8, 0.8, 999999.0, 255, 255, 255, 255);
+	
 	for (int i = 1; i < MaxClients; i++) {
 		if (IsDefender(i)) {
-			SetHudTextParams(0.8, 0.8, 999999.0, 255, 255, 255, 255);
 			ShowSyncHudText(i, g_hMetalHud, "Team Metal: %d", g_iSharedMetal);
 		}
 	}
