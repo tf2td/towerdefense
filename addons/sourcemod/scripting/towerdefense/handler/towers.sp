@@ -162,7 +162,7 @@ stock void Tower_OnTouchNobuild(int iTower) {
  */
 
 stock void Tower_OnUpgrade(int iTower, int iClient) {
-	if (!g_bEnabled || !IsDefender(iClient)) {
+	if (!g_bEnabled) {
 		return;
 	}
 	
