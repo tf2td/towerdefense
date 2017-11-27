@@ -93,11 +93,7 @@ stock Database_UpdateServer() {
 	GetConVarString(FindConVar("sv_password"), sPassword, sizeof(sPassword));
 	SQL_EscapeString(g_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
 
-	decl String:sRconPassword[256], String:sRconPasswordSave[512];
-	GetRconPassword(sRconPassword, sizeof(sRconPassword));
-	SQL_EscapeString(g_hDatabase, sRconPassword, sRconPasswordSave, sizeof(sRconPasswordSave));
-
-	Format(sQuery, sizeof(sQuery), "CALL UpdateServer(%d, '%s', '%s', '%s', '%s', %d)", g_iServerId, sServerNameSave, PLUGIN_VERSION, sPasswordSave, sRconPasswordSave, GetRealClientCount());
+	Format(sQuery, sizeof(sQuery), "CALL UpdateServer(%d, '%s', '%s', '%s', '%s', %d)", g_iServerId, sServerNameSave, PLUGIN_VERSION, sPasswordSave, GetRealClientCount());
 
 	SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 0);
 }
@@ -141,53 +137,6 @@ public Database_OnUpdateServer(Handle:hDriver, Handle:hResult, const String:sErr
 			Log(TDLogLevel_Info, "Updated server in database (%s:%d)", g_sServerIp, g_iServerPort);
 
 			g_bConfigsExecuted = true;
-
-			Database_CheckForDelete();
-		}
-	}
-
-	if (hResult != INVALID_HANDLE) {
-		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
-	}
-}
-
-/**
- * Checks for plugin delete.
- *
- * @noreturn
- */
-
-stock Database_CheckForDelete() {
-	decl String:sQuery[128];
-
-	Format(sQuery, sizeof(sQuery), "CALL GetServerDelete(%d)", g_iServerId);
-
-	SQL_TQuery(g_hDatabase, Database_OnCheckForDelete, sQuery);
-}
-
-public Database_OnCheckForDelete(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
-	if (hResult == INVALID_HANDLE) {
-		Log(TDLogLevel_Error, "Query failed at Database_CheckForDelete > Error: %s", sError);
-	} else {
-		SQL_FetchRow(hResult);
-
-		decl String:sDelete[32];
-		SQL_FetchString(hResult, 0, sDelete, sizeof(sDelete));
-
-		if (StrEqual(sDelete, "delete")) {
-			decl String:sFile[PLATFORM_MAX_PATH], String:sPath[PLATFORM_MAX_PATH];
-			
-			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
-			BuildPath(Path_SM, sPath, PLATFORM_MAX_PATH, "plugins/%s", sFile);			
-
-			if (FileExists(sPath)) {
-				if (DeleteFile(sPath)) {
-					ServerCommand("sm plugins unload %s", sFile);
-				}
-			}
-		} else {
-			Database_CheckServerSettings();
 		}
 	}
 
@@ -259,51 +208,9 @@ public Database_OnCheckServerSettings(Handle:hDriver, Handle:hResult, const Stri
 		}
 
 		Log_Initialize(iLogLevel, iLogType);
-
-		Database_CheckServerVerified();
-	} else {
-		Database_CheckServerVerified();
 	}
 
-	if (hResult != INVALID_HANDLE) {
-		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
-	}
-}
-
-/**
- * Checks if the server is verified.
- *
- * @noreturn
- */
-
-stock Database_CheckServerVerified() {
-	decl String:sQuery[128];
-
-	Format(sQuery, sizeof(sQuery), "CALL GetServerVerified(%d)", g_iServerId);
-
-	SQL_TQuery(g_hDatabase, Database_OnCheckServerVerified, sQuery);
-}
-
-public Database_OnCheckServerVerified(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
-	if (hResult == INVALID_HANDLE) {
-		Log(TDLogLevel_Error, "Query failed at Database_CheckServerVerified > Error: %s", sError);
-	} else if (SQL_GetRowCount(hResult)) {
-		SQL_FetchRow(hResult);
-
-		decl String:sVerfied[32];
-		SQL_FetchString(hResult, 0, sVerfied, sizeof(sVerfied));
-
-		if (StrEqual(sVerfied, "verified")) {
-			Database_CheckServerConfig();
-		} else {
-			Log(TDLogLevel_Warning, "Your server is not verified, please contact us at tf2td.net or on Steam");
-
-			decl String:sFile[PLATFORM_MAX_PATH];
-			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
-			ServerCommand("sm plugins unload %s", sFile);
-		}
-	}
+	Database_CheckServerConfig();
 
 	if (hResult != INVALID_HANDLE) {
 		CloseHandle(hResult);

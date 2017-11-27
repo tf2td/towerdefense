@@ -143,21 +143,16 @@ stock void Database_UpdateServer() {
 	GetConVarString(FindConVar("sv_password"), sPassword, sizeof(sPassword));
 	SQL_EscapeString(g_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
 	
-	char sRconPassword[256], sRconPasswordSave[512];
-	GetRconPassword(sRconPassword, sizeof(sRconPassword));
-	SQL_EscapeString(g_hDatabase, sRconPassword, sRconPasswordSave, sizeof(sRconPasswordSave));
-	
 	Format(sQuery, sizeof(sQuery), "\
 		UPDATE `server` \
 		SET `name` = '%s', \
 			`version` = '%s', \
 			`password` = '%s', \
-			`rcon_password` = '%s', \
 			`players` = %d, \
 			`updated` = UTC_TIMESTAMP() \
 		WHERE `server_id` = %d \
 		LIMIT 1 \
-	", sServerNameSave, PLUGIN_VERSION, sPasswordSave, sRconPasswordSave, GetRealClientCount(), g_iServerId);
+	", sServerNameSave, PLUGIN_VERSION, sPasswordSave, GetRealClientCount(), g_iServerId);
 	
 	SQL_TQuery(g_hDatabase, Database_OnUpdateServer, sQuery, 0);
 }
@@ -211,58 +206,6 @@ public void Database_OnUpdateServer(Handle hDriver, Handle hResult, const char[]
 			Log(TDLogLevel_Info, "Updated server in database (%s:%d)", g_sServerIp, g_iServerPort);
 			
 			g_bConfigsExecuted = true;
-			
-			Database_CheckForDelete();
-		}
-	}
-	
-	if (hResult != null) {
-		CloseHandle(hResult);
-		hResult = null;
-	}
-}
-
-/**
- * Checks for plugin delete.
- *
- * @noreturn
- */
-
-stock void Database_CheckForDelete() {
-	char sQuery[128];
-	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `delete` \
-		FROM `server` \
-		WHERE `server_id` = %d \
-		LIMIT 1 \
-	", g_iServerId);
-	
-	SQL_TQuery(g_hDatabase, Database_OnCheckForDelete, sQuery);
-}
-
-public void Database_OnCheckForDelete(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == null) {
-		Log(TDLogLevel_Error, "Query failed at Database_CheckForDelete > Error: %s", sError);
-	} else {
-		SQL_FetchRow(hResult);
-		
-		char sDelete[32];
-		SQL_FetchString(hResult, 0, sDelete, sizeof(sDelete));
-		
-		if (StrEqual(sDelete, "delete")) {
-			char sFile[PLATFORM_MAX_PATH], sPath[PLATFORM_MAX_PATH];
-			
-			GetPluginFilename(null, sFile, sizeof(sFile));
-			BuildPath(Path_SM, sPath, PLATFORM_MAX_PATH, "plugins/%s", sFile);
-			
-			if (FileExists(sPath)) {
-				if (DeleteFile(sPath)) {
-					ServerCommand("sm plugins unload %s", sFile);
-				}
-			}
-		} else {
-			Database_CheckServerSettings();
 		}
 	}
 	
@@ -341,57 +284,9 @@ public void Database_OnCheckServerSettings(Handle hDriver, Handle hResult, const
 		}
 		
 		Log_Initialize(iLogLevel, iLogType);
-		
-		Database_CheckServerVerified();
-	} else {
-		Database_CheckServerVerified();
 	}
 	
-	if (hResult != null) {
-		CloseHandle(hResult);
-		hResult = null;
-	}
-}
-
-/**
- * Checks if the server is verified.
- *
- * @noreturn
- */
-
-stock void Database_CheckServerVerified() {
-	char sQuery[128];
-	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `verified` \
-		FROM `server` \
-		WHERE `server_id` = %d \
-		LIMIT 1 \
-	", g_iServerId);
-	
-	SQL_TQuery(g_hDatabase, Database_OnCheckServerVerified, sQuery);
-}
-
-public void Database_OnCheckServerVerified(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == null) {
-		Log(TDLogLevel_Error, "Query failed at Database_CheckServerVerified > Error: %s", sError);
-	} else if (SQL_GetRowCount(hResult)) {
-		SQL_FetchRow(hResult);
-		
-		char sVerfied[32];
-		SQL_FetchString(hResult, 0, sVerfied, sizeof(sVerfied));
-		
-		if (StrEqual(sVerfied, "verified")) {
-			Database_CheckServerConfig();
-		} else {
-			Log(TDLogLevel_Warning, "Your server is not verified, please contact us at tf2td.net or on Steam");
-			
-			char sFile[PLATFORM_MAX_PATH];
-			GetPluginFilename(null, sFile, sizeof(sFile));
-			ServerCommand("sm plugins unload %s", sFile);
-		}
-	}
-	
+	Database_CheckServerConfig();
 	Database_CheckServerStats();
 	
 	if (hResult != null) {

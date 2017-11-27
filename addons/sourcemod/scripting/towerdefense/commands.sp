@@ -252,9 +252,6 @@ public Action Command_BuildSentry(int iClient, int iArgs) {
 }
 
 public Action Command_DropMetal(int iClient, int iArgs) {
-	char sPassword[256];
-	GetRconPassword(sPassword, sizeof(sPassword));
-	
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}

@@ -1,10 +1,3 @@
-/**
-
-	TODO:
-	- panels.sp:
-	  - Rename panels
-**/
-
 #pragma semicolon 1
 
 #include <sourcemod>
@@ -96,7 +89,6 @@ public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iMax
 	if (SQL_CheckConfig("towerdefense"))
 		g_hDatabase = SQL_Connect("towerdefense", true, sError, iMaxLength);
 	else {
-		// TODO(hurp): Flatfile server cfgs
 		Format(sError, iMaxLength, "Unable to read database info from file");
 		return APLRes_Failure;
 	}
@@ -1508,70 +1500,6 @@ stock void ShowAnnotation(int iId, float fLocation[3], float fOffsetZ, float fLi
 
 stock int Abs(int iValue) {
 	return (iValue < 0 ? -iValue : iValue);
-}
-
-/**
- * Reads the rcon password from the servers config.
- *
- * @param sBuffer			Destination string buffer.
- * @param iMaxLength		Maximum length of output string buffer.
- * @noreturn
- */
-
-stock void GetRconPassword(char[] sBuffer, int iMaxLength) {
-	Handle hDirectory = OpenDirectory("cfg");
-	
-	if (hDirectory == null) {
-		return;
-	}
-	
-	char sFile[PLATFORM_MAX_PATH], sPath[PLATFORM_MAX_PATH], sLine[256];
-	FileType iFileType;
-	int iChar;
-	Handle hFile;
-	
-	while (ReadDirEntry(hDirectory, sFile, sizeof(sFile), iFileType)) {
-		if (iFileType == FileType_File) {
-			iChar = FindCharInString(sFile, '.', true);
-			
-			if (iChar != -1) {
-				if (StrEqual(sFile[iChar + 1], "cfg", false)) {
-					Format(sPath, sizeof(sPath), "cfg/%s", sFile);
-					
-					hFile = OpenFile(sPath, "r");
-					
-					while (!IsEndOfFile(hFile) && ReadFileLine(hFile, sLine, sizeof(sLine))) {
-						if (StrContains(sLine, "//") == -1 && StrContains(sLine, "con_pa", false) != -1) {  // rcon_password
-							int iQuote1 = FindCharInString(sLine, '"');
-							int iQuote2 = FindCharInString(sLine, '"', true);
-							
-							if (iQuote1 == -1 || iQuote2 == -1) {
-								int iSpace = FindCharInString(sLine, ' ');
-								
-								if (iSpace != -1) {
-									if (sLine[strlen(sLine) - 1] == '\n' || sLine[strlen(sLine) - 1] == '\r') {
-										sLine[strlen(sLine) - 1] = '\0';
-									}
-								}
-								
-								strcopy(sBuffer, iMaxLength, sLine[iSpace + 1]);
-							} else if (iQuote1 != iQuote2) {
-								if (sLine[strlen(sLine) - 1] == '\n' || sLine[strlen(sLine) - 1] == '\r') {
-									sLine[strlen(sLine) - 2] = '\0';
-								}
-								
-								strcopy(sBuffer, iMaxLength, sLine[iQuote1 + 1]);
-							}
-						}
-					}
-					
-					CloseHandle(hFile);
-				}
-			}
-		}
-	}
-	
-	CloseHandle(hDirectory);
 }
 
 /**
