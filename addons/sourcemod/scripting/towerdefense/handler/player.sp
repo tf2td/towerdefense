@@ -1,9 +1,3 @@
-/**
-
-	TODO(hurp): It looks like a lot of this stuff could be re-factored into methodmaps.
-
-**/
-
 #pragma semicolon 1
 
 #include <sourcemod>

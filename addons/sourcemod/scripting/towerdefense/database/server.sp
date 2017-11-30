@@ -58,12 +58,9 @@ stock void Database_AddServer() {
 	char sQuery[256];
 	
 	Format(sQuery, sizeof(sQuery), "\
-		INSERT INTO `server` (`ip`, `port`, `host_id`, `created`, `updated`) \
-		VALUES ('%s', %d, (SELECT `host_id` \
-						   FROM `host` \
-						   WHERE `name` = '%s' \
-						   LIMIT 1), UTC_TIMESTAMP(), UTC_TIMESTAMP()) \
-	", g_sServerIp, g_iServerPort, PLUGIN_HOST);
+		INSERT INTO `server` (`ip`, `port`, `created`, `updated`) \
+		VALUES ('%s', %d, UTC_TIMESTAMP(), UTC_TIMESTAMP()) \
+	", g_sServerIp, g_iServerPort);
 	
 	SQL_TQuery(g_hDatabase, Database_OnAddServer, sQuery, 0);
 }
@@ -206,6 +203,8 @@ public void Database_OnUpdateServer(Handle hDriver, Handle hResult, const char[]
 			Log(TDLogLevel_Info, "Updated server in database (%s:%d)", g_sServerIp, g_iServerPort);
 			
 			g_bConfigsExecuted = true;
+			
+			Database_CheckServerSettings();
 		}
 	}
 	
@@ -284,10 +283,13 @@ public void Database_OnCheckServerSettings(Handle hDriver, Handle hResult, const
 		}
 		
 		Log_Initialize(iLogLevel, iLogType);
+		
+		Database_CheckServerConfig();
+		Database_CheckServerStats();
+	} else {
+		Database_CheckServerConfig();
+		Database_CheckServerStats();
 	}
-	
-	Database_CheckServerConfig();
-	Database_CheckServerStats();
 	
 	if (hResult != null) {
 		CloseHandle(hResult);
@@ -330,120 +332,13 @@ public void Database_OnCheckServerConfig(Handle hDriver, Handle hResult, const c
 			ServerCommand("%s", sCommand);
 		}
 		
-		Database_CheckForUpdates();
+		Database_OnServerChecked();
 	}
 	
 	if (hResult != null) {
 		CloseHandle(hResult);
 		hResult = null;
 	}
-}
-
-/**
- * Checks for plugin updates.
- *
- * @noreturn
- */
-
-stock void Database_CheckForUpdates() {
-	char sQuery[128];
-	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT IF(`update` = 'update', '', `update_url`) \
-		FROM `server` \
-		WHERE `server_id` = %d \
-		LIMIT 1 \
-	", g_iServerId);
-	
-	SQL_TQuery(g_hDatabase, Database_OnCheckForUpdates, sQuery);
-}
-
-public void Database_OnCheckForUpdates(Handle hDriver, Handle hResult, const char[] sError, any iData) {
-	if (hResult == null) {
-		Log(TDLogLevel_Error, "Query failed at Database_CheckForUpdates > Error: %s", sError);
-	} else if (SQL_GetRowCount(hResult)) {
-		SQL_FetchRow(hResult);
-		
-		char sUrl[256];
-		SQL_FetchString(hResult, 0, sUrl, sizeof(sUrl));
-		
-		if (StrEqual(sUrl, "")) {
-			Database_OnServerChecked();
-		} else {
-			Log(TDLogLevel_Info, "Plugin update pending. Updating now ...");
-			
-			char sFile[PLATFORM_MAX_PATH];
-			GetPluginFilename(null, sFile, sizeof(sFile));
-			
-			char sPath[PLATFORM_MAX_PATH];
-			Format(sPath, sizeof(sPath), "addons/sourcemod/plugins/%s", sFile);
-			
-			Updater_Download(sUrl, sPath);
-		}
-	}
-	
-	if (hResult != null) {
-		CloseHandle(hResult);
-		hResult = null;
-	}
-}
-
-/**
- * Tells the database that the servers plugin got updated.
- *
- * @return				True on success, false otherwise.
- */
-
-stock bool Database_UpdatedServer() {
-	char sQuery[128];
-	Handle hQuery = null;
-	
-	Format(sQuery, sizeof(sQuery), "\
-		UPDATE `server` \
-		SET `update` = 0 \
-		WHERE `server_id` = %d \
-		LIMIT 1 \
-	", g_iServerId);
-	
-	SQL_LockDatabase(g_hDatabase);
-	
-	hQuery = SQL_Query(g_hDatabase, sQuery);
-	
-	if (hQuery == null) {
-		char sError[256];
-		SQL_GetError(g_hDatabase, sError, sizeof(sError));
-		Log(TDLogLevel_Error, "Query failed at Database_UpdatedServer > Error: %s", sError);
-		
-		SQL_UnlockDatabase(g_hDatabase);
-		return false;
-	}
-	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `update` \
-		FROM `server` \
-		WHERE `server_id` = %d \
-		LIMIT 1 \
-	", g_iServerId);
-	
-	SQL_LockDatabase(g_hDatabase);
-	
-	hQuery = SQL_Query(g_hDatabase, sQuery);
-	
-	if (hQuery == null) {
-		char sError[256];
-		SQL_GetError(g_hDatabase, sError, sizeof(sError));
-		Log(TDLogLevel_Error, "Query failed at Database_UpdatedServer > Error: %s", sError);
-		
-		SQL_UnlockDatabase(g_hDatabase);
-		return false;
-	}
-	
-	bool bResult = (SQL_FetchRow(hQuery) && SQL_FetchInt(hQuery, 0) == 0);
-	
-	SQL_UnlockDatabase(g_hDatabase);
-	CloseHandle(hQuery);
-	
-	return bResult;
 }
 
 /**

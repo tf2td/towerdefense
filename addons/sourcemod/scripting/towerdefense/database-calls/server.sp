@@ -244,89 +244,13 @@ public Database_OnCheckServerConfig(Handle:hDriver, Handle:hResult, const String
 			ServerCommand("%s", sCommand);
 		}
 		
-		Database_CheckForUpdates();
+		Database_LoadTowers();
 	}
 
 	if (hResult != INVALID_HANDLE) {
 		CloseHandle(hResult);
 		hResult = INVALID_HANDLE;
 	}
-}
-
-/**
- * Checks for plugin updates.
- *
- * @noreturn
- */
-
-stock Database_CheckForUpdates() {
-	decl String:sQuery[128];
-
-	Format(sQuery, sizeof(sQuery), "CALL GetServerUpdate(%d)", g_iServerId);
-
-	SQL_TQuery(g_hDatabase, Database_OnCheckForUpdates, sQuery);
-}
-
-public Database_OnCheckForUpdates(Handle:hDriver, Handle:hResult, const String:sError[], any:iData) {
-	if (hResult == INVALID_HANDLE) {
-		Log(TDLogLevel_Error, "Query failed at Database_CheckForUpdates > Error: %s", sError);
-	} else if (SQL_GetRowCount(hResult)) {
-		SQL_FetchRow(hResult);
-
-		decl String:sUrl[256];
-		SQL_FetchString(hResult, 0, sUrl, sizeof(sUrl));
-
-		if (StrEqual(sUrl, "")) {
-			Database_LoadTowers();
-		} else {
-			Log(TDLogLevel_Info, "Plugin update pending. Updating now ...");
-
-			decl String:sFile[PLATFORM_MAX_PATH];
-			GetPluginFilename(INVALID_HANDLE, sFile, sizeof(sFile));
-
-			decl String:sPath[PLATFORM_MAX_PATH];
-			Format(sPath, sizeof(sPath), "addons/sourcemod/plugins/%s", sFile);
-
-			Updater_Download(sUrl, sPath);
-		}
-	}
-
-	if (hResult != INVALID_HANDLE) {
-		CloseHandle(hResult);
-		hResult = INVALID_HANDLE;
-	}
-}
-
-/**
- * Tells the database that the servers plugin got updated.
- *
- * @return				True on success, false otherwiseherwise.
- */
-
-stock bool:Database_UpdatedServer() {
-	decl String:sQuery[128];
-
-	Format(sQuery, sizeof(sQuery), "CALL UpdatedServer(%d)", g_iServerId);
-	 
-	SQL_LockDatabase(g_hDatabase);
-		
-	new Handle:hQuery = SQL_Query(g_hDatabase, sQuery);
-
-	if (hQuery == INVALID_HANDLE) {
-		decl String:sError[256];
-		SQL_GetError(g_hDatabase, sError, sizeof(sError));
-		Log(TDLogLevel_Error, "Query failed at Database_UpdatedServer > Error: %s", sError);
-
-		SQL_UnlockDatabase(g_hDatabase);
-		return false;
-	}
-
-	new bool:bResult = (SQL_FetchRow(hQuery) && SQL_FetchInt(hQuery, 0) == 0);
-
-	SQL_UnlockDatabase(g_hDatabase);
-	CloseHandle(hQuery);
-
-	return bResult;
 }
 
 /**

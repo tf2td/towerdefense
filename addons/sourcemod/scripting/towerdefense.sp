@@ -16,11 +16,8 @@
 =            Constants            =
 =================================*/
 
-#define PLUGIN_HOST 	"Styria Games"
-#define SERVER_PASS 	"toPsecret"
-
 #define PLUGIN_NAME		"TF2 Tower Defense"
-#define PLUGIN_AUTHOR	"floube, benedevil, hurp durp"
+#define PLUGIN_AUTHOR	"floube, benedevil, hurpdurp"
 #define PLUGIN_DESC		"Stop enemies from crossing a map by buying towers and building up defenses."
 #define PLUGIN_VERSION	"2.0.1"
 #define PLUGIN_URL		"http://www.tf2td.net/"
@@ -74,7 +71,6 @@ public Plugin myinfo =
 #include "towerdefense/commands.sp"
 #include "towerdefense/events.sp"
 #include "towerdefense/timers.sp"
-#include "towerdefense/updater.sp"
 
 /*=======================================
 =            Public Forwards            =
