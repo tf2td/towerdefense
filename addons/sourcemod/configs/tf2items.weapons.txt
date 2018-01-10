@@ -1,4 +1,11 @@
 "custom_weapons_v3"
 {
-	
+	"*"
+	{
+		"11007"
+		{
+			"preserve-attributes"	"1"
+			"1"				"94 ; 0.1"
+		}
+	}
 }

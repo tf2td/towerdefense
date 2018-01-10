@@ -1,0 +1,51 @@
+"custom_give_weapons_vlolz"   //leave this alone
+{
+    "10014" // SniperTower
+    {
+        "classname"        "tf_weapon_sniperrifle"        // weapon classname
+        "index"            "14"                           // actual weapon index
+        "slot"             "0"                            // slot 0-5 
+        "quality"          "1"
+        "level"            "5"
+        "attribs"          "6 ; 0.1"
+        "ammo"             "0"
+        "model"            "models/weapons/w_models/w_sniperrifle.mdl"
+        "viewmodel"        "models/weapons/w_models/w_sniperrifle.mdl"
+    }
+    "10039" // AnitAirFlareTower
+    {
+        "classname"        "tf_weapon_flaregun"           // weapon classname
+        "index"            "39"                           // actual weapon index
+        "slot"             "1"                            // slot 0-5 
+        "quality"          "1"
+        "level"            "5"
+        "attribs"          "6 ; 0.5"
+        "ammo"             "0"
+        "model"            "models/weapons/c_models/c_flaregun_pyro/c_flaregun_pyro.mdl"
+        "viewmodel"        "models/weapons/c_models/c_flaregun_pyro/c_flaregun_pyro.mdl"
+    }
+    "10232" // BushwackaTower
+    {
+        "classname"        "tf_weapon_club"               // weapon classname
+        "index"            "232"                          // actual weapon index
+        "slot"             "2"                            // slot 0-5 
+        "quality"          "1"
+        "level"            "5"
+        "attribs"          "6 ; 0.4"
+        "ammo"             "0"
+        "model"            "models/weapons/c_models/c_croc_knife/c_croc_knife.mdl"
+        "viewmodel"        "models/weapons/c_models/c_croc_knife/c_croc_knife.mdl"
+    }
+    "10153" // HomewreckerTower
+    {
+        "classname"        "tf_weapon_fireaxe"            // weapon classname
+        "index"            "153"                          // actual weapon index
+        "slot"             "2"                            // slot 0-5 
+        "quality"          "1"
+        "level"            "5"
+        "attribs"          "6 ; 0.4"
+        "ammo"             "0"
+        "model"            "models/weapons/c_models/c_croc_knife/c_croc_knife.mdl"
+        "viewmodel"        "models/weapons/c_models/c_croc_knife/c_croc_knife.mdl"
+    }
+}
