@@ -766,12 +766,6 @@ ALTER TABLE `config`
   ADD PRIMARY KEY (`config_id`);
 
 --
--- Indexes for table `host`
---
-ALTER TABLE `host`
-  ADD PRIMARY KEY (`host_id`);
-
---
 -- Indexes for table `map`
 --
 ALTER TABLE `map`
@@ -859,7 +853,6 @@ ALTER TABLE `server`
   ADD PRIMARY KEY (`server_id`),
   ADD UNIQUE KEY `ip_port_UNIQUE` (`ip`,`port`),
   ADD KEY `fk_server_map_idx` (`map_id`),
-  ADD KEY `fk_server_host_idx` (`host_id`),
   ADD KEY `fk_server_server_config_idx` (`server_settings_id`);
 
 --
