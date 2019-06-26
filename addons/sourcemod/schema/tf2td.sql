@@ -325,14 +325,6 @@ CREATE TABLE `server_settings` (
   `logtype` enum('File','Console','File and console') NOT NULL DEFAULT 'File and console' COMMENT 'The servers log type.'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `server_settings`
---
-
-INSERT INTO `server_settings` (`server_settings_id`, `config_start`, `config_end`, `lockable`, `loglevel`, `logtype`) VALUES
-(1, NULL, NULL, 'lockable', 'None', 'File and console'),
-(14, NULL, NULL, 'not lockable', 'Error', 'File and console');
-
 -- --------------------------------------------------------
 
 --
