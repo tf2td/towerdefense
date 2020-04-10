@@ -350,7 +350,7 @@ CREATE TABLE `tower` (
   `name` varchar(64) NOT NULL COMMENT 'The towers name.',
   `class` enum('Unknown','Scout','Sniper','Soldier','Demoman','Medic','Heavy','Pyro','Spy','Engineer') NOT NULL COMMENT 'The towers class.',
   `price` int(10) UNSIGNED NOT NULL COMMENT 'The towers price to buy.',
-  `damagetype` enum('None','Bullet','Fire','Explosion','Melee') NOT NULL COMMENT 'The towers damagetype.',
+  `damagetype` enum('None','Bullet','Fire','Explosion','Melee','AoE') NOT NULL COMMENT 'The towers damagetype.',
   `description` varchar(1024) DEFAULT NULL COMMENT 'The towers description (use \\n for line breaks).'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -361,7 +361,7 @@ CREATE TABLE `tower` (
 INSERT INTO `tower` (`tower_id`, `name`, `class`, `price`, `damagetype`, `description`) VALUES
 (1, 'EngineerTower', 'Engineer', 3000, 'Melee', 'Will repair/upgrade any building. It has infinite metal supply.'),
 (2, 'SniperTower', 'Sniper', 1750, 'Bullet', 'Deals medium damage with rapid shots and inifinite range. Can be tricky to place.'),
-(3, 'MedicTower', 'Medic', 1800, '', 'Heals you if you get hurt. Dying is a major source of failure.'),
+(3, 'MedicTower', 'Medic', 1800, 'AoE', 'Heals you if you get hurt. Dying is a major source of failure.'),
 (4, 'GrenadeTower', 'Demoman', 2500, 'Explosion', 'Has a low rate of fire but deals very high damage within a radius.'),
 (5, 'PyroTower', 'Pyro', 1500, 'Fire', 'Deals high damage. Enemies will begin to burn after passing it''s flames.'),
 (6, 'JarateTower', 'Sniper', 2350, 'None', 'Throws jarate to enemies. Any damage deal mini-crits to affected enemies.'),
@@ -384,9 +384,9 @@ INSERT INTO `tower` (`tower_id`, `name`, `class`, `price`, `damagetype`, `descri
 (23, 'GuillotineTower', 'Scout', 1450, 'None', NULL),
 (24, 'HomewreckerTower', 'Pyro', 1200, 'Melee', NULL),
 (25, 'AirblastTower', 'Pyro', 2400, 'None', NULL),
-(26, 'AoEEngineerTower', 'Engineer', 3450, '', NULL),
-(27, 'KritzkriegTower', 'Medic', 2000, '', NULL),
-(28, 'SlownessTower', 'Spy', 2300, '', NULL);
+(26, 'AoEEngineerTower', 'Engineer', 3450, 'AoE', NULL),
+(27, 'KritzkriegTower', 'Medic', 2000, 'AoE', NULL),
+(28, 'SlownessTower', 'Spy', 2300, 'AoE', NULL);
 
 -- --------------------------------------------------------
 
