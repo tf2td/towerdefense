@@ -60,7 +60,7 @@ CREATE TABLE `map` (
   `teleport_air` varchar(128) NOT NULL COMMENT 'Location of air waves.',
   `teleport_tower` varchar(128) NOT NULL COMMENT 'Location of the tower after bought.',
   `respawn_wave_time` int(11) NOT NULL COMMENT 'Time between waves (in seconds).',
-  `player_limit` int(11) NOT NULL DEFAULT '4',
+  `player_limit` int(11) NOT NULL DEFAULT '6',
   `wave_start` int(11) NOT NULL COMMENT 'The wave index to start with.',
   `wave_end` int(11) NOT NULL COMMENT 'The wave index to end with.'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
