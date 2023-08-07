@@ -319,7 +319,6 @@ stock void Wave_SpawnBots() {
 	if(g_iBotsToSpawn <= 0) {
 		return;
 	}
-	
 	char sName[MAX_NAME_LENGTH];
 	if (!Wave_GetName(g_iCurrentWave, sName, sizeof(sName))) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to spawn wave %d, could not read name!", g_iCurrentWave);
