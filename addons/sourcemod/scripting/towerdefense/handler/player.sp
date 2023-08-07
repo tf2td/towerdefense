@@ -77,6 +77,36 @@ stock void Player_SyncDatabase(int iUserId, int iClient, const char[] sCommunity
 stock void Player_Connected(int iUserId, int iClient, const char[] sName, const char[] sSteamId, const char[] sCommunityId, const char[] sIp) {
 	Log(TDLogLevel_Debug, "Player connected (UserId=%d, Client=%d, Name=%s, SteamId=%s, CommunityId=%s, Address=%s)", iUserId, iClient, sName, sSteamId, sCommunityId, sIp);
 	
+	char sQuery[256];
+	char sCurrentMap[PLATFORM_MAX_PATH];
+	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
+
+	int maxClientMap = PLAYER_LIMIT;
+
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `map_id`, `respawn_wave_time` \
+		FROM `map` \
+		WHERE `name` = '%s' \
+		LIMIT 1 \
+	", sCurrentMap);
+	
+	DBResultSet query = SQL_Query(g_hDatabase, sQuery);
+
+	if (query == null)
+	{
+		char error[255];
+		SQL_GetError(g_hDatabase, error, sizeof(error));
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to query (error: %s)", error);
+	} 
+	else 
+	{
+		//TODO
+		//check the maxplayer for the map
+		//maxClientMap = GetData....
+		delete query;
+	}
+
+
 	if (!StrEqual(sSteamId, "BOT")) {
 		if (GetRealClientCount() > PLAYER_LIMIT) {
 			KickClient(iClient, "Maximum number of players has been reached (%d/%d)", GetRealClientCount() - 1, PLAYER_LIMIT);
