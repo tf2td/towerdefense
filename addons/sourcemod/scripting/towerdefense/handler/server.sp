@@ -259,7 +259,7 @@ stock void Server_USetFloat(int iServerId, const char[] sKey, float fValue) {
 	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
 
 	char sValue[64];
-	FloatToString(fValue, sValue, sizeof(sValue))
+	FloatToString(fValue, sValue, sizeof(sValue));
 
 	Server_OnDataSet(iServerId, sKey, TDDataType_Integer, -1, false, fValue, "");
 
@@ -282,7 +282,7 @@ stock bool Server_UGetFloat(int iServerId, const char[] sKey, float &fValue) {
 	return true;
 }
 
-stock bool Server_USetString(int iServerId, const char[] sKey, const char[] sValue, any...) {
+stock void Server_USetString(int iServerId, const char[] sKey, const char[] sValue, any...) {
 	char sServerIdKey[128];
 	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
 

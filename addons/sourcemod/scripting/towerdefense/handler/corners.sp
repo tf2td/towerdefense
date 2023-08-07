@@ -213,7 +213,7 @@ stock bool Corner_GetAngles(int iCornerA, int iCornerB, float fAngles[3], bool b
  * @return				The next corners entity index, or -1 on failure.
  */
 
-stock int Corner_GetNext(int iCorner = -1, const char sName[] = "") {
+stock int Corner_GetNext(int iCorner = -1, const char[] sName = "") {
 	char sCornerName[64];
 	
 	if (StrEqual(sName, "") && Corner_IsValid(iCorner)) {
@@ -243,7 +243,7 @@ stock int Corner_GetNext(int iCorner = -1, const char sName[] = "") {
  * @return				The previous corners entity index, or -1 on failure.
  */
 
-stock void Corner_GetPrevious(int iCorner = -1, const char sName[] = "") {
+stock int Corner_GetPrevious(int iCorner = -1, const char[] sName = "") {
 	char sCornerName[64];
 	
 	if (StrEqual(sName, "") && Corner_IsValid(iCorner)) {
