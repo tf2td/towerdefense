@@ -49,6 +49,7 @@ int iMaxWaves;
 int iMaxMultiplierTypes;
 int g_iBotsToSpawn;
 int g_iTotalBotsLeft;
+int g_iMaxClients;
 
 /*==========  String  ==========*/
 
