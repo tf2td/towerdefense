@@ -1,7 +1,61 @@
 "Phrases"
 {
+  //Waves
   "waveStart"
   {
-    "de"    "{1} hat Welle {2} gestartet"
+    "de"      "hat Welle {1} gestartet"
+  }
+  "waveIncomming"
+  {
+    "de"      "Welle ({1}) mit {2} HP ankommend!"
+  }
+  "waveIncommingType"
+  {
+    "de"      "{1} Welle ({2}) mit {3} HP ankommend!"
+  }
+  "waveArrivingIn"
+  {
+    "de"      "Die nächste Welle kommt in: {1}"
+  }
+  "waveStartedEarly"
+  {
+    "de"      "Jeder hat {1} Metall erhalten, weil {2} Sekunden früher angefangen wurde!"
+  }
+  "wavePassed"
+  {
+    "de"      "*** Welle {1} bestanden ***"
+  }
+  "wavePrepareTime"
+  {
+    "de"      "Du hast {1} Sekunden, um dich auf die nächste Welle vorzubereiten!"
+  }
+  "waveTowersUnlocked"
+  {
+    "de"      "Die Türme wurden freigeschaltet und können nun bewegt werden!"
+  }
+  //Wave Types
+  "waveTypeRapid"
+  {
+    "de"      "Schnelle"
+  }
+  "waveTypeRegen"
+  {
+    "de"      "Regenerierende"
+  }
+  "waveTypeKnockbackImmune"
+  {
+    "de"      "Rückstoß immune"
+  }
+  "waveTypeAir"
+  {
+    "de"      "Fliegende"
+  }
+  "waveTypeJarateImmune"
+  {
+    "de"      "Jarate immune"
+  }
+  "waveTypeBoss"
+  {
+    "de"      "Boss"
   }
 }

@@ -1,8 +1,68 @@
 "Phrases"
 {
+  //Waves
   "waveStart"
   {
-    "#format" "{1:s},{2:d}"
-    "en"    "{1} started Wave {2}"
+    "#format" "{1:d}"
+    "en"      "started Wave {1}"
+  }
+  "waveIncomming"
+  {
+    "#format" "{1:d},{2:d}"
+    "en"      "Wave ({1}) with {2} HP incoming!"
+  }
+  "waveIncommingType"
+  {
+    "#format" "{1:s},{2:d},{3:d}"
+    "en"      "{1} Wave ({2}) with {3} HP incoming!"
+  }
+  "waveArrivingIn"
+  {
+    "#format" "{1:02d}"
+    "en"      "Next wave arrives in: {1}"
+  }
+  "waveStartedEarly"
+  {
+    "#format" "{1:d},{2:d}"
+    "en"      "Everyone has received {1} metal for starting {2} seconds earlier!"
+  }
+  "wavePassed"
+  {
+    "#format" "{1:d}"
+    "en"      "*** Wave {1} passed ***"
+  }
+  "wavePrepareTime"
+  {
+    "#format" "{1:d}"
+    "en"      "You have {1} seconds to prepare for the next wave!"
+  }
+  "waveTowersUnlocked"
+  {
+    "en"      "Towers have been unlocked and can now be moved!"
+  }
+  //Wave Types
+  "waveTypeRapid"
+  {
+    "en"      "Rapid"
+  }
+  "waveTypeRegen"
+  {
+    "en"      "Regen"
+  }
+  "waveTypeKnockbackImmune"
+  {
+    "en"      "Knockback Immune"
+  }
+  "waveTypeAir"
+  {
+    "en"      "Air"
+  }
+  "waveTypeJarateImmune"
+  {
+    "en"      "Jarate Immune"
+  }
+  "waveTypeBoss"
+  {
+    "en"      "Boss"
   }
 }

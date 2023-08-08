@@ -3,7 +3,8 @@
 #include <sourcemod>
 #include <sdkhooks>
 #include <sdktools>
-#include <socket>
+//Plugin appears to work fine without it? Cnat find any usage either.
+//#include <socket>
 #include <steamtools>
 #include <tf2>
 #include <tf2_stocks>

@@ -32,9 +32,12 @@ stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 	
 	TeleportEntity(iButton, view_as<float>( { 0.0, 0.0, -9192.0 } ), NULL_VECTOR, view_as<float>( { 0.0, 0.0, 0.0 } ));
 	
-	char sPlayerName[MAX_NAME_LENGTH + 1];
-	GetClientName(iActivator, sPlayerName, sizeof(sPlayerName));
-	PrintToChatAll("%t", "waveStart", sPlayerName, g_iCurrentWave + 1);
+	/*Translation Example
+	* Format: %s	  			%N	 			 	%t
+	* Values: PLUGIN_PREFIX		iActivator			"waveStart" (g_iCurrentWave + 1)
+	* Output: [TF2TD] 			[PrWh] Dragonisser 	started Wave 1
+	*/
+	PrintToChatAll("%s %N %t", PLUGIN_PREFIX, iActivator, "waveStart", g_iCurrentWave + 1);
 	
 	//Wave Health
 	int iWaveHealth;
@@ -48,7 +51,7 @@ stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsDefender(iClient)) {
 			if(Wave_GetType(g_iCurrentWave) == 0) {
-				ShowHudText(iClient, -1, "Wave (%d) with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
+				ShowHudText(iClient, -1, "%t", "waveIncomming", g_iCurrentWave + 1, iWaveHealth);
 			}
 		}
 	}
@@ -247,9 +250,15 @@ stock void Wave_OnDeathAll() {
 	
 	Timer_NextWaveCountdown(null, g_iRespawnWaveTime);
 	
-	PrintToChatAll("\x04*** Wave %d passed ***", g_iCurrentWave);
-	PrintToChatAll("\x01You have \x04%d seconds\x01 to prepare for the next wave!", g_iRespawnWaveTime);
-	PrintToChatAll("\x01Towers have been unlocked and can now be moved!");
+	
+	PrintToChatAll("%s %t", PLUGIN_PREFIX, "wavePassed", g_iCurrentWave);
+	//PrintToChatAll("\x04*** Wave %d passed ***", g_iCurrentWave);
+
+	PrintToChatAll("%s %t", PLUGIN_PREFIX, "wavePrepareTime", g_iRespawnWaveTime);
+	//PrintToChatAll("\x01You have \x04%d seconds\x01 to prepare for the next wave!", g_iRespawnWaveTime);
+
+	PrintToChatAll("%s %t", PLUGIN_PREFIX, "waveTowersUnlocked");
+	//PrintToChatAll("\x01Towers have been unlocked and can now be moved!");
 	
 	g_bTowersLocked = false;
 	
@@ -447,7 +456,7 @@ public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
 	if (g_bStartWaveEarly) {
 		for (int iClient = 1; iClient <= MaxClients; iClient++) {
 			if (IsDefender(iClient)) {
-				PrintToChat(iClient, "\x04Everyone has received %d metal for starting %d seconds earlier!", (iTime + 1) * 10, iTime + 1);
+				PrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "waveStartedEarly", (iTime + 1) * 10, iTime + 1);
 				AddClientMetal(iClient, (iTime + 1) * 10);
 			}
 		}
@@ -467,63 +476,66 @@ public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
 			else
 				iWaveHealth = Wave_GetHealth(g_iCurrentWave);
 			
-			char sType[256];
-			strcopy(sType, sizeof(sType), "");
-			
-			if (g_iNextWaveType & TDWaveType_Rapid) {
-				if (StrEqual(sType, "")) {
-					Format(sType, sizeof(sType), "%s", "Rapid");
-				} else {
-					Format(sType, sizeof(sType), "%s + %s", sType, "Rapid");
-				}
-			}
-			
-			if (g_iNextWaveType & TDWaveType_Regen) {
-				if (StrEqual(sType, "")) {
-					Format(sType, sizeof(sType), "%s", "Regen");
-				} else {
-					Format(sType, sizeof(sType), "%s + %s", sType, "Regen");
-				}
-			}
-			
-			if (g_iNextWaveType & TDWaveType_KnockbackImmune) {
-				if (StrEqual(sType, "")) {
-					Format(sType, sizeof(sType), "%s", "Knockback Immune");
-				} else {
-					Format(sType, sizeof(sType), "%s + %s", sType, "Knockback Immune");
-				}
-			}
-			
-			if (g_iNextWaveType & TDWaveType_Air) {
-				if (StrEqual(sType, "")) {
-					Format(sType, sizeof(sType), "%s", "Air");
-				} else {
-					Format(sType, sizeof(sType), "%s + %s", sType, "Air");
-				}
-			}
-			
-			if (g_iNextWaveType & TDWaveType_JarateImmune) {
-				if (StrEqual(sType, "")) {
-					Format(sType, sizeof(sType), "%s", "Jarate Immune");
-				} else {
-					Format(sType, sizeof(sType), "%s + %s", sType, "Jarate Immune");
-				}
-			}
-			
-			if (g_iNextWaveType & TDWaveType_Boss) {
-				if (StrEqual(sType, "")) {
-					Format(sType, sizeof(sType), "%s", "Boss");
-				} else {
-					Format(sType, sizeof(sType), "%s %s", sType, "Boss");
-				}
-			}
+
 			
 			for (int iClient = 1; iClient <= MaxClients; iClient++) {
 				if (IsDefender(iClient)) {
+
+					char sType[256];
+					strcopy(sType, sizeof(sType), "");
+
+					if (g_iNextWaveType & TDWaveType_Rapid) {
+						if (StrEqual(sType, "")) {
+							Format(sType, sizeof(sType), "%T", "waveTypeRapid", iClient);
+						} else {
+							Format(sType, sizeof(sType), "%s + %T", sType, "waveTypeRapid", iClient);
+						}
+					}
+					
+					if (g_iNextWaveType & TDWaveType_Regen) {
+						if (StrEqual(sType, "")) {
+							Format(sType, sizeof(sType), "%T", "waveTypeRegen", iClient);
+						} else {
+							Format(sType, sizeof(sType), "%s + %T", sType, "waveTypeRegen", iClient);
+						}
+					}
+					
+					if (g_iNextWaveType & TDWaveType_KnockbackImmune) {
+						if (StrEqual(sType, "")) {
+							Format(sType, sizeof(sType), "%T", "waveTypeKnockbackImmune", iClient);
+						} else {
+							Format(sType, sizeof(sType), "%s + %T", sType, "waveTypeKnockbackImmune", iClient);
+						}
+					}
+					
+					if (g_iNextWaveType & TDWaveType_Air) {
+						if (StrEqual(sType, "")) {
+							Format(sType, sizeof(sType), "%T", "waveTypeAir", iClient);
+						} else {
+							Format(sType, sizeof(sType), "%s + %T", sType, "waveTypeAir", iClient);
+						}
+					}
+					
+					if (g_iNextWaveType & TDWaveType_JarateImmune) {
+						if (StrEqual(sType, "")) {
+							Format(sType, sizeof(sType), "%T", "waveTypeJarateImmune", iClient);
+						} else {
+							Format(sType, sizeof(sType), "%s + %T", sType, "waveTypeJarateImmune", iClient);
+						}
+					}
+					
+					if (g_iNextWaveType & TDWaveType_Boss) {
+						if (StrEqual(sType, "")) {
+							Format(sType, sizeof(sType), "%T", "waveTypeBoss", iClient);
+						} else {
+							Format(sType, sizeof(sType), "%s %T", sType, "waveTypeBoss", iClient);
+						}
+					}
+
 					if (StrEqual(sType, "")) {
-						ShowHudText(iClient, -1, "Wave (%d) with %d HP incoming!", g_iCurrentWave + 1, iWaveHealth);
+						ShowHudText(iClient, -1, "%t", "waveIncomming", g_iCurrentWave + 1, iWaveHealth);
 					} else {
-						ShowHudText(iClient, -1, "%s Wave (%d) with %d HP incoming!", sType, g_iCurrentWave + 1, iWaveHealth);
+						ShowHudText(iClient, -1, "%t", "waveIncommingType", sType, g_iCurrentWave + 1, iWaveHealth);
 					}
 				}
 			}
@@ -556,7 +568,7 @@ public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
 	
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsDefender(iClient)) {
-			ShowHudText(iClient, -1, "Next wave arrives in: %02d", iTime);
+			ShowHudText(iClient, -1, "%t", "waveArrivingIn", iTime);
 		}
 	}
 	
