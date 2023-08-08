@@ -99,6 +99,8 @@ public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iMax
 public void OnPluginStart() {
 	PrintToServer("%s Loaded %s %s by %s", PLUGIN_PREFIX, PLUGIN_NAME, PLUGIN_VERSION, PLUGIN_AUTHOR);
 	
+	LoadTranslations("towerdefense.phrases.txt");
+
 	Log_Initialize(TDLogLevel_Trace, TDLogType_Console);
 	
 	CreateDataMap(g_hMapTowers);

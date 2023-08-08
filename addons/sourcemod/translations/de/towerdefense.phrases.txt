@@ -1,0 +1,7 @@
+"Phrases"
+{
+  "waveStart"
+  {
+    "de"    "{1} hat Welle {2} gestartet"
+  }
+}

@@ -32,7 +32,9 @@ stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 	
 	TeleportEntity(iButton, view_as<float>( { 0.0, 0.0, -9192.0 } ), NULL_VECTOR, view_as<float>( { 0.0, 0.0, 0.0 } ));
 	
-	PrintToChatAll("%N started\x04 Wave %d", iActivator, g_iCurrentWave + 1);
+	char sPlayerName[MAX_NAME_LENGTH + 1];
+	GetClientName(iActivator, sPlayerName, sizeof(sPlayerName));
+	PrintToChatAll("%t", "waveStart", sPlayerName, g_iCurrentWave + 1);
 	
 	//Wave Health
 	int iWaveHealth;

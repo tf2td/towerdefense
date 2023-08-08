@@ -1,0 +1,8 @@
+"Phrases"
+{
+  "waveStart"
+  {
+    "#format" "{1:s},{2:d}"
+    "en"    "{1} started Wave {2}"
+  }
+}
