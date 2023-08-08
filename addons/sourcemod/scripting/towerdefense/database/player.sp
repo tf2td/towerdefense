@@ -39,7 +39,6 @@ public void Database_OnCheckPlayer(Handle hDriver, Handle hResult, const char[] 
 		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayer > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult) == 0) {
 		// No player found, add it
-		
 		Database_AddPlayer(iUserId);
 	} else {
 		SQL_FetchRow(hResult);
@@ -79,13 +78,6 @@ stock void Database_AddPlayer(int iUserId) {
 
 	Player_UGetString(iUserId, PLAYER_IP_ADDRESS, sPlayerIp, sizeof(sPlayerIp));
 	SQL_EscapeString(g_hDatabase, sPlayerIp, sPlayerIpSave, sizeof(sPlayerIpSave));
-	
-
-	PrintToServer("name: (%s)", sPlayerNameSave);
-	PrintToServer("steamid: (%s)", sSteamId);
-	PrintToServer("ip: (%s)", sPlayerIpSave);
-	PrintToServer("serverid: (%d)", g_iServerId);
-
 
 	Format(sQuery, sizeof(sQuery), "\
 		INSERT INTO `player` (`name`,`steamid64`,`ip`,`first_server`) \

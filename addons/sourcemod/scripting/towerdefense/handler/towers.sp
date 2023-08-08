@@ -590,14 +590,12 @@ stock TDTowerId GetTowerId(int iTower) {
 	if (IsValidClient(iTower)) {
 		char sName[MAX_NAME_LENGTH], sName2[MAX_NAME_LENGTH];
 		GetClientName(iTower, sName, sizeof(sName));
-		
+
 		int iClient, iTowerId;
-		
 		for (iClient = 1; iClient <= MaxClients; iClient++) {
 			if (IsClientInGame(iClient)) {
 				for (iTowerId = 0; iTowerId < view_as<int>(TDTower_Quantity); iTowerId++) {
 					Tower_GetName(view_as<TDTowerId>(iTowerId), sName2, sizeof(sName2));
-					
 					if (StrEqual(sName, sName2)) {
 						return view_as<TDTowerId>(iTowerId);
 					}
@@ -605,7 +603,6 @@ stock TDTowerId GetTowerId(int iTower) {
 			}
 		}
 	}
-	
 	return TDTower_Invalid;
 }
 

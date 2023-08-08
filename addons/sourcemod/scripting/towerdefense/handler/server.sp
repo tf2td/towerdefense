@@ -22,6 +22,16 @@ stock void Server_Initialize() {
 	StripConVarFlag("tf_bot_count", FCVAR_NOTIFY);
 	StripConVarFlag("sv_password", FCVAR_NOTIFY);
 
+	int iBotQuota = GetConVarInt(FindConVar("tf_bot_quota"));
+
+	if (iBotQuota > 0) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "ConVar 'tf_bot_quota' is not set to 0 - Value: %d", iBotQuota);
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Setting ConVar 'tf_bot_quota' to 0");
+		SetConVarInt(FindConVar("tf_bot_quota"), 0);
+	} else {
+		LogType(TDLogLevel_Debug, TDLogType_FileAndConsole, "ConVar 'tf_bot_quota' is set to 0 - Value: %d", iBotQuota);
+	}
+
 	HookButtons();
 	Server_Reset();
 
@@ -103,7 +113,10 @@ stock void Server_Reset() {
 		//Reset bought Towers
 		if(IsTower(iClient)) {
 			TDTowerId iTowerId = GetTowerId(iClient);
-			g_bTowerBought[view_as<int>(iTowerId)] = false;
+			//tf_bot_quota > 0 breaks this here
+			if (iTowerId != TDTower_Invalid) {
+				g_bTowerBought[view_as<int>(iTowerId)] = false;
+			}
 		}
 		if(IsAttacker(iClient) && g_iSlowAttacker[iClient]) {
 			g_iSlowAttacker[iClient] = false;
