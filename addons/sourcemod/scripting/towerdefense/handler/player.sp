@@ -76,15 +76,15 @@ stock void Player_SyncDatabase(int iUserId, int iClient, const char[] sCommunity
 
 stock void Player_Connected(int iUserId, int iClient, const char[] sName, const char[] sSteamId, const char[] sCommunityId, const char[] sIp) {
 	Log(TDLogLevel_Debug, "Player connected (UserId=%d, Client=%d, Name=%s, SteamId=%s, CommunityId=%s, Address=%s)", iUserId, iClient, sName, sSteamId, sCommunityId, sIp);
-	
+
 	if (!StrEqual(sSteamId, "BOT")) {
-		if (GetRealClientCount() > PLAYER_LIMIT) {
-			KickClient(iClient, "Maximum number of players has been reached (%d/%d)", GetRealClientCount() - 1, PLAYER_LIMIT);
-			Log(TDLogLevel_Info, "Kicked player (%N, %s) (Maximum players reached: %d/%d)", iClient, sSteamId, GetRealClientCount() - 1, PLAYER_LIMIT);
+		if (GetRealClientCount() > g_iMaxClients) {
+			KickClient(iClient, "Maximum number of players has been reached (%d/%d)", GetRealClientCount() - 1, g_iMaxClients);
+			Log(TDLogLevel_Info, "Kicked player (%N, %s) (Maximum players reached: %d/%d)", iClient, sSteamId, GetRealClientCount() - 1, g_iMaxClients);
 			return;
 		}
 		
-		Log(TDLogLevel_Info, "Connected clients: %d/%d", GetRealClientCount(), PLAYER_LIMIT);
+		Log(TDLogLevel_Info, "Connected clients: %d/%d", GetRealClientCount(), g_iMaxClients);
 		
 		Player_USetString(iUserId, PLAYER_STEAM_ID, sSteamId);
 		Player_USetString(iUserId, PLAYER_COMMUNITY_ID, sCommunityId);
@@ -343,7 +343,7 @@ stock void Player_USetFloat(int iUserId, const char[] sKey, float fValue) {
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
 	
 	char sValue[64];
-	FloatToString(fValue, sValue, sizeof(sValue))
+	FloatToString(fValue, sValue, sizeof(sValue));
 	
 	Player_OnDataSet(iUserId, GetClientOfUserId(iUserId), sKey, TDDataType_Integer, -1, false, fValue, "");
 	
@@ -376,7 +376,7 @@ stock bool Player_CGetFloat(int iClient, const char[] sKey, float &fValue) {
 	return CheckClientForUserId(iClient) && Player_UGetFloat(GetClientUserId(iClient), sKey, fValue);
 }
 
-stock bool Player_USetString(int iUserId, const char[] sKey, const char[] sValue, any...) {
+stock void Player_USetString(int iUserId, const char[] sKey, const char[] sValue, any...) {
 	char sUserIdKey[128];
 	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
 	
@@ -420,7 +420,7 @@ stock void Player_AddHealth(int iClient, int iHealth, bool ignoreMax=false) {
 			SetEntityHealth(iClient, GetClientHealth(iClient) + iHealth);
 		} else {
 			int iCurrentHealth = GetEntProp(iClient, Prop_Send, "m_iHealth");
-			int iMaxHealth = GetEntData(iClient, FindDataMapOffs(iClient, "m_iMaxHealth"));
+			int iMaxHealth = GetEntData(iClient, FindDataMapInfo(iClient, "m_iMaxHealth"));
 			if(iCurrentHealth < iMaxHealth) {
 				SetEntityHealth(iClient, GetClientHealth(iClient) + iHealth);
 			}

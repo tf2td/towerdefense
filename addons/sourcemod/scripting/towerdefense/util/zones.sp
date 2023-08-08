@@ -19,7 +19,7 @@
  * @noreturn
  */
 
-stock void CreateBeamLine(int iClient, float fStart[3], float fEnd[3], float fDuration = 5.0, const int iColors[] =  { 255, 0, 0, 255 } ) {
+stock void CreateBeamLine(int iClient, float fStart[3], float fEnd[3], float fDuration = 5.0, const int[] iColors =  { 255, 0, 0, 255 } ) {
 	int iColors2[4];
 	iColors2[0] = iColors[0];
 	iColors2[1] = iColors[1];
@@ -151,7 +151,7 @@ public Action:Timer_CreateBeam2(Handle:hTimer, Handle:hPack) {
  * @noreturn
  */
 
-stock void CreateBeamBox(int iClient, float fStart[3], float fEnd[3], float fDuration = 5.0, const int iColors[] =  { 255, 0, 0, 255 } ) {
+stock void CreateBeamBox(int iClient, float fStart[3], float fEnd[3], float fDuration = 5.0, const int[] iColors =  { 255, 0, 0, 255 } ) {
 	float fPoint[8][3];
 	
 	CopyVector(fStart, fPoint[0]);
@@ -227,7 +227,7 @@ stock void CreateZonePoints(float fPoint[8][3]) {
  * @noreturn
  */
 
-stock void CreateBeamBoxAroundClient(int iClient, float fDistance, bool OnlyPlayerHeight = true, float fDuration = 5.0, const int iColors[] =  { 255, 0, 0, 255 } ) {
+stock void CreateBeamBoxAroundClient(int iClient, float fDistance, bool OnlyPlayerHeight = true, float fDuration = 5.0, const int[] iColors =  { 255, 0, 0, 255 } ) {
 	if (!IsValidClient(iClient) || !IsClientConnected(iClient) || !IsClientInGame(iClient) || !IsPlayerAlive(iClient)) {
 		return;
 	}
@@ -348,8 +348,10 @@ stock bool IsClientInZone(int iClient, float fPoint[8][3]) {
  * @return				True if inside, false otherwise.
  */
 
-stock bool IsClientInZone2(int iClient, float fPoint[8][3], int iID) {
-	float fPlayerPosition[3], Float fPlayerPoint[8][3];
+/*stock bool IsClientInZone2(int iClient, float fPoint[8][3], int iID) {
+
+	float fPlayerPosition[3];
+	float fPlayerPoint[8][3];
 	
 	GetEntPropVector(iClient, Prop_Send, "m_vecOrigin", fPlayerPosition);
 	fPlayerPosition[2] += 41.5;
@@ -364,7 +366,7 @@ stock bool IsClientInZone2(int iClient, float fPoint[8][3], int iID) {
 	CreateZonePoints(fPlayerPoint);
 	
 	return (Box3DIntersects(fPlayerPoint, fPoint) && g_bMetalPackID[iID]);
-}
+}*/
 
 /**
  * Draws a bounding box around a client.

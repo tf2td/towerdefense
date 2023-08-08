@@ -1,1 +1,7 @@
 *.smx
+addons/sourcemod/scripting/include
+!addons/sourcemod/scripting/include/steamtools.inc
+!addons/sourcemod/scripting/include/socket.inc
+!addons/sourcemod/scripting/include/tf2items.inc
+!addons/sourcemod/scripting/include/tf2attributes.inc
+.vscode

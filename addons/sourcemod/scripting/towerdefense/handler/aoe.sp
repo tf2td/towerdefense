@@ -37,6 +37,7 @@ public Action Timer_ClientNearAoETower(Handle hTimer) {
 			}
 		}
 	}
+	return Plugin_Continue;
 }
 
 /**
@@ -292,6 +293,7 @@ public Action Timer_TeleportAoEEngineerBack(Handle hTimer, DataPack hPack) {
 	fLocation[1] = hPack.ReadFloat();
 	fLocation[2] = hPack.ReadFloat();
 	TeleportEntity(iTower, fLocation, NULL_VECTOR, NULL_VECTOR);
+	return Plugin_Continue;
 }
 
 /**

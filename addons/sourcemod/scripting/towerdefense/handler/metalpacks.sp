@@ -70,7 +70,7 @@ stock bool SpawnMetalPacks(TDMetalPackType iMetalPackType) {
  * @return					True on success, false otherwiseherwise.
  */
 
-stock bool SpawnMetalPacksNumber(TDMetalPackType iMetalPackType, int iNumPacks) {
+stock void SpawnMetalPacksNumber(TDMetalPackType iMetalPackType, int iNumPacks) {
 	
 	int iMetal = 0, iEntity;
 	float fLocation[3];
@@ -113,7 +113,7 @@ stock bool SpawnMetalPacksNumber(TDMetalPackType iMetalPackType, int iNumPacks) 
  * @noreturn
  */
 
-stock void SpawnRewardPack(TDMetalPackSpawnType iMetalPackType, float[3] fLocation, int iMetal) {
+stock void SpawnRewardPack(TDMetalPackSpawnType iMetalPackType, float fLocation[3], int iMetal) {
 	int iEntity;
 	SpawnMetalPack2(iMetalPackType, fLocation, iMetal, iEntity);
 	

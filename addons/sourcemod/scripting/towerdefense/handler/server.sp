@@ -158,6 +158,41 @@ stock void Server_Reset() {
 		hAoETimer = null;
 	}
 
+	//Get map max clients
+	g_iMaxClients = PLAYER_LIMIT;
+
+	char sQuery[256];
+	char sCurrentMap[PLATFORM_MAX_PATH];
+	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
+
+	Format(sQuery, sizeof(sQuery), "\
+		SELECT `player_limit` \
+		FROM `map` \
+		WHERE `name` = '%s' \
+		LIMIT 1 \
+	", sCurrentMap);
+	
+	DBResultSet queryResult = SQL_Query(g_hDatabase, sQuery);
+
+	if (queryResult == null)
+	{
+		char error[255];
+		SQL_GetError(g_hDatabase, error, sizeof(error));
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to query (error: %s)", error);
+	} 
+	else 
+	{
+		if(queryResult.HasResults && queryResult.FetchRow()) {
+			if (queryResult.FetchInt(0) > 0) {
+				g_iMaxClients = queryResult.FetchInt(0);
+				LogType(TDLogLevel_Debug, TDLogType_FileAndConsole, "Max clients for map %s is %d", sCurrentMap, g_iMaxClients);
+			} 
+		} else {
+				LogType(TDLogLevel_Debug, TDLogType_FileAndConsole, "Couldn't find entry for map '%s'. Setting max clients to default %d", sCurrentMap, g_iMaxClients);
+			}
+		delete queryResult;
+	}
+
 	Format(g_sPassword, sizeof(g_sPassword), "");
 
 	SetPassword(g_sPassword, false); //Change upon release
@@ -259,7 +294,7 @@ stock void Server_USetFloat(int iServerId, const char[] sKey, float fValue) {
 	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
 
 	char sValue[64];
-	FloatToString(fValue, sValue, sizeof(sValue))
+	FloatToString(fValue, sValue, sizeof(sValue));
 
 	Server_OnDataSet(iServerId, sKey, TDDataType_Integer, -1, false, fValue, "");
 
@@ -282,7 +317,7 @@ stock bool Server_UGetFloat(int iServerId, const char[] sKey, float &fValue) {
 	return true;
 }
 
-stock bool Server_USetString(int iServerId, const char[] sKey, const char[] sValue, any...) {
+stock void Server_USetString(int iServerId, const char[] sKey, const char[] sValue, any...) {
 	char sServerIdKey[128];
 	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
 
