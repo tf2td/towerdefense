@@ -89,6 +89,15 @@
     "#format" "{1:s}"
     "en"      "bought {1}"
   }
+  "towerMoving"
+  {
+    "en"      "Moving:"
+  }
+  "towerPickedUp"
+  {
+    "#format" "{1:s}"
+    "en"      "You picked up {1}"
+  }
   //buttons
   "towerInsufficientMetal"
   {

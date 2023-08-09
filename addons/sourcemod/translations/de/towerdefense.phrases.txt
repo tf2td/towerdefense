@@ -79,6 +79,14 @@
   {
     "de"      "kaufte {1}"
   }
+  "towerMoving"
+  {
+    "de"      "Verschieben:"
+  }
+  "towerPickedUp"
+  {
+    "de"      "Du hast {1} aufgehoben"
+  }
   //buttons
   "towerInsufficientMetal"
   {

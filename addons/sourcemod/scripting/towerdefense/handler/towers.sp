@@ -439,12 +439,17 @@ stock void Tower_Pickup(int iClient) {
 		TeleportEntity(iTower, view_as<float>( { 0.0, 0.0, -8192.0 } ), NULL_VECTOR, NULL_VECTOR); // Teleport out of the map
 		
 		HideAnnotation(iTower);
-		AttachAnnotation(iClient, 86400.0, "Moving: %N", iTower);
+		AttachAnnotation(iClient, 86400.0, "%T %N", "towerMoving", iClient, iTower);
 		
 		g_bCarryingObject[iClient] = true;
 		g_iAttachedTower[iClient] = iTower;
 		
-		PrintToChat(iClient, "\x01You picked up \x04%N", iTower);
+
+		TDTowerId iTowerId = GetTowerId(iTower);
+		char sName[MAX_NAME_LENGTH];
+		Tower_GetName(iTowerId, sName, sizeof(sName));
+		
+		PrintToChat(iClient, "%t", "towerPickedUp", sName);
 		Log(TDLogLevel_Debug, "%N picked up tower (%N)", iClient, iTower);
 	}
 }
