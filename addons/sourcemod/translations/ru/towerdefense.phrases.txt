@@ -1,0 +1,61 @@
+"Phrases"
+{
+  //Waves
+  "waveStart"
+  {
+    "ru"      "запускает {1}-ю волну"
+  }
+  "waveIncomming"
+  {
+    "ru"      "Волна ({1}) с {2} ед. здоровья приближается!"
+  }
+  "waveIncommingType"
+  {
+    "ru"      "{1} - Волна ({2}) с {3} ед. здоровья приближается!"
+  }
+  "waveArrivingIn"
+  {
+    "ru"      "Следующая волна прибудет через: {1}"
+  }
+  "waveStartedEarly"
+  {
+    "ru"      "Каждый получил {1} металла за начало на {2} сек. раньше!"
+  }
+  "wavePassed"
+  {
+    "ru"      "*** {1}-я волна пройдена ***"
+  }
+  "wavePrepareTime"
+  {
+    "ru"      "У вас есть {1} сек., чтобы подготовиться к следующей волне!"
+  }
+  "waveTowersUnlocked"
+  {
+    "ru"      "Башни теперь разблокированы и теперь их можно перемещать!"
+  }
+  //Wave Types
+  "waveTypeRapid"
+  {
+    "ru"      "Быстрые"
+  }
+  "waveTypeRegen"
+  {
+    "ru"      "Регенерирующие"
+  }
+  "waveTypeKnockbackImmune"
+  {
+    "ru"      "Невосприимчивые к отдаче"
+  }
+  "waveTypeAir"
+  {
+    "ru"      "Воздушные"
+  }
+  "waveTypeJarateImmune"
+  {
+    "ru"      "Невосприимчивые к Банкате"
+  }
+  "waveTypeBoss"
+  {
+    "ru"      "Босс"
+  }
+}
