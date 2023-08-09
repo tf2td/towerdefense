@@ -104,7 +104,6 @@ stock void Server_Reset() {
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		//Reset carry Towers/Sentry
 		if (IsTower(g_iAttachedTower[iClient])) {
-			PrintToChatAll("Yes");
 			TF2Attrib_RemoveByName(iClient, "cannot pick up buildings");
 			g_iLastMover[g_iAttachedTower[iClient]] = 0;
 			g_bCarryingObject[iClient] = false;

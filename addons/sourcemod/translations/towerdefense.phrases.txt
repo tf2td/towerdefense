@@ -54,7 +54,6 @@
   {
     "en"      "Towers have been locked and can't be moved!"
   }
-  //Wave Types
   "waveTypeRapid"
   {
     "en"      "Rapid"
@@ -78,5 +77,22 @@
   "waveTypeBoss"
   {
     "en"      "Boss"
+  }
+  //towers
+  "towerBuyAttempt"
+  {
+    "#format" "{1:s},{2:d}"
+    "en"      "wants to buy {1} (Total price: {2} metal)"
+  }
+  "towerBought"
+  {
+    "#format" "{1:s}"
+    "en"      "bought {1}"
+  }
+  //buttons
+  "towerInsufficientMetal"
+  {
+    "#format" "{1:d}"
+    "en"      "needs {1} metal"
   }
 }

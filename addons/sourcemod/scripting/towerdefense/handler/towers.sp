@@ -31,8 +31,6 @@ stock void Tower_OnButtonBuy(TDTowerId iTowerId, int iButton, int iActivator) {
 		char sName[MAX_NAME_LENGTH];
 		Tower_GetName(iTowerId, sName, sizeof(sName));
 		
-		PrintToChatAll("\x01Buying \x04%s\x01 (Total price: \x04%d metal\x01)", sName, iPrice);
-		
 		int iClients = GetRealClientCount(true);
 		
 		if (iClients <= 0) {
@@ -41,7 +39,11 @@ stock void Tower_OnButtonBuy(TDTowerId iTowerId, int iButton, int iActivator) {
 		
 		iPrice /= iClients;
 		
-		if (CanAfford(iPrice)) {
+		if (!CanAfford(iPrice, true)) {
+			PrintToChatAll("%s %N %t", PLUGIN_PREFIX, iActivator, "towerBuyAttempt", sName, iPrice);
+		}
+
+		if (CanAfford(iPrice, false)) {
 			Tower_Spawn(iTowerId);
 			
 			for (int iClient = 1; iClient <= MaxClients; iClient++) {
@@ -51,8 +53,7 @@ stock void Tower_OnButtonBuy(TDTowerId iTowerId, int iButton, int iActivator) {
 					Player_CAddValue(iClient, PLAYER_TOWERS_BOUGHT, 1);
 				}
 			}
-			
-			PrintToChatAll("\x01%N bought \x04%s", iActivator, sName);
+			PrintToChatAll("%s %N %t", PLUGIN_PREFIX, iActivator, "towerBought", sName, iPrice);
 			
 			g_bTowerBought[view_as<int>(iTowerId)] = true;
 			AcceptEntityInput(iButton, "Break");

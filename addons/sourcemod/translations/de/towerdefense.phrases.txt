@@ -46,7 +46,6 @@
   {
     "de"      "Die Türme sind gesperrt und können nicht bewegt werden!"
   }
-  //Wave Types
   "waveTypeRapid"
   {
     "de"      "Schnelle"
@@ -70,5 +69,19 @@
   "waveTypeBoss"
   {
     "de"      "Boss"
+  }  
+  //towers
+  "towerBuyAttempt"
+  {
+    "de"      "möchte {1} kaufen (Gesamtpreis: {2} Metall)"
+  }
+  "towerBought"
+  {
+    "de"      "kaufte {1}"
+  }
+  //buttons
+  "towerInsufficientMetal"
+  {
+    "de"      "braucht {1} Metall"
   }
 }

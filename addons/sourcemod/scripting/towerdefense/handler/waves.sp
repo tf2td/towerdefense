@@ -312,9 +312,6 @@ stock void Wave_Spawn() {
 
 	PrintToChatAll("%s %t", PLUGIN_PREFIX, "waveIncomming", g_iCurrentWave + 1);
 	PrintToChatAll("%s %t", PLUGIN_PREFIX, "waveTowersLocked");
-	
-	PrintToChatAll("\x04Wave %d incoming!", g_iCurrentWave + 1);
-	PrintToChatAll("\x01Towers have been locked and can't be moved!");
 	g_bTowersLocked = true;
 	
 	g_iBotsToSpawn = Wave_GetQuantity(g_iCurrentWave);

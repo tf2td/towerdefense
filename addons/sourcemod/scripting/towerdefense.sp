@@ -3,7 +3,7 @@
 #include <sourcemod>
 #include <sdkhooks>
 #include <sdktools>
-//Plugin appears to work fine without it? Cnat find any usage either.
+//Plugin appears to work fine without it? Cant find any usage either.
 //#include <socket>
 #include <steamtools>
 #include <tf2>

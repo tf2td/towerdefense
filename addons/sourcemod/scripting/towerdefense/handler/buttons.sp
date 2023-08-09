@@ -141,7 +141,7 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 						iClients = 1;
 					}
 		
-					if(CanAfford(iPriceToPay)) {
+					if(CanAfford(iPriceToPay, false)) {
 						
 						for (int iLoopClient = 1; iLoopClient <= MaxClients; iLoopClient++) {
 							if (IsDefender(iLoopClient)) {
@@ -170,7 +170,7 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 			
 					iPriceToPay /= iClients;
 		
-					if(CanAfford(iPriceToPay)) {
+					if(CanAfford(iPriceToPay, false)) {
 		
 						for (int iLoopClient = 1; iLoopClient <= MaxClients; iLoopClient++) {
 							if (IsDefender(iLoopClient)) {
@@ -254,14 +254,15 @@ stock int Multiplier_GetInt(const char[] sDamageType) {
  * @return				True if affordable, false otherwise.
  */
 
-stock bool CanAfford(int iPrice) {
+stock bool CanAfford(int iPrice, bool silent) {
 	bool bResult = true;
 	
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsDefender(iClient)) {
 			if (GetClientMetal(iClient) < iPrice) {
-				PrintToChatAll("\x07FF0000%N needs %d metal", iClient, iPrice - GetClientMetal(iClient));
-				
+				if (!silent) {
+					PrintToChatAll("%s %N %t", PLUGIN_PREFIX, iClient, "towerInsufficientMetal", iPrice - GetClientMetal(iClient));
+				}
 				bResult = false;
 			}
 		}
