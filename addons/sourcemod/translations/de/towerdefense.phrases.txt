@@ -7,9 +7,14 @@
   }
   "waveIncomming"
   {
+    "#format" "{1:d}"
+    "en"      "Welle {1} ankommend!"
+  }
+  "waveIncommingWithHealth"
+  {
     "de"      "Welle ({1}) mit {2} HP ankommend!"
   }
-  "waveIncommingType"
+  "waveIncommingWithHealthAndType"
   {
     "de"      "{1} Welle ({2}) mit {3} HP ankommend!"
   }
@@ -32,6 +37,14 @@
   "waveTowersUnlocked"
   {
     "de"      "Die Türme wurden freigeschaltet und können nun bewegt werden!"
+  }
+  "waveBonusAvailable"
+  {
+    "de"      "Neuer Bonus (Welle {1}) verfügbar, siehe Kauf-Panel!"
+  }
+  "waveTowersLocked"
+  {
+    "de"      "Die Türme sind gesperrt und können nicht bewegt werden!"
   }
   //Wave Types
   "waveTypeRapid"

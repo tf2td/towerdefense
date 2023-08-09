@@ -51,7 +51,7 @@ stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsDefender(iClient)) {
 			if(Wave_GetType(g_iCurrentWave) == 0) {
-				ShowHudText(iClient, -1, "%t", "waveIncomming", g_iCurrentWave + 1, iWaveHealth);
+				ShowHudText(iClient, -1, "%t", "waveIncommingWithHealth", g_iCurrentWave + 1, iWaveHealth);
 			}
 		}
 	}
@@ -252,20 +252,15 @@ stock void Wave_OnDeathAll() {
 	
 	
 	PrintToChatAll("%s %t", PLUGIN_PREFIX, "wavePassed", g_iCurrentWave);
-	//PrintToChatAll("\x04*** Wave %d passed ***", g_iCurrentWave);
-
 	PrintToChatAll("%s %t", PLUGIN_PREFIX, "wavePrepareTime", g_iRespawnWaveTime);
-	//PrintToChatAll("\x01You have \x04%d seconds\x01 to prepare for the next wave!", g_iRespawnWaveTime);
-
 	PrintToChatAll("%s %t", PLUGIN_PREFIX, "waveTowersUnlocked");
-	//PrintToChatAll("\x01Towers have been unlocked and can now be moved!");
 	
 	g_bTowersLocked = false;
 	
 	Log(TDLogLevel_Info, "Wave %d passed", g_iCurrentWave);
 	
 	if (Panel_Remove(g_iCurrentWave)) {
-		PrintToChatAll("\x04New bonus (wave %d) available, see the buy panel!", g_iCurrentWave);
+		PrintToChatAll("%s %t", PLUGIN_PREFIX, "waveBonusAvailable", g_iCurrentWave);
 		Log(TDLogLevel_Debug, "New bonus available (Wave: %d)", g_iCurrentWave);
 	}
 }
@@ -303,7 +298,7 @@ public void Wave_OnTouchCorner(int iCorner, int iAttacker) {
  */
 
 stock void Wave_Spawn() {
-	// Remove reward ammo packs that have not been picked up
+	// Delete ammo packs loot that have not been picked up
 	char buffer[64];
 	int entity = -1;
 	while ((entity = FindEntityByClassname(entity, "prop_dynamic")) != INVALID_ENT_REFERENCE) {
@@ -314,6 +309,9 @@ stock void Wave_Spawn() {
 			g_iMetalPackCount--;
 		}
 	}
+
+	PrintToChatAll("%s %t", PLUGIN_PREFIX, "waveIncomming", g_iCurrentWave + 1);
+	PrintToChatAll("%s %t", PLUGIN_PREFIX, "waveTowersLocked");
 	
 	PrintToChatAll("\x04Wave %d incoming!", g_iCurrentWave + 1);
 	PrintToChatAll("\x01Towers have been locked and can't be moved!");
@@ -533,9 +531,9 @@ public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
 					}
 
 					if (StrEqual(sType, "")) {
-						ShowHudText(iClient, -1, "%t", "waveIncomming", g_iCurrentWave + 1, iWaveHealth);
+						ShowHudText(iClient, -1, "%t", "waveIncommingWithHealth", g_iCurrentWave + 1, iWaveHealth);
 					} else {
-						ShowHudText(iClient, -1, "%t", "waveIncommingType", sType, g_iCurrentWave + 1, iWaveHealth);
+						ShowHudText(iClient, -1, "%t", "waveIncommingWithHealthAndType", sType, g_iCurrentWave + 1, iWaveHealth);
 					}
 				}
 			}
