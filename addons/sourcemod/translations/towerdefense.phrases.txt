@@ -98,6 +98,25 @@
     "#format" "{1:s}"
     "en"      "You picked up {1}"
   }
+  "towerUpgradeLevel"
+  {
+    "#format" "{1:d}"
+    "en"      "reached level {1}"
+  }
+  "towerUpgradeDamageBonus"
+  {
+    "#format" "{1:d}"
+    "en"      "gained {1}%% damage bonus"
+  }
+  "towerUpgradeAttackSpeed"
+  {
+    "#format" "{1:d}"
+    "en"      "gained {1}%% attackspeed"    
+  }
+  "towerUpgradeCanRotate"
+  {
+    "en"      "can now rotate"   
+  }
   //buttons
   "towerInsufficientMetal"
   {

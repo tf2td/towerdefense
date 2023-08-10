@@ -356,8 +356,9 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 			iButtons |= IN_ATTACK2;
 		}
 		
+		PrintToServer("Tower? %b %b", Tower_GetRotate(iTowerId), g_bTowersLocked);
 		if(Tower_GetRotate(iTowerId) && g_bTowersLocked) {
-		
+			PrintToServer("Tower can Rotate. Trying to.");
 			float fClientEyePosition[3];
 			GetClientEyePosition(iClient, fClientEyePosition);
 			
@@ -376,6 +377,7 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 			fAngle[0] = (fAngle[0] * -1.0) + 355;
 			fAngle[1] += 180.0;
 
+			PrintToServer("TeleportEntity? %N %f %f", iClient, fAngle[0], fAngle[1]);
 			TeleportEntity(iClient, NULL_VECTOR, fAngle, NULL_VECTOR);
 		}
 	}
