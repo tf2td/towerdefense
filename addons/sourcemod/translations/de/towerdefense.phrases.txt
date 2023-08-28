@@ -7,8 +7,7 @@
   }
   "waveIncomming"
   {
-    "#format" "{1:d}"
-    "en"      "Welle {1} ankommend!"
+    "de"      "Welle {1} ankommend!"
   }
   "waveIncommingWithHealth"
   {
