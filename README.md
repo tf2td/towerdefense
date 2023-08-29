@@ -24,7 +24,7 @@ Maps - [mani](http://steamcommunity.com/profiles/76561198002201102/), [fatboy](h
  * Metamod + Sourcemod
  * [Socket](https://github.com/nefarius/sm-ext-socket)
  * [TF2Items](https://forums.alliedmods.net/showthread.php?p=1050170)
- * [Steamtools](https://forums.alliedmods.net/showthread.php?t=170630)
+ * [SteamWorks](https://forums.alliedmods.net/showthread.php?t=229556)
  * [TF2Attributes](https://forums.alliedmods.net/showthread.php?t=210221)
 
 

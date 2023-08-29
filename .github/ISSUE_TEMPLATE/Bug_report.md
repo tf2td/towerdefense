@@ -19,7 +19,7 @@ Tower Defense:          2.1.0
 
 TF2Items:               1.6.4-279
 
-Steamtools:             0.10.0-54fdc51
+SteamWorks:             0.10.0-54fdc51
 
 TF2Attributes:          v1.7.3
 
