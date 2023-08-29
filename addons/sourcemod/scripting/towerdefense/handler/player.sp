@@ -139,7 +139,7 @@ stock void Player_Loaded(int iUserId, int iClient) {
 	
 	Log(TDLogLevel_Debug, "Player loaded (UserId=%d, Client=%d, CommunityId=%s)", iUserId, iClient, sCommunityId);
 	
-	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
+	if (IsValidClient(iClient) && !IsFakeClient(iClient) && g_bTowerDefenseMap) {
 		CreateTimer(1.0, InitInfoTimer, iUserId, TIMER_FLAG_NO_MAPCHANGE);
 	}
 	
