@@ -5,7 +5,9 @@
 #include <sdktools>
 //Plugin appears to work fine without it? Cnat find any usage either.
 //#include <socket>
-#include <steamtools>
+//steamtools is deprecated 
+//#include <steamtools>
+#include <SteamWorks>
 #include <tf2>
 #include <tf2_stocks>
 #include <tf2items>
@@ -20,7 +22,7 @@
 #define PLUGIN_NAME		"TF2 Tower Defense"
 #define PLUGIN_AUTHOR	"floube, benedevil, hurpdurp, dragonisser"
 #define PLUGIN_DESC		"Stop enemies from crossing a map by buying towers and building up defenses."
-#define PLUGIN_VERSION	"2.1.0"
+#define PLUGIN_VERSION	"2.1.2"
 #define PLUGIN_URL		"https://github.com/tf2td/towerdefense"
 #define PLUGIN_PREFIX	"[TF2TD]"
 
@@ -93,7 +95,7 @@ public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iMax
 	if (g_hDatabase == null)
 		return APLRes_Failure;
 	
-	MarkNativeAsOptional("Steam_SetGameDescription");
+	MarkNativeAsOptional("SteamWorks_SetGameDescription");
 	return APLRes_Success;
 }
 
@@ -123,8 +125,8 @@ public void OnPluginStart() {
 }
 
 public void OnPluginEnd() {
-	if (g_bSteamTools) {
-		Steam_SetGameDescription("Team Fortress");
+	if (g_bSteamWorks) {
+		SteamWorks_SetGameDescription("Team Fortress");
 	}
 	
 	if (g_hDatabase != null) {
@@ -203,7 +205,7 @@ public void OnMapEnd() {
 }
 
 public void OnConfigsExecuted() {
-	g_bEnabled = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap && g_bSteamTools && g_bTF2Attributes;
+	g_bEnabled = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap && g_bSteamWorks && g_bTF2Attributes;
 	g_bMapRunning = true;
 	
 	UpdateGameDescription();
@@ -232,12 +234,12 @@ public Action InitializeDelay(Handle hTimer, any iTime) {
 }
 
 public void OnAllPluginsLoaded() {
-	g_bSteamTools = LibraryExists("SteamTools");
+	g_bSteamWorks = LibraryExists("SteamWorks");
 	
-	if (g_bSteamTools) {
+	if (g_bSteamWorks) {
 		UpdateGameDescription();
 		
-		Log(TDLogLevel_Debug, "Found SteamTools on startup");
+		Log(TDLogLevel_Debug, "Found SteamWorks on startup");
 	}
 	
 	g_bTF2Attributes = LibraryExists("tf2attributes");
@@ -248,11 +250,11 @@ public void OnAllPluginsLoaded() {
 }
 
 public void OnLibraryAdded(const char[] sName) {
-	if (StrEqual(sName, "SteamTools", false)) {
-		g_bSteamTools = true;
+	if (StrEqual(sName, "SteamWorks", false)) {
+		g_bSteamWorks = true;
 		UpdateGameDescription();
 		
-		Log(TDLogLevel_Debug, "SteamTools loaded");
+		Log(TDLogLevel_Debug, "SteamWorks loaded");
 	} else if (StrEqual(sName, "tf2attributes", false)) {
 		g_bTF2Attributes = true;
 		
@@ -261,10 +263,10 @@ public void OnLibraryAdded(const char[] sName) {
 }
 
 public void OnLibraryRemoved(const char[] sName) {
-	if (StrEqual(sName, "SteamTools", false)) {
-		g_bSteamTools = false;
+	if (StrEqual(sName, "SteamWorks", false)) {
+		g_bSteamWorks = false;
 		
-		Log(TDLogLevel_Debug, "SteamTools unloaded");
+		Log(TDLogLevel_Debug, "SteamWorks unloaded");
 	} else if (StrEqual(sName, "tf2attributes", false)) {
 		g_bTF2Attributes = false;
 		
@@ -755,7 +757,7 @@ stock bool IsTowerDefenseMap() {
  */
 
 stock void UpdateGameDescription() {
-	if (!g_bSteamTools) {
+	if (!g_bSteamWorks) {
 		return;
 	}
 	
@@ -767,7 +769,7 @@ stock void UpdateGameDescription() {
 		strcopy(sGamemode, sizeof(sGamemode), "Team Fortress");
 	}
 	
-	Steam_SetGameDescription(sGamemode);
+	SteamWorks_SetGameDescription(sGamemode);
 }
 
 /**

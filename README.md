@@ -22,9 +22,8 @@ Maps - [mani](http://steamcommunity.com/profiles/76561198002201102/), [fatboy](h
  * Dedicated Team Fortress 2 server (windows or linux)
  * MySQL/MariaDB server
  * Metamod + Sourcemod
- * [Socket](https://github.com/nefarius/sm-ext-socket)
  * [TF2Items](https://forums.alliedmods.net/showthread.php?p=1050170)
- * [Steamtools](https://forums.alliedmods.net/showthread.php?t=170630)
+ * [SteamWorks](https://forums.alliedmods.net/showthread.php?t=229556) -> [Download](https://github.com/hexa-core-eu/SteamWorks/releases)
  * [TF2Attributes](https://forums.alliedmods.net/showthread.php?t=210221)
 
 
