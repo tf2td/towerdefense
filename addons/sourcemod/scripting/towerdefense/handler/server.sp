@@ -36,7 +36,7 @@ stock void Server_Initialize() {
 	Server_Reset();
 
 	int iServerIp[4];
-	Steam_GetPublicIP(iServerIp);
+	SteamWorks_GetPublicIP(iServerIp);
 	Format(g_sServerIp, sizeof(g_sServerIp), "%d.%d.%d.%d", iServerIp[0], iServerIp[1], iServerIp[2], iServerIp[3]);
 
 	char sServerPort[6];
@@ -44,6 +44,12 @@ stock void Server_Initialize() {
 	g_iServerPort = StringToInt(sServerPort);
 
 	if (StrEqual(g_sServerIp, "0.0.0.0")) {
+		Log(TDLogLevel_Error, "ServerIP: %s", g_sServerIp);
+		Log(TDLogLevel_Error, "Vac enabled?: %b", SteamWorks_IsVACEnabled());
+		Log(TDLogLevel_Error, "Is connected to Steam?: %b", SteamWorks_IsConnected());
+		Log(TDLogLevel_Error, "This can be caused by using GSLT with an expired Token. https://steamcommunity.com/dev/managegameservers");
+		Log(TDLogLevel_Error, "The server will loop indefinetly if it can't connect to Steam");
+
 		Log(TDLogLevel_Info, "Server has been restarted completely, reloading map for initializing");
 		ReloadMap();
 	} else {
@@ -72,7 +78,7 @@ stock void Database_OnDataLoaded() {
  */
 
 stock void Server_Reset() {
-	g_bEnabled = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap && g_bSteamTools && g_bTF2Attributes;
+	g_bEnabled = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap && g_bSteamWorks && g_bTF2Attributes;
 	g_bMapRunning = true;
 
 	UpdateGameDescription();

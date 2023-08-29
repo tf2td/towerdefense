@@ -25,7 +25,7 @@ bool g_bEnabled;
 bool g_bLockable;
 bool g_bMapRunning;
 bool g_bServerInitialized;
-bool g_bSteamTools;
+bool g_bSteamWorks;
 bool g_bTF2Attributes;
 bool g_bTowerDefenseMap;
 bool g_bCanGetUnlocks;
