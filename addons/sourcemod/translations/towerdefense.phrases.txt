@@ -123,4 +123,75 @@
     "#format" "{1:d}"
     "en"      "needs {1} metal"
   }
+  "sentryLimitChanged"
+  {
+    "#format" "{1:d}"
+    "en"      "Your sentry limit has been changed to: {1}"
+  }
+  "sentryLimitBuildInfo"
+  {
+    "en"      "You can build additional sentries with the command /s"   
+  }
+  "dispenserLimitChanged"
+  {
+    "#format" "{1:d}"
+    "en"      "Your dispenser limit has been changed to: {1}"
+  }
+  "dispenserLimitBuildInfo"
+  {
+    "en"      "You can build dispensers via your PDA"   
+  }
+  "critChanceLimitReached"
+  {
+    "en"      "You can't increase crit chance anymore"   
+  }
+  "critChanceSet"
+  {
+    "#format" "{1:d}"
+    "en"      "Crit Chance set to: {1}"
+  }
+  "dmgMultiplierSet"
+  {
+    "#format" "{1:d}"
+    "en"      "Multiplier set to: {1}"
+  }
+  "nextUpgradeCost"
+  {
+    "#format" "{1:d}"
+    "en"      "Next Upgrade will cost [{1}] metal per Player"
+  }
+  //timers
+  "hintBuildInfo"
+  {
+    "en"      "You can build sentries via your PDA or with the command /s"   
+  }
+  "hintDropMetal"
+  {
+    "en"      "/d <amount> to drop metal for other players"   
+  }
+  "hintMetalStatus"
+  {
+    "en"      "Check everyone's metal status with /m"   
+  }
+  "hintMetalTransfer"
+  {
+    "en"      "Transfer metal between your comrades /t <target> <amount>"   
+  }
+  "hintCheckWave"
+  {
+    "en"      "Check on what wave you're on with /w"   
+  }
+  "hintDeath"
+  {
+    "en"      "Dying will make you lose half your metal!"   
+  }
+  //events
+  "eventPlayerJoined"
+  {
+    "en"      "joined the Defenders"   
+  }
+  "eventGameOver"
+  {
+    "en"      "Game over! Resetting the map..."   
+  }
 }
