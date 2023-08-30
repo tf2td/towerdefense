@@ -1,3 +1,5 @@
+USE `towerdefense`;
+
 TRUNCATE `metalpack`;
 
 INSERT INTO `metalpack` (`metalpack_id`, `map_id`, `metalpacktype_id`, `metal`, `location`) VALUES

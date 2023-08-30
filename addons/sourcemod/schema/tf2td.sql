@@ -8,7 +8,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `tf2td`
+-- Database: `towerdefense`
 --
 
 -- --------------------------------------------------------
@@ -16,6 +16,8 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `achievement`
 --
+
+USE `towerdefense`;
 
 CREATE TABLE `achievement` (
   `achievement_id` int(11) NOT NULL,
