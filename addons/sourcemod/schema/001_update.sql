@@ -28,7 +28,7 @@ INSERT INTO `metalpack` (`metalpack_id`, `map_id`, `metalpacktype_id`, `metal`, 
 (25, 5, 2, 400, '-67 -571 -460');
 
 
-TRUNCATE `metalpack`;
+TRUNCATE `multiplier`;
 
 INSERT INTO `multiplier` (`map_id`, `multipliertype_id`, `price`, `increase`) VALUES
 (1, 1, 2000, 1000),
