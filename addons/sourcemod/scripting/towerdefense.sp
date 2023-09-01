@@ -327,6 +327,7 @@ public void OnClientDisconnect(int iClient) {
 			
 			SpawnMetalPack(TDMetalPack_Medium, fLocation, iMetal);
 		}
+		UpdateGameDescription();
 	}
 }
 
@@ -764,7 +765,12 @@ stock void UpdateGameDescription() {
 	char sGamemode[64];
 	
 	if (g_bEnabled) {
-		Format(sGamemode, sizeof(sGamemode), "%s (%s)", GAME_DESCRIPTION, PLUGIN_VERSION);
+		if (g_hPlayerCountInDescription) {
+			Format(sGamemode, sizeof(sGamemode), "%s (%s) - %i / %i", GAME_DESCRIPTION, PLUGIN_VERSION, GetRealClientCount(), g_iMaxClients);
+		} else {
+			Format(sGamemode, sizeof(sGamemode), "%s (%s)", GAME_DESCRIPTION, PLUGIN_VERSION);
+		}
+		
 	} else {
 		strcopy(sGamemode, sizeof(sGamemode), "Team Fortress");
 	}

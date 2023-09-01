@@ -15,7 +15,7 @@ enum EUserHasLicenseForAppResult
 enum EResult
 {
 	k_EResultOK	= 1,							// success
-	k_EResultFail = 2,							// generic failure 
+	k_EResultFail = 2,							// generic failure
 	k_EResultNoConnection = 3,					// no/failed network connection
 //	k_EResultNoConnectionRetry = 4,				// OBSOLETE - removed
 	k_EResultInvalidPassword = 5,				// password/ticket is invalid
@@ -80,8 +80,8 @@ enum EResult
 	k_EResultCannotUseOldPassword = 64,			// The requested new password is not legal
 	k_EResultInvalidLoginAuthCode = 65,			// account login denied due to auth code invalid
 	k_EResultAccountLogonDeniedNoMail = 66,		// account login denied due to 2nd factor auth failure - and no mail has been sent
-	k_EResultHardwareNotCapableOfIPT = 67,		// 
-	k_EResultIPTInitError = 68,					// 
+	k_EResultHardwareNotCapableOfIPT = 67,		//
+	k_EResultIPTInitError = 68,					//
 	k_EResultParentalControlRestricted = 69,	// operation failed due to parental control restrictions for current user
 	k_EResultFacebookQueryError = 70,			// Facebook query returned an error
 	k_EResultExpiredLoginAuthCode = 71,			// account login denied due to auth code expired
@@ -132,7 +132,7 @@ enum EHTTPMethod
 	k_EHTTPMethodOPTIONS,
 	k_EHTTPMethodPATCH,
 
-	// The remaining HTTP methods are not yet supported, per rfc2616 section 5.1.1 only GET and HEAD are required for 
+	// The remaining HTTP methods are not yet supported, per rfc2616 section 5.1.1 only GET and HEAD are required for
 	// a compliant general purpose server.  We'll likely add more as we find uses for them.
 
 	// k_EHTTPMethodTRACE,
@@ -308,7 +308,7 @@ forward EGCResults SteamWorks_GCRetrieveMessage(int punMsgType, const char[] pub
 
 native EGCResults SteamWorks_SendMessageToGC(int unMsgType, const char[] pubData, int cubData);
 
-public Extension __ext_SteamWorks = 
+public Extension __ext_SteamWorks =
 {
 	name = "SteamWorks",
 	file = "SteamWorks.ext",
