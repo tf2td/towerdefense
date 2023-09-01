@@ -101,6 +101,8 @@ stock void Player_Connected(int iUserId, int iClient, const char[] sName, const 
 		ChangeClientTeam(iClient, TEAM_DEFENDER);
 		TF2_SetPlayerClass(iClient, TFClass_Engineer, false, true);
 		
+		UpdateGameDescription();
+
 		Log(TDLogLevel_Debug, "Moved player %N to the Defenders team as Engineer", iClient);
 	}
 }

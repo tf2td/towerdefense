@@ -33,6 +33,7 @@ bool g_bCanGetUnlocks;
 /*==========  Handle  ==========*/
 
 Handle g_hEnabled;
+Handle g_hPlayerCountInDescription;
 Handle hHintTimer;
 
 /*==========  Float  ==========*/
