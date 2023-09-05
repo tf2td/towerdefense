@@ -1,19 +1,14 @@
 #pragma semicolon 1
+#pragma newdecls required
 
 #include <sourcemod>
 #include <sdkhooks>
 #include <sdktools>
-//Plugin appears to work fine without it? Cant find any usage either.
-//#include <socket>
-//steamtools is deprecated 
-//#include <steamtools>
 #include <SteamWorks>
 #include <tf2>
 #include <tf2_stocks>
 #include <tf2items>
 #include <tf2attributes>
-
-#pragma newdecls required
 
 /*=================================
 =            Constants            =
@@ -292,16 +287,13 @@ public void OnClientPostAdminCheck(int iClient) {
 	GetClientAuthId(iClient, AuthId_Steam2, sSteamId, sizeof(sSteamId));
 	
 	if (!StrEqual(sSteamId, "BOT")) {
-		char sName[MAX_NAME_LENGTH];
-		GetClientName(iClient, sName, sizeof(sName));
-		
 		char sCommunityId[32];
 		GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId));
 		
 		char sIp[32];
 		GetClientIP(iClient, sIp, sizeof(sIp));
 		
-		Player_Connected(GetClientUserId(iClient), iClient, sName, sSteamId, sCommunityId, sIp);
+		Player_Connected(GetClientUserId(iClient), iClient, GetClientNameShort(iClient), sSteamId, sCommunityId, sIp);
 	}
 	
 	SDKHook(iClient, SDKHook_OnTakeDamage, OnTakeDamage);
@@ -1283,24 +1275,6 @@ stock void PrintToHud(int iClient, const char[] sMessage, any...) {
 		return;
 	}
 	
-	/*
-	char sBuffer[256];
-	
-	SetGlobalTransTarget(iClient);
-	VFormat(sBuffer, sizeof(sBuffer), sMessage, 3);
-	ReplaceString(sBuffer, sizeof(sBuffer), "\"", "“");
-	
-	decl iParams[] = {0x76, 0x6F, 0x69, 0x63, 0x65, 0x5F, 0x73, 0x65, 0x6C, 0x66, 0x00, 0x00};
-	new Handle:hMessage = StartMessageOne("HudNotifyCustom", iClient);
-	BfWriteString(hMessage, sBuffer);
-	
-	for (new i = 0; i < sizeof(iParams); i++) {
-		BfWriteByte(hMessage, iParams[i]);
-	}
-	
-	EndMessage();
-	*/
-	
 	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 3);
 	
@@ -1339,20 +1313,14 @@ stock void PrintToHudAll(const char[] sMessage, any...) {
  */
 
 stock int GetClientByNameExact(char[] sName, int iTeam = -1) {
-	char sClientName[MAX_NAME_LENGTH];
-	
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsClientInGame(iClient)) {
 			if (iTeam == -1) {
-				GetClientName(iClient, sClientName, sizeof(sClientName));
-				
-				if (StrEqual(sName, sClientName)) {
+				if (StrEqual(sName, GetClientNameShort(iClient))) {
 					return iClient;
 				}
 			} else if (GetClientTeam(iClient) == iTeam) {
-				GetClientName(iClient, sClientName, sizeof(sClientName));
-				
-				if (StrEqual(sName, sClientName)) {
+				if (StrEqual(sName, GetClientNameShort(iClient))) {
 					return iClient;
 				}
 			}
@@ -1579,4 +1547,13 @@ stock int GetClosestClient(int iClient)
 		}
 	}
 	return iClosestEntity;
+}
+
+
+
+stock char[] GetClientNameShort(int iClient) {
+	//Steam username is limited to 32 chars, sourcemod says 128?
+	char sName[MAX_NAME_LENGTH];
+	GetClientName(iClient, sName, sizeof(sName));
+	return sName;
 }

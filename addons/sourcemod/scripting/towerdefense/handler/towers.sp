@@ -562,14 +562,13 @@ stock bool IsTowerAttached(int iTower) {
  */
 
 stock int GetTower(TDTowerId iTowerId) {
-	char sName[MAX_NAME_LENGTH], sName2[MAX_NAME_LENGTH];
+	char sName2[MAX_NAME_LENGTH];
 	
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsTower(iClient)) {
-			GetClientName(iClient, sName, sizeof(sName));
 			Tower_GetName(iTowerId, sName2, sizeof(sName2));
 			
-			if (StrEqual(sName, sName2)) {
+			if (StrEqual(GetClientNameShort(iClient), sName2)) {
 				return iClient;
 			}
 		}
@@ -587,7 +586,8 @@ stock int GetTower(TDTowerId iTowerId) {
 
 stock TDTowerId GetTowerId(int iTower) {
 	if (IsValidClient(iTower)) {
-		char sName[MAX_NAME_LENGTH], sName2[MAX_NAME_LENGTH];
+		char sName[MAX_NAME_LENGTH]; 
+		char sName2[MAX_NAME_LENGTH];
 		GetClientName(iTower, sName, sizeof(sName));
 
 		int iClient, iTowerId;
