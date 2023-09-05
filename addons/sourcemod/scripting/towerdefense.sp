@@ -495,7 +495,8 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 		return Plugin_Handled;
 	}
 	
-	if (IsClientInGame(iClient)) {   
+	if (IsClientInGame(iClient)) {
+		PrintToServer("%N took damage %i", iClient, iDamageType);
 		if (!IsValidEdict(iInflictor)) {
 			return Plugin_Continue;
 		}
