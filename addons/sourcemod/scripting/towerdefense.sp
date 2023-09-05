@@ -320,6 +320,7 @@ public void OnClientDisconnect(int iClient) {
 			
 			SpawnMetalPack(TDMetalPack_Medium, fLocation, iMetal);
 		}
+		UpdateGameDescription();
 	}
 }
 
@@ -486,7 +487,11 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 		return Plugin_Handled;
 	}
 	
-	if (IsClientInGame(iClient)) {   
+	if (IsClientInGame(iClient)) {
+		PrintToServer("%N took damage %i", iClient, iDamageType);
+		if (!IsValidEdict(iInflictor)) {
+			return Plugin_Continue;
+		}
 		char sAttackerObject[128];
 		GetEdictClassname(iInflictor, sAttackerObject, sizeof(sAttackerObject));
 		
@@ -756,7 +761,12 @@ stock void UpdateGameDescription() {
 	char sGamemode[64];
 	
 	if (g_bEnabled) {
-		Format(sGamemode, sizeof(sGamemode), "%s (%s)", GAME_DESCRIPTION, PLUGIN_VERSION);
+		if (g_hPlayerCountInDescription) {
+			Format(sGamemode, sizeof(sGamemode), "%s (%s) - %i / %i", GAME_DESCRIPTION, PLUGIN_VERSION, GetRealClientCount(), g_iMaxClients);
+		} else {
+			Format(sGamemode, sizeof(sGamemode), "%s (%s)", GAME_DESCRIPTION, PLUGIN_VERSION);
+		}
+		
 	} else {
 		strcopy(sGamemode, sizeof(sGamemode), "Team Fortress");
 	}

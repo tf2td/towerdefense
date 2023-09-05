@@ -26,6 +26,9 @@ Maps - [mani](http://steamcommunity.com/profiles/76561198002201102/), [fatboy](h
  * [SteamWorks](https://forums.alliedmods.net/showthread.php?t=229556) -> [Download](https://github.com/hexa-core-eu/SteamWorks/releases)
  * [TF2Attributes](https://forums.alliedmods.net/showthread.php?t=210221)
 
+### Optional Plugins ###
+
+* [Cheat-Control](https://forums.alliedmods.net/showthread.php?p=600521)
 
 ### Installation ###
 

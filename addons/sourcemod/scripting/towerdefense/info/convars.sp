@@ -12,6 +12,7 @@ stock void LoadConVars() {
 	CreateConVar("towerdefense_version", PLUGIN_VERSION, "Tower Defense Version", FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
 	
 	g_hEnabled = CreateConVar("td_enabled", "1", "Enables/disables Tower Defense", FCVAR_DONTRECORD);
+	g_hPlayerCountInDescription = CreateConVar("towerdefense_player_count_in_description", "1", "Display the amount of connected players in the game description");
 	
 	HookConVarChange(g_hEnabled, OnConVarChanged);
 }
