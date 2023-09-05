@@ -495,6 +495,9 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 	}
 	
 	if (IsClientInGame(iClient)) {   
+		if (!IsValidEdict(iInflictor)) {
+			return Plugin_Continue;
+		}
 		char sAttackerObject[128];
 		GetEdictClassname(iInflictor, sAttackerObject, sizeof(sAttackerObject));
 		
