@@ -488,13 +488,12 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 	}
 	
 	if (IsClientInGame(iClient)) {
-		PrintToServer("%N took damage %i", iClient, iDamageType);
 		if (!IsValidEdict(iInflictor)) {
 			return Plugin_Continue;
 		}
 		char sAttackerObject[128];
 		GetEdictClassname(iInflictor, sAttackerObject, sizeof(sAttackerObject));
-		
+
 		//Sentry Damage
 		if (StrEqual(sAttackerObject, "obj_sentrygun")) {
 			fDamage *= fMultiplier[Multiplier_GetInt("sentry")] + 1.0;
