@@ -1,10 +1,10 @@
 "Phrases"
 {
-  //Waves
+  //waves
   "waveStart"
   {
-    "#format" "{1:d}"
-    "en"      "started Wave {1}"
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} started Wave {2}"
   }
   "waveIncomming"
   {
@@ -81,17 +81,18 @@
   //towers
   "towerBuyAttempt"
   {
-    "#format" "{1:s},{2:d}"
-    "en"      "wants to buy {1} (Total price: {2} metal)"
+    "#format" "{1:s},{2:s},{3:d}"
+    "en"      "{1} wants to buy {2} (Total price: {3} metal)"
   }
   "towerBought"
   {
-    "#format" "{1:s}"
-    "en"      "bought {1}"
+    "#format" "{1:s},{2:s}"
+    "en"      "{1} bought {2}"
   }
   "towerMoving"
   {
-    "en"      "Moving:"
+    "#format" "{1:s}"
+    "en"      "Moving: {1}"
   }
   "towerPickedUp"
   {
@@ -100,28 +101,39 @@
   }
   "towerUpgradeLevel"
   {
-    "#format" "{1:d}"
-    "en"      "reached level {1}"
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} reached level {2}"
   }
   "towerUpgradeDamageBonus"
   {
-    "#format" "{1:d}"
-    "en"      "gained {1}%% damage bonus"
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} gained {2}%% damage bonus"
   }
   "towerUpgradeAttackSpeed"
   {
-    "#format" "{1:d}"
-    "en"      "gained {1}%% attackspeed"    
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} gained {2}%% attackspeed"    
   }
   "towerUpgradeCanRotate"
   {
-    "en"      "can now rotate"   
+    "#format" "{1:s}"
+    "en"      "{1} can now rotate"   
+  }
+  "towerUpgradeProgress"
+  {
+    "#format" "{1:s},{2:d},{3:d},{4:d}"
+    "en"      "{1} \n Current Level: {2} \n Upgrade Progress: {3}/{4}"
+  }
+  "towerUpgradeMaxLevel"
+  {
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} \n Current Level: {2} \n Max. Level Reached"
   }
   //buttons
   "towerInsufficientMetal"
   {
-    "#format" "{1:d}"
-    "en"      "needs {1} metal"
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} needs {2} metal"
   }
   "sentryLimitChanged"
   {
@@ -188,7 +200,8 @@
   //events
   "eventPlayerJoined"
   {
-    "en"      "joined the Defenders"   
+    "#format" "{1:s}"
+    "en"      "{1} joined the Defenders"   
   }
   "eventGameOver"
   {

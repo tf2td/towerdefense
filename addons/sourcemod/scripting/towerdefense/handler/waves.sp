@@ -33,11 +33,11 @@ stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 	TeleportEntity(iButton, view_as<float>( { 0.0, 0.0, -9192.0 } ), NULL_VECTOR, view_as<float>( { 0.0, 0.0, 0.0 } ));
 	
 	/*Translation Example
-	* Format: %s	  			%N	 			 	%t
-	* Values: PLUGIN_PREFIX		iActivator			"waveStart" (g_iCurrentWave + 1)
-	* Output: [TF2TD] 			[PrWh] Dragonisser 	started Wave 1
+	* Format: %s	  			%t
+	* Values: PLUGIN_PREFIX		"waveStart" GetClientNameShort(iActivator) (g_iCurrentWave + 1)
+	* Output: [TF2TD] 			[PrWh] Dragonisser started Wave 1
 	*/
-	PrintToChatAll("%s %N %t", PLUGIN_PREFIX, iActivator, "waveStart", g_iCurrentWave + 1);
+	PrintToChatAll("%s %t", PLUGIN_PREFIX, "waveStart", GetClientNameShort(iActivator), g_iCurrentWave + 1);
 	
 	//Wave Health
 	int iWaveHealth;

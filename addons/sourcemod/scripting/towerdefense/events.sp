@@ -83,8 +83,7 @@ public Action Event_PlayerChangeTeamPre(Handle hEvent, const char[] sName, bool 
 	SetEventBroadcast(hEvent, true); // Block the chat output (Player ... joined team BLU)
 	
 	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
-		PrintToChatAll("%s %N %t", PLUGIN_PREFIX, iClient, "eventPlayerJoined");
-		//PrintToChatAll("Player %N joined the Defenders.", iClient);
+		PrintToChatAll("%s %t", PLUGIN_PREFIX, "eventPlayerJoined", GetClientNameShort(iClient));
 	}
 	
 	return Plugin_Continue;

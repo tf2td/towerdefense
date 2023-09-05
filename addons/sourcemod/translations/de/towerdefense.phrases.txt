@@ -3,7 +3,7 @@
   //Waves
   "waveStart"
   {
-    "de"      "hat Welle {1} gestartet"
+    "de"      "{1} hat Welle {2} gestartet"
   }
   "waveIncomming"
   {
@@ -72,15 +72,15 @@
   //towers
   "towerBuyAttempt"
   {
-    "de"      "möchte {1} kaufen (Gesamtpreis: {2} Metall)"
+    "de"      "{1} möchte {2} kaufen (Gesamtpreis: {3} Metall)"
   }
   "towerBought"
   {
-    "de"      "kaufte {1}"
+    "de"      "{1} kaufte {2}"
   }
   "towerMoving"
   {
-    "de"      "Verschieben:"
+    "de"      "Verschieben: {1}"
   }
   "towerPickedUp"
   {
@@ -88,23 +88,23 @@
   }
   "towerUpgradeLevel"
   {
-    "de"      "hat Level {1} erreicht"
+    "de"      "{1} hat Level {2} erreicht"
   }
   "towerUpgradeDamageBonus"
   {
-    "de"      "erhielt {1}% extra Schaden"
+    "de"      "{1} erhielt {2}% extra Schaden"
   }
   "towerUpgradeAttackSpeed"
   {
-    "de"      "erhielt {1}% Angriffgeschwindikeit"    
+    "de"      "{1} erhielt {2}% Angriffgeschwindikeit"    
   }
   "towerUpgradeCanRotate"
   {
-    "de"      "kann sich nun drehen"   
+    "de"      "{1} kann sich nun drehen"   
   }
   //buttons
   "towerInsufficientMetal"
   {
-    "de"      "braucht {1} Metall"
+    "de"      "{1} braucht {2} Metall"
   }
 }

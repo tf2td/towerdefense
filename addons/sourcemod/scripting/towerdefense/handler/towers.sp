@@ -40,7 +40,7 @@ stock void Tower_OnButtonBuy(TDTowerId iTowerId, int iButton, int iActivator) {
 		iPrice /= iClients;
 		
 		if (!CanAfford(iPrice, true)) {
-			PrintToChatAll("%s %N %t", PLUGIN_PREFIX, iActivator, "towerBuyAttempt", sName, iPrice);
+			PrintToChatAll("%s %t", PLUGIN_PREFIX, "towerBuyAttempt", GetClientNameShort(iActivator), sName, iPrice);
 		}
 
 		if (CanAfford(iPrice, false)) {
@@ -53,7 +53,7 @@ stock void Tower_OnButtonBuy(TDTowerId iTowerId, int iButton, int iActivator) {
 					Player_CAddValue(iClient, PLAYER_TOWERS_BOUGHT, 1);
 				}
 			}
-			PrintToChatAll("%s %N %t", PLUGIN_PREFIX, iActivator, "towerBought", sName, iPrice);
+			PrintToChatAll("%s %t", PLUGIN_PREFIX, "towerBought", GetClientNameShort(iActivator), sName);
 			
 			g_bTowerBought[view_as<int>(iTowerId)] = true;
 			AcceptEntityInput(iButton, "Break");
@@ -190,16 +190,15 @@ stock void Tower_OnUpgrade(int iTower, int iClient) {
 				Tower_SetLevelAttributes(iTower, iTowerId);
 			}
 			
-			PrintToChatAll("%s %N %t", PLUGIN_PREFIX, iTower, "towerUpgradeLevel", g_iUpgradeLevel[iTower]);
+			PrintToChatAll("%s %t", PLUGIN_PREFIX, "towerUpgradeLevel", GetClientNameShort(iTower), g_iUpgradeLevel[iTower]);
 			
 			float fDamageScale = Tower_GetDamageScale(iTowerId);
 
-			PrintToChatAll("%s %N %t", PLUGIN_PREFIX, iTower, "towerUpgradeDamageBonus", RoundFloat(fDamageScale * 100 - ((fDamageScale > 1.0) ? 100 : 0)));
-			PrintToChatAll("%s %N %t", PLUGIN_PREFIX, iTower, "towerUpgradeAttackSpeed", RoundFloat(fDamageScale * 100 - ((fDamageScale > 1.0) ? 100 : 0)));
-			PrintToChatAll("%s %N %t", PLUGIN_PREFIX, iTower, "towerUpgradeCanRotate");
+			PrintToChatAll("%s %t", PLUGIN_PREFIX, "towerUpgradeDamageBonus", GetClientNameShort(iTower),RoundFloat(fDamageScale * 100 - ((fDamageScale > 1.0) ? 100 : 0)));
+			PrintToChatAll("%s %t", PLUGIN_PREFIX, "towerUpgradeAttackSpeed", GetClientNameShort(iTower),RoundFloat(fDamageScale * 100 - ((fDamageScale > 1.0) ? 100 : 0)));
 
 			if (Tower_GetRotate(iTowerId)) {
-				PrintToChatAll("%s %N %t", PLUGIN_PREFIX, iTower, "towerUpgradeCanRotate");
+				PrintToChatAll("%s %t", PLUGIN_PREFIX, "towerUpgradeCanRotate", GetClientNameShort(iTower));
 			}
 		}
 	}
@@ -208,9 +207,9 @@ stock void Tower_OnUpgrade(int iTower, int iClient) {
 	HideAdvancedAnnotation(iClient, iTower);
 	
 	if (g_iUpgradeLevel[iTower] == iMaxLevel) {
-		AttachAnnotation(iTower, 2.0, "%N\nCurrent Level: %d\nMax. Level Reached", iTower, g_iUpgradeLevel[iTower]);
+		AttachAnnotation(iTower, 2.0, "%t", "towerUpgradeMaxLevel", GetClientNameShort(iTower), g_iUpgradeLevel[iTower]);
 	} else {
-		AttachAnnotation(iTower, 2.0, "%N\nCurrent Level: %d\nUpgrade Progress: %d/%d", iTower, g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower], Tower_GetMetal(iTowerId));
+		AttachAnnotation(iTower, 2.0, "%t", "towerUpgradeProgress", GetClientNameShort(iTower), g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower], Tower_GetMetal(iTowerId));
 	}
 }
 
@@ -432,7 +431,7 @@ stock void Tower_Pickup(int iClient) {
 		TeleportEntity(iTower, view_as<float>( { 0.0, 0.0, -8192.0 } ), NULL_VECTOR, NULL_VECTOR); // Teleport out of the map
 		
 		HideAnnotation(iTower);
-		AttachAnnotation(iClient, 86400.0, "%T %N", "towerMoving", iClient, iTower);
+		AttachAnnotation(iClient, 86400.0, "%t", "towerMoving", GetClientNameShort(iTower));
 		
 		g_bCarryingObject[iClient] = true;
 		g_iAttachedTower[iClient] = iTower;
