@@ -30,10 +30,13 @@ bool g_bTF2Attributes;
 bool g_bTowerDefenseMap;
 bool g_bCanGetUnlocks;
 
+/*==========  ConVar  ==========*/
+
+ConVar g_hEnabled;
+ConVar g_hTfBotQuota;
+
 /*==========  Handle  ==========*/
 
-Handle g_hEnabled;
-Handle g_hPlayerCountInDescription;
 Handle hHintTimer;
 
 /*==========  Float  ==========*/

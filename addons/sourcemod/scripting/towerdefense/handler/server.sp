@@ -22,16 +22,6 @@ stock void Server_Initialize() {
 	StripConVarFlag("tf_bot_count", FCVAR_NOTIFY);
 	StripConVarFlag("sv_password", FCVAR_NOTIFY);
 
-	int iBotQuota = GetConVarInt(FindConVar("tf_bot_quota"));
-
-	if (iBotQuota > 0) {
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "ConVar 'tf_bot_quota' is not set to 0 - Value: %d", iBotQuota);
-		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Setting ConVar 'tf_bot_quota' to 0");
-		SetConVarInt(FindConVar("tf_bot_quota"), 0);
-	} else {
-		LogType(TDLogLevel_Debug, TDLogType_FileAndConsole, "ConVar 'tf_bot_quota' is set to 0 - Value: %d", iBotQuota);
-	}
-
 	HookButtons();
 	Server_Reset();
 
@@ -78,7 +68,7 @@ stock void Database_OnDataLoaded() {
  */
 
 stock void Server_Reset() {
-	g_bEnabled = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap && g_bSteamWorks && g_bTF2Attributes;
+	g_bEnabled = g_hEnabled.BoolValue && g_bTowerDefenseMap && g_bSteamWorks && g_bTF2Attributes;
 	g_bMapRunning = true;
 
 	UpdateGameDescription();
@@ -203,10 +193,10 @@ stock void Server_Reset() {
 		if(queryResult.HasResults && queryResult.FetchRow()) {
 			if (queryResult.FetchInt(0) > 0) {
 				g_iMaxClients = queryResult.FetchInt(0);
-				LogType(TDLogLevel_Debug, TDLogType_FileAndConsole, "Max clients for map %s is %d", sCurrentMap, g_iMaxClients);
+				Log(TDLogLevel_Debug, "Max clients for map %s is %d", sCurrentMap, g_iMaxClients);
 			} 
 		} else {
-				LogType(TDLogLevel_Debug, TDLogType_FileAndConsole, "Couldn't find entry for map '%s'. Setting max clients to default %d", sCurrentMap, g_iMaxClients);
+				Log(TDLogLevel_Debug, "Couldn't find entry for map '%s'. Setting max clients to default %d", sCurrentMap, g_iMaxClients);
 			}
 		delete queryResult;
 	}

@@ -113,8 +113,11 @@ public void OnPluginStart() {
 	
 	HookEvents();
 	RegisterCommands();
+	CreateConVars();
 	LoadConVars();
 	SetConVars();
+
+	
 	
 	SetPassword("WaitingForServerToInitialize", false);
 }
@@ -200,7 +203,7 @@ public void OnMapEnd() {
 }
 
 public void OnConfigsExecuted() {
-	g_bEnabled = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap && g_bSteamWorks && g_bTF2Attributes;
+	g_bEnabled = g_hEnabled.BoolValue && g_bTowerDefenseMap && g_bSteamWorks && g_bTF2Attributes;
 	g_bMapRunning = true;
 	
 	UpdateGameDescription();
@@ -760,12 +763,7 @@ stock void UpdateGameDescription() {
 	char sGamemode[64];
 	
 	if (g_bEnabled) {
-		if (g_hPlayerCountInDescription) {
-			Format(sGamemode, sizeof(sGamemode), "%s (%s) - %i / %i", GAME_DESCRIPTION, PLUGIN_VERSION, GetRealClientCount(), g_iMaxClients);
-		} else {
-			Format(sGamemode, sizeof(sGamemode), "%s (%s)", GAME_DESCRIPTION, PLUGIN_VERSION);
-		}
-		
+		Format(sGamemode, sizeof(sGamemode), "%s (%s)", GAME_DESCRIPTION, PLUGIN_VERSION);
 	} else {
 		strcopy(sGamemode, sizeof(sGamemode), "Team Fortress");
 	}
@@ -1223,13 +1221,7 @@ stock void ReloadMap() {
  */
 
 stock void StripConVarFlag(char[] sCvar, int iFlag) {
-	Handle hCvar;
-	int iFlags;
-	
-	hCvar = FindConVar(sCvar);
-	iFlags = GetConVarFlags(hCvar);
-	iFlags &= ~iFlag;
-	SetConVarFlags(hCvar, iFlags);
+	FindConVar(sCvar).Flags &= ~iFlag;
 }
 
 /**
@@ -1241,13 +1233,7 @@ stock void StripConVarFlag(char[] sCvar, int iFlag) {
  */
 
 stock void AddConVarFlag(char[] sCvar, int iFlag) {
-	Handle hCvar;
-	int iFlags;
-	
-	hCvar = FindConVar(sCvar);
-	iFlags = GetConVarFlags(hCvar);
-	iFlags &= iFlag;
-	SetConVarFlags(hCvar, iFlags);
+	FindConVar(sCvar).Flags &= iFlag;
 }
 
 /**
