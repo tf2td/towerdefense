@@ -273,7 +273,7 @@ stock bool CanAfford(int iPrice, bool silent) {
 		if (IsDefender(iClient)) {
 			if (GetClientMetal(iClient) < iPrice) {
 				if (!silent) {
-					PrintToChatAll("%s %t", PLUGIN_PREFIX, iClient, "towerInsufficientMetal", GetClientNameShort(iClient), iPrice - GetClientMetal(iClient));
+					PrintToChatAll("%s %t", PLUGIN_PREFIX, "towerInsufficientMetal", GetClientNameShort(iClient), iPrice - GetClientMetal(iClient));
 				}
 				bResult = false;
 			}
