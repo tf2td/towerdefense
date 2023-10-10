@@ -93,17 +93,20 @@ public Action Command_ReloadMap(int iClient, int iArgs) {
 
 public Action Command_SetWave(int iClient, int iArgs) {
 	if (iArgs != 1) {
-		PrintToChat(iClient, "Usage: !sw <wave>");
+		PrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdSetWaveUsage");
+		//PrintToChat(iClient, "Usage: !sw <wave>");
 		return Plugin_Handled;
 	}
 
 	char sWave[6];
 	GetCmdArg(1, sWave, sizeof(sWave));
 	if(StringToInt(sWave) - 1 >= iMaxWaves)
-		PrintToChat(iClient, "[SM] The highest wave is %i. Please choose a lower value than that!", iMaxWaves);
+		PrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdSetWaveOOB", iMaxWaves);
+		//PrintToChat(iClient, "[SM] The highest wave is %i. Please choose a lower value than that!", iMaxWaves);
 	else {
 	g_iCurrentWave = StringToInt(sWave) - 1;
-	PrintToChat(iClient, "[SM] Wave set to %i.", g_iCurrentWave + 1);
+	PrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdSetWave", g_iCurrentWave + 1);
+	//PrintToChat(iClient, "[SM] Wave set to %i.", g_iCurrentWave + 1);
 	}
 
 	return Plugin_Handled;
@@ -124,7 +127,8 @@ public Action Command_BuyTower(int iClient, int iArgs) {
 		
 		Tower_Spawn(iTowerId);
 			
-		PrintToChatAll("\x01%N bought \x04%s", iClient, sName);
+		PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdBuyTower", GetClientNameShort(iClient), sName);
+		//PrintToChatAll("\x01%N bought \x04%s", iClient, sName);
 			
 		g_bTowerBought[view_as<int>(iTowerId)] = true;
 	}
@@ -146,8 +150,11 @@ public Action Command_PreGame(int iClient, int iArgs) {
 	
 	SpawnMetalPacks(TDMetalPack_Start);
 	
-	PrintToChatAll("\x04Have fun playing!");
-	PrintToChatAll("\x04Don't forget to pick up dropped metal packs!");
+	PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdPreGameInfo1");
+	PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdPreGameInfo2");
+
+	//PrintToChatAll("\x04Have fun playing!");
+	//PrintToChatAll("\x04Don't forget to pick up dropped metal packs!");
 	
 	// Hook func_nobuild events
 	int iEntity = -1;
@@ -176,13 +183,18 @@ public Action Command_Password(int iClient, int iArgs) {
 		
 		g_sPassword[4] = '\0';
 		
-		PrintToChatAll("\x01Set the server password to \x04%s", g_sPassword);
-		PrintToChatAll("\x01If you want your friends to join, tell them the password.");
-		PrintToChatAll("\x01Write \x04!p\x01 to see the password again.");
+		PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdSetPasswordInfo1", g_sPassword);
+		PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdSetPasswordInfo2");
+		PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdSetPasswordInfo3");
+
+		//PrintToChatAll("\x01Set the server password to \x04%s", g_sPassword);
+		//PrintToChatAll("\x01If you want your friends to join, tell them the password.");
+		//PrintToChatAll("\x01Write \x04!p\x01 to see the password again.");
 		
 		SetPassword(g_sPassword);
 	} else {
-		PrintToChatAll("This server can't be locked!");
+		PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdServerNotLockable");
+		//PrintToChatAll("This server can't be locked!");
 	}
 	
 	return Plugin_Handled;
@@ -196,11 +208,12 @@ public Action Command_GetPassword(int iClient, int iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
-	if(!StrEqual(g_sPassword, ""))
-		PrintToChatAll("\x01The server password is \x04%s", g_sPassword);
-	else
+	if(!StrEqual(g_sPassword, "")) {
+		PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdPassword", g_sPassword);
+		//PrintToChatAll("\x01The server password is \x04%s", g_sPassword);
+	} else {
 		Forbid(iClient, true, "There is no password set!");
-		
+	}
 	return Plugin_Continue;
 }
 
@@ -211,7 +224,7 @@ public Action Command_BuildSentry(int iClient, int iArgs) {
 	}
 	
 	if (IsInsideClient(iClient)) {
-		Forbid(iClient, true, "You can not build while standing inside a other player!");
+		Forbid(iClient, true, "You can not build while standing inside another player!");
 		return Plugin_Handled;
 	}
 	
@@ -326,11 +339,13 @@ public Action Command_ShowMetal(int iClient, int iArgs) {
 		return Plugin_Handled;
 	}
 	
-	PrintToChatAll("\x04[\x03TD\x04]\x03 Metal stats:");
+	PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdMetalStats");
+	//PrintToChatAll("\x04[\x03TD\x04]\x03 Metal stats:");
 	
-	for (int i = 1; i <= MaxClients; i++) {
-		if (IsDefender(i)) {
-			PrintToChatAll("\x04%N - %d metal", i, GetClientMetal(i));
+	for (int iPlayer = 1; iPlayer <= MaxClients; iPlayer++) {
+		if (IsDefender(iPlayer)) {
+			PrintToChatAll("%t", "cmdMetalStatsPlayer", GetClientNameShort(iPlayer), GetClientMetal(iPlayer));
+			//PrintToChatAll("\x04%N - %d metal", i, GetClientMetal(i));
 		}
 	}
 	
@@ -341,8 +356,9 @@ public Action Command_ShowWave(int iClient, int iArgs) {
 	if (!g_bEnabled) {
 		return Plugin_Handled;
 	}
-	
-	PrintToChatAll("\x04[\x03TD\x04]\x03 Currently on Wave %i out of %i", g_iCurrentWave + 1, iMaxWaves);
+
+	PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdCurrentWave", g_iCurrentWave + 1, iMaxWaves);
+	//PrintToChatAll("\x04[\x03TD\x04]\x03 Currently on Wave %i out of %i", g_iCurrentWave + 1, iMaxWaves);
 	
 	return Plugin_Handled;
 }

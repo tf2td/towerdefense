@@ -11,11 +11,11 @@
   }
   "waveIncommingWithHealth"
   {
-    "de"      "Welle ({1}) mit {2} HP ankommend!"
+    "de"      "Welle ({1}) mit {2} LP ankommend!"
   }
   "waveIncommingWithHealthAndType"
   {
-    "de"      "{1} Welle ({2}) mit {3} HP ankommend!"
+    "de"      "{1} Welle ({2}) mit {3} LP ankommend!"
   }
   "waveArrivingIn"
   {

@@ -207,4 +207,68 @@
   {
     "en"      "Game over! Resetting the map..."   
   }
+  //commands
+  "cmdCurrentWave"
+  {
+    "#format" "{1:d},{2:d}"
+    "en"      "Currently on Wave {1} out of {2}"
+  }
+  "cmdMetalStats"
+  {
+    "en"      "Metal stats:"   
+  }
+  "cmdMetalStatsPlayer"
+  {
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} - {2} metal"   
+  }
+  "cmdPassword"
+  {
+    "#format" "{1:s}"
+    "en"      "The server password is {1}"
+  }
+  "cmdServerNotLockable"
+  {
+    "en"      "This server can't be locked!"
+  }
+  "cmdSetPasswordInfo1"
+  {
+    "#format" "{1:s}"
+    "en"      "Set the server password to {1}"
+  }
+  "cmdSetPasswordInfo2"
+  {
+    "en"      "If you want your friends to join, tell them the password."
+  }
+  "cmdSetPasswordInfo3"
+  {
+    "en"      "Write !p to see the password again."
+  }
+  "cmdPreGameInfo1"
+  {
+    "en"      "Have fun playing!"
+  }
+  "cmdPreGameInfo2"
+  {
+    "en"      "Don't forget to pick up dropped metal packs!"
+  }
+  "cmdBuyTower"
+  {
+    "#format" "{1:s},{2:s}"
+    "en"      "{1} bought {2}"
+  }
+  "cmdSetWave"
+  {
+    "#format" "{1:s}"
+    "en"      "Wave set to {1}"
+  }
+  "cmdSetWaveOOB"
+  {
+    "#format" "{1:s}"
+    "en"      "The highest wave is {1}. Please choose a lower value than that!"
+  }
+  "cmdSetWaveUsage"
+  {
+    "en"      "Usage: !sw <wave>"
+  }
 }
