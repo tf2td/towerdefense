@@ -192,5 +192,5 @@ INSERT INTO `wave` (`wave_id`, `wavetype`, `name`, `class`, `quantity`, `health`
 (127, 36, 'OverpoweredMedic', 'Medic', 8, 10975),
 (128, 8, 'floube', 'Engineer', 9, 9975),
 (129, 8, 'mani', 'Soldier', 10, 9975),
-(130, 37, 'benedevil', 'Heavy', 4, 60000);
+(130, 37, 'benedevil', 'Heavy', 4, 60000),
 (131, 7, 'dragonisser', 'Medic', 12, 8000);
