@@ -9,6 +9,7 @@
 #include <tf2_stocks>
 #include <tf2items>
 #include <tf2attributes>
+#include <morecolors>
 
 /*=================================
 =            Constants            =
@@ -91,6 +92,7 @@ public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iMax
 		return APLRes_Failure;
 	
 	MarkNativeAsOptional("SteamWorks_SetGameDescription");
+	MarkNativeAsOptional("GetUserMessageType");
 	return APLRes_Success;
 }
 
@@ -967,11 +969,11 @@ stock int GetClientByName(int iClient, char[] sName) {
 		return iTarget;
 	} else if (iResults == 0) {
 		if (IsDefender(iClient)) {
-			Forbid(iClient, true, "Couldn't find player %s.", sName);
+			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidCantFindPlayer", sName);
 		}
 	} else {
 		if (IsDefender(iClient)) {
-			Forbid(iClient, true, "Be more specific.", sName);
+			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidTooUnspecific");
 		}
 	}
 	
@@ -1106,19 +1108,19 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 	}
 	
 	if (TF2_IsPlayerInCondition(iClient, TFCond_Taunting)) {
-		Forbid(iClient, true, "You can't build while taunting!");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidNoBuildWhileTaunting");
 		return false;
 	}
 	
 	if (g_bCarryingObject[iClient]) {
-		Forbid(iClient, true, "You can not build while carrying another building or a tower!");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidNoBuildWhileCarrying");
 		return false;
 	}
 	
 	switch (iType) {
 		case TDBuilding_Sentry: {
 			if (GetClientMetal(iClient) < 130) {
-				Forbid(iClient, true, "You need at least 130 metal!");
+				Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidInsufficientMetal", 130);
 				return false;
 			}
 			
@@ -1140,13 +1142,13 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 			if (iCount < g_iBuildingLimit[TDBuilding_Sentry]) {
 				return true;
 			} else {
-				Forbid(iClient, true, "Sentry limit reached! (Limit: %d)", g_iBuildingLimit[TDBuilding_Sentry]);
+				Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidSentryLimit", g_iBuildingLimit[TDBuilding_Sentry]);
 				return false;
 			}
 		}
 		case TDBuilding_Dispenser: {
 			if (GetClientMetal(iClient) < 100) {
-				Forbid(iClient, true, "You need at least 100 metal!");
+				Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidInsufficientMetal", 100);
 				return false;
 			}
 			
@@ -1169,7 +1171,7 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 				Player_CAddValue(iClient, PLAYER_OBJECTS_BUILT, 1);
 				return true;
 			} else {
-				Forbid(iClient, true, "Dispenser limit reached! (Limit: %d)", g_iBuildingLimit[TDBuilding_Dispenser]);
+				Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidDispenserLimit", g_iBuildingLimit[TDBuilding_Dispenser]);
 				return false;
 			}
 		}
@@ -1179,7 +1181,7 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 }
 
 /**
- * Prints a red forbid message to a client and plays a sound.
+ * Prints a colored (default red) forbid message to a client and plays by default a sound.
  *
  * @param iClient 		The client.
  * @param bPlaySound	Play the sound or not.
@@ -1188,11 +1190,11 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
  * @noreturn
  */
 
-stock void Forbid(int iClient, bool bPlaySound, const char[] sMessage, any...) {
+stock void Forbid(int iClient, bool bPlaySound=true, const char[] sMessage, any...) {
 	char sFormattedMessage[512];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
 	
-	PrintToChat(iClient, "\x07FF0000%s", sFormattedMessage);
+	CPrintToChat(iClient, "%s", sFormattedMessage);
 	
 	if (bPlaySound) {
 		PlaySound("Forbid", iClient);

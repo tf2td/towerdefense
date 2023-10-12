@@ -151,7 +151,7 @@ stock void Tower_OnTouchNobuild(int iTower) {
 		return;
 	}
 	
-	Forbid(g_iLastMover[iTower], true, "Can't place a tower there.");
+	Forbid(g_iLastMover[iTower], true, "%s %t", PLUGIN_PREFIX, "forbidCantPlaceTowerThere");
 	Tower_TeleportToSpawn(iTower);
 }
 
@@ -415,12 +415,12 @@ stock void Tower_Pickup(int iClient) {
 	
 	if (IsTower(iTower)) {
 		if (IsTowerAttached(iTower)) {
-			Forbid(iClient, true, "%N is already being moved by someone!", iTower);
+			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidTowerAlreadyCarried", GetClientNameShort(iTower));
 			return;
 		}
 	
 		if(g_bTowersLocked){
-			Forbid(iClient, true, "You can't move towers mid wave!");
+			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidTowerLockedMidwave");
 			return;
 		}
 		
@@ -441,7 +441,7 @@ stock void Tower_Pickup(int iClient) {
 		char sName[MAX_NAME_LENGTH];
 		Tower_GetName(iTowerId, sName, sizeof(sName));
 		
-		PrintToChat(iClient, "%t", "towerPickedUp", sName);
+		CPrintToChat(iClient, "%t", "towerPickedUp", sName);
 		Log(TDLogLevel_Debug, "%N picked up tower (%N)", iClient, iTower);
 	}
 }
@@ -459,12 +459,12 @@ stock void Tower_Drop(int iClient) {
 	}
 	
 	if (g_bInsideNobuild[iClient]) {
-		Forbid(iClient, true, "Towers aren't meant to be placed on the path!");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidCantPlaceTowerOnPath");
 		return;
 	}
 	
 	if(g_bTowersLocked){
-			Forbid(iClient, true, "You can't place towers mid wave!");
+			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidCantPlaceTowerMidwave");
 			return;
 		}
 	

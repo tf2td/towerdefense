@@ -37,7 +37,7 @@ stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 	* Values: PLUGIN_PREFIX		"waveStart" GetClientNameShort(iActivator) (g_iCurrentWave + 1)
 	* Output: [TF2TD] 			[PrWh] Dragonisser started Wave 1
 	*/
-	PrintToChatAll("%s %t", PLUGIN_PREFIX, "waveStart", GetClientNameShort(iActivator), g_iCurrentWave + 1);
+	CPrintToChatAll("%s %t", PLUGIN_PREFIX, "waveStart", GetClientNameShort(iActivator), g_iCurrentWave + 1);
 	
 	//Wave Health
 	int iWaveHealth;
@@ -251,16 +251,16 @@ stock void Wave_OnDeathAll() {
 	Timer_NextWaveCountdown(null, g_iRespawnWaveTime);
 	
 	
-	PrintToChatAll("%s %t", PLUGIN_PREFIX, "wavePassed", g_iCurrentWave);
-	PrintToChatAll("%s %t", PLUGIN_PREFIX, "wavePrepareTime", g_iRespawnWaveTime);
-	PrintToChatAll("%s %t", PLUGIN_PREFIX, "waveTowersUnlocked");
+	CPrintToChatAll("%s %t", PLUGIN_PREFIX, "wavePassed", g_iCurrentWave);
+	CPrintToChatAll("%s %t", PLUGIN_PREFIX, "wavePrepareTime", g_iRespawnWaveTime);
+	CPrintToChatAll("%s %t", PLUGIN_PREFIX, "waveTowersUnlocked");
 	
 	g_bTowersLocked = false;
 	
 	Log(TDLogLevel_Info, "Wave %d passed", g_iCurrentWave);
 	
 	if (Panel_Remove(g_iCurrentWave)) {
-		PrintToChatAll("%s %t", PLUGIN_PREFIX, "waveBonusAvailable", g_iCurrentWave);
+		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "waveBonusAvailable", g_iCurrentWave);
 		Log(TDLogLevel_Debug, "New bonus available (Wave: %d)", g_iCurrentWave);
 	}
 }
@@ -310,8 +310,8 @@ stock void Wave_Spawn() {
 		}
 	}
 
-	PrintToChatAll("%s %t", PLUGIN_PREFIX, "waveIncomming", g_iCurrentWave + 1);
-	PrintToChatAll("%s %t", PLUGIN_PREFIX, "waveTowersLocked");
+	CPrintToChatAll("%s %t", PLUGIN_PREFIX, "waveIncomming", g_iCurrentWave + 1);
+	CPrintToChatAll("%s %t", PLUGIN_PREFIX, "waveTowersLocked");
 	g_bTowersLocked = true;
 	
 	g_iBotsToSpawn = Wave_GetQuantity(g_iCurrentWave);
@@ -451,7 +451,7 @@ public Action Timer_NextWaveCountdown(Handle hTimer, any iTime) {
 	if (g_bStartWaveEarly) {
 		for (int iClient = 1; iClient <= MaxClients; iClient++) {
 			if (IsDefender(iClient)) {
-				PrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "waveStartedEarly", (iTime + 1) * 10, iTime + 1);
+				CPrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "waveStartedEarly", (iTime + 1) * 10, iTime + 1);
 				AddClientMetal(iClient, (iTime + 1) * 10);
 			}
 		}

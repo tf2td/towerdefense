@@ -83,7 +83,7 @@ public Action Event_PlayerChangeTeamPre(Handle hEvent, const char[] sName, bool 
 	SetEventBroadcast(hEvent, true); // Block the chat output (Player ... joined team BLU)
 	
 	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
-		PrintToChatAll("%s %t", PLUGIN_PREFIX, "eventPlayerJoined", GetClientNameShort(iClient));
+		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "eventPlayerJoined", GetClientNameShort(iClient));
 	}
 	
 	return Plugin_Continue;
@@ -200,7 +200,7 @@ public Action Event_RoundWin(Handle hEvent, const char[] sName, bool bDontBroadc
 	ServerCommand("mp_autoteambalance 0");
 	
 	if (iTeam == TEAM_ATTACKER) {
-		PrintToChatAll("%s %t", PLUGIN_PREFIX, "eventGameOver");
+		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "eventGameOver");
 		//PrintToChatAll("\x07FF0000Game over! Resetting the map...");
 	}
 	Server_Reset();

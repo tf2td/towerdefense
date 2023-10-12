@@ -93,7 +93,7 @@ public Action Command_ReloadMap(int iClient, int iArgs) {
 
 public Action Command_SetWave(int iClient, int iArgs) {
 	if (iArgs != 1) {
-		PrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdSetWaveUsage");
+		CPrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdSetWaveUsage");
 		//PrintToChat(iClient, "Usage: !sw <wave>");
 		return Plugin_Handled;
 	}
@@ -101,11 +101,11 @@ public Action Command_SetWave(int iClient, int iArgs) {
 	char sWave[6];
 	GetCmdArg(1, sWave, sizeof(sWave));
 	if(StringToInt(sWave) - 1 >= iMaxWaves)
-		PrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdSetWaveOOB", iMaxWaves);
+		CPrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdSetWaveOOB", iMaxWaves);
 		//PrintToChat(iClient, "[SM] The highest wave is %i. Please choose a lower value than that!", iMaxWaves);
 	else {
 	g_iCurrentWave = StringToInt(sWave) - 1;
-	PrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdSetWave", g_iCurrentWave + 1);
+	CPrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdSetWave", g_iCurrentWave + 1);
 	//PrintToChat(iClient, "[SM] Wave set to %i.", g_iCurrentWave + 1);
 	}
 
@@ -127,7 +127,7 @@ public Action Command_BuyTower(int iClient, int iArgs) {
 		
 		Tower_Spawn(iTowerId);
 			
-		PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdBuyTower", GetClientNameShort(iClient), sName);
+		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdBuyTower", GetClientNameShort(iClient), sName);
 		//PrintToChatAll("\x01%N bought \x04%s", iClient, sName);
 			
 		g_bTowerBought[view_as<int>(iTowerId)] = true;
@@ -150,8 +150,8 @@ public Action Command_PreGame(int iClient, int iArgs) {
 	
 	SpawnMetalPacks(TDMetalPack_Start);
 	
-	PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdPreGameInfo1");
-	PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdPreGameInfo2");
+	CPrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdPreGameInfo1");
+	CPrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdPreGameInfo2");
 
 	//PrintToChatAll("\x04Have fun playing!");
 	//PrintToChatAll("\x04Don't forget to pick up dropped metal packs!");
@@ -183,9 +183,9 @@ public Action Command_Password(int iClient, int iArgs) {
 		
 		g_sPassword[4] = '\0';
 		
-		PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdSetPasswordInfo1", g_sPassword);
-		PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdSetPasswordInfo2");
-		PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdSetPasswordInfo3");
+		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdSetPasswordInfo1", g_sPassword);
+		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdSetPasswordInfo2");
+		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdSetPasswordInfo3");
 
 		//PrintToChatAll("\x01Set the server password to \x04%s", g_sPassword);
 		//PrintToChatAll("\x01If you want your friends to join, tell them the password.");
@@ -193,7 +193,7 @@ public Action Command_Password(int iClient, int iArgs) {
 		
 		SetPassword(g_sPassword);
 	} else {
-		PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdServerNotLockable");
+		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdServerNotLockable");
 		//PrintToChatAll("This server can't be locked!");
 	}
 	
@@ -209,10 +209,10 @@ public Action Command_GetPassword(int iClient, int iArgs) {
 		return Plugin_Handled;
 	}
 	if(!StrEqual(g_sPassword, "")) {
-		PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdPassword", g_sPassword);
+		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdPassword", g_sPassword);
 		//PrintToChatAll("\x01The server password is \x04%s", g_sPassword);
 	} else {
-		Forbid(iClient, true, "There is no password set!");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidNoPasswordSet");
 	}
 	return Plugin_Continue;
 }
@@ -224,7 +224,7 @@ public Action Command_BuildSentry(int iClient, int iArgs) {
 	}
 	
 	if (IsInsideClient(iClient)) {
-		Forbid(iClient, true, "You can not build while standing inside another player!");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidCantBuildInsideAPlayer");
 		return Plugin_Handled;
 	}
 	
@@ -258,7 +258,8 @@ public Action Command_BuildSentry(int iClient, int iArgs) {
 		
 		g_bPickupSentry[iClient] = true;
 		
-		PrintToChat(iClient, "\x01Sentries need \x041000 metal\x01 to upgrade!");
+		CPrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdBuildSentryInfo");
+		//PrintToChat(iClient, "\x01Sentries need \x041000 metal\x01 to upgrade!");
 	}
 	
 	return Plugin_Handled;
@@ -270,8 +271,8 @@ public Action Command_DropMetal(int iClient, int iArgs) {
 	}
 	
 	if (iArgs != 1) {
-		PrintToChat(iClient, "\x01Usage: !d <amount>");
-		
+		CPrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdDropMetalUsage");
+		//PrintToChat(iClient, "\x01Usage: !d <amount>");
 		return Plugin_Handled;
 	}
 	
@@ -281,24 +282,24 @@ public Action Command_DropMetal(int iClient, int iArgs) {
 	int iMetal;
 	
 	if (!IsStringNumeric(sMetal)) {
-		Forbid(iClient, true, "Invalid input");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidInvalidInput");
 		return Plugin_Handled;
 	} else {
 		iMetal = StringToInt(sMetal);
 	}
 	
 	if (iMetal <= 0) {
-		Forbid(iClient, true, "You must drop at least 1 metal");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidDropMinMetal");
 		return Plugin_Handled;
 	}
 	
 	if (!IsPlayerAlive(iClient)) {
-		Forbid(iClient, true, "Cannot drop metal while dead");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidDeadCantDropMetal");
 		return Plugin_Handled;
 	}
 	
 	if (!(GetEntityFlags(iClient) & FL_ONGROUND)) {
-		Forbid(iClient, true, "Cannot drop metal while in the air");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidInAirCantDropMetal");
 		return Plugin_Handled;
 	}
 	
@@ -317,13 +318,13 @@ public Action Command_DropMetal(int iClient, int iArgs) {
 	
 	switch (SpawnMetalPack(TDMetalPack_Medium, fLocation, iMetal)) {
 		case TDMetalPack_InvalidMetal: {
-			Forbid(iClient, true, "You must drop at least 1 metal");
+			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidDropMinMetal");
 		}
 		case TDMetalPack_LimitReached: {
-			Forbid(iClient, true, "Metalpack limit reached, pick some metalpacks up!");
+			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidDropMetalLimit");
 		}
 		case TDMetalPack_InvalidType: {
-			Forbid(iClient, true, "Unable to drop metal");
+			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidUnableDropMetal");
 		}
 		case TDMetalPack_SpawnedPack: {
 			AddClientMetal(iClient, -iMetal);
@@ -339,12 +340,12 @@ public Action Command_ShowMetal(int iClient, int iArgs) {
 		return Plugin_Handled;
 	}
 	
-	PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdMetalStats");
+	CPrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdMetalStats");
 	//PrintToChatAll("\x04[\x03TD\x04]\x03 Metal stats:");
 	
 	for (int iPlayer = 1; iPlayer <= MaxClients; iPlayer++) {
 		if (IsDefender(iPlayer)) {
-			PrintToChatAll("%t", "cmdMetalStatsPlayer", GetClientNameShort(iPlayer), GetClientMetal(iPlayer));
+			CPrintToChatAll("%t", "cmdMetalStatsPlayer", GetClientNameShort(iPlayer), GetClientMetal(iPlayer));
 			//PrintToChatAll("\x04%N - %d metal", i, GetClientMetal(i));
 		}
 	}
@@ -357,7 +358,7 @@ public Action Command_ShowWave(int iClient, int iArgs) {
 		return Plugin_Handled;
 	}
 
-	PrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdCurrentWave", g_iCurrentWave + 1, iMaxWaves);
+	CPrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdCurrentWave", g_iCurrentWave + 1, iMaxWaves);
 	//PrintToChatAll("\x04[\x03TD\x04]\x03 Currently on Wave %i out of %i", g_iCurrentWave + 1, iMaxWaves);
 	
 	return Plugin_Handled;
@@ -370,8 +371,8 @@ public Action Command_TransferMetal(int iClient, int iArgs) {
 	}
 	
 	if (iArgs != 2) {
-		PrintToChat(iClient, "\x01Usage: !t <target> <amount>");
-		
+		CPrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdTransferMetalUsage");
+		//PrintToChat(iClient, "\x01Usage: !t <target> <amount>");
 		return Plugin_Handled;
 	}
 	
@@ -384,24 +385,27 @@ public Action Command_TransferMetal(int iClient, int iArgs) {
 	int iTarget = GetClientByName(iClient, sTarget);
 	
 	if (!IsStringNumeric(sMetal)) {
-		Forbid(iClient, true, "Invalid input");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidInvalidInput");
 		return Plugin_Handled;
 	} else {
 		iMetal = StringToInt(sMetal);
 	}
 
 	if (iMetal > GetClientMetal(iClient) || GetClientMetal(iClient) <= 0) {
-		Forbid(iClient, true, "You can't transfer more metal then you have!");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidTransferNotEnough");
+		//Forbid(iClient, true, "You can't transfer more metal then you have!");
 		return Plugin_Handled;
 	}
 
 	if (iMetal < 0) {
-		Forbid(iClient, true, "Can't transfer negative amounts!");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidTransferNegative");
+		//Forbid(iClient, true, "Can't transfer negative amounts!");
 		return Plugin_Handled;
 	}
 
 	if (!IsPlayerAlive(iClient)) {
-		Forbid(iClient, true, "Can't transfer while dead!");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidTransferDead");
+		//Forbid(iClient, true, "Can't transfer while dead!");
 		return Plugin_Handled;
 	}
 
@@ -409,8 +413,10 @@ public Action Command_TransferMetal(int iClient, int iArgs) {
 		AddClientMetal(iTarget, iMetal);
 		AddClientMetal(iClient, -iMetal);
 
-		PrintToChat(iTarget, "\x04You received \x01%d metal \x04from \x01%N\x04.", iMetal, iClient);
-		PrintToChat(iClient, "\x01%N \x04received \x01%d metal \x04from you.", iTarget, iMetal);
+		CPrintToChat(iTarget, "%s %t", PLUGIN_PREFIX, "cmdTransferMetalReceived", iMetal, GetClientNameShort(iClient));
+		CPrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdTransferMetalSent", GetClientNameShort(iTarget), iMetal);
+		//PrintToChat(iTarget, "\x04You received \x01%d metal \x04from \x01%N\x04.", iMetal, iClient);
+		//PrintToChat(iClient, "\x01%N \x04received \x01%d metal \x04from you.", iTarget, iMetal);
 	}
 	
 	return Plugin_Continue;
