@@ -11,8 +11,6 @@ Handle g_hMultiplier;
 Handle g_hServerData;
 
 int g_iTime;
-int g_iMaxBotsOnField = 8; //TODO: Make this configurable through server settings
-
 
 /*=========================================
 =            Generic Variables            =
@@ -34,6 +32,7 @@ bool g_bCanGetUnlocks;
 
 Handle g_hEnabled;
 Handle g_hPlayerCountInDescription;
+ConVar g_hMaxBotsOnField;
 Handle hHintTimer;
 
 /*==========  Float  ==========*/

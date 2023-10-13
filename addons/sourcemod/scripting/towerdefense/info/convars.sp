@@ -13,6 +13,7 @@ stock void LoadConVars() {
 	
 	g_hEnabled = CreateConVar("td_enabled", "1", "Enables/disables Tower Defense", FCVAR_DONTRECORD);
 	g_hPlayerCountInDescription = CreateConVar("towerdefense_player_count_in_description", "1", "Display the amount of connected players in the game description");
+	g_hMaxBotsOnField = CreateConVar("td_max_bots_on_field", "8", "Max bots simultaneously on field. Might be actually lower than set due to maxplayer limit");
 	
 	HookConVarChange(g_hEnabled, OnConVarChanged);
 }

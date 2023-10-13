@@ -184,32 +184,41 @@ stock void Server_Reset() {
 	char sCurrentMap[PLATFORM_MAX_PATH];
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
-	Format(sQuery, sizeof(sQuery), "\
+	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
 		SELECT `player_limit` \
 		FROM `map` \
 		WHERE `name` = '%s' \
 		LIMIT 1 \
 	", sCurrentMap);
-	
+
 	DBResultSet queryResult = SQL_Query(g_hDatabase, sQuery);
 
-	if (queryResult == null)
-	{
+	if (queryResult == null) {
 		char error[255];
 		SQL_GetError(g_hDatabase, error, sizeof(error));
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to query (error: %s)", error);
-	} 
-	else 
-	{
-		if(queryResult.HasResults && queryResult.FetchRow()) {
-			if (queryResult.FetchInt(0) > 0) {
-				g_iMaxClients = queryResult.FetchInt(0);
+	} else {
+		if (queryResult.HasResults && queryResult.FetchRow()) {
+			int iResult = queryResult.FetchInt(0);
+			if (iResult > 0) {
+				g_iMaxClients = iResult;
 				LogType(TDLogLevel_Debug, TDLogType_FileAndConsole, "Max clients for map %s is %d", sCurrentMap, g_iMaxClients);
-			} 
-		} else {
-				LogType(TDLogLevel_Debug, TDLogType_FileAndConsole, "Couldn't find entry for map '%s'. Setting max clients to default %d", sCurrentMap, g_iMaxClients);
+			} else {
+				LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Max clients for map %s is %d. This isnt supported; Please check the database entries. Setting max clients to default %d", sCurrentMap, iResult, g_iMaxClients);
 			}
+		} else {
+			LogType(TDLogLevel_Debug, TDLogType_FileAndConsole, "Couldn't find entry for map '%s'. Setting max clients to default %d", sCurrentMap, g_iMaxClients);
+		}
 		delete queryResult;
+	}
+
+	int clients = (g_iMaxClients + g_hMaxBotsOnField.IntValue) - MaxClients;
+
+	if (clients > 0) {
+		char cvarName[32];
+		g_hMaxBotsOnField.GetName(cvarName, sizeof(cvarName));
+		LogType(TDLogLevel_Warning, TDLogType_FileAndConsole, "ConVar '%s' value + the allowed max clients '%d' (database) is higher than the server maxplayers '%d'. Shrinking convar value by '%d'", cvarName, g_iMaxClients, MaxClients, clients);
+		g_hMaxBotsOnField.IntValue = g_hMaxBotsOnField.IntValue - clients;
 	}
 
 	Format(g_sPassword, sizeof(g_sPassword), "");

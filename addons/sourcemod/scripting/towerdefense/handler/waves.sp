@@ -346,7 +346,7 @@ stock void Wave_SpawnBots() {
 	int iAliveBots = GetAliveAttackerCount();
 	
 	//If only less than g_iMaxBotsOnField bots in total
-	if(iTotalBots <= g_iMaxBotsOnField) {
+	if(iTotalBots <= g_hMaxBotsOnField.IntValue) {
 		if (iTotalBots > 1) {
 			for (int i = 1; i <= iTotalBots; i++) {
 				ServerCommand("bot -team red -class %s -name %s%d", sClass, sName, i);
@@ -362,14 +362,14 @@ stock void Wave_SpawnBots() {
 	} else {
 		//If no bot alive
 		if(iAliveBots <= 0) {
-			for (int i = 1; i <= g_iMaxBotsOnField; i++) {
+			for (int i = 1; i <= g_hMaxBotsOnField.IntValue; i++) {
 				g_iBotsToSpawn--;
 				ServerCommand("bot -team red -class %s -name %s%d", sClass, sName, -(g_iBotsToSpawn - iTotalBots));
 			}
-			CreateTimer(1.0, TeleportWaveDelay, g_iMaxBotsOnField, TIMER_FLAG_NO_MAPCHANGE);
+			CreateTimer(1.0, TeleportWaveDelay, g_hMaxBotsOnField.IntValue, TIMER_FLAG_NO_MAPCHANGE);
 		//If bots alive
 		} else {
-			int iBotsToSpawn = g_iMaxBotsOnField - iAliveBots;
+			int iBotsToSpawn = g_hMaxBotsOnField.IntValue - iAliveBots;
 			for(int i = 1; i <= iBotsToSpawn; i++) {
 				g_iBotsToSpawn--;
 				ServerCommand("bot -team red -class %s -name %s%d", sClass, sName, -(g_iBotsToSpawn - iTotalBots));
@@ -389,9 +389,9 @@ public Action TeleportWaveDelay(Handle hTimer, any iNumber) {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to teleport wave %d, could not read name!", g_iCurrentWave);
 		return Plugin_Stop;
 	}
-	if(iTotalBots <= 1){
+	if (iTotalBots <= 1){
 		Format(sName, sizeof(sName), "%s", sName);
-	} else if(iTotalBots > g_iMaxBotsOnField){
+	} else if (iTotalBots > g_hMaxBotsOnField.IntValue){
 		g_iTotalBotsLeft--;
 		Format(sName, sizeof(sName), "%s%d", sName, -(g_iTotalBotsLeft - iTotalBots));
 	} else if (iNumber > 0) {
