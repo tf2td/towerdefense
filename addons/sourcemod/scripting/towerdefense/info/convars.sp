@@ -10,16 +10,15 @@
 
 stock void LoadConVars() {
 	CreateConVar("towerdefense_version", PLUGIN_VERSION, "Tower Defense Version", FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
-	
-	g_hEnabled = CreateConVar("td_enabled", "1", "Enables/disables Tower Defense", FCVAR_DONTRECORD);
+
+	g_hEnabled					= CreateConVar("td_enabled", "1", "Enables/disables Tower Defense", FCVAR_DONTRECORD);
 	g_hPlayerCountInDescription = CreateConVar("towerdefense_player_count_in_description", "1", "Display the amount of connected players in the game description");
-	g_hMaxBotsOnField = CreateConVar("td_max_bots_on_field", "8", "Max bots simultaneously on field. Might be actually lower than set due to maxplayer limit");
-	
+	g_hMaxBotsOnField			= CreateConVar("td_max_bots_on_field", "8", "Max bots simultaneously on field. Might be actually lower than set due to maxplayer limit");
+
 	HookConVarChange(g_hEnabled, OnConVarChanged);
 }
 
 stock void SetConVars() {
-	
 }
 
 stock void SetPregameConVars() {
@@ -34,20 +33,19 @@ stock void SetPregameConVars() {
  * @param sNewValue		String containing the new value of the convar.
  * @noreturn
  */
-
 public void OnConVarChanged(Handle hConVar, const char[] sOldValue, const char[] sNewValue) {
 	if (hConVar == g_hEnabled) {
 		if (!g_bMapRunning) {
 			return;
 		}
-		
+
 		if (GetConVarBool(g_hEnabled)) {
 			if (!g_bEnabled) {
 				bool bEnabled = IsTowerDefenseMap();
-				
+
 				if (bEnabled) {
 					// Basically do the same as in OnConfigsExecuted().
-					
+
 					g_bEnabled = true;
 					UpdateGameDescription();
 				}
@@ -55,10 +53,10 @@ public void OnConVarChanged(Handle hConVar, const char[] sOldValue, const char[]
 		} else {
 			if (g_bEnabled) {
 				// Basically do the same as in OnMapEnd().
-				
+
 				g_bEnabled = false;
 				UpdateGameDescription();
 			}
 		}
 	}
-} 
+}
