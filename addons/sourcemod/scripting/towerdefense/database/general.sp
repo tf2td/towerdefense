@@ -8,6 +8,18 @@
 	#include "../info/variables.sp"
 #endif
 
+
+/**
+ * Database Connection Callback
+ */
+public void ConnectToDB(Database db, const char[] error, any data) {
+	if (db == null) {
+		LogError("Database failure: %s", error);
+	} else {
+		g_hDatabase = db;
+	}
+}
+
 /*======================================
 =            Data Functions            =
 ======================================*/
@@ -31,7 +43,7 @@ stock void Database_LoadData() {
 stock void Database_LoadTowers() {
 	char sQuery[512];
 	
-	Format(sQuery, sizeof(sQuery), "\
+	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
 		SELECT `tower`.`tower_id`, `level`, `tower`.`name`, `class`, `price`, `teleport_tower`, `damagetype`, `description`, `metal`, `weapon_id`, `attack`, `rotate`, `pitch`, `damage`, `attackspeed`, `area` \
 		FROM `tower` \
 		INNER JOIN `map` \
@@ -40,8 +52,8 @@ stock void Database_LoadTowers() {
 			ON (`tower`.`tower_id` = `towerlevel`.`tower_id`) \
 		ORDER BY `tower`.`name` ASC, `level` ASC \
 	", g_iServerMap);
-	
-	SQL_TQuery(g_hDatabase, Database_OnLoadTowers, sQuery);
+
+	g_hDatabase.Query(Database_OnLoadTowers, sQuery);
 }
 
 public void Database_OnLoadTowers(Handle hDriver, Handle hResult, const char[] sError, any iData) {

@@ -86,7 +86,7 @@ public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iMax
 	}
 	
 	if (SQL_CheckConfig("towerdefense"))
-		g_hDatabase = SQL_Connect("towerdefense", true, sError, iMaxLength);
+		Database.Connect(ConnectToDB, "towerdefense");
 	else {
 		Format(sError, iMaxLength, "Unable to read database info from file");
 		return APLRes_Failure;

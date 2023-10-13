@@ -64,7 +64,7 @@ char g_sPassword[8];
 
 /*==========  Handle  ==========*/
 
-Handle g_hDatabase;
+Database g_hDatabase;
 
 /*==========  Float  ==========*/
 
