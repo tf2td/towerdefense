@@ -90,9 +90,6 @@ public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iMax
 		return APLRes_Failure;
 	}
 
-	if (g_hDatabase == null)
-		return APLRes_Failure;
-
 	MarkNativeAsOptional("SteamWorks_SetGameDescription");
 	return APLRes_Success;
 }

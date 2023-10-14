@@ -17,13 +17,12 @@
 stock void Database_CheckServer() {
 	char sQuery[128];
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		SELECT `server_id` \
-		FROM `server` \
-		WHERE `ip` = '%s' AND `port` = %d \
-		LIMIT 1 \
-	",
-					   g_sServerIp, g_iServerPort);
+	g_hDatabase.Format(sQuery, sizeof(sQuery),
+		"SELECT `server_id` " ...
+		"FROM `server` " ...
+		"WHERE `ip` = '%s' AND `port` = %d " ...
+		"LIMIT 1",
+		g_sServerIp, g_iServerPort);
 
 	g_hDatabase.Query(Database_OnCheckServer, sQuery);
 }
@@ -58,11 +57,10 @@ public void Database_OnCheckServer(Handle hDriver, Handle hResult, const char[] 
 stock void Database_AddServer() {
 	char sQuery[256];
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		INSERT INTO `server` (`ip`, `port`, `created`, `updated`) \
-		VALUES ('%s', %d, UTC_TIMESTAMP(), UTC_TIMESTAMP()) \
-	",
-					   g_sServerIp, g_iServerPort);
+	g_hDatabase.Format(sQuery, sizeof(sQuery),
+		"INSERT INTO `server` (`ip`, `port`, `created`, `updated`) " ...
+		"VALUES ('%s', %d, UTC_TIMESTAMP(), UTC_TIMESTAMP())",
+		g_sServerIp, g_iServerPort);
 
 	g_hDatabase.Query(Database_OnAddServer, sQuery, 0);
 }
@@ -74,24 +72,22 @@ public void Database_OnAddServer(Handle hDriver, Handle hResult, const char[] sE
 		char sQuery[256];
 
 		if (iData == 0) {
-			g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-				SELECT `server_id` \
-				FROM `server` \
-				WHERE `ip` = '%s' AND `port` = %d \
-				LIMIT 1 \
-			",
-							   g_sServerIp, g_iServerPort);
+			g_hDatabase.Format(sQuery, sizeof(sQuery), 
+				"SELECT `server_id` " ...
+				"FROM `server` " ...
+				"WHERE `ip` = '%s' AND `port` = %d " ...
+				"LIMIT 1",
+				g_sServerIp, g_iServerPort);
 
 			g_hDatabase.Query(Database_OnAddServer, sQuery, 1);
 		} else if (iData == 1) {
 			SQL_FetchRow(hResult);
 			g_iServerId = SQL_FetchInt(hResult, 0);
 
-			g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-				INSERT INTO `server_stats` (`server_id`) \
-				VALUES (%d) \
-			",
-							   g_iServerId);
+			g_hDatabase.Format(sQuery, sizeof(sQuery), 
+				"INSERT INTO `server_stats` (`server_id`) " ...
+				"VALUES (%d)",
+				g_iServerId);
 
 			g_hDatabase.Query(Database_OnAddServer, sQuery, 2);
 		} else if (iData == 2) {
@@ -110,13 +106,12 @@ public void Database_OnAddServer(Handle hDriver, Handle hResult, const char[] sE
 stock void Database_UpdateServerPlayerCount() {
 	char sQuery[512];
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		UPDATE `server` \
-		SET `players` = %d \
-		WHERE `server_id` = %d \
-		LIMIT 1 \
-	",
-					   GetRealClientCount(), g_iServerId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery), 
+		"UPDATE `server` " ...
+		"SET `players` = %d " ...
+		"WHERE `server_id` = %d " ...
+		"LIMIT 1",
+		GetRealClientCount(), g_iServerId);
 
 	g_hDatabase.Query(Database_OnUpdateServerPlayerCount, sQuery, 0);
 }
@@ -145,17 +140,16 @@ stock void Database_UpdateServer() {
 	GetConVarString(FindConVar("sv_password"), sPassword, sizeof(sPassword));
 	SQL_EscapeString(g_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		UPDATE `server` \
-		SET `name` = '%s', \
-			`version` = '%s', \
-			`password` = '%s', \
-			`players` = %d, \
-			`updated` = UTC_TIMESTAMP() \
-		WHERE `server_id` = %d \
-		LIMIT 1 \
-	",
-					   sServerNameSave, PLUGIN_VERSION, sPasswordSave, GetRealClientCount(), g_iServerId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery),
+		"UPDATE `server` " ...
+		"SET `name` = '%s', " ...
+			"`version` = '%s', " ...
+			"`password` = '%s', " ...
+			"`players` = %d, " ...
+			"`updated` = UTC_TIMESTAMP() " ...
+		"WHERE `server_id` = %d  " ...
+		"LIMIT 1",
+		sServerNameSave, PLUGIN_VERSION, sPasswordSave, GetRealClientCount(), g_iServerId);
 
 	g_hDatabase.Query(Database_OnUpdateServer, sQuery, 0);
 }
@@ -169,13 +163,12 @@ public void Database_OnUpdateServer(Handle hDriver, Handle hResult, const char[]
 		GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
 		if (iData == 0) {
-			g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-				SELECT `map_id`, `respawn_wave_time` \
-				FROM `map` \
-				WHERE `name` = '%s' \
-				LIMIT 1 \
-			",
-							   sCurrentMap);
+			g_hDatabase.Format(sQuery, sizeof(sQuery),
+				"SELECT `map_id`, `respawn_wave_time` " ...
+				"FROM `map` " ...
+				"WHERE `name` = '%s'  " ...
+				"LIMIT 1",
+				sCurrentMap);
 
 			g_hDatabase.Query(Database_OnUpdateServer, sQuery, 1);
 		} else if (iData == 1) {
@@ -198,13 +191,12 @@ public void Database_OnUpdateServer(Handle hDriver, Handle hResult, const char[]
 			g_iServerMap	   = SQL_FetchInt(hResult, 0);
 			g_iRespawnWaveTime = SQL_FetchInt(hResult, 1);
 
-			g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-				UPDATE `server` \
-				SET `map_id` = %d \
-				WHERE `server_id` = %d \
-				LIMIT 1 \
-			",
-							   g_iServerMap, g_iServerId);
+			g_hDatabase.Format(sQuery, sizeof(sQuery), 
+				"UPDATE `server` " ...
+				"SET `map_id` = %d " ...
+				"WHERE `server_id` = %d " ...
+				"LIMIT 1",
+				g_iServerMap, g_iServerId);
 
 			g_hDatabase.Query(Database_OnUpdateServer, sQuery, 2);
 		} else if (iData == 2) {
@@ -231,15 +223,14 @@ public void Database_OnUpdateServer(Handle hDriver, Handle hResult, const char[]
 stock void Database_CheckServerSettings() {
 	char sQuery[256];
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		SELECT `lockable`, `loglevel`, `logtype` \
-		FROM `server` \
-		INNER JOIN `server_settings` \
-			ON (`server`.`server_settings_id` = `server_settings`.`server_settings_id`) \
-		WHERE `server_id` = %d \
-		LIMIT 1 \
-	",
-					   g_iServerId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery),
+		"SELECT `lockable`, `loglevel`, `logtype` " ...
+		"FROM `server` " ...
+		"INNER JOIN `server_settings` " ...
+			"ON (`server`.`server_settings_id` = `server_settings`.`server_settings_id`) " ...
+		"WHERE `server_id` = %d " ...
+		"LIMIT 1",
+		g_iServerId);
 
 	g_hDatabase.Query(Database_OnCheckServerSettings, sQuery);
 }
@@ -315,17 +306,16 @@ public void Database_OnCheckServerSettings(Handle hDriver, Handle hResult, const
 stock void Database_CheckServerConfig() {
 	char sQuery[512];
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		SELECT CONCAT(`variable`, ' \"', `value`, '\"') \
-		FROM `config` \
-		INNER JOIN `server` \
-			ON (`server_id` = %d) \
-		INNER JOIN `server_settings` \
-			ON (`server`.`server_settings_id` = `server_settings`.`server_settings_id`) \
-		WHERE `config_id` >= `config_start` AND `config_id` <= `config_end` \
-		ORDER BY `config_id` ASC \
-	",
-					   g_iServerId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery),
+		"SELECT CONCAT(`variable`, ' \"', `value`, '\"') " ...
+		"FROM `config` " ...
+		"INNER JOIN `server` " ...
+			"ON (`server_id` = %d) " ...
+		"INNER JOIN `server_settings` " ...
+			"ON (`server`.`server_settings_id` = `server_settings`.`server_settings_id`) " ...
+		"WHERE `config_id` >= `config_start` AND `config_id` <= `config_end` " ...
+		"ORDER BY `config_id` ASC",
+		g_iServerId);
 
 	g_hDatabase.Query(Database_OnCheckServerConfig, sQuery);
 }
@@ -365,13 +355,12 @@ stock void Database_SetServerPassword(const char[] sPassword, bool bReloadMap) {
 	char sPasswordSave[64];
 	SQL_EscapeString(g_hDatabase, sPassword, sPasswordSave, sizeof(sPasswordSave));
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		UPDATE `server` \
-		SET `password` = '%s' \
-		WHERE `server_id` = %d \
-		LIMIT 1 \
-	",
-					   sPasswordSave, g_iServerId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery), 
+		"UPDATE `server` " ...
+		"SET `password` = '%s' " ...
+		"WHERE `server_id` = %d " ...
+		"LIMIT 1",
+		sPasswordSave, g_iServerId);
 
 	DataPack hPack = new DataPack();
 
@@ -414,13 +403,12 @@ public void Database_OnSetServerPassword(Handle hDriver, Handle hResult, const c
 stock void Database_CheckServerStats() {
 	char sQuery[128];
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		SELECT `playtime` \
-		FROM `server_stats` \
-		WHERE `server_id` = %d \
-		LIMIT 1 \
-	",
-					   g_iServerId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery), 
+		"SELECT `playtime` " ...
+		"FROM `server_stats` " ...
+		"WHERE `server_id` = %d " ...
+		"LIMIT 1",
+		g_iServerId);
 
 	g_hDatabase.Query(Database_OnCheckServerStats, sQuery);
 }
@@ -443,11 +431,10 @@ public void Database_OnCheckServerStats(Handle hDriver, Handle hResult, const ch
 stock void Database_AddServerStats() {
 	char sQuery[256];
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		INSERT INTO `server_stats` (`server_id`) \
-		VALUES (%d) \
-	",
-					   g_iServerId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery), 
+		"INSERT INTO `server_stats` (`server_id`) " ...
+		"VALUES (%d)",
+		g_iServerId);
 
 	g_hDatabase.Query(Database_OnAddServerStats, sQuery);
 }
@@ -479,12 +466,11 @@ stock void Database_ServerStatsUpdate() {
 	if (!Server_UGetValue(g_iServerId, SERVER_PLAYTIME, iPlaytime))
 		iRounds_Won = 0;
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-			UPDATE `server_stats` \
-			SET `connections` = connections + %d, `rounds_played` = rounds_played + %d, `rounds_won` = rounds_won + %d, `playtime` = playtime + %d \
-			WHERE `server_id` = %d \
-		",
-					   iConnections, iRounds_Played, iRounds_Won, iPlaytime, g_iServerId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery), 
+			"UPDATE `server_stats` " ...
+			"SET `connections` = connections + %d, `rounds_played` = rounds_played + %d, `rounds_won` = rounds_won + %d, `playtime` = playtime + %d " ...
+			"WHERE `server_id` = %d",
+			iConnections, iRounds_Played, iRounds_Won, iPlaytime, g_iServerId);
 
 	Server_USetValue(g_iServerId, SERVER_CONNECTIONS, 0);
 	Server_USetValue(g_iServerId, SERVER_ROUNDS_PLAYED, 0);

@@ -24,13 +24,12 @@ stock void Database_CheckPlayer(int iUserId, int iClient, const char[] sCommunit
 
 	char sQuery[192];
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		SELECT `player_id` \
-		FROM `player` \
-		WHERE `player`.`steamid64` = '%s' \
-		LIMIT 1 \
-	",
-					   sCommunityId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery),
+		"SELECT `player_id` " ...
+		"FROM `player` " ...
+		"WHERE `player`.`steamid64` = '%s' " ...
+		"LIMIT 1",
+		sCommunityId);
 
 	g_hDatabase.Query(Database_OnCheckPlayer, sQuery, iUserId);
 }
@@ -80,11 +79,10 @@ stock void Database_AddPlayer(int iUserId) {
 	Player_UGetString(iUserId, PLAYER_IP_ADDRESS, sPlayerIp, sizeof(sPlayerIp));
 	SQL_EscapeString(g_hDatabase, sPlayerIp, sPlayerIpSave, sizeof(sPlayerIpSave));
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		INSERT INTO `player` (`name`,`steamid64`,`ip`,`first_server`) \
-		VALUES ('%s', '%s', '%s', %d) \
-	",
-					   sPlayerNameSave, sSteamId, sPlayerIpSave, g_iServerId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery),
+		"INSERT INTO `player` (`name`,`steamid64`,`ip`,`first_server`) " ...
+		"VALUES ('%s', '%s', '%s', %d)",
+		sPlayerNameSave, sSteamId, sPlayerIpSave, g_iServerId);
 
 	g_hDatabase.Query(Database_OnAddPlayer_1, sQuery, iUserId);
 }
@@ -154,16 +152,15 @@ stock void Database_UpdatePlayer(int iUserId) {
 	int iPlayerId;
 	Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		UPDATE `player` \
-		SET `name` = '%s', \
-			`ip` = '%s', \
-			`last_server` = %d, \
-			`current_server` = %d \
-		WHERE `player_id` = %d \
-		LIMIT 1 \
-	",
-					   sPlayerNameSave, sPlayerIpSave, g_iServerId, g_iServerId, iPlayerId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery),
+		"UPDATE `player` " ...
+		"SET `name` = '%s', " ...
+			"`ip` = '%s', " ...
+			"`last_server` = %d, " ...
+			"`current_server` = %d " ...
+		"WHERE `player_id` = %d " ...
+		"LIMIT 1",
+		sPlayerNameSave, sPlayerIpSave, g_iServerId, g_iServerId, iPlayerId);
 
 	g_hDatabase.Query(Database_OnUpdatePlayer_1, sQuery, iUserId);
 }
@@ -177,16 +174,15 @@ public void Database_OnUpdatePlayer_1(Handle hDriver, Handle hResult, const char
 		int	 iPlayerId;
 		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
-		g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-			INSERT IGNORE INTO `player_stats` (`player_id`, `map_id`, `first_connect`, `last_connect`, `last_disconnect`) \
-			VALUES (%d, \
-					(SELECT `map_id` \
-					 FROM `server` \
-					 WHERE `server_id` = %d \
-					 LIMIT 1), \
-					UTC_TIMESTAMP(), UTC_TIMESTAMP(), UTC_TIMESTAMP()) \
-		",
-						   iPlayerId, g_iServerId);
+		g_hDatabase.Format(sQuery, sizeof(sQuery), 
+			"INSERT IGNORE INTO `player_stats` (`player_id`, `map_id`, `first_connect`, `last_connect`, `last_disconnect`) " ...
+			"VALUES (%d, " ...
+					"(SELECT `map_id` " ...
+					"FROM `server` " ...
+					"WHERE `server_id` = %d " ...
+					"LIMIT 1), " ...
+					"UTC_TIMESTAMP(), UTC_TIMESTAMP(), UTC_TIMESTAMP())",
+					iPlayerId, g_iServerId);
 
 		g_hDatabase.Query(Database_OnUpdatePlayer_2, sQuery, iUserId);
 	}
@@ -206,13 +202,12 @@ public void Database_OnUpdatePlayer_2(Handle hDriver, Handle hResult, const char
 		int	 iPlayerId;
 		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
-		g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-			SELECT `steamid64` \
-			FROM `player` \
-			WHERE `player_id` = %d \
-			LIMIT 1 \
-		",
-						   iPlayerId);
+		g_hDatabase.Format(sQuery, sizeof(sQuery),
+			"SELECT `steamid64` " ...
+			"FROM `player` " ...
+			"WHERE `player_id` = %d " ...
+			"LIMIT 1",
+			iPlayerId);
 
 		g_hDatabase.Query(Database_OnUpdatePlayer_3, sQuery, iUserId);
 	}
@@ -229,13 +224,12 @@ public void Database_OnUpdatePlayer_3(Handle hDriver, Handle hResult, const char
 	} else if (SQL_GetRowCount(hResult)) {
 		char sQuery[128];
 
-		g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-			UPDATE `server` \
-			SET `players` = `players` + 1 \
-			WHERE `server_id` = %d \
-			LIMIT 1 \
-		",
-						   g_iServerId);
+		g_hDatabase.Format(sQuery, sizeof(sQuery),
+			"UPDATE `server` " ...
+			"SET `players` = `players` + 1 " ...
+			"WHERE `server_id` = %d " ...
+			"LIMIT 1",
+			g_iServerId);
 
 		g_hDatabase.Query(Database_OnUpdatePlayer_4, sQuery, iUserId);
 	}
@@ -279,12 +273,11 @@ stock void Database_CheckPlayerBanned(int iUserId) {
 	int	 iPlayerId;
 	Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		UPDATE `player_ban` \
-		SET `active` = 'not active' \
-		WHERE `player_id` = %d AND `expire` <= UTC_TIMESTAMP() \
-	",
-					   iPlayerId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery),
+		"UPDATE `player_ban` " ...
+		"SET `active` = 'not active' " ...
+		"WHERE `player_id` = %d AND `expire` <= UTC_TIMESTAMP()",
+		iPlayerId);
 
 	g_hDatabase.Query(Database_OnCheckPlayerBanned_1, sQuery, iUserId);
 }
@@ -298,15 +291,15 @@ public void Database_OnCheckPlayerBanned_1(Handle hDriver, Handle hResult, const
 		int	 iPlayerId;
 		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
-		g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-			SELECT `reason`, CONCAT(`expire`, ' ', 'UTC') \
-			FROM `player_ban` \
-			WHERE `player_id` = %d AND `active` = 'active' AND `expire` IN (SELECT MAX(`expire`) \
-																			FROM `player_ban` \
-																			WHERE `player_id` = %d) \
-			LIMIT 1 \
-		",
-						   iPlayerId, iPlayerId);
+		g_hDatabase.Format(sQuery, sizeof(sQuery), 
+			"SELECT `reason`, CONCAT(`expire`, ' ', 'UTC') " ...
+			"FROM `player_ban` " ...
+			"WHERE `player_id` = %d AND `active` = 'active' AND `expire` " ...
+			"IN (SELECT MAX(`expire`) " ...
+				"FROM `player_ban` " ...
+				"WHERE `player_id` = %d) " ...
+			"LIMIT 1",
+			iPlayerId, iPlayerId);
 
 		g_hDatabase.Query(Database_OnCheckPlayerBanned_2, sQuery, iUserId);
 	}
@@ -366,13 +359,12 @@ stock void Database_CheckPlayerImmunity(int iUserId) {
 	int	 iPlayerId;
 	Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		SELECT `immunity` \
-		FROM `player_immunity` \
-		WHERE `player_id` = %d \
-		LIMIT 1 \
-	",
-					   iPlayerId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery), 
+		"SELECT `immunity` " ...
+		"FROM `player_immunity` " ...
+		"WHERE `player_id` = %d " ...
+		"LIMIT 1",
+		iPlayerId);
 
 	g_hDatabase.Query(Database_OnCheckPlayerImmunity, sQuery, iUserId);
 }
@@ -417,13 +409,12 @@ stock void Database_UpdatePlayerDisconnect(int iUserId) {
 	int	 iPlayerId;
 	Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		UPDATE `player` \
-		SET `current_server` = NULL \
-		WHERE `player_id` = %d \
-		LIMIT 1 \
-	",
-					   iPlayerId);
+	g_hDatabase.Format(sQuery, sizeof(sQuery), 
+		"UPDATE `player` " ...
+		"SET `current_server` = NULL " ...
+		"WHERE `player_id` = %d " ...
+		"LIMIT 1",
+		iPlayerId);
 
 	g_hDatabase.Query(Database_OnUpdatePlayerDisconnect_1, sQuery, iUserId);
 }
@@ -437,13 +428,12 @@ public void Database_OnUpdatePlayerDisconnect_1(Handle hDriver, Handle hResult, 
 		int	 iPlayerId;
 		Player_UGetValue(iUserId, PLAYER_DATABASE_ID, iPlayerId);
 
-		g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-			UPDATE `player_stats` \
-			SET `last_disconnect` = UTC_TIMESTAMP() \
-			WHERE `player_id` = %d \
-			LIMIT 1 \
-		",
-						   iPlayerId);
+		g_hDatabase.Format(sQuery, sizeof(sQuery),
+			"UPDATE `player_stats` " ...
+			"SET `last_disconnect` = UTC_TIMESTAMP() " ...
+			"WHERE `player_id` = %d " ...
+			"LIMIT 1",
+			iPlayerId);
 
 		g_hDatabase.Query(Database_OnUpdatePlayerDisconnect_2, sQuery, iUserId);
 	}
@@ -460,13 +450,12 @@ public void Database_OnUpdatePlayerDisconnect_2(Handle hDriver, Handle hResult, 
 	} else {
 		char sQuery[128];
 
-		g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-			UPDATE `server` \
-			SET `players` = `players` - 1 \
-			WHERE `server_id` = %d \
-			LIMIT 1 \
-		",
-						   g_iServerId);
+		g_hDatabase.Format(sQuery, sizeof(sQuery),
+			"UPDATE `server` " ...
+			"SET `players` = `players` - 1 " ...
+			"WHERE `server_id` = %d " ...
+			"LIMIT 1",
+			g_iServerId);
 
 		g_hDatabase.Query(Database_OnUpdatePlayerDisconnect_3, sQuery, iUserId);
 	}
@@ -515,15 +504,14 @@ public void Database_OnUpdatePlayerDisconnect_3(Handle hDriver, Handle hResult, 
 
 		// Update Player info based on saved info
 		char sQuery[1024];
-		g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-			UPDATE `player_stats` \
-			SET `kills` = kills + %d, `assists` = assists + %d, `deaths` = deaths + %d, `damage` = damage + %d, \
-			`objects_built` = objects_built + %d, `towers_bought` = towers_bought + %d, `metal_pick` = metal_pick + %d, \
-			`metal_drop` = metal_drop + %d, `waves_played` = waves_played + %d, `wave_reached` =  IF(wave_reached < %d, wave_reached = %d, wave_reached), \
-			`rounds_played` = rounds_played + %d, `rounds_won` = rounds_won + %d, `playtime` = playtime + %d  \
-			WHERE `player_id` = %d AND map_id = %d \
-		",
-						   iKills, iAssists, iDeaths, iDamage, iObjects_Built, iTowers_Bought, iMetal_Pick, iMetal_Drop, iWaves_Played, iWaves_Reached, iWaves_Reached, iRounds_Played, iRounds_Won, iPlayTime, iPlayerId, g_iServerMap);
+		g_hDatabase.Format(sQuery, sizeof(sQuery), 
+			"UPDATE `player_stats` " ...
+			"SET `kills` = kills + %d, `assists` = assists + %d, `deaths` = deaths + %d, `damage` = damage + %d, " ...
+			"`objects_built` = objects_built + %d, `towers_bought` = towers_bought + %d, `metal_pick` = metal_pick + %d, " ...
+			"`metal_drop` = metal_drop + %d, `waves_played` = waves_played + %d, `wave_reached` =  IF(wave_reached < %d, wave_reached = %d, wave_reached), " ...
+			"`rounds_played` = rounds_played + %d, `rounds_won` = rounds_won + %d, `playtime` = playtime + %d " ...
+			"WHERE `player_id` = %d AND map_id = %d",
+			iKills, iAssists, iDeaths, iDamage, iObjects_Built, iTowers_Bought, iMetal_Pick, iMetal_Drop, iWaves_Played, iWaves_Reached, iWaves_Reached, iRounds_Played, iRounds_Won, iPlayTime, iPlayerId, g_iServerMap);
 
 		g_hDatabase.Query(Database_OnUpdatePlayerDisconnect_4, sQuery, iUserId);
 

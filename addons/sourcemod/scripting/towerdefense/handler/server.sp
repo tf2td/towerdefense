@@ -184,13 +184,12 @@ stock void Server_Reset() {
 	char sCurrentMap[PLATFORM_MAX_PATH];
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
-	g_hDatabase.Format(sQuery, sizeof(sQuery), "\
-		SELECT `player_limit` \
-		FROM `map` \
-		WHERE `name` = '%s' \
-		LIMIT 1 \
-	",
-					   sCurrentMap);
+	g_hDatabase.Format(sQuery, sizeof(sQuery),
+		"SELECT `player_limit` " ...
+		"FROM `map` " ...
+		"WHERE `name` = '%s' " ...
+		"LIMIT 1",
+		sCurrentMap);
 
 	DBResultSet queryResult = SQL_Query(g_hDatabase, sQuery);
 
