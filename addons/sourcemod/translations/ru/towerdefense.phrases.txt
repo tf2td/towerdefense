@@ -1,0 +1,354 @@
+"Phrases"
+{
+  //waves
+  "waveStart"
+  {
+    "ru"      "{1} запускает {2}-ю волну"
+  }
+  "waveIncomming"
+  {
+    "ru"      "{1}-я волна приближается!"
+  }
+  "waveIncommingWithHealth"
+  {
+    "ru"      "Волна ({1}) с {2} ед. здоровья приближается!"
+  }
+  "waveIncommingWithHealthAndType"
+  {
+    "ru"      "{1} - Волна ({2}) с {3} ед. здоровья приближается!"
+  }
+  "waveArrivingIn"
+  {
+    "ru"      "Следующая волна прибудет через: {1}"
+  }
+  "waveStartedEarly"
+  {
+    "ru"      "Каждый получает {1} металла за начало на {2} сек. раньше!"
+  }
+  "wavePassed"
+  {
+    "ru"      "*** {1}-я волна пройдена ***"
+  }
+  "wavePrepareTime"
+  {
+    "ru"      "У вас есть {1} сек. на подготовку к следующей волне!"
+  }
+  "waveTowersUnlocked"
+  {
+    "ru"      "Башни теперь разблокированы и теперь их можно перемещать!"
+  }
+  "waveBonusAvailable"
+  {
+    "ru"      "Новый бонус ({1}-я волна) доступен, загляните в панель покупок!"
+  }
+  "waveTowersLocked"
+  {
+    "ru"      "Башни были заблокированы и не могут быть перемещены!"
+  }
+  "waveTypeRapid"
+  {
+    "ru"      "Быстрые"
+  }
+  "waveTypeRegen"
+  {
+    "ru"      "Регенерирующие"
+  }
+  "waveTypeKnockbackImmune"
+  {
+    "ru"      "Невоспр. к отдаче"
+  }
+  "waveTypeAir"
+  {
+    "ru"      "Воздушные"
+  }
+  "waveTypeJarateImmune"
+  {
+    "ru"      "Невоспр. к Банкате"
+  }
+  "waveTypeBoss"
+  {
+    "ru"      "Босс"
+  }
+  //towers
+  "towerBuyAttempt"
+  {
+    "ru"      "{1} хочет купить «{2}» (Общая цена: {3} металла)"
+  }
+  "towerBought"
+  {
+    "ru"      "{1} покупает: {2}"
+  }
+  "towerMoving"
+  {
+    "ru"      "Перемещение: {1}"
+  }
+  "towerPickedUp"
+  {
+    "ru"      "Вы подняли: {1}"
+  }
+  "towerUpgradeLevel"
+  {
+    "ru"      "{1} достигает {2}-го уровня"
+  }
+  "towerUpgradeDamageBonus"
+  {
+    "ru"      "{1} получает {2}%% к наносимому урону"
+  }
+  "towerUpgradeAttackSpeed"
+  {
+    "ru"      "{1} получает {2}%% к скорострельности"    
+  }
+  "towerUpgradeCanRotate"
+  {
+    "ru"      "{1} теперь можно поворачивать"   
+  }
+  "towerUpgradeProgress"
+  {
+    "ru"      "{1} \n Текущий уровень: {2} \n Улучшение: {3}/{4}"
+  }
+  "towerUpgradeMaxLevel"
+  {
+    "ru"      "{1} \n Текущий уровень: {2} \n Достигнут макс. уровень"
+  }
+  //buttons
+  "towerInsufficientMetal"
+  {
+    "ru"      "{1} требует {2} металла"
+  }
+  "sentryLimitChanged"
+  {
+    "ru"      "Ваш лимит турелей был изменён на {1}"
+  }
+  "sentryLimitBuildInfo"
+  {
+    "ru"      "Вы можете построить дополнительные турели с помощью команды /s"   
+  }
+  "dispenserLimitChanged"
+  {
+    "ru"      "Ваш лимит раздатчиков был изменён на {1}"
+  }
+  "dispenserLimitBuildInfo"
+  {
+    "ru"      "Вы можете построить раздатчики через КПК"   
+  }
+  "critChanceLimitReached"
+  {
+    "ru"      "Вы больше не можете увеличить шанс крита"   
+  }
+  "critChanceSet"
+  {
+    "ru"      "Шанс крита установлен на {1}"
+  }
+  "dmgMultiplierSet"
+  {
+    "ru"      "Множитель урона установлен на {1}"
+  }
+  "nextUpgradeCost"
+  {
+    "ru"      "Следующее улучшение будет стоить [{1}] металла для каждого игрока"
+  }
+  //timers
+  "hintBuildInfo"
+  {
+    "ru"      "Построить турели можно через КПК или с помощью команды /s"   
+  }
+  "hintDropMetal"
+  {
+    "ru"      "/d <количество> для выброса металла другим игрокам"   
+  }
+  "hintMetalStatus"
+  {
+    "ru"      "Проверить состояние по металлу у каждого игрока с помощью /m"   
+  }
+  "hintMetalTransfer"
+  {
+    "ru"      "Передача металла между союзниками: команда /t <игрок> <количество>"   
+  }
+  "hintCheckWave"
+  {
+    "ru"      "Проверьте, на какой волне вы находитесь с помощью /w"   
+  }
+  "hintDeath"
+  {
+    "ru"      "Умерев, вы потеряете половину металла!"   
+  }
+  //events
+  "eventPlayerJoined"
+  {
+    "ru"      "{1} присоединяется к защитникам"   
+  }
+  "eventGameOver"
+  {
+    "ru"      "Игра окончена! Сброс карты..."   
+  }
+  //commands
+  "cmdCurrentWave"
+  {
+    "ru"      "Сейчас идёт {1}-я волна из {2}"
+  }
+  "cmdMetalStats"
+  {
+    "ru"      "Статистика металла:"   
+  }
+  "cmdMetalStatsPlayer"
+  {
+    "ru"      "{1} - {2} металла"   
+  }
+  "cmdPassword"
+  {
+    "ru"      "Пароль сервера - {1}"
+  }
+  "cmdServerNotLockable"
+  {
+    "ru"      "Этот сервер нельзя заблокировать!"
+  }
+  "cmdSetPasswordInfo1"
+  {
+    "ru"      "Установлен пароль сервера - {1}"
+  }
+  "cmdSetPasswordInfo2"
+  {
+    "ru"      "Если вы хотите, чтобы к вам присоединились друзья, сообщите им пароль."
+  }
+  "cmdSetPasswordInfo3"
+  {
+    "ru"      "!p - снова увидеть пароль."
+  }
+  "cmdPreGameInfo1"
+  {
+    "ru"      "Приятной игры!"
+  }
+  "cmdPreGameInfo2"
+  {
+    "ru"      "Не забудьте подбирать выпавшие ящики металла!"
+  }
+  "cmdBuyTower"
+  {
+    "ru"      "{1} покупает: {2}"
+  }
+  "cmdSetWave"
+  {
+    "ru"      "Волна установлена на {1}"
+  }
+  "cmdSetWaveOOB"
+  {
+    "ru"      "Наибольшее значение волны равно {1}. Пожалуйста, выберите меньшее значение, чем это!"
+  }
+  "cmdSetWaveUsage"
+  {
+    "ru"      "Использование: !sw <волна>"
+  }
+  "cmdBuildSentryInfo"
+  {
+    "ru"      "Для улучшения турелей требуется 1000 металла!"
+  }
+  "cmdDropMetalUsage"
+  {
+    "ru"      "Использование: !d <количество>"
+  }
+  "cmdTransferMetalUsage"
+  {
+    "ru"      "Использование: !t <игрок> <количество>"
+  }
+  "cmdTransferMetalReceived"
+  {
+    "ru"      "Вы получили {1} металла от {2}."
+  }
+  "cmdTransferMetalSent"
+  {
+    "ru"      "{1} получает {2} металла от вас."
+  }
+  //forbid
+  "forbidCantFindPlayer"
+  {
+    "ru"      "{red}Не удалось найти игрока {1}."
+  }
+  "forbidTooUnspecific"
+  {
+    "ru"      "{red}Уточните данные команды."
+  }
+  "forbidNoBuildWhileTaunting"
+  {
+    "ru"      "{red}Вы не можете строить во время использования насмешки!"
+  }
+  "forbidNoBuildWhileCarrying"
+  {
+    "ru"      "{red}Вы не можете строить, неся другую постройку или башню!"
+  }
+  "forbidInsufficientMetal"
+  {
+    "ru"      "{red}Вам нужно как минимум {1} металла!"
+  }
+  "forbidSentryLimit"
+  {
+    "ru"      "{red}Достигнут лимит турелей! (Лимит: {1})"
+  }
+  "forbidDispenserLimit"
+  {
+    "ru"      "{red}Достигнут лимит раздатчиков! (Limit: {1})"
+  }
+  "forbidCantPlaceTowerThere"
+  {
+    "ru"      "{red}Невозможно разместить башню здесь."
+  }
+  "forbidTowerAlreadyCarried"
+  {
+    "ru"      "{red}{1} уже перемещается кем-то!"
+  }
+  "forbidTowerLockedMidwave"
+  {
+    "ru"      "{red}Вы не можете перемещать башни в середине волны!"
+  }
+  "forbidCantPlaceTowerOnPath"
+  {
+    "ru"      "{red}Башни не должны стоять на пути!"
+  }
+  "forbidCantPlaceTowerMidwave"
+  {
+    "ru"      "{red}Вы не можете размещать башни в середине волны!"
+  }
+  "forbidNoPasswordSet"
+  {
+    "ru"      "{red}Пароль не установлен!"
+  }
+  "forbidCantBuildInsideAPlayer"
+  {
+    "ru"      "{red}Вы не можете строить, находясь внутри другого игрока!"
+  }
+  "forbidInvalidInput"
+  {
+    "ru"      "{red}Неверная команда"
+  }
+  "forbidDropMinMetal"
+  {
+    "ru"      "{red}Вы должны выбросить не менее 1 металла"
+  }
+  "forbidDeadCantDropMetal"
+  {
+    "ru"      "{red}Невозможно выбросить металл, будучи мёртвым"
+  }
+  "forbidInAirCantDropMetal"
+  {
+    "ru"      "{red}Невозможно выбросить металл в воздухе"
+  }
+  "forbidDropMetalLimit"
+  {
+    "ru"      "{red}Достигнут лимит ящиков металла, подберите несколько ящиков металла!"
+  }
+  "forbidUnableDropMetal"
+  {
+    "ru"      "{red}Невозможно выбросить металл"
+  }
+  "forbidTransferNotEnough"
+  {
+    "ru"      "{red}Вы не можете передать больше металла, чем у вас есть!"
+  }
+  "forbidTransferNegative"
+  {
+    "ru"      "{red}Невозможно передать отрицательное значение!"
+  }
+  "forbidTransferDead"
+  {
+    "ru"      "{red}Невозможно передать, будучи мёртвым!"
+  }
+}
