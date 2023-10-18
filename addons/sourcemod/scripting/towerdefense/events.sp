@@ -1,5 +1,4 @@
 #pragma semicolon 1
-#pragma newdecls required
 
 #include <sourcemod>
 
@@ -84,7 +83,7 @@ public Action Event_PlayerChangeTeamPre(Handle hEvent, const char[] sName, bool 
 	SetEventBroadcast(hEvent, true);	// Block the chat output (Player ... joined team BLU)
 
 	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
-		PrintToChatAll("Player %N joined the Defenders.", iClient);
+		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "eventPlayerJoined", GetClientNameShort(iClient));
 	}
 
 	return Plugin_Continue;
@@ -201,7 +200,8 @@ public Action Event_RoundWin(Handle hEvent, const char[] sName, bool bDontBroadc
 	ServerCommand("mp_autoteambalance 0");
 
 	if (iTeam == TEAM_ATTACKER) {
-		PrintToChatAll("\x07FF0000Game over! Resetting the map...");
+		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "eventGameOver");
+		//PrintToChatAll("\x07FF0000Game over! Resetting the map...");
 	}
 	Server_Reset();
 

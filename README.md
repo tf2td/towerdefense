@@ -45,4 +45,8 @@ Maps - [mani](http://steamcommunity.com/profiles/76561198002201102/), [fatboy](h
 8. Start your server with the map `td_firstone_v11b`. You should be able to connect and play if everything was set up correctly.
 
 
+### General Information ###
+
+In case you are using [STAC](https://github.com/sapphonie/StAC-tf2) you need to set "stac_work_with_sv_cheats" to "1" or else STAC will shut itself down. It is recommended to also use [Cheat-Control](#optional-plugins).
+
 ##### Trouble getting it working? Create an issue and provide your server log files and other required information for assistance. #####

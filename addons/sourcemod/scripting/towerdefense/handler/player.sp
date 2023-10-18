@@ -140,8 +140,8 @@ stock void Player_Loaded(int iUserId, int iClient) {
 	Player_CGetString(iClient, PLAYER_COMMUNITY_ID, sCommunityId, sizeof(sCommunityId));
 
 	Log(TDLogLevel_Debug, "Player loaded (UserId=%d, Client=%d, CommunityId=%s)", iUserId, iClient, sCommunityId);
-
-	if (IsValidClient(iClient) && !IsFakeClient(iClient)) {
+	
+	if (IsValidClient(iClient) && !IsFakeClient(iClient) && g_bTowerDefenseMap) {
 		CreateTimer(1.0, InitInfoTimer, iUserId, TIMER_FLAG_NO_MAPCHANGE);
 	}
 }
@@ -426,82 +426,3 @@ stock void Player_AddHealth(int iClient, int iHealth, bool ignoreMax = false) {
 		}
 	}
 }
-
-/*==========  May not be of use  ==========*/
-/*
-stock Player_USetArray(iUserId, const String:sKey[], const any:aArray[], iNumItems) {
-	decl String:sUserIdKey[128];
-	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
-
-	Log(TDLogLevel_Trace, "Player_USetArray: iUserId=%d, sKey=%s, iNumItems=%d", iUserId, sKey, iNumItems);
-
-	SetTrieArray(g_hPlayerData, sUserIdKey, aArray, iNumItems);
-}
-
-stock Player_CSetArray(iClient, const String:sKey[], const any:aArray[], iNumItems) {
-	if (CheckClientForUserId(iClient)) {
-		Player_USetArray(GetClientUserId(iClient), sKey, aArray, iNumItems);
-	}
-}
-
-stock bool:Player_UGetArray(iUserId, const String:sKey[], any:aArray[], iMaxSize) {
-	decl String:sUserIdKey[128];
-	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
-
-	Log(TDLogLevel_Trace, "Player_UGetArray: iUserId=%d, sKey=%s, iMaxSize=%d", iUserId, sKey, iMaxSize);
-
-	new bool:bResult = GetTrieArray(g_hPlayerData, sUserIdKey, aArray, iMaxSize);
-
-	if (!bResult) {
-		bResult = GetTrieValue(g_hPlayerData, sUserIdKey, aArray[0]);
-	}
-
-	return bResult;
-}
-
-stock bool:Player_CGetArray(iClient, const String:sKey[], any:aArray[], iMaxSize) {
-	return CheckClientForUserId(iClient) && Player_UGetArray(GetClientUserId(iClient), sKey, aArray, iMaxSize);
-}
-
-stock Player_USetArrayValue(iUserId, const String:sKey[], iIndex, any:aValue, const iNumItems) {
-	decl String:sUserIdKey[128];
-	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
-
-	Log(TDLogLevel_Trace, "Player_USetArrayValue: iUserId=%d, sKey=%s, iIndex=%d, iNumItems=%d", iUserId, sKey, iIndex, iNumItems);
-
-	new any:aArray[iNumItems];
-	GetTrieArray(g_hPlayerData, sUserIdKey, aArray, iNumItems);
-
-	aArray[iIndex] = aValue;
-
-	SetTrieArray(g_hPlayerData, sUserIdKey, aArray, iNumItems);
-}
-
-stock Player_CSetArrayValue(iClient, const String:sKey[], iIndex, any:aValue, const iNumItems) {
-	if (CheckClientForUserId(iClient)) {
-		Player_USetArrayValue(GetClientUserId(iClient), sKey, iIndex, aValue, iNumItems);
-	}
-}
-
-stock bool:Player_UGetArrayValue(iUserId, const String:sKey[], iIndex, &any:aValue, const iNumItems) {
-	decl String:sUserIdKey[128];
-	Format(sUserIdKey, sizeof(sUserIdKey), "%d_%s", iUserId, sKey);
-
-	Log(TDLogLevel_Trace, "Player_USetArrayValue: iUserId=%d, sKey=%s, iIndex=%d, iNumItems=%d", iUserId, sKey, iIndex, iNumItems);
-
-	new any:aArray[iNumItems];
-	new bool:bResult = GetTrieArray(g_hPlayerData, sUserIdKey, aArray, iNumItems);
-
-	if (bResult) {
-		aValue = aArray[iIndex];
-	} else {
-		bResult = GetTrieValue(g_hPlayerData, sUserIdKey, aValue);
-	}
-
-	return bResult;
-}
-
-stock bool:Player_CGetArrayValue(iClient, const String:sKey[], iIndex, &any:aValue, const iNumItems) {
-	return CheckClientForUserId(iClient) && Player_UGetArrayValue(GetClientUserId(iClient), sKey, iIndex, aValue, iNumItems);
-}
-*/

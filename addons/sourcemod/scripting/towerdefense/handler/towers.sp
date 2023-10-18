@@ -30,9 +30,7 @@ stock void Tower_OnButtonBuy(TDTowerId iTowerId, int iButton, int iActivator) {
 		int	 iPrice = Tower_GetPrice(iTowerId);
 		char sName[MAX_NAME_LENGTH];
 		Tower_GetName(iTowerId, sName, sizeof(sName));
-
-		PrintToChatAll("\x01Buying \x04%s\x01 (Total price: \x04%d metal\x01)", sName, iPrice);
-
+		
 		int iClients = GetRealClientCount(true);
 
 		if (iClients <= 0) {
@@ -40,8 +38,12 @@ stock void Tower_OnButtonBuy(TDTowerId iTowerId, int iButton, int iActivator) {
 		}
 
 		iPrice /= iClients;
+		
+		if (!CanAfford(iPrice, true)) {
+			PrintToChatAll("%s %t", PLUGIN_PREFIX, "towerBuyAttempt", GetClientNameShort(iActivator), sName, iPrice);
+		}
 
-		if (CanAfford(iPrice)) {
+		if (CanAfford(iPrice, false)) {
 			Tower_Spawn(iTowerId);
 
 			for (int iClient = 1; iClient <= MaxClients; iClient++) {
@@ -51,9 +53,8 @@ stock void Tower_OnButtonBuy(TDTowerId iTowerId, int iButton, int iActivator) {
 					Player_CAddValue(iClient, PLAYER_TOWERS_BOUGHT, 1);
 				}
 			}
-
-			PrintToChatAll("\x01%N bought \x04%s", iActivator, sName);
-
+			PrintToChatAll("%s %t", PLUGIN_PREFIX, "towerBought", GetClientNameShort(iActivator), sName);
+			
 			g_bTowerBought[view_as<int>(iTowerId)] = true;
 			AcceptEntityInput(iButton, "Break");
 		}
@@ -148,8 +149,8 @@ stock void Tower_OnTouchNobuild(int iTower) {
 	if (!g_bEnabled) {
 		return;
 	}
-
-	Forbid(g_iLastMover[iTower], true, "Can't place a tower there.");
+	
+	Forbid(g_iLastMover[iTower], true, "%s %t", PLUGIN_PREFIX, "forbidCantPlaceTowerThere");
 	Tower_TeleportToSpawn(iTower);
 }
 
@@ -186,24 +187,16 @@ stock void Tower_OnUpgrade(int iTower, int iClient) {
 			} else {
 				Tower_SetLevelAttributes(iTower, iTowerId);
 			}
-
-			PrintToChatAll("\x04%N\x01 reached level \x04%d", iTower, g_iUpgradeLevel[iTower]);
-
+			
+			PrintToChatAll("%s %t", PLUGIN_PREFIX, "towerUpgradeLevel", GetClientNameShort(iTower), g_iUpgradeLevel[iTower]);
+			
 			float fDamageScale = Tower_GetDamageScale(iTowerId);
-			if (fDamageScale > 1.0) {
-				PrintToChatAll("\x04%N\x01 gained \x04%d%% damage bonus", iTower, RoundFloat(fDamageScale * 100 - 100));
-			} else if (fDamageScale < 1.0) {
-				PrintToChatAll("\x04%N\x01 gained \x04%d%% attackspeed", iTower, RoundFloat(fDamageScale * 100));
-			}
 
-			float fAttackspeedScale = Tower_GetAttackspeedScale(iTowerId);
-			if (fAttackspeedScale > 1.0) {
-				PrintToChatAll("\x04%N\x01 gained \x04%d%% attackspeed", iTower, RoundFloat(fAttackspeedScale * 100 - 100));
-			} else if (fAttackspeedScale < 1.0) {
-				PrintToChatAll("\x04%N\x01 gained \x04%d%% attackspeed", iTower, RoundFloat(fAttackspeedScale * 100));
-			}
+			PrintToChatAll("%s %t", PLUGIN_PREFIX, "towerUpgradeDamageBonus", GetClientNameShort(iTower),RoundFloat(fDamageScale * 100 - ((fDamageScale > 1.0) ? 100 : 0)));
+			PrintToChatAll("%s %t", PLUGIN_PREFIX, "towerUpgradeAttackSpeed", GetClientNameShort(iTower),RoundFloat(fDamageScale * 100 - ((fDamageScale > 1.0) ? 100 : 0)));
+
 			if (Tower_GetRotate(iTowerId)) {
-				PrintToChatAll("\x04%N\x01 can now rotate", iTower);
+				PrintToChatAll("%s %t", PLUGIN_PREFIX, "towerUpgradeCanRotate", GetClientNameShort(iTower));
 			}
 		}
 	}
@@ -212,9 +205,9 @@ stock void Tower_OnUpgrade(int iTower, int iClient) {
 	HideAdvancedAnnotation(iClient, iTower);
 
 	if (g_iUpgradeLevel[iTower] == iMaxLevel) {
-		AttachAnnotation(iTower, 2.0, "%N\nCurrent Level: %d\nMax. Level Reached", iTower, g_iUpgradeLevel[iTower]);
+		AttachAnnotation(iTower, 2.0, "%t", "towerUpgradeMaxLevel", GetClientNameShort(iTower), g_iUpgradeLevel[iTower]);
 	} else {
-		AttachAnnotation(iTower, 2.0, "%N\nCurrent Level: %d\nUpgrade Progress: %d/%d", iTower, g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower], Tower_GetMetal(iTowerId));
+		AttachAnnotation(iTower, 2.0, "%t", "towerUpgradeProgress", GetClientNameShort(iTower), g_iUpgradeLevel[iTower], g_iUpgradeMetal[iTower], Tower_GetMetal(iTowerId));
 	}
 }
 
@@ -420,12 +413,12 @@ stock void Tower_Pickup(int iClient) {
 
 	if (IsTower(iTower)) {
 		if (IsTowerAttached(iTower)) {
-			Forbid(iClient, true, "%N is already being moved by someone!", iTower);
+			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidTowerAlreadyCarried", GetClientNameShort(iTower));
 			return;
 		}
-
-		if (g_bTowersLocked) {
-			Forbid(iClient, true, "You can't move towers mid wave!");
+	
+		if(g_bTowersLocked){
+			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidTowerLockedMidwave");
 			return;
 		}
 
@@ -436,12 +429,17 @@ stock void Tower_Pickup(int iClient) {
 		TeleportEntity(iTower, view_as<float>({ 0.0, 0.0, -8192.0 }), NULL_VECTOR, NULL_VECTOR);	// Teleport out of the map
 
 		HideAnnotation(iTower);
-		AttachAnnotation(iClient, 86400.0, "Moving: %N", iTower);
-
+		AttachAnnotation(iClient, 86400.0, "%t", "towerMoving", GetClientNameShort(iTower));
+		
 		g_bCarryingObject[iClient] = true;
-		g_iAttachedTower[iClient]  = iTower;
+		g_iAttachedTower[iClient] = iTower;
+		
 
-		PrintToChat(iClient, "\x01You picked up \x04%N", iTower);
+		TDTowerId iTowerId = GetTowerId(iTower);
+		char sName[MAX_NAME_LENGTH];
+		Tower_GetName(iTowerId, sName, sizeof(sName));
+		
+		CPrintToChat(iClient, "%t", "towerPickedUp", sName);
 		Log(TDLogLevel_Debug, "%N picked up tower (%N)", iClient, iTower);
 	}
 }
@@ -459,16 +457,16 @@ stock void Tower_Drop(int iClient) {
 	}
 
 	if (g_bInsideNobuild[iClient]) {
-		Forbid(iClient, true, "Towers aren't meant to be placed on the path!");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidCantPlaceTowerOnPath");
 		return;
 	}
-
-	if (g_bTowersLocked) {
-		Forbid(iClient, true, "You can't place towers mid wave!");
-		return;
-	}
-
-	int	  iTower = g_iAttachedTower[iClient];
+	
+	if(g_bTowersLocked){
+			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidCantPlaceTowerMidwave");
+			return;
+		}
+	
+	int iTower = g_iAttachedTower[iClient];
 	float fLocation[3], fAngles[3];
 
 	SetEntityMoveType(iTower, MOVETYPE_WALK);
@@ -561,14 +559,13 @@ stock bool IsTowerAttached(int iTower) {
  */
 
 stock int GetTower(TDTowerId iTowerId) {
-	char sName[MAX_NAME_LENGTH], sName2[MAX_NAME_LENGTH];
-
+	char sName2[MAX_NAME_LENGTH];
+	
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsTower(iClient)) {
-			GetClientName(iClient, sName, sizeof(sName));
 			Tower_GetName(iTowerId, sName2, sizeof(sName2));
-
-			if (StrEqual(sName, sName2)) {
+			
+			if (StrEqual(GetClientNameShort(iClient), sName2)) {
 				return iClient;
 			}
 		}
@@ -586,7 +583,8 @@ stock int GetTower(TDTowerId iTowerId) {
 
 stock TDTowerId GetTowerId(int iTower) {
 	if (IsValidClient(iTower)) {
-		char sName[MAX_NAME_LENGTH], sName2[MAX_NAME_LENGTH];
+		char sName[MAX_NAME_LENGTH]; 
+		char sName2[MAX_NAME_LENGTH];
 		GetClientName(iTower, sName, sizeof(sName));
 
 		int iClient, iTowerId;

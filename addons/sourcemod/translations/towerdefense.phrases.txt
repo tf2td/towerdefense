@@ -1,17 +1,22 @@
 "Phrases"
 {
-  //Waves
+  //waves
   "waveStart"
   {
-    "#format" "{1:d}"
-    "en"      "started Wave {1}"
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} started Wave {2}"
   }
   "waveIncomming"
+  {
+    "#format" "{1:d}"
+    "en"      "Wave {1} incoming!"
+  }
+  "waveIncommingWithHealth"
   {
     "#format" "{1:d},{2:d}"
     "en"      "Wave ({1}) with {2} HP incoming!"
   }
-  "waveIncommingType"
+  "waveIncommingWithHealthAndType"
   {
     "#format" "{1:s},{2:d},{3:d}"
     "en"      "{1} Wave ({2}) with {3} HP incoming!"
@@ -40,7 +45,15 @@
   {
     "en"      "Towers have been unlocked and can now be moved!"
   }
-  //Wave Types
+  "waveBonusAvailable"
+  {
+    "#format" "{1:d}"
+    "en"      "New bonus (wave {1}) available, check the buy panel!"
+  }
+  "waveTowersLocked"
+  {
+    "en"      "Towers have been locked and can't be moved!"
+  }
   "waveTypeRapid"
   {
     "en"      "Rapid"
@@ -64,5 +77,318 @@
   "waveTypeBoss"
   {
     "en"      "Boss"
+  }
+  //towers
+  "towerBuyAttempt"
+  {
+    "#format" "{1:s},{2:s},{3:d}"
+    "en"      "{1} wants to buy {2} (Total price: {3} metal)"
+  }
+  "towerBought"
+  {
+    "#format" "{1:s},{2:s}"
+    "en"      "{1} bought {2}"
+  }
+  "towerMoving"
+  {
+    "#format" "{1:s}"
+    "en"      "Moving: {1}"
+  }
+  "towerPickedUp"
+  {
+    "#format" "{1:s}"
+    "en"      "You picked up {1}"
+  }
+  "towerUpgradeLevel"
+  {
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} reached level {2}"
+  }
+  "towerUpgradeDamageBonus"
+  {
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} gained {2}%% damage bonus"
+  }
+  "towerUpgradeAttackSpeed"
+  {
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} gained {2}%% attackspeed"    
+  }
+  "towerUpgradeCanRotate"
+  {
+    "#format" "{1:s}"
+    "en"      "{1} can now rotate"   
+  }
+  "towerUpgradeProgress"
+  {
+    "#format" "{1:s},{2:d},{3:d},{4:d}"
+    "en"      "{1} \n Current Level: {2} \n Upgrade Progress: {3}/{4}"
+  }
+  "towerUpgradeMaxLevel"
+  {
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} \n Current Level: {2} \n Max. Level Reached"
+  }
+  //buttons
+  "towerInsufficientMetal"
+  {
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} needs {2} metal"
+  }
+  "sentryLimitChanged"
+  {
+    "#format" "{1:d}"
+    "en"      "Your sentry limit has been changed to {1}"
+  }
+  "sentryLimitBuildInfo"
+  {
+    "en"      "You can build additional sentries with the command /s"   
+  }
+  "dispenserLimitChanged"
+  {
+    "#format" "{1:d}"
+    "en"      "Your dispenser limit has been changed to {1}"
+  }
+  "dispenserLimitBuildInfo"
+  {
+    "en"      "You can build dispensers via your PDA"   
+  }
+  "critChanceLimitReached"
+  {
+    "en"      "You can't increase crit chance anymore"   
+  }
+  "critChanceSet"
+  {
+    "#format" "{1:d}"
+    "en"      "Crit chance set to {1}"
+  }
+  "dmgMultiplierSet"
+  {
+    "#format" "{1:d}"
+    "en"      "Damage multiplier set to {1}"
+  }
+  "nextUpgradeCost"
+  {
+    "#format" "{1:d}"
+    "en"      "Next Upgrade will cost [{1}] metal per Player"
+  }
+  //timers
+  "hintBuildInfo"
+  {
+    "en"      "You can build sentries via your PDA or with the command /s"   
+  }
+  "hintDropMetal"
+  {
+    "en"      "/d <amount> to drop metal for other players"   
+  }
+  "hintMetalStatus"
+  {
+    "en"      "Check everyone's metal status with /m"   
+  }
+  "hintMetalTransfer"
+  {
+    "en"      "Transfer metal between your comrades via /t <player> <amount>"   
+  }
+  "hintCheckWave"
+  {
+    "en"      "Check on what wave you're on with /w"   
+  }
+  "hintDeath"
+  {
+    "en"      "Dying will make you lose half your metal!"   
+  }
+  //events
+  "eventPlayerJoined"
+  {
+    "#format" "{1:s}"
+    "en"      "{1} joined the Defenders"   
+  }
+  "eventGameOver"
+  {
+    "en"      "Game over! Resetting the map..."   
+  }
+  //commands
+  "cmdCurrentWave"
+  {
+    "#format" "{1:d},{2:d}"
+    "en"      "Currently on Wave {1} out of {2}"
+  }
+  "cmdMetalStats"
+  {
+    "en"      "Metal stats:"   
+  }
+  "cmdMetalStatsPlayer"
+  {
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} - {2} metal"   
+  }
+  "cmdPassword"
+  {
+    "#format" "{1:s}"
+    "en"      "The server password is {1}"
+  }
+  "cmdServerNotLockable"
+  {
+    "en"      "This server can't be locked!"
+  }
+  "cmdSetPasswordInfo1"
+  {
+    "#format" "{1:s}"
+    "en"      "Set the server password to {1}"
+  }
+  "cmdSetPasswordInfo2"
+  {
+    "en"      "If you want your friends to join, tell them the password."
+  }
+  "cmdSetPasswordInfo3"
+  {
+    "en"      "Write !p to see the password again."
+  }
+  "cmdPreGameInfo1"
+  {
+    "en"      "Have fun playing!"
+  }
+  "cmdPreGameInfo2"
+  {
+    "en"      "Don't forget to pick up dropped metal packs!"
+  }
+  "cmdBuyTower"
+  {
+    "#format" "{1:s},{2:s}"
+    "en"      "{1} bought {2}"
+  }
+  "cmdSetWave"
+  {
+    "#format" "{1:s}"
+    "en"      "Wave set to {1}"
+  }
+  "cmdSetWaveOOB"
+  {
+    "#format" "{1:s}"
+    "en"      "The highest wave is {1}. Please choose a lower value than that!"
+  }
+  "cmdSetWaveUsage"
+  {
+    "en"      "Usage: !sw <wave>"
+  }
+  "cmdBuildSentryInfo"
+  {
+    "en"      "Sentries need 1000 metal to upgrade!"
+  }
+  "cmdDropMetalUsage"
+  {
+    "en"      "Usage: !d <amount>"
+  }
+  "cmdTransferMetalUsage"
+  {
+    "en"      "Usage: !t <player> <amount>"
+  }
+  "cmdTransferMetalReceived"
+  {
+    "#format" "{1:d},{2:s}"
+    "en"      "You received {1} metal from {2}."
+  }
+  "cmdTransferMetalSent"
+  {
+    "#format" "{1:s},{2:d}"
+    "en"      "{1} received {2} metal from you."
+  }
+  //forbid
+  "forbidCantFindPlayer"
+  {
+    "#format" "{1:s}"
+    "en"      "{red}Couldn't find player {1}."
+  }
+  "forbidTooUnspecific"
+  {
+    "en"      "{red}Be more specific."
+  }
+  "forbidNoBuildWhileTaunting"
+  {
+    "en"      "{red}You can't build while taunting!"
+  }
+  "forbidNoBuildWhileCarrying"
+  {
+    "en"      "{red}You can not build while carrying another building or a tower!"
+  }
+  "forbidInsufficientMetal"
+  {
+    "#format" "{1:d}"
+    "en"      "{red}You need at least {1} metal!"
+  }
+  "forbidSentryLimit"
+  {
+    "#format" "{1:d}"
+    "en"      "{red}Sentry limit reached! (Limit: {1})"
+  }
+  "forbidDispenserLimit"
+  {
+    "#format" "{1:d}"
+    "en"      "{red}Dispenser limit reached! (Limit: {1})"
+  }
+  "forbidCantPlaceTowerThere"
+  {
+    "en"      "{red}Can't place a tower there."
+  }
+  "forbidTowerAlreadyCarried"
+  {
+    "#format" "{1:s}"
+    "en"      "{red}{1} is already being moved by someone!"
+  }
+  "forbidTowerLockedMidwave"
+  {
+    "en"      "{red}You can't move towers mid wave!"
+  }
+  "forbidCantPlaceTowerOnPath"
+  {
+    "en"      "{red}Towers aren't meant to be placed on the path!"
+  }
+  "forbidCantPlaceTowerMidwave"
+  {
+    "en"      "{red}You can't place towers mid wave!"
+  }
+  "forbidNoPasswordSet"
+  {
+    "en"      "{red}There is no password set!"
+  }
+  "forbidCantBuildInsideAPlayer"
+  {
+    "en"      "{red}You can not build while standing inside another player!"
+  }
+  "forbidInvalidInput"
+  {
+    "en"      "{red}Invalid Input"
+  }
+  "forbidDropMinMetal"
+  {
+    "en"      "{red}You must drop at least 1 metal"
+  }
+  "forbidDeadCantDropMetal"
+  {
+    "en"      "{red}Cannot drop metal while dead"
+  }
+  "forbidInAirCantDropMetal"
+  {
+    "en"      "{red}Cannot drop metal while in the air"
+  }
+  "forbidDropMetalLimit"
+  {
+    "en"      "{red}Metalpack limit reached, pick some metalpacks up!"
+  }
+  "forbidUnableDropMetal"
+  {
+    "en"      "{red}Unable to drop metal"
+  }
+  "forbidTransferNotEnough"
+  {
+    "en"      "{red}You can't transfer more metal then you have!"
+  }
+  "forbidTransferNegative"
+  {
+    "en"      "{red}Can't transfer negative amounts!"
+  }
+  "forbidTransferDead"
+  {
+    "en"      "{red}Can't transfer while dead!"
   }
 }

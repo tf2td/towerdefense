@@ -1,19 +1,15 @@
 #pragma semicolon 1
+#pragma newdecls required
 
 #include <sourcemod>
 #include <sdkhooks>
 #include <sdktools>
-// Plugin appears to work fine without it? Cnat find any usage either.
-//#include <socket>
-// steamtools is deprecated
-//#include <steamtools>
 #include <SteamWorks>
 #include <tf2>
 #include <tf2_stocks>
 #include <tf2items>
 #include <tf2attributes>
-
-#pragma newdecls required
+#include <morecolors>
 
 /*=================================
 =            Constants            =
@@ -22,7 +18,7 @@
 #define PLUGIN_NAME	   "TF2 Tower Defense"
 #define PLUGIN_AUTHOR  "floube, benedevil, hurpdurp, dragonisser"
 #define PLUGIN_DESC	   "Stop enemies from crossing a map by buying towers and building up defenses."
-#define PLUGIN_VERSION "2.1.2"
+#define PLUGIN_VERSION "2.1.3"
 #define PLUGIN_URL	   "https://github.com/tf2td/towerdefense"
 #define PLUGIN_PREFIX  "[TF2TD]"
 
@@ -91,6 +87,7 @@ public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iMax
 	}
 
 	MarkNativeAsOptional("SteamWorks_SetGameDescription");
+	MarkNativeAsOptional("GetUserMessageType");
 	return APLRes_Success;
 }
 
@@ -113,6 +110,7 @@ public void OnPluginStart() {
 
 	HookEvents();
 	RegisterCommands();
+	CreateConVars();
 	LoadConVars();
 	SetConVars();
 
@@ -200,7 +198,7 @@ public void OnMapEnd() {
 }
 
 public void OnConfigsExecuted() {
-	g_bEnabled	  = GetConVarBool(g_hEnabled) && g_bTowerDefenseMap && g_bSteamWorks && g_bTF2Attributes;
+	g_bEnabled	  = g_hEnabled.BoolValue && g_bTowerDefenseMap && g_bSteamWorks && g_bTF2Attributes;
 	g_bMapRunning = true;
 
 	UpdateGameDescription();
@@ -211,10 +209,11 @@ public void OnConfigsExecuted() {
 			GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
 			Log(TDLogLevel_Info, "Map \"%s\" is not supported, Tower Defense has been disabled.", sCurrentMap);
+			SetPassword("", false);
+
 		} else {
 			Log(TDLogLevel_Info, "Tower Defense is disabled.");
 		}
-
 		return;
 	}
 
@@ -286,16 +285,13 @@ public void OnClientPostAdminCheck(int iClient) {
 	GetClientAuthId(iClient, AuthId_Steam2, sSteamId, sizeof(sSteamId));
 
 	if (!StrEqual(sSteamId, "BOT")) {
-		char sName[MAX_NAME_LENGTH];
-		GetClientName(iClient, sName, sizeof(sName));
-
 		char sCommunityId[32];
 		GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId));
 
 		char sIp[32];
 		GetClientIP(iClient, sIp, sizeof(sIp));
 
-		Player_Connected(GetClientUserId(iClient), iClient, sName, sSteamId, sCommunityId, sIp);
+		Player_Connected(GetClientUserId(iClient), iClient, GetClientNameShort(iClient), sSteamId, sCommunityId, sIp);
 	}
 
 	SDKHook(iClient, SDKHook_OnTakeDamage, OnTakeDamage);
@@ -490,6 +486,9 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 	}
 
 	if (IsClientInGame(iClient)) {
+		if (!IsValidEdict(iInflictor)) {
+			return Plugin_Continue;
+		}
 		char sAttackerObject[128];
 		GetEdictClassname(iInflictor, sAttackerObject, sizeof(sAttackerObject));
 
@@ -759,12 +758,7 @@ stock void UpdateGameDescription() {
 	char sGamemode[64];
 
 	if (g_bEnabled) {
-		if (g_hPlayerCountInDescription) {
-			Format(sGamemode, sizeof(sGamemode), "%s (%s) - %i / %i", GAME_DESCRIPTION, PLUGIN_VERSION, GetRealClientCount(), g_iMaxClients);
-		} else {
-			Format(sGamemode, sizeof(sGamemode), "%s (%s)", GAME_DESCRIPTION, PLUGIN_VERSION);
-		}
-
+		Format(sGamemode, sizeof(sGamemode), "%s (%s)", GAME_DESCRIPTION, PLUGIN_VERSION);
 	} else {
 		strcopy(sGamemode, sizeof(sGamemode), "Team Fortress");
 	}
@@ -968,11 +962,11 @@ stock int GetClientByName(int iClient, char[] sName) {
 		return iTarget;
 	} else if (iResults == 0) {
 		if (IsDefender(iClient)) {
-			Forbid(iClient, true, "Couldn't find player %s.", sName);
+			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidCantFindPlayer", sName);
 		}
 	} else {
 		if (IsDefender(iClient)) {
-			Forbid(iClient, true, "Be more specific.", sName);
+			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidTooUnspecific");
 		}
 	}
 
@@ -1114,19 +1108,19 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 	}
 
 	if (TF2_IsPlayerInCondition(iClient, TFCond_Taunting)) {
-		Forbid(iClient, true, "You can't build while taunting!");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidNoBuildWhileTaunting");
 		return false;
 	}
 
 	if (g_bCarryingObject[iClient]) {
-		Forbid(iClient, true, "You can not build while carrying another building or a tower!");
+		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidNoBuildWhileCarrying");
 		return false;
 	}
 
 	switch (iType) {
 		case TDBuilding_Sentry: {
 			if (GetClientMetal(iClient) < 130) {
-				Forbid(iClient, true, "You need at least 130 metal!");
+				Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidInsufficientMetal", 130);
 				return false;
 			}
 
@@ -1148,13 +1142,13 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 			if (iCount < g_iBuildingLimit[TDBuilding_Sentry]) {
 				return true;
 			} else {
-				Forbid(iClient, true, "Sentry limit reached! (Limit: %d)", g_iBuildingLimit[TDBuilding_Sentry]);
+				Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidSentryLimit", g_iBuildingLimit[TDBuilding_Sentry]);
 				return false;
 			}
 		}
 		case TDBuilding_Dispenser: {
 			if (GetClientMetal(iClient) < 100) {
-				Forbid(iClient, true, "You need at least 100 metal!");
+				Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidInsufficientMetal", 100);
 				return false;
 			}
 
@@ -1177,7 +1171,7 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 				Player_CAddValue(iClient, PLAYER_OBJECTS_BUILT, 1);
 				return true;
 			} else {
-				Forbid(iClient, true, "Dispenser limit reached! (Limit: %d)", g_iBuildingLimit[TDBuilding_Dispenser]);
+				Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidDispenserLimit", g_iBuildingLimit[TDBuilding_Dispenser]);
 				return false;
 			}
 		}
@@ -1187,7 +1181,7 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 }
 
 /**
- * Prints a red forbid message to a client and plays a sound.
+ * Prints a colored (default red) forbid message to a client and plays by default a sound.
  *
  * @param iClient 		The client.
  * @param bPlaySound	Play the sound or not.
@@ -1196,11 +1190,11 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
  * @noreturn
  */
 
-stock void Forbid(int iClient, bool bPlaySound, const char[] sMessage, any...) {
+stock void Forbid(int iClient, bool bPlaySound = true, const char[] sMessage, any...) {
 	char sFormattedMessage[512];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
 
-	PrintToChat(iClient, "\x07FF0000%s", sFormattedMessage);
+	CPrintToChat(iClient, "%s", sFormattedMessage);
 
 	if (bPlaySound) {
 		PlaySound("Forbid", iClient);
@@ -1229,13 +1223,7 @@ stock void ReloadMap() {
  */
 
 stock void StripConVarFlag(char[] sCvar, int iFlag) {
-	Handle hCvar;
-	int	   iFlags;
-
-	hCvar  = FindConVar(sCvar);
-	iFlags = GetConVarFlags(hCvar);
-	iFlags &= ~iFlag;
-	SetConVarFlags(hCvar, iFlags);
+	FindConVar(sCvar).Flags &= ~iFlag;
 }
 
 /**
@@ -1247,13 +1235,7 @@ stock void StripConVarFlag(char[] sCvar, int iFlag) {
  */
 
 stock void AddConVarFlag(char[] sCvar, int iFlag) {
-	Handle hCvar;
-	int	   iFlags;
-
-	hCvar  = FindConVar(sCvar);
-	iFlags = GetConVarFlags(hCvar);
-	iFlags &= iFlag;
-	SetConVarFlags(hCvar, iFlags);
+	FindConVar(sCvar).Flags &= iFlag;
 }
 
 /**
@@ -1289,24 +1271,6 @@ stock void PrintToHud(int iClient, const char[] sMessage, any...) {
 	if (!IsValidClient(iClient) || !IsClientInGame(iClient)) {
 		return;
 	}
-
-	/*
-	char sBuffer[256];
-
-	SetGlobalTransTarget(iClient);
-	VFormat(sBuffer, sizeof(sBuffer), sMessage, 3);
-	ReplaceString(sBuffer, sizeof(sBuffer), "\"", "“");
-
-	decl iParams[] = {0x76, 0x6F, 0x69, 0x63, 0x65, 0x5F, 0x73, 0x65, 0x6C, 0x66, 0x00, 0x00};
-	new Handle:hMessage = StartMessageOne("HudNotifyCustom", iClient);
-	BfWriteString(hMessage, sBuffer);
-
-	for (new i = 0; i < sizeof(iParams); i++) {
-		BfWriteByte(hMessage, iParams[i]);
-	}
-
-	EndMessage();
-	*/
 
 	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 3);
@@ -1346,20 +1310,14 @@ stock void PrintToHudAll(const char[] sMessage, any...) {
  */
 
 stock int GetClientByNameExact(char[] sName, int iTeam = -1) {
-	char sClientName[MAX_NAME_LENGTH];
-
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsClientInGame(iClient)) {
 			if (iTeam == -1) {
-				GetClientName(iClient, sClientName, sizeof(sClientName));
-
-				if (StrEqual(sName, sClientName)) {
+				if (StrEqual(sName, GetClientNameShort(iClient))) {
 					return iClient;
 				}
 			} else if (GetClientTeam(iClient) == iTeam) {
-				GetClientName(iClient, sClientName, sizeof(sClientName));
-
-				if (StrEqual(sName, sClientName)) {
+				if (StrEqual(sName, GetClientNameShort(iClient))) {
 					return iClient;
 				}
 			}
@@ -1586,4 +1544,11 @@ stock int GetClosestClient(int iClient) {
 			}
 		}
 	return iClosestEntity;
+}
+
+stock char[] GetClientNameShort(int iClient) {
+	// Steam username is limited to 32 chars, sourcemod says 128?
+	char sName[MAX_NAME_LENGTH];
+	GetClientName(iClient, sName, sizeof(sName));
+	return sName;
 }

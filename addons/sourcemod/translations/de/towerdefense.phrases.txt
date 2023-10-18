@@ -3,15 +3,19 @@
   //Waves
   "waveStart"
   {
-    "de"      "hat Welle {1} gestartet"
+    "de"      "{1} hat Welle {2} gestartet"
   }
   "waveIncomming"
   {
-    "de"      "Welle ({1}) mit {2} HP ankommend!"
+    "de"      "Welle {1} ankommend!"
   }
-  "waveIncommingType"
+  "waveIncommingWithHealth"
   {
-    "de"      "{1} Welle ({2}) mit {3} HP ankommend!"
+    "de"      "Welle ({1}) mit {2} LP ankommend!"
+  }
+  "waveIncommingWithHealthAndType"
+  {
+    "de"      "{1} Welle ({2}) mit {3} LP ankommend!"
   }
   "waveArrivingIn"
   {
@@ -33,7 +37,14 @@
   {
     "de"      "Die Türme wurden freigeschaltet und können nun bewegt werden!"
   }
-  //Wave Types
+  "waveBonusAvailable"
+  {
+    "de"      "Neuer Bonus (Welle {1}) verfügbar, siehe Kauf-Panel!"
+  }
+  "waveTowersLocked"
+  {
+    "de"      "Die Türme sind gesperrt und können nicht bewegt werden!"
+  }
   "waveTypeRapid"
   {
     "de"      "Schnelle"
@@ -57,5 +68,279 @@
   "waveTypeBoss"
   {
     "de"      "Boss"
+  }  
+  //towers
+  "towerBuyAttempt"
+  {
+    "de"      "{1} möchte {2} kaufen (Gesamtpreis: {3} Metall)"
+  }
+  "towerBought"
+  {
+    "de"      "{1} kaufte {2}"
+  }
+  "towerMoving"
+  {
+    "de"      "Verschieben: {1}"
+  }
+  "towerPickedUp"
+  {
+    "de"      "Du hast {1} aufgehoben"
+  }
+  "towerUpgradeLevel"
+  {
+    "de"      "{1} hat Level {2} erreicht"
+  }
+  "towerUpgradeDamageBonus"
+  {
+    "de"      "{1} erhielt {2}% extra Schaden"
+  }
+  "towerUpgradeAttackSpeed"
+  {
+    "de"      "{1} erhielt {2}% Angriffgeschwindikeit"    
+  }
+  "towerUpgradeCanRotate"
+  {
+    "de"      "{1} kann sich nun drehen"   
+  }
+  //buttons
+  "towerInsufficientMetal"
+  {
+    "de"      "{1} braucht {2} Metall"
+  }
+  "sentryLimitChanged"
+  {
+    "de"      "Dein Sentry limit wurde auf {1} geändert"
+  }
+  "sentryLimitBuildInfo"
+  {
+    "de"      "Du kannst zusätzliche Sentries mit dem Befehl /s bauen"   
+  }
+  "dispenserLimitChanged"
+  {
+    "de"      "Dein Dispenser limit wurde auf {1} geändert"
+  }
+  "dispenserLimitBuildInfo"
+  {
+    "de"      "Du kannst Dispenser über deinen PDA bauen"   
+  }
+  "critChanceLimitReached"
+  {
+    "de"      "Du kannst die Crit-Chance nicht mehr erhöhen"   
+  }
+  "critChanceSet"
+  {
+    "de"      "Crit-Chance auf {1} gesetzt"
+  }
+  "dmgMultiplierSet"
+  {
+    "de"      "Schadensmultiplikator auf {1} gesetzt"
+  }
+  "nextUpgradeCost"
+  {
+    "de"      "Das nächste Upgrade kostet [{1}] Metall pro Spieler"
+  }
+  //timers
+  "hintBuildInfo"
+  {
+    "de"      "Du kannst Sentries über deinen PDA oder mit dem Befehl /s bauen"   
+  }
+  "hintDropMetal"
+  {
+    "de"      "/d <Menge>, um Metall für andere Spieler fallen zu lassen"   
+  }
+  "hintMetalStatus"
+  {
+    "de"      "Überprüfe den Metallstatus von allen mit /m"   
+  }
+  "hintMetalTransfer"
+  {
+    "de"      "Transferiere Metall zwischen deinen Kameraden mit /t <Spieler> <Menge>"   
+  }
+  "hintCheckWave"
+  {
+    "de"      "Schau nach, auf welcher Welle du dich befindest mit /w"   
+  }
+  "hintDeath"
+  {
+    "de"      "Wenn du stirbst, verlierst du die Hälfte deines Metalls!"   
+  }
+  //events
+  "eventPlayerJoined"
+  {
+    "de"      "{1} trat den Verteidigern bei"   
+  }
+  "eventGameOver"
+  {
+    "de"      "Das Match ist vorbei! Die Karte wird zurückgesetzt..."   
+  }
+  //commands
+  "cmdCurrentWave"
+  {
+    "de"      "Zurzeit auf Welle {1} von {2}"
+  }
+  "cmdMetalStats"
+  {
+    "de"      "Metallstatus:"   
+  }
+  "cmdMetalStatsPlayer"
+  {
+    "de"      "{1} - {2} Metall"   
+  }
+  "cmdPassword"
+  {
+    "de"      "Das Server-Passwort lautet {1}"
+  }
+  "cmdServerNotLockable"
+  {
+    "de"      "Dieser Server kann nicht gesperrt werden!"
+  }
+  "cmdSetPasswordInfo1"
+  {
+    "de"      "Serverpasswort auf {1} gesetzt"
+  }
+  "cmdSetPasswordInfo2"
+  {
+    "de"      "Wenn du möchtest, dass deine Freunde beitreten können, musst du ihnen das Passwort mitteilen."
+  }
+  "cmdSetPasswordInfo3"
+  {
+    "de"      "Schreibe !p, um das Passwort erneut zu sehen."
+  }
+  "cmdPreGameInfo1"
+  {
+    "de"      "Viel Spaß beim Spielen!"
+  }
+  "cmdPreGameInfo2"
+  {
+    "de"      "Vergiss nicht, heruntergefallene Metallpakete aufzuheben!"
+  }
+  "cmdBuyTower"
+  {
+    "de"      "{1} kaufte {2}"
+  }
+  "cmdSetWave"
+  {
+    "de"      "Welle auf {1} gesetzt"
+  }
+  "cmdSetWaveOOB"
+  {
+    "de"      "Die höchste Welle ist {1}. Bitte wähle einen niedrigeren Wert als diesen!"
+  }
+  "cmdSetWaveUsage"
+  {
+    "de"      "Benutzung: !sw <Welle>"
+  }
+  "cmdBuildSentryInfo"
+  {
+    "de"      "Sentries brauchen 1000 Metall zum Upgraden!"
+  }
+  "cmdDropMetalUsage"
+  {
+    "de"      "Benutzung: !d <Betrag>"
+  }
+  "cmdTransferMetalUsage"
+  {
+    "de"      "Benutzung: !t <Spieler> <Betrag>"
+  }
+  "cmdTransferMetalReceived"
+  {
+    "de"      "Du hast {1} Metall von {2} erhalten."
+  }
+  "cmdTransferMetalSent"
+  {
+    "de"      "{1} erhielt {2} Metall von dir."
+  }
+  //forbid
+  "forbidCantFindPlayer"
+  {
+    "de"      "{red}Spieler {1} konnte nicht gefunden werden."
+  }
+  "forbidTooUnspecific"
+  {
+    "de"      "{red}Sei etwas genauer."
+  }
+  "forbidNoBuildWhileTaunting"
+  {
+    "de"      "{red}Du kannst nicht bauen, während du spottest!"
+  }
+  "forbidNoBuildWhileCarrying"
+  {
+    "de"      "{red}Du kannst nicht bauen, während du ein anderes Gebäude oder einen Turm trägst!"
+  }
+  "forbidInsufficientMetal"
+  {
+    "de"      "{red}Du brauchst mindestens {1} Metall!"
+  }
+  "forbidSentryLimit"
+  {
+    "de"      "{red}Sentry Limit erreicht! (Limit: {1})"
+  }
+  "forbidDispenserLimit"
+  {
+    "de"      "{red}Dispenser Limit erreicht! (Limit: {1})"
+  }
+  "forbidCantPlaceTowerThere"
+  {
+    "de"      "{red}Dort kann kein Turm stehen."
+  }
+  "forbidTowerAlreadyCarried"
+  {
+    "de"      "{red}{1} wird bereits von jemandem bewegt!"
+  }
+  "forbidTowerLockedMidwave"
+  {
+    "de"      "{red}Du kannst die Türme nicht während einer Welle verschieben!"
+  }
+  "forbidCantPlaceTowerOnPath"
+  {
+    "de"      "{red}Türme dürfen nicht auf den Weg!"
+  }
+  "forbidCantPlaceTowerMidwave"
+  {
+    "de"      "{red}Du kannst keine Türme während einer Welle platzieren!"
+  }
+  "forbidNoPasswordSet"
+  {
+    "de"      "{red}Es ist kein Passwort festgelegt!"
+  }
+  "forbidCantBuildInsideAPlayer"
+  {
+    "de"      "{red}Du kannst nicht bauen, während du in einem anderen Spieler stehst!"
+  }
+  "forbidInvalidInput"
+  {
+    "de"      "{red}Ungültige Eingabe"
+  }
+  "forbidDropMinMetal"
+  {
+    "de"      "{red}Du musst mindestens 1 Metall fallen lassen"
+  }
+  "forbidDeadCantDropMetal"
+  {
+    "de"      "{red}Du kannst kein Metall fallen lassen, wenn du tot bist!"
+  }
+  "forbidInAirCantDropMetal"
+  {
+    "de"      "{red}Kann in der Luft kein Metall abwerfen"
+  }
+  "forbidDropMetalLimit"
+  {
+    "de"      "{red}Metallpaket-Limit erreicht, sammle einige Metallpakete ein!"
+  }
+  "forbidUnableDropMetal"
+  {
+    "de"      "{red}Metall kann nicht fallen gelassen werden"
+  }
+  "forbidTransferNotEnough"
+  {
+    "de"      "{red}Du kannst nicht mehr Metall übertragen, als du hast!"
+  }
+  "forbidTransferNegative"
+  {
+    "de"      "{red}Negative Beträge können nicht überwiesen werden!"
+  }
+  "forbidTransferDead"
+  {
+    "de"      "{red}Du kannst nicht überweisen, wenn du tot bist!"
   }
 }

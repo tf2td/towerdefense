@@ -64,16 +64,14 @@ public void Database_OnCheckPlayer(Handle hDriver, Handle hResult, const char[] 
 stock void Database_AddPlayer(int iUserId) {
 	char sQuery[256];
 	char sSteamId[32];
-	char sPlayerName[MAX_NAME_LENGTH + 1];
 	char sPlayerNameSave[MAX_NAME_LENGTH * 2 + 1];
 	char sPlayerIp[16];
 	char sPlayerIpSave[33];
-
-	int	 iClient = GetClientOfUserId(iUserId);
-
-	GetClientName(iClient, sPlayerName, sizeof(sPlayerName));
-	SQL_EscapeString(g_hDatabase, sPlayerName, sPlayerNameSave, sizeof(sPlayerNameSave));
-
+	
+	int iClient = GetClientOfUserId(iUserId);
+	
+	SQL_EscapeString(g_hDatabase, GetClientNameShort(iClient), sPlayerNameSave, sizeof(sPlayerNameSave));
+	
 	Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sSteamId, sizeof(sSteamId));
 
 	Player_UGetString(iUserId, PLAYER_IP_ADDRESS, sPlayerIp, sizeof(sPlayerIp));
@@ -134,15 +132,13 @@ public void Database_OnAddPlayer_2(Handle hDriver, Handle hResult, const char[] 
 
 stock void Database_UpdatePlayer(int iUserId) {
 	char sQuery[512];
-
-	char sPlayerName[MAX_NAME_LENGTH + 1];
+	
 	char sPlayerNameSave[MAX_NAME_LENGTH * 2 + 1];
-
-	int	 iClient = GetClientOfUserId(iUserId);
-
-	GetClientName(iClient, sPlayerName, sizeof(sPlayerName));
-	SQL_EscapeString(g_hDatabase, sPlayerName, sPlayerNameSave, sizeof(sPlayerNameSave));
-
+	
+	int iClient = GetClientOfUserId(iUserId);
+	
+	SQL_EscapeString(g_hDatabase, GetClientNameShort(iClient), sPlayerNameSave, sizeof(sPlayerNameSave));
+	
 	char sPlayerIp[16];
 	char sPlayerIpSave[33];
 
