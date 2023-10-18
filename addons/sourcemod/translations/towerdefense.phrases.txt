@@ -259,12 +259,12 @@
   }
   "cmdSetWave"
   {
-    "#format" "{1:s}"
+    "#format" "{1:d}"
     "en"      "Wave set to {1}"
   }
   "cmdSetWaveOOB"
   {
-    "#format" "{1:s}"
+    "#format" "{1:d}"
     "en"      "The highest wave is {1}. Please choose a lower value than that!"
   }
   "cmdSetWaveUsage"
@@ -294,6 +294,10 @@
     "en"      "{1} received {2} metal from you."
   }
   //forbid
+  "forbidSetWaveMidWave"
+  {
+    "en"      "{red}You can't set the wave while a wave is currently ongoing!"
+  }
   "forbidCantFindPlayer"
   {
     "#format" "{1:s}"
