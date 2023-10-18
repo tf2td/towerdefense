@@ -8,6 +8,18 @@
 	#include "../info/variables.sp"
 #endif
 
+/**
+ * Database Connection Callback
+ */
+public void ConnectToDB(Database db, const char[] error, any data) {
+	if (!db || error[0]) {
+		LogError("Database failure: %s", error);
+		SetFailState("OnDatabaseConnectionResult: %s", error);
+	} else {
+		g_hDatabase = db;
+	}
+}
+
 /*======================================
 =            Data Functions            =
 ======================================*/
@@ -31,17 +43,17 @@ stock void Database_LoadData() {
 stock void Database_LoadTowers() {
 	char sQuery[512];
 	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `tower`.`tower_id`, `level`, `tower`.`name`, `class`, `price`, `teleport_tower`, `damagetype`, `description`, `metal`, `weapon_id`, `attack`, `rotate`, `pitch`, `damage`, `attackspeed`, `area` \
-		FROM `tower` \
-		INNER JOIN `map` \
-			ON (`map`.`map_id` = %d) \
-		INNER JOIN `towerlevel` \
-			ON (`tower`.`tower_id` = `towerlevel`.`tower_id`) \
-		ORDER BY `tower`.`name` ASC, `level` ASC \
-	", g_iServerMap);
-	
-	SQL_TQuery(g_hDatabase, Database_OnLoadTowers, sQuery);
+	g_hDatabase.Format(sQuery, sizeof(sQuery), 
+	"SELECT `tower`.`tower_id`, `level`, `tower`.`name`, `class`, `price`, `teleport_tower`, `damagetype`, `description`, `metal`, `weapon_id`, `attack`, `rotate`, `pitch`, `damage`, `attackspeed`, `area` " ...
+	"FROM `tower` " ...
+	"INNER JOIN `map` " ...
+		"ON (`map`.`map_id` = %d) " ...
+	"INNER JOIN `towerlevel` " ...
+		"ON (`tower`.`tower_id` = `towerlevel`.`tower_id`) " ...
+	"ORDER BY `tower`.`name` ASC, `level` ASC", 
+	g_iServerMap);
+
+	g_hDatabase.Query(Database_OnLoadTowers, sQuery);
 }
 
 public void Database_OnLoadTowers(Handle hDriver, Handle hResult, const char[] sError, any iData) {
@@ -172,13 +184,12 @@ public void Database_OnLoadTowers(Handle hDriver, Handle hResult, const char[] s
 stock void Database_LoadWeapons() {
 	char sQuery[256];
 	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `name`, `index`, (`slot` - 1), `level`, (`quality` - 1), `classname`, `attributes`, (`preserve_attributes` - 1) \
-		FROM `weapon` \
-		ORDER BY `weapon_id` ASC \
-	");
+	g_hDatabase.Format(sQuery, sizeof(sQuery), 
+	"SELECT `name`, `index`, (`slot` - 1), `level`, (`quality` - 1), `classname`, `attributes`, (`preserve_attributes` - 1) " ...
+	"FROM `weapon` " ...
+	"ORDER BY `weapon_id` ASC");
 	
-	SQL_TQuery(g_hDatabase, Database_OnLoadWeapons, sQuery);
+	g_hDatabase.Query(Database_OnLoadWeapons, sQuery);
 }
 
 public void Database_OnLoadWeapons(Handle hDriver, Handle hResult, const char[] sError, any iData) {
@@ -264,16 +275,16 @@ public void Database_OnLoadWeapons(Handle hDriver, Handle hResult, const char[] 
 stock void Database_LoadWaves() {
 	char sQuery[512];
 	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `wavetype`, `wave`.`name`, `class`, `quantity`, `health`, IF(`wavetype` & (SELECT `bit_value` FROM `wavetype` WHERE `wavetype`.`type` = 'air'), `teleport_air`, `teleport_ground`) \
-		FROM `wave` \
-		INNER JOIN `map` \
-			ON (`map`.`map_id` = %d) \
-		WHERE `wave_id` >= `wave_start` AND `wave_id` <= `wave_end` \
-		ORDER BY `wave_id` ASC \
-	", g_iServerMap);
+	g_hDatabase.Format(sQuery, sizeof(sQuery), 
+		"SELECT `wavetype`, `wave`.`name`, `class`, `quantity`, `health`, IF(`wavetype` & (SELECT `bit_value` FROM `wavetype` WHERE `wavetype`.`type` = 'air'), `teleport_air`, `teleport_ground`) " ...
+		"FROM `wave` " ...
+		"INNER JOIN `map` " ...
+			"ON (`map`.`map_id` = %d) " ...
+		"WHERE `wave_id` >= `wave_start` AND `wave_id` <= `wave_end` " ...
+		"ORDER BY `wave_id` ASC",
+		g_iServerMap);
 	
-	SQL_TQuery(g_hDatabase, Database_OnLoadWaves, sQuery);
+	g_hDatabase.Query(Database_OnLoadWaves, sQuery);
 }
 
 public void Database_OnLoadWaves(Handle hDriver, Handle hResult, const char[] sError, any iData) {
@@ -352,13 +363,13 @@ public void Database_OnLoadWaves(Handle hDriver, Handle hResult, const char[] sE
 stock void Database_LoadAirWaveSpawn() {
 	char sQuery[512];
 	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `teleport_air` \
-		FROM `map` \
-		WHERE (`map_id` = %d) \
-	", g_iServerMap);
+	g_hDatabase.Format(sQuery, sizeof(sQuery),
+		"SELECT `teleport_air` " ...
+		"FROM `map` " ...
+		"WHERE (`map_id` = %d)",
+		g_iServerMap);
 	
-	SQL_TQuery(g_hDatabase, Database_OnLoadAirWaveSpawn, sQuery);
+	g_hDatabase.Query(Database_OnLoadAirWaveSpawn, sQuery);
 }
 
 public void Database_OnLoadAirWaveSpawn(Handle hDriver, Handle hResult, const char[] sError, any iData) {
@@ -394,16 +405,16 @@ public void Database_OnLoadAirWaveSpawn(Handle hDriver, Handle hResult, const ch
 stock void Database_LoadMetalpacks() {
 	char sQuery[256];
 	
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `type`, `metal`, `location` \
-		FROM `metalpack` \
-		INNER JOIN `metalpacktype` \
-			ON (`metalpack`.`metalpacktype_id` = `metalpacktype`.`metalpacktype_id`) \
-		WHERE `map_id` = %d \
-		ORDER BY `metalpack_id` ASC \
-	", g_iServerMap);
+	g_hDatabase.Format(sQuery, sizeof(sQuery), 
+		"SELECT `type`, `metal`, `location` " ...
+		"FROM `metalpack` " ...
+		"INNER JOIN `metalpacktype` " ...
+			"ON (`metalpack`.`metalpacktype_id` = `metalpacktype`.`metalpacktype_id`) " ...
+		"WHERE `map_id` = %d " ...
+		"ORDER BY `metalpack_id` ASC", 
+		g_iServerMap);
 	
-	SQL_TQuery(g_hDatabase, Database_OnLoadMetalpacks, sQuery);
+	g_hDatabase.Query(Database_OnLoadMetalpacks, sQuery);
 }
 
 public void Database_OnLoadMetalpacks(Handle hDriver, Handle hResult, const char[] sError, any iData) {
@@ -456,9 +467,9 @@ public void Database_OnLoadMetalpacks(Handle hDriver, Handle hResult, const char
 stock void Database_LoadMultipliersTypes() {
 	char sQuery[512];
 	
-	Format(sQuery, sizeof(sQuery), "SELECT type FROM multipliertype ORDER BY `multipliertype_id` ASC", g_iServerMap);
+	g_hDatabase.Format(sQuery, sizeof(sQuery), "SELECT type FROM multipliertype ORDER BY `multipliertype_id` ASC", g_iServerMap);
 	
-	SQL_TQuery(g_hDatabase, Database_OnLoadMultipliersTypes, sQuery);
+	g_hDatabase.Query(Database_OnLoadMultipliersTypes, sQuery);
 }
 
 /**
@@ -492,9 +503,9 @@ stock void Database_LoadMultipliersTypes() {
 stock void Database_LoadMultipliers() {
 	char sQuery[512];
 	
-	Format(sQuery, sizeof(sQuery), "SELECT price,increase FROM `multiplier` WHERE map_id=%d ORDER BY `multipliertype_id` ASC", g_iServerMap);
+	g_hDatabase.Format(sQuery, sizeof(sQuery), "SELECT price,increase FROM `multiplier` WHERE map_id=%d ORDER BY `multipliertype_id` ASC", g_iServerMap);
 	
-	SQL_TQuery(g_hDatabase, Database_OnLoadMultipliers, sQuery);
+	g_hDatabase.Query(Database_OnLoadMultipliers, sQuery);
 }
 
 /**
