@@ -251,6 +251,10 @@
     "de"      "{1} erhielt {2} Metall von dir."
   }
   //forbid
+  "forbidSetWaveMidWave"
+  {
+    "de"      "{red}Du kannst die Welle nicht festlegen, wenn gerade eine Welle läuft!"
+  }
   "forbidCantFindPlayer"
   {
     "de"      "{red}Spieler {1} konnte nicht gefunden werden."

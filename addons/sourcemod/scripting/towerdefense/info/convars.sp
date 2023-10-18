@@ -16,6 +16,7 @@ stock void CreateConVars() {
 
 stock void LoadConVars() {
 	g_hEnabled.AddChangeHook(OnConVarChanged);
+	g_hMaxBotsOnField.AddChangeHook(OnConVarChanged);
 	g_hTfBotQuota = FindConVar("tf_bot_quota");
 	g_hTfBotQuota.AddChangeHook(OnConVarChanged);
 }
@@ -68,5 +69,7 @@ public void OnConVarChanged(ConVar hConVar, const char[] sOldValue, const char[]
 			LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Setting ConVar 'tf_bot_quota' to default");
 			ResetConVar(g_hTfBotQuota, true, false);
 		}
+	} else if (hConVar == g_hMaxBotsOnField) {
+		UpdateMaxBotsOnField();
 	}
 }
