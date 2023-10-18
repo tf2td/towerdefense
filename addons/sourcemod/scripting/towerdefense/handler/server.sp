@@ -156,6 +156,7 @@ stock void Server_Reset() {
 	iAoEKritzMedicTimer	 = 0;
 
 	g_iHealthBar		 = GetHealthBar();
+	g_iMaxBotsOnField	 = g_hMaxBotsOnField.IntValue;
 
 	g_bLockable			 = true;
 	g_bCanGetUnlocks	 = true;
@@ -201,18 +202,34 @@ stock void Server_Reset() {
 		delete queryResult;
 	}
 
-	int clients = (g_iMaxClients + g_hMaxBotsOnField.IntValue) - MaxClients;
-
-	if (clients > 0) {
-		char cvarName[32];
-		g_hMaxBotsOnField.GetName(cvarName, sizeof(cvarName));
-		LogType(TDLogLevel_Warning, TDLogType_FileAndConsole, "ConVar '%s' value + the allowed max clients '%d' (database) is higher than the server maxplayers '%d'. Shrinking convar value by '%d'", cvarName, g_iMaxClients, MaxClients, clients);
-		g_hMaxBotsOnField.IntValue = g_hMaxBotsOnField.IntValue - clients;
-	}
+	UpdateMaxBotsOnField();
 
 	Format(g_sPassword, sizeof(g_sPassword), "");
 
 	SetPassword(g_sPassword, false);	// Change upon release
+}
+
+stock void UpdateMaxBotsOnField() {
+	int clients = (g_iMaxClients + GetTowersBought() + g_hMaxBotsOnField.IntValue) - MaxClients;
+
+	if (clients > 0) {
+		char cvarName[32];
+		g_hMaxBotsOnField.GetName(cvarName, sizeof(cvarName));
+		LogType(TDLogLevel_Info, TDLogType_FileAndConsole, "ConVar '%s' value '%d' + the allowed max clients '%d' (database) + the towers bought '%d' is higher than the server maxplayers '%d'. Shrinking convar value by '%d'", cvarName, g_hMaxBotsOnField.IntValue, g_iMaxClients, GetTowersBought(), MaxClients, clients);
+		g_iMaxBotsOnField = g_hMaxBotsOnField.IntValue - clients;
+	} else {
+		g_iMaxBotsOnField = g_hMaxBotsOnField.IntValue;
+	}
+}
+
+stock int GetTowersBought() {
+	int amount = 0;
+	for (int tower = 0; tower < sizeof(g_bTowerBought); tower++) {
+		if (g_bTowerBought[tower]) {
+			amount++;
+		}
+	}
+	return amount;
 }
 
 /**
