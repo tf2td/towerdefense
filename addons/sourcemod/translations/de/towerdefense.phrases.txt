@@ -253,94 +253,94 @@
   //forbid
   "forbidCantFindPlayer"
   {
-    "de"      "Spieler {1} konnte nicht gefunden werden."
+    "de"      "{red}Spieler {1} konnte nicht gefunden werden."
   }
   "forbidTooUnspecific"
   {
-    "de"      "Sei etwas genauer."
+    "de"      "{red}Sei etwas genauer."
   }
   "forbidNoBuildWhileTaunting"
   {
-    "de"      "Du kannst nicht bauen, während du spottest!"
+    "de"      "{red}Du kannst nicht bauen, während du spottest!"
   }
   "forbidNoBuildWhileCarrying"
   {
-    "de"      "Du kannst nicht bauen, während du ein anderes Gebäude oder einen Turm trägst!"
+    "de"      "{red}Du kannst nicht bauen, während du ein anderes Gebäude oder einen Turm trägst!"
   }
   "forbidInsufficientMetal"
   {
-    "de"      "Du brauchst mindestens {1} Metall!"
+    "de"      "{red}Du brauchst mindestens {1} Metall!"
   }
   "forbidSentryLimit"
   {
-    "de"      "Sentry Limit erreicht! (Limit: {1})"
+    "de"      "{red}Sentry Limit erreicht! (Limit: {1})"
   }
   "forbidDispenserLimit"
   {
-    "de"      "Dispenser Limit erreicht! (Limit: {1})"
+    "de"      "{red}Dispenser Limit erreicht! (Limit: {1})"
   }
   "forbidCantPlaceTowerThere"
   {
-    "de"      "Dort kann kein Turm stehen."
+    "de"      "{red}Dort kann kein Turm stehen."
   }
   "forbidTowerAlreadyCarried"
   {
-    "de"      "{1} wird bereits von jemandem bewegt!"
+    "de"      "{red}{1} wird bereits von jemandem bewegt!"
   }
   "forbidTowerLockedMidwave"
   {
-    "de"      "Du kannst die Türme nicht während einer Welle verschieben!"
+    "de"      "{red}Du kannst die Türme nicht während einer Welle verschieben!"
   }
   "forbidCantPlaceTowerOnPath"
   {
-    "de"      "Türme dürfen nicht auf den Weg!"
+    "de"      "{red}Türme dürfen nicht auf den Weg!"
   }
   "forbidCantPlaceTowerMidwave"
   {
-    "de"      "Du kannst keine Türme während einer Welle platzieren!"
+    "de"      "{red}Du kannst keine Türme während einer Welle platzieren!"
   }
   "forbidNoPasswordSet"
   {
-    "de"      "Es ist kein Passwort festgelegt!"
+    "de"      "{red}Es ist kein Passwort festgelegt!"
   }
   "forbidCantBuildInsideAPlayer"
   {
-    "de"      "Du kannst nicht bauen, während du in einem anderen Spieler stehst!"
+    "de"      "{red}Du kannst nicht bauen, während du in einem anderen Spieler stehst!"
   }
   "forbidInvalidInput"
   {
-    "de"      "Ungültige Eingabe"
+    "de"      "{red}Ungültige Eingabe"
   }
   "forbidDropMinMetal"
   {
-    "de"      "Du musst mindestens 1 Metall fallen lassen"
+    "de"      "{red}Du musst mindestens 1 Metall fallen lassen"
   }
   "forbidDeadCantDropMetal"
   {
-    "de"      "Du kannst kein Metall fallen lassen, wenn du tot bist!"
+    "de"      "{red}Du kannst kein Metall fallen lassen, wenn du tot bist!"
   }
   "forbidInAirCantDropMetal"
   {
-    "de"      "Kann in der Luft kein Metall abwerfen"
+    "de"      "{red}Kann in der Luft kein Metall abwerfen"
   }
   "forbidDropMetalLimit"
   {
-    "de"      "Metallpaket-Limit erreicht, sammle einige Metallpakete ein!"
+    "de"      "{red}Metallpaket-Limit erreicht, sammle einige Metallpakete ein!"
   }
   "forbidUnableDropMetal"
   {
-    "de"      "Metall kann nicht fallen gelassen werden"
+    "de"      "{red}Metall kann nicht fallen gelassen werden"
   }
   "forbidTransferNotEnough"
   {
-    "de"      "Du kannst nicht mehr Metall übertragen, als du hast!"
+    "de"      "{red}Du kannst nicht mehr Metall übertragen, als du hast!"
   }
   "forbidTransferNegative"
   {
-    "de"      "Negative Beträge können nicht überwiesen werden!"
+    "de"      "{red}Negative Beträge können nicht überwiesen werden!"
   }
   "forbidTransferDead"
   {
-    "de"      "Du kannst nicht überweisen, wenn du tot bist!"
+    "de"      "{red}Du kannst nicht überweisen, wenn du tot bist!"
   }
 }

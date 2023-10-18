@@ -297,98 +297,98 @@
   "forbidCantFindPlayer"
   {
     "#format" "{1:s}"
-    "en"      "Couldn't find player {1}."
+    "en"      "{red}Couldn't find player {1}."
   }
   "forbidTooUnspecific"
   {
-    "en"      "Be more specific."
+    "en"      "{red}Be more specific."
   }
   "forbidNoBuildWhileTaunting"
   {
-    "en"      "You can't build while taunting!"
+    "en"      "{red}You can't build while taunting!"
   }
   "forbidNoBuildWhileCarrying"
   {
-    "en"      "You can not build while carrying another building or a tower!"
+    "en"      "{red}You can not build while carrying another building or a tower!"
   }
   "forbidInsufficientMetal"
   {
     "#format" "{1:d}"
-    "en"      "You need at least {1} metal!"
+    "en"      "{red}You need at least {1} metal!"
   }
   "forbidSentryLimit"
   {
     "#format" "{1:d}"
-    "en"      "Sentry limit reached! (Limit: {1})"
+    "en"      "{red}Sentry limit reached! (Limit: {1})"
   }
   "forbidDispenserLimit"
   {
     "#format" "{1:d}"
-    "en"      "Dispenser limit reached! (Limit: {1})"
+    "en"      "{red}Dispenser limit reached! (Limit: {1})"
   }
   "forbidCantPlaceTowerThere"
   {
-    "en"      "Can't place a tower there."
+    "en"      "{red}Can't place a tower there."
   }
   "forbidTowerAlreadyCarried"
   {
     "#format" "{1:s}"
-    "en"      "{1} is already being moved by someone!"
+    "en"      "{red}{1} is already being moved by someone!"
   }
   "forbidTowerLockedMidwave"
   {
-    "en"      "You can't move towers mid wave!"
+    "en"      "{red}You can't move towers mid wave!"
   }
   "forbidCantPlaceTowerOnPath"
   {
-    "en"      "Towers aren't meant to be placed on the path!"
+    "en"      "{red}Towers aren't meant to be placed on the path!"
   }
   "forbidCantPlaceTowerMidwave"
   {
-    "en"      "You can't place towers mid wave!"
+    "en"      "{red}You can't place towers mid wave!"
   }
   "forbidNoPasswordSet"
   {
-    "en"      "There is no password set!"
+    "en"      "{red}There is no password set!"
   }
   "forbidCantBuildInsideAPlayer"
   {
-    "en"      "You can not build while standing inside another player!"
+    "en"      "{red}You can not build while standing inside another player!"
   }
   "forbidInvalidInput"
   {
-    "en"      "Invalid Input"
+    "en"      "{red}Invalid Input"
   }
   "forbidDropMinMetal"
   {
-    "en"      "You must drop at least 1 metal"
+    "en"      "{red}You must drop at least 1 metal"
   }
   "forbidDeadCantDropMetal"
   {
-    "en"      "Cannot drop metal while dead"
+    "en"      "{red}Cannot drop metal while dead"
   }
   "forbidInAirCantDropMetal"
   {
-    "en"      "Cannot drop metal while in the air"
+    "en"      "{red}Cannot drop metal while in the air"
   }
   "forbidDropMetalLimit"
   {
-    "en"      "Metalpack limit reached, pick some metalpacks up!"
+    "en"      "{red}Metalpack limit reached, pick some metalpacks up!"
   }
   "forbidUnableDropMetal"
   {
-    "en"      "Unable to drop metal"
+    "en"      "{red}Unable to drop metal"
   }
   "forbidTransferNotEnough"
   {
-    "en"      "You can't transfer more metal then you have!"
+    "en"      "{red}You can't transfer more metal then you have!"
   }
   "forbidTransferNegative"
   {
-    "en"      "Can't transfer negative amounts!"
+    "en"      "{red}Can't transfer negative amounts!"
   }
   "forbidTransferDead"
   {
-    "en"      "Can't transfer while dead!"
+    "en"      "{red}Can't transfer while dead!"
   }
 }
