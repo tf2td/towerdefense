@@ -74,73 +74,6 @@ public Action Timer_CreateBeam(Handle hTimer, DataPack hPack) {
 }
 
 /**
- * Creates a beam line.
- *
- * @param iClient		The client.
- * @param fStart		The start point.
- * @param fEnd			The end point.
- * @param iColors		The colors.
- * @noreturn
- */
-
-/*
-stock CreateBeamLine2(iClient, iIndex, Float:fStart[3], Float:fEnd[3], const iColors[]={255, 0, 0, 255}) {
-	new iColors2[4];
-	iColors2[0] = iColors[0];
-	iColors2[1] = iColors[1];
-	iColors2[2] = iColors[2];
-	iColors2[3] = iColors[3];
-	
-	TE_SetupBeamPoints(fStart, fEnd, g_iLaserMaterial, g_iHaloMaterial, 0, 0, 0.6, 1.0, 1.0, 1, 0.0, iColors2, 0);
-
-	if (g_bMetalPackID[iIndex]) {
-		new Handle:hPack = CreateDataPack();
-
-		CreateDataTimer(0.5, Timer_CreateBeam2, hPack);
-
-		WritePackCell(hPack, iClient);
-		WritePackCell(hPack, iIndex);
-		WritePackFloat(hPack, fStart[0]);
-		WritePackFloat(hPack, fStart[1]);
-		WritePackFloat(hPack, fStart[2]);
-		WritePackFloat(hPack, fEnd[0]);
-		WritePackFloat(hPack, fEnd[1]);
-		WritePackFloat(hPack, fEnd[2]);
-		WritePackCell(hPack, iColors[0]);
-		WritePackCell(hPack, iColors[1]);
-		WritePackCell(hPack, iColors[2]);
-		WritePackCell(hPack, iColors[3]);
-	}
-
-	TE_SendToAll();
-}
-*/
-
-/*
-public Action:Timer_CreateBeam2(Handle:hTimer, Handle:hPack) {
-	new iClient, iIndex, Float:fStart[3], Float:fEnd[3], iColors[4];
-	
-	ResetPack(hPack);
-	iClient = ReadPackCell(hPack);
-	iIndex = ReadPackCell(hPack);
-	fStart[0] = ReadPackFloat(hPack);
-	fStart[1] = ReadPackFloat(hPack);
-	fStart[2] = ReadPackFloat(hPack);
-	fEnd[0] = ReadPackFloat(hPack);
-	fEnd[1] = ReadPackFloat(hPack);
-	fEnd[2] = ReadPackFloat(hPack);
-	iColors[0] = ReadPackCell(hPack);
-	iColors[1] = ReadPackCell(hPack);
-	iColors[2] = ReadPackCell(hPack);
-	iColors[3] = ReadPackCell(hPack);
-	
-	CreateBeamLine2(iClient, iIndex, fStart, fEnd, iColors);
-
-	return Plugin_Stop;
-}
-*/
-
-/**
  * Creates a beam box.
  *
  * @param iClient		The client.
@@ -167,39 +100,6 @@ stock void CreateBeamBox(int iClient, float fStart[3], float fEnd[3], float fDur
 		}
 	}
 }
-
-/**
- * Creates a beam box.
- *
- * @param iClient		The client.
- * @param iIndex		The unique id index.
- * @param fStart		The start point.
- * @param fEnd			The end point.
- * @param fDuration		The duration it should appear (in seconds).
- * @param iColors		The colors.
- * @noreturn
- */
-
-/*
-stock CreateBeamBox2(iClient, iIndex, Float:fStart[3], Float:fEnd[3], const iColors[]={255, 0, 0, 255}) {
-	new Float:fPoint[8][3];
-
-	CopyVector(fStart, fPoint[0]);
-	CopyVector(fEnd, fPoint[7]);
-
-	CreateZonePoints(fPoint);
-
-	g_bMetalPackID[iIndex] = true;
-
-	for (new i = 0, i2 = 3; i2 >= 0; i += i2--) {
-		for (new j = 1; j <= 7; j += (j / 2) + 1) {
-			if (j != 7 - i) {
-				CreateBeamLine2(iClient, iIndex, fPoint[i], fPoint[j], iColors);
-			}
-		}
-	}
-}
-*/
 
 /**
  * Creates all 8 zone points by using start and end point.
@@ -338,35 +238,6 @@ stock bool IsClientInZone(int iClient, float fPoint[8][3]) {
 	
 	return Box3DIntersects(fPlayerPoint, fPoint);
 }
-
-/**
- * Checkes if a client is inside a zone.
- *
- * @param iClient		The client.
- * @param fPoint		The zone array.
- * @param iID			The unique id.
- * @return				True if inside, false otherwise.
- */
-
-/*stock bool IsClientInZone2(int iClient, float fPoint[8][3], int iID) {
-
-	float fPlayerPosition[3];
-	float fPlayerPoint[8][3];
-	
-	GetEntPropVector(iClient, Prop_Send, "m_vecOrigin", fPlayerPosition);
-	fPlayerPosition[2] += 41.5;
-	
-	fPlayerPoint[0][0] = fPlayerPosition[0] - 12.0;
-	fPlayerPoint[0][1] = fPlayerPosition[1] - 12.0;
-	fPlayerPoint[0][2] = fPlayerPosition[2] - 20.0;
-	fPlayerPoint[7][0] = fPlayerPosition[0] + 12.0;
-	fPlayerPoint[7][1] = fPlayerPosition[1] + 12.0;
-	fPlayerPoint[7][2] = fPlayerPosition[2] + 20.0;
-	
-	CreateZonePoints(fPlayerPoint);
-	
-	return (Box3DIntersects(fPlayerPoint, fPoint) && g_bMetalPackID[iID]);
-}*/
 
 /**
  * Draws a bounding box around a client.

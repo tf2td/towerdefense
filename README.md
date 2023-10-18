@@ -22,11 +22,13 @@ Maps - [mani](http://steamcommunity.com/profiles/76561198002201102/), [fatboy](h
  * Dedicated Team Fortress 2 server (windows or linux)
  * MySQL/MariaDB server
  * Metamod + Sourcemod
- * [Socket](https://github.com/nefarius/sm-ext-socket)
  * [TF2Items](https://forums.alliedmods.net/showthread.php?p=1050170)
- * [Steamtools](https://forums.alliedmods.net/showthread.php?t=170630)
+ * [SteamWorks](https://forums.alliedmods.net/showthread.php?t=229556) -> [Download](https://github.com/hexa-core-eu/SteamWorks/releases)
  * [TF2Attributes](https://forums.alliedmods.net/showthread.php?t=210221)
 
+### Optional Plugins ###
+
+* [Cheat-Control](https://forums.alliedmods.net/showthread.php?p=600521)
 
 ### Installation ###
 
@@ -42,5 +44,9 @@ Maps - [mani](http://steamcommunity.com/profiles/76561198002201102/), [fatboy](h
 7. Copy `towerdefense.smx` to your sourcemod `tf/addons/sourcemod/plugins` folder.
 8. Start your server with the map `td_firstone_v11b`. You should be able to connect and play if everything was set up correctly.
 
+
+### General Information ###
+
+In case you are using [STAC](https://github.com/sapphonie/StAC-tf2) you need to set "stac_work_with_sv_cheats" to "1" or else STAC will shut itself down. It is recommended to also use [Cheat-Control](#optional-plugins).
 
 ##### Trouble getting it working? Create an issue and provide your server log files and other required information for assistance. #####
