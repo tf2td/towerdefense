@@ -201,7 +201,6 @@ public Action Event_RoundWin(Handle hEvent, const char[] sName, bool bDontBroadc
 
 	if (iTeam == TEAM_ATTACKER) {
 		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "eventGameOver");
-		//PrintToChatAll("\x07FF0000Game over! Resetting the map...");
 	}
 	Server_Reset();
 

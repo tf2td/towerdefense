@@ -77,9 +77,6 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "sentryLimitChanged", g_iBuildingLimit[TDBuilding_Sentry]);
 		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "sentryLimitBuildInfo");
 
-		//PrintToChatAll("\x04[\x03TD\x04]\x03 Your sentry limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Sentry]);
-		//PrintToChatAll("\x04[\x03TD\x04]\x03 You can build additional sentries with the command \x04/s");
-		
 		AcceptEntityInput(iCaller, "Break");
 	} else if (StrContains(sName, "enable_dispenser") != -1) {
 		// Enable dispenser
@@ -96,9 +93,6 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "dispenserLimitChanged", g_iBuildingLimit[TDBuilding_Dispenser]);
 		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "dispenserLimitBuildInfo");
 
-		//PrintToChatAll("\x04[\x03TD\x04]\x03 Your dispenser limit has been changed to:\x04 %i",g_iBuildingLimit[TDBuilding_Dispenser]);
-		//PrintToChatAll("\x04[\x03TD\x04]\x03 You can build dispensers via your PDA");
-		
 		AcceptEntityInput(iCaller, "Break");
 	} else if (StrContains(sName, "bonus_metal") != -1) {
 		// Metal bonus reward
@@ -134,7 +128,6 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 					//Check if already has 100% crits
 					if(fMultiplier[i] >= 20.0) {
 						CPrintToChatAll("%s %t", PLUGIN_PREFIX, "critChanceLimitReached");
-						//PrintToChatAll("\x04[\x03TD\x04]\x03 You can't increase crit chance anymore.");
 						return;
 					}
 
@@ -154,15 +147,12 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 						}
 						fMultiplier[i] += 1.0;
 						CPrintToChatAll("%s %t", PLUGIN_PREFIX, "critChanceSet", RoundToZero(fMultiplier[i] * 5.0));
-						//PrintToChatAll("\x04[\x03TD\x04]\x03 Crit Chance set to:\x04 %i%", RoundToZero(fMultiplier[i] * 5.0));
 						
 						if(fMultiplier[i] >= 20.0) {
 							CPrintToChatAll("%s %t", PLUGIN_PREFIX, "critChanceLimitReached");
-							//PrintToChatAll("\x04[\x03TD\x04]\x03 You can't increase crit chance anymore.");
 						} else {
 							int iNextPrice = iPriceToPay + Multiplier_GetIncrease(i);
 							CPrintToChatAll("%s %t", PLUGIN_PREFIX, "nextUpgradeCost", iNextPrice);
-							//PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal per Player",iNextPrice);
 						}
 					}
 				} else if (StrContains(sName, sMultiplier) != -1) {
@@ -186,11 +176,9 @@ public void OnButtonShot(const char[] sOutput, int iCaller, int iActivator, floa
 						}
 						fMultiplier[i] += 1.0;
 						CPrintToChatAll("%s %t", PLUGIN_PREFIX, "dmgMultiplierSet", RoundToZero(fMultiplier[i] * 5.0));
-						//PrintToChatAll("\x04[\x03TD\x04]\x03 Multiplier set to:\x04 %i.0",RoundToZero(fMultiplier[i] + 1.0));
 			
 						int iNextPrice = iPriceToPay + Multiplier_GetIncrease(i);
 						CPrintToChatAll("%s %t", PLUGIN_PREFIX, "nextUpgradeCost", iNextPrice);
-						//PrintToChatAll("\x04[\x03TD\x04]\x03 Next Upgrade will cost:\x04 %i\x03 metal per Player",iNextPrice);
 					}
 				}
 			}
