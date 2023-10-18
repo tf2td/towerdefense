@@ -11,8 +11,6 @@ Handle g_hMultiplier;
 Handle g_hServerData;
 
 int g_iTime;
-int g_iMaxBotsOnField = 8; //TODO: Make this configurable through server settings
-
 
 /*=========================================
 =            Generic Variables            =
@@ -34,6 +32,7 @@ bool g_bCanGetUnlocks;
 
 ConVar g_hEnabled;
 ConVar g_hTfBotQuota;
+ConVar g_hMaxBotsOnField;
 
 /*==========  Handle  ==========*/
 
@@ -67,7 +66,7 @@ char g_sPassword[8];
 
 /*==========  Handle  ==========*/
 
-Handle g_hDatabase;
+Database g_hDatabase;
 
 /*==========  Float  ==========*/
 

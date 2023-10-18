@@ -25,14 +25,13 @@
 /*==========================================
 =            Plugin Information            =
 ==========================================*/
-
-public Plugin myinfo = 
+public Plugin myinfo =
 {
-	name = PLUGIN_NAME, 
-	author = PLUGIN_AUTHOR, 
-	description = PLUGIN_DESC, 
-	version = PLUGIN_VERSION, 
-	url = PLUGIN_URL
+	name		= PLUGIN_NAME,
+	author		= PLUGIN_AUTHOR,
+	description = PLUGIN_DESC,
+	version		= PLUGIN_VERSION,
+	url			= PLUGIN_URL
 };
 
 /*=======================================
@@ -74,23 +73,19 @@ public Plugin myinfo =
 /*=======================================
 =            Public Forwards            =
 =======================================*/
-
 public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iMaxLength) {
 	if (GetEngineVersion() != Engine_TF2) {
 		Format(sError, iMaxLength, "This mod can only run under TF2.");
 		return APLRes_Failure;
 	}
-	
+
 	if (SQL_CheckConfig("towerdefense"))
-		g_hDatabase = SQL_Connect("towerdefense", true, sError, iMaxLength);
+		Database.Connect(ConnectToDB, "towerdefense");
 	else {
 		Format(sError, iMaxLength, "Unable to read database info from file");
 		return APLRes_Failure;
 	}
-	
-	if (g_hDatabase == null)
-		return APLRes_Failure;
-	
+
 	MarkNativeAsOptional("SteamWorks_SetGameDescription");
 	MarkNativeAsOptional("GetUserMessageType");
 	return APLRes_Success;
@@ -98,21 +93,21 @@ public APLRes AskPluginLoad2(Handle hMyself, bool bLate, char[] sError, int iMax
 
 public void OnPluginStart() {
 	PrintToServer("%s Loaded %s %s by %s", PLUGIN_PREFIX, PLUGIN_NAME, PLUGIN_VERSION, PLUGIN_AUTHOR);
-	
+
 	LoadTranslations("towerdefense.phrases.txt");
 
 	Log_Initialize(TDLogLevel_Trace, TDLogType_Console);
-	
+
 	CreateDataMap(g_hMapTowers);
 	CreateDataMap(g_hMapWeapons);
 	CreateDataMap(g_hMapWaves);
 	CreateDataMap(g_hMapMetalpacks);
 	CreateDataMap(g_hMultiplierType);
 	CreateDataMap(g_hMultiplier);
-	
+
 	CreateDataMap(g_hServerData);
 	CreateDataMap(g_hPlayerData);
-	
+
 	HookEvents();
 	RegisterCommands();
 	CreateConVars();
@@ -128,47 +123,47 @@ public void OnPluginEnd() {
 	if (g_bSteamWorks) {
 		SteamWorks_SetGameDescription("Team Fortress");
 	}
-	
+
 	if (g_hDatabase != null) {
 		CloseHandle(g_hDatabase);
 		g_hDatabase = null;
 	}
-	
+
 	if (g_hMapTowers != null) {
 		CloseHandle(g_hMapTowers);
 		g_hMapTowers = null;
 	}
-	
+
 	if (g_hMapWeapons != null) {
 		CloseHandle(g_hMapWeapons);
 		g_hMapWeapons = null;
 	}
-	
+
 	if (g_hMapWaves != null) {
 		CloseHandle(g_hMapWaves);
 		g_hMapWaves = null;
 	}
-	
+
 	if (g_hMapMetalpacks != null) {
 		CloseHandle(g_hMapMetalpacks);
 		g_hMapMetalpacks = null;
 	}
-	
+
 	if (g_hMultiplierType != null) {
 		CloseHandle(g_hMultiplierType);
 		g_hMultiplierType = null;
 	}
-	
+
 	if (g_hMultiplier != null) {
 		CloseHandle(g_hMultiplier);
 		g_hMultiplier = null;
 	}
-	
+
 	if (g_hServerData != null) {
 		CloseHandle(g_hServerData);
 		g_hServerData = null;
 	}
-	
+
 	if (g_hPlayerData != null) {
 		CloseHandle(g_hPlayerData);
 		g_hPlayerData = null;
@@ -179,25 +174,25 @@ public void OnPluginEnd() {
 
 public void OnMapStart() {
 	g_bTowerDefenseMap = IsTowerDefenseMap();
-	
+
 	PrecacheModels();
 	PrecacheSounds();
-	
-	g_iHealthBar = GetHealthBar();
-	
+
+	g_iHealthBar	   = GetHealthBar();
+
 	g_bConfigsExecuted = false;
 }
 
 public void OnMapEnd() {
-	g_bMapRunning = false;
-	
+	g_bMapRunning	 = false;
+
 	bool bWasEnabled = g_bEnabled;
-	g_bEnabled = false;
-	
+	g_bEnabled		 = false;
+
 	if (bWasEnabled) {
 		UpdateGameDescription();
 	}
-	
+
 	AddConVarFlag("sv_cheats", FCVAR_NOTIFY);
 	AddConVarFlag("sv_tags", FCVAR_NOTIFY);
 	AddConVarFlag("tf_bot_count", FCVAR_NOTIFY);
@@ -207,14 +202,14 @@ public void OnMapEnd() {
 public void OnConfigsExecuted() {
 	g_bEnabled = g_hEnabled.BoolValue && g_bTowerDefenseMap && g_bSteamWorks && g_bTF2Attributes;
 	g_bMapRunning = true;
-	
+
 	UpdateGameDescription();
-	
+
 	if (!g_bEnabled) {
 		if (!g_bTowerDefenseMap) {
 			char sCurrentMap[PLATFORM_MAX_PATH];
 			GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
-			
+
 			Log(TDLogLevel_Info, "Map \"%s\" is not supported, Tower Defense has been disabled.", sCurrentMap);
 			SetPassword("", false);
 			
@@ -223,9 +218,9 @@ public void OnConfigsExecuted() {
 		}
 		return;
 	}
-	
+
 	g_bServerInitialized = false;
-	
+
 	CreateTimer(5.0, InitializeDelay, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
 }
 
@@ -236,15 +231,15 @@ public Action InitializeDelay(Handle hTimer, any iTime) {
 
 public void OnAllPluginsLoaded() {
 	g_bSteamWorks = LibraryExists("SteamWorks");
-	
+
 	if (g_bSteamWorks) {
 		UpdateGameDescription();
-		
+
 		Log(TDLogLevel_Debug, "Found SteamWorks on startup");
 	}
-	
+
 	g_bTF2Attributes = LibraryExists("tf2attributes");
-	
+
 	if (g_bTF2Attributes) {
 		Log(TDLogLevel_Debug, "Found TF2Attributes on startup");
 	}
@@ -254,11 +249,11 @@ public void OnLibraryAdded(const char[] sName) {
 	if (StrEqual(sName, "SteamWorks", false)) {
 		g_bSteamWorks = true;
 		UpdateGameDescription();
-		
+
 		Log(TDLogLevel_Debug, "SteamWorks loaded");
 	} else if (StrEqual(sName, "tf2attributes", false)) {
 		g_bTF2Attributes = true;
-		
+
 		Log(TDLogLevel_Debug, "TF2Attributes loaded");
 	}
 }
@@ -266,11 +261,11 @@ public void OnLibraryAdded(const char[] sName) {
 public void OnLibraryRemoved(const char[] sName) {
 	if (StrEqual(sName, "SteamWorks", false)) {
 		g_bSteamWorks = false;
-		
+
 		Log(TDLogLevel_Debug, "SteamWorks unloaded");
 	} else if (StrEqual(sName, "tf2attributes", false)) {
 		g_bTF2Attributes = false;
-		
+
 		Log(TDLogLevel_Debug, "TF2Attributes unloaded");
 	}
 }
@@ -287,20 +282,20 @@ public void OnClientPostAdminCheck(int iClient) {
 	if (!g_bEnabled) {
 		return;
 	}
-	
+
 	char sSteamId[32];
 	GetClientAuthId(iClient, AuthId_Steam2, sSteamId, sizeof(sSteamId));
-	
+
 	if (!StrEqual(sSteamId, "BOT")) {
 		char sCommunityId[32];
 		GetClientCommunityId(iClient, sCommunityId, sizeof(sCommunityId));
-		
+
 		char sIp[32];
 		GetClientIP(iClient, sIp, sizeof(sIp));
 		
 		Player_Connected(GetClientUserId(iClient), iClient, GetClientNameShort(iClient), sSteamId, sCommunityId, sIp);
 	}
-	
+
 	SDKHook(iClient, SDKHook_OnTakeDamage, OnTakeDamage);
 	SDKHook(iClient, SDKHook_OnTakeDamagePost, OnTakeDamagePost);
 }
@@ -309,20 +304,20 @@ public void OnClientDisconnect(int iClient) {
 	if (!g_bEnabled) {
 		return;
 	}
-	
+
 	if (IsTower(g_iAttachedTower[iClient])) {
 		Tower_OnCarrierDisconnected(g_iAttachedTower[iClient], iClient);
 	}
-	
+
 	if (IsDefender(iClient)) {
 		int iMetal = GetClientMetal(iClient);
-		
+
 		if (iMetal > 0) {
 			float fLocation[3];
-			
+
 			GetClientEyePosition(iClient, fLocation);
 			fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
-			
+
 			SpawnMetalPack(TDMetalPack_Medium, fLocation, iMetal);
 		}
 		UpdateGameDescription();
@@ -333,11 +328,11 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
-	
+
 	// Force towers to shoot
 	if (IsTower(iClient)) {
 		TDTowerId iTowerId = GetTowerId(iClient);
-	
+
 		// Refill ammo for airblast tower
 		if (iTowerId == TDTower_Airblast_Pyro) {
 			int iOffset = FindSendPropInfo("CTFPlayer", "m_iAmmo");
@@ -345,14 +340,14 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 				SetEntData(iClient, iOffset + 4, 100);
 			}
 		}
-		if(iTowerId == TDTower_AoE_Engineer && g_bAoEEngineerAttack) {
+		if (iTowerId == TDTower_AoE_Engineer && g_bAoEEngineerAttack) {
 			iButtons |= IN_ATTACK;
 		}
-		
+
 		if (Tower_GetAttackPrimary(iTowerId)) {
 			iButtons |= IN_ATTACK;
 		}
-		
+
 		if (Tower_GetAttackSecondary(iTowerId)) {
 			iButtons |= IN_ATTACK2;
 		}
@@ -360,9 +355,9 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 		if(Tower_GetRotate(iTowerId) && g_bTowersLocked) {
 			float fClientEyePosition[3];
 			GetClientEyePosition(iClient, fClientEyePosition);
-			
+
 			int iClosest = GetClosestClient(iClient);
-			if(!IsValidClient(iClosest) || !IsClientConnected(iClosest) || !IsClientInGame(iClosest))
+			if (!IsValidClient(iClosest) || !IsClientConnected(iClosest) || !IsClientInGame(iClosest))
 				return Plugin_Continue;
 
 			float fClosestLocation[3];
@@ -379,20 +374,20 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 			TeleportEntity(iClient, NULL_VECTOR, fAngle, NULL_VECTOR);
 		}
 	}
-	
+
 	if (IsAttacker(iClient) && g_bBoostWave) {
 		fVelocity[0] = 500.0;
 	}
 	if (IsAttacker(iClient) && g_iSlowAttacker[iClient]) {
 		fVelocity[0] = -10000.0;
 	}
-	
+
 	if (IsDefender(iClient)) {
 		// Attach/detach tower on right-click
 		if (IsButtonReleased(iClient, iButtons, IN_ATTACK2)) {
 			char sActiveWeapon[64];
 			GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
-			
+
 			if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
 				if (IsTower(g_iAttachedTower[iClient])) {
 					Tower_Drop(iClient);
@@ -401,55 +396,55 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 				}
 			}
 		}
-		
+
 		// Show tower info on left-click
 		if (IsButtonReleased(iClient, iButtons, IN_ATTACK)) {
 			char sActiveWeapon[64];
 			GetClientWeapon(iClient, sActiveWeapon, sizeof(sActiveWeapon));
-			
+
 			if (StrEqual(sActiveWeapon, "tf_weapon_wrench") || StrEqual(sActiveWeapon, "tf_weapon_robot_arm")) {
 				Tower_ShowInfo(iClient);
 			}
 		}
-		
+
 		float fLocation[3], fViewAngles[3];
 		GetClientEyePosition(iClient, fLocation);
 		GetClientEyeAngles(iClient, fViewAngles);
-		
+
 		TR_TraceRayFilter(fLocation, fViewAngles, MASK_VISIBLE, RayType_Infinite, TraceRayEntities, iClient);
-		
+
 		if (TR_DidHit()) {
 			int iAimEntity = TR_GetEntityIndex();
-			
+
 			if (IsValidEntity(iAimEntity)) {
 				char sClassname[64];
 				GetEntityClassname(iAimEntity, sClassname, sizeof(sClassname));
-				
+
 				if (StrEqual(sClassname, "func_breakable")) {
 					char sName[64];
 					GetEntPropString(iAimEntity, Prop_Data, "m_iName", sName, sizeof(sName));
-					
+
 					if (StrContains(sName, "break_tower_") != -1) {
 						float fEntityLocation[3];
 						GetEntPropVector(iAimEntity, Prop_Send, "m_vecOrigin", fEntityLocation);
-						
+
 						if (GetVectorDistance(fLocation, fEntityLocation) <= 512.0) {
 							TDTowerId iTowerId;
-							
+
 							if (StrContains(sName, "break_tower_tp_") != -1) {
 								char sNameParts[4][32];
 								ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
-								
+
 								iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[3]));
 								Tower_GetName(iTowerId, sName, sizeof(sName));
 							} else {
 								char sNameParts[3][32];
 								ExplodeString(sName, "_", sNameParts, sizeof(sNameParts), sizeof(sNameParts[]));
-								
+
 								iTowerId = view_as<TDTowerId>(StringToInt(sNameParts[2]));
 								Tower_GetName(iTowerId, sName, sizeof(sName));
 							}
-							
+
 							char sDescription[1024];
 							if (Tower_GetDescription(iTowerId, sDescription, sizeof(sDescription))) {
 								char sDamagetype[64];
@@ -461,8 +456,8 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 										Damagetype: %s \n\
 										Number of Levels: %d \n\
 										--------------- \n\
-										%s", 
-										sName, Tower_GetPrice(iTowerId), Tower_GetPrice(iTowerId) / GetRealClientCount(true), sDamagetype, Tower_GetMaxLevel(iTowerId), sDescription);
+										%s",
+											   sName, Tower_GetPrice(iTowerId), Tower_GetPrice(iTowerId) / GetRealClientCount(true), sDamagetype, Tower_GetMaxLevel(iTowerId), sDescription);
 								}
 							}
 						}
@@ -471,14 +466,14 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 			}
 		}
 	}
-	
+
 	if (g_bPickupSentry[iClient]) {
 		iButtons |= IN_ATTACK2;
 		g_bPickupSentry[iClient] = false;
 	}
-	
+
 	g_iLastButtons[iClient] = iButtons;
-	
+
 	return Plugin_Continue;
 }
 
@@ -486,7 +481,7 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
-	
+
 	// Block tower taking damage
 	if (IsTower(iClient)) {
 		return Plugin_Handled;
@@ -502,67 +497,67 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 		//Sentry Damage
 		if (StrEqual(sAttackerObject, "obj_sentrygun")) {
 			fDamage *= fMultiplier[Multiplier_GetInt("sentry")] + 1.0;
-			//Register Damage For Stats
-			if(IsValidClient(iAttacker) && IsDefender(iAttacker)) {
+			// Register Damage For Stats
+			if (IsValidClient(iAttacker) && IsDefender(iAttacker)) {
 				Player_CAddValue(iAttacker, PLAYER_DAMAGE, RoundToZero(fDamage));
 			}
 			return Plugin_Changed;
 		}
-		
-		//Blast Damage
-		if(iDamageType & DMG_BLAST) {
+
+		// Blast Damage
+		if (iDamageType & DMG_BLAST) {
 			fDamage *= fMultiplier[Multiplier_GetInt("explosion")] + 1.0;
-			//Register Damage For Stats
-			if(IsValidClient(iAttacker) && IsDefender(iAttacker)) {
+			// Register Damage For Stats
+			if (IsValidClient(iAttacker) && IsDefender(iAttacker)) {
 				Player_CAddValue(iAttacker, PLAYER_DAMAGE, RoundToZero(fDamage));
 			}
 			return Plugin_Changed;
 		}
-		
-		//Fire Damage
-		if(iDamageType & DMG_BURN) {
+
+		// Fire Damage
+		if (iDamageType & DMG_BURN) {
 			fDamage *= fMultiplier[Multiplier_GetInt("fire")] + 1.0;
-			//Register Damage For stats
-			if(IsValidClient(iAttacker) && IsDefender(iAttacker)) {
+			// Register Damage For stats
+			if (IsValidClient(iAttacker) && IsDefender(iAttacker)) {
 				Player_CAddValue(iAttacker, PLAYER_DAMAGE, RoundToZero(fDamage));
 			}
 			return Plugin_Changed;
 		}
-		
-		//Bullet Damage
-		if(iDamageType & DMG_BULLET) {
+
+		// Bullet Damage
+		if (iDamageType & DMG_BULLET) {
 			fDamage *= fMultiplier[Multiplier_GetInt("bullet")] + 1.0;
-			//Register Damage For Stats
-			if(IsValidClient(iAttacker) && IsDefender(iAttacker)) {
+			// Register Damage For Stats
+			if (IsValidClient(iAttacker) && IsDefender(iAttacker)) {
 				Player_CAddValue(iAttacker, PLAYER_DAMAGE, RoundToZero(fDamage));
 			}
 			return Plugin_Changed;
 		}
 	}
-	
-	if(IsValidClient(iAttacker) && IsDefender(iAttacker)) {
+
+	if (IsValidClient(iAttacker) && IsDefender(iAttacker)) {
 		Player_CAddValue(iAttacker, PLAYER_DAMAGE, RoundToZero(fDamage));
 	}
-	
+
 	if (IsDefender(iClient)) {
 		if (IsValidClient(iAttacker)) {
 			if (iClient == iAttacker || GetClientTeam(iClient) != GetClientTeam(iAttacker)) {
 				if (fDamage >= GetClientHealth(iClient)) {
 					int iMetal = GetClientMetal(iClient) / 2;
-					
+
 					if (iMetal > 0) {
 						float fLocation[3];
-						
+
 						GetClientEyePosition(iClient, fLocation);
 						fLocation[2] = fLocation[2] - GetDistanceToGround(fLocation) + 10.0;
-						
+
 						SpawnMetalPack(TDMetalPack_Medium, fLocation, iMetal);
 					}
 				}
 			}
 		}
 	}
-	
+
 	return Plugin_Continue;
 }
 
@@ -570,7 +565,7 @@ public void OnTakeDamagePost(int iClient, int iAttacker, int iInflictor, float f
 	if (!g_bEnabled) {
 		return;
 	}
-	
+
 	if (IsAttacker(iClient)) {
 		Wave_OnTakeDamagePost(iClient, iAttacker, iInflictor, fDamage, iDamageType);
 	}
@@ -598,10 +593,10 @@ public void OnButtonSpawned(int iEntity) {
 	if (!g_bEnabled) {
 		return;
 	}
-	
+
 	char sName[64];
 	GetEntPropString(iEntity, Prop_Data, "m_iName", sName, sizeof(sName));
-	
+
 	if (StrEqual(sName, "wave_start")) {
 		g_iWaveStartButton = iEntity;
 		GetEntPropVector(iEntity, Prop_Send, "m_vecOrigin", g_fWaveStartButtonLocation);
@@ -612,7 +607,7 @@ public void OnAntiAirProjectileSpawned(int iEntity) {
 	if (!g_bEnabled) {
 		return;
 	}
-	
+
 	SDKHook(iEntity, SDKHook_ShouldCollide, OnProjectileCollide);
 	int iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
 
@@ -625,7 +620,7 @@ public void OnProjectileSpawned(int iEntity) {
 	if (!g_bEnabled) {
 		return;
 	}
-	
+
 	SDKHook(iEntity, SDKHook_ShouldCollide, OnProjectileCollide);
 }
 
@@ -633,21 +628,21 @@ public bool OnProjectileCollide(int iEntity, int iCollisiongroup, int iContentsm
 	if (!g_bEnabled) {
 		return true;
 	}
-	
+
 	int iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity");
-	
+
 	if (IsValidEntity(iOwner)) {
-		int iTeam = GetEntProp(iOwner, Prop_Send, "m_iTeamNum");
-		
+		int	  iTeam = GetEntProp(iOwner, Prop_Send, "m_iTeamNum");
+
 		float fLocation[3], fAngles[3];
 		GetEntPropVector(iEntity, Prop_Data, "m_vecOrigin", fLocation);
 		GetEntPropVector(iEntity, Prop_Data, "m_angAbsRotation", fAngles);
-		
+
 		TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayPlayers);
-		
+
 		if (TR_DidHit()) {
 			int iTarget = TR_GetEntityIndex();
-			
+
 			if (IsValidClient(iTarget)) {
 				if (GetClientTeam(iTarget) != iTeam) {
 					SetEntProp(iEntity, Prop_Data, "m_CollisionGroup", 0);
@@ -657,7 +652,7 @@ public bool OnProjectileCollide(int iEntity, int iCollisiongroup, int iContentsm
 			}
 		}
 	}
-	
+
 	return true;
 }
 
@@ -665,7 +660,7 @@ public Action OnNobuildEnter(int iEntity, int iClient) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
-	
+
 	if (IsDefender(iClient)) {
 		g_bInsideNobuild[iClient] = true;
 	} else if (IsTower(iClient)) {
@@ -673,7 +668,7 @@ public Action OnNobuildEnter(int iEntity, int iClient) {
 			Tower_OnTouchNobuild(iClient);
 		}
 	}
-	
+
 	return Plugin_Continue;
 }
 
@@ -681,11 +676,11 @@ public Action OnNobuildExit(int iEntity, int iClient) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
 	}
-	
+
 	if (IsDefender(iClient)) {
 		g_bInsideNobuild[iClient] = false;
 	}
-	
+
 	return Plugin_Continue;
 }
 
@@ -738,7 +733,7 @@ stock bool IsAttacker(int iClient) {
 }
 
 /**
- * Checks if the current map is a Tower Defense map, 
+ * Checks if the current map is a Tower Defense map,
  * which can either start with td_ or tf2td_.
  *
  * @return		True if the current map is a Tower Defense map, false otherwise.
@@ -747,7 +742,7 @@ stock bool IsAttacker(int iClient) {
 stock bool IsTowerDefenseMap() {
 	char sCurrentMap[PLATFORM_MAX_PATH];
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
-	
+
 	return (strncmp(sCurrentMap, "td_", 3) == 0 || strncmp(sCurrentMap, "tf2td_", 6) == 0);
 }
 
@@ -761,15 +756,15 @@ stock void UpdateGameDescription() {
 	if (!g_bSteamWorks) {
 		return;
 	}
-	
+
 	char sGamemode[64];
-	
+
 	if (g_bEnabled) {
 		Format(sGamemode, sizeof(sGamemode), "%s (%s)", GAME_DESCRIPTION, PLUGIN_VERSION);
 	} else {
 		strcopy(sGamemode, sizeof(sGamemode), "Team Fortress");
 	}
-	
+
 	SteamWorks_SetGameDescription(sGamemode);
 }
 
@@ -789,13 +784,13 @@ stock void PrecacheModels() {
 	PrecacheModel("models/bots/pyro/bot_pyro.mdl");
 	PrecacheModel("models/bots/spy/bot_spy.mdl");
 	PrecacheModel("models/bots/engineer/bot_engineer.mdl");
-	
+
 	PrecacheModel("models/items/ammopack_large.mdl");
 	PrecacheModel("models/items/ammopack_medium.mdl");
 	PrecacheModel("models/items/ammopack_small.mdl");
-	
+
 	g_iLaserMaterial = PrecacheModel("materials/sprites/laserbeam.vmt");
-	g_iHaloMaterial = PrecacheModel("materials/sprites/halo01.vmt");
+	g_iHaloMaterial	 = PrecacheModel("materials/sprites/halo01.vmt");
 }
 
 /**
@@ -810,7 +805,7 @@ stock void PrecacheSounds() {
 		Format(sRoboPath, sizeof(sRoboPath), "mvm/player/footsteps/robostep_%s%i.mp3", (i < 10) ? "0" : "", i);
 		PrecacheSound(sRoboPath);
 	}
-	
+
 	PrecacheSound("items/ammo_pickup.wav");
 	PrecacheSound("items/gunpickup2.wav");
 	PrecacheSound("vo/announcer_begins_5sec.mp3");
@@ -833,7 +828,7 @@ stock void PrecacheSounds() {
 	PrecacheSound("music/mvm_start_mid_wave.wav");
 	PrecacheSound("music/mvm_start_last_wave.wav");
 	PrecacheSound("music/mvm_end_last_wave.wav");
-	}
+}
 
 /**
  * Counts non-fake clients connected to the game.
@@ -844,13 +839,13 @@ stock void PrecacheSounds() {
 
 stock int GetRealClientCount(bool bInGameOnly = false) {
 	int iClients = 0;
-	
+
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (((bInGameOnly) ? IsClientInGame(iClient) : IsClientConnected(iClient)) && !IsFakeClient(iClient)) {
 			iClients++;
 		}
 	}
-	
+
 	return iClients;
 }
 
@@ -891,17 +886,17 @@ stock int GetAimTarget(int iClient) {
 	float fLocation[3], fAngles[3];
 	GetClientEyePosition(iClient, fLocation);
 	GetClientEyeAngles(iClient, fAngles);
-	
+
 	TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayPlayers, iClient);
-	
+
 	if (TR_DidHit()) {
 		int iEntity = TR_GetEntityIndex();
-		
+
 		if (IsValidEntity(iEntity) && IsValidClient(iEntity)) {
 			return iEntity;
 		}
 	}
-	
+
 	return -1;
 }
 
@@ -920,17 +915,17 @@ stock int GetAimEntity(int iClient) {
 	float fLocation[3], fAngles[3];
 	GetClientEyePosition(iClient, fLocation);
 	GetClientEyeAngles(iClient, fAngles);
-	
+
 	TR_TraceRayFilter(fLocation, fAngles, MASK_PLAYERSOLID, RayType_Infinite, TraceRayEntities, iClient);
-	
+
 	if (TR_DidHit()) {
 		int iEntity = TR_GetEntityIndex();
-		
+
 		if (IsValidEntity(iEntity)) {
 			return iEntity;
 		}
 	}
-	
+
 	return -1;
 }
 
@@ -948,23 +943,23 @@ public bool TraceRayEntities(int iEntity, int iMask, any iData) {
 
 stock int GetClientByName(int iClient, char[] sName) {
 	char sNameOfIndex[MAX_NAME_LENGTH + 1];
-	int iLen = strlen(sName);
-	
-	int iResults = 0;
-	int iTarget = 0;
-	
+	int	 iLen	  = strlen(sName);
+
+	int	 iResults = 0;
+	int	 iTarget  = 0;
+
 	for (int i = 1; i <= MaxClients; i++) {
 		if (IsClientInGame(i)) {
 			GetClientName(i, sNameOfIndex, sizeof(sNameOfIndex));
 			Substring(sNameOfIndex, sizeof(sNameOfIndex), sNameOfIndex, sizeof(sNameOfIndex), 0, iLen);
-			
+
 			if (StrEqual(sName, sNameOfIndex)) {
 				iResults++;
 				iTarget = i;
 			}
 		}
 	}
-	
+
 	if (iResults == 1) {
 		return iTarget;
 	} else if (iResults == 0) {
@@ -976,7 +971,7 @@ stock int GetClientByName(int iClient, char[] sName) {
 			Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidTooUnspecific");
 		}
 	}
-	
+
 	return -1;
 }
 
@@ -1015,7 +1010,7 @@ stock bool IsStringNumeric(char[] sText) {
 			return false;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -1028,15 +1023,15 @@ stock bool IsStringNumeric(char[] sText) {
 
 stock float GetDistanceToGround(float fLocation[3]) {
 	float fGround[3];
-	
-	TR_TraceRayFilter(fLocation, view_as<float>( { 90.0, 0.0, 0.0 } ), MASK_PLAYERSOLID, RayType_Infinite, TraceRayNoPlayers, 0);
-	
+
+	TR_TraceRayFilter(fLocation, view_as<float>({ 90.0, 0.0, 0.0 }), MASK_PLAYERSOLID, RayType_Infinite, TraceRayNoPlayers, 0);
+
 	if (TR_DidHit()) {
 		TR_GetEndPosition(fGround);
-		
+
 		return GetVectorDistance(fLocation, fGround);
 	}
-	
+
 	return 0.0;
 }
 
@@ -1053,7 +1048,7 @@ public bool TraceRayNoPlayers(int iEntity, int iMask, any iData) {
 
 stock void SetRobotModel(int iClient) {
 	char sClass[16], sModelPath[PLATFORM_MAX_PATH];
-	
+
 	GetClientClassName(iClient, sClass, sizeof(sClass));
 	Format(sModelPath, sizeof(sModelPath), "models/bots/%s/bot_%s.mdl", sClass, sClass);
 	SetVariantString(sModelPath);
@@ -1074,21 +1069,29 @@ stock void GetClientClassName(int iClient, char[] sBuffer, int iMaxLength) {
 	switch (TF2_GetPlayerClass(iClient)) {
 		case TFClass_Scout: {
 			strcopy(sBuffer, iMaxLength, "scout");
-		} case TFClass_Sniper: {
+		}
+		case TFClass_Sniper: {
 			strcopy(sBuffer, iMaxLength, "sniper");
-		} case TFClass_Soldier: {
+		}
+		case TFClass_Soldier: {
 			strcopy(sBuffer, iMaxLength, "soldier");
-		} case TFClass_DemoMan: {
+		}
+		case TFClass_DemoMan: {
 			strcopy(sBuffer, iMaxLength, "demo");
-		} case TFClass_Medic: {
+		}
+		case TFClass_Medic: {
 			strcopy(sBuffer, iMaxLength, "medic");
-		} case TFClass_Heavy: {
+		}
+		case TFClass_Heavy: {
 			strcopy(sBuffer, iMaxLength, "heavy");
-		} case TFClass_Pyro: {
+		}
+		case TFClass_Pyro: {
 			strcopy(sBuffer, iMaxLength, "pyro");
-		} case TFClass_Spy: {
+		}
+		case TFClass_Spy: {
 			strcopy(sBuffer, iMaxLength, "spy");
-		} case TFClass_Engineer: {
+		}
+		case TFClass_Engineer: {
 			strcopy(sBuffer, iMaxLength, "engineer");
 		}
 	}
@@ -1101,43 +1104,42 @@ stock void GetClientClassName(int iClient, char[] sBuffer, int iMaxLength) {
  * @param iType			The building type.
  * @return				True if allowed, false otherwise.
  */
-
 public bool CanClientBuild(int iClient, TDBuildingType iType) {
 	if (!IsValidClient(iClient)) {
 		return false;
 	}
-	
+
 	if (TF2_IsPlayerInCondition(iClient, TFCond_Taunting)) {
 		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidNoBuildWhileTaunting");
 		return false;
 	}
-	
+
 	if (g_bCarryingObject[iClient]) {
 		Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidNoBuildWhileCarrying");
 		return false;
 	}
-	
+
 	switch (iType) {
 		case TDBuilding_Sentry: {
 			if (GetClientMetal(iClient) < 130) {
 				Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidInsufficientMetal", 130);
 				return false;
 			}
-			
+
 			int iEntity = -1, iCount = 0, iOwner = -1;
-			
+
 			while ((iEntity = FindEntityByClassname(iEntity, "obj_sentrygun")) != -1) {
 				iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hBuilder");
-				
+
 				if (iOwner == iClient) {
 					iCount++;
 				}
-				
+
 				if (iCount > g_iBuildingLimit[TDBuilding_Sentry]) {
 					AcceptEntityInput(iEntity, "Kill");
 				}
 			}
-			
+
 			// Client can build Sentry
 			if (iCount < g_iBuildingLimit[TDBuilding_Sentry]) {
 				return true;
@@ -1151,21 +1153,21 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 				Forbid(iClient, true, "%s %t", PLUGIN_PREFIX, "forbidInsufficientMetal", 100);
 				return false;
 			}
-			
+
 			int iEntity = -1, iCount = 0, iOwner = -1;
-			
+
 			while ((iEntity = FindEntityByClassname(iEntity, "obj_dispenser")) != -1) {
 				iOwner = GetEntPropEnt(iEntity, Prop_Send, "m_hBuilder");
-				
+
 				if (iOwner == iClient) {
 					iCount++;
 				}
-				
+
 				if (iCount > g_iBuildingLimit[TDBuilding_Dispenser]) {
 					AcceptEntityInput(iEntity, "Kill");
 				}
 			}
-			
+
 			// Client can build Dispenser
 			if (iCount < g_iBuildingLimit[TDBuilding_Dispenser]) {
 				Player_CAddValue(iClient, PLAYER_OBJECTS_BUILT, 1);
@@ -1176,7 +1178,7 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
 			}
 		}
 	}
-	
+
 	return false;
 }
 
@@ -1210,7 +1212,7 @@ stock void Forbid(int iClient, bool bPlaySound=true, const char[] sMessage, any.
 stock void ReloadMap() {
 	char sCurrentMap[PLATFORM_MAX_PATH];
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
-	
+
 	ServerCommand("changelevel %s", sCurrentMap);
 }
 
@@ -1247,14 +1249,14 @@ stock void AddConVarFlag(char[] sCvar, int iFlag) {
 
 stock bool IsInsideClient(int iClient) {
 	float fMinBounds[3], fMaxBounds[3], fLocation[3];
-	
+
 	GetClientMins(iClient, fMinBounds);
 	GetClientMaxs(iClient, fMaxBounds);
-	
+
 	GetClientAbsOrigin(iClient, fLocation);
-	
+
 	TR_TraceHullFilter(fLocation, fLocation, fMinBounds, fMaxBounds, MASK_SOLID, TraceRayPlayers, iClient);
-	
+
 	return TR_DidHit();
 }
 
@@ -1274,9 +1276,9 @@ stock void PrintToHud(int iClient, const char[] sMessage, any...) {
 	
 	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 3);
-	
+
 	Handle hBuffer = StartMessageOne("KeyHintText", iClient);
-	
+
 	BfWriteByte(hBuffer, 1);
 	BfWriteString(hBuffer, sFormattedMessage);
 	EndMessage();
@@ -1292,7 +1294,7 @@ stock void PrintToHud(int iClient, const char[] sMessage, any...) {
 
 stock void PrintToHudAll(const char[] sMessage, any...) {
 	char sFormattedMessage[256];
-	
+
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (IsClientInGame(iClient) && !IsFakeClient(iClient)) {
 			VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 2);
@@ -1323,7 +1325,7 @@ stock int GetClientByNameExact(char[] sName, int iTeam = -1) {
 			}
 		}
 	}
-	
+
 	return -1;
 }
 
@@ -1339,20 +1341,20 @@ stock int GetClientByNameExact(char[] sName, int iTeam = -1) {
 
 stock void AttachAnnotation(int iEntity, float fLifetime, char[] sMessage, any...) {
 	Handle hEvent = CreateEvent("show_annotation");
-	
+
 	if (hEvent == null) {
 		return;
 	}
-	
+
 	SetEventInt(hEvent, "follow_entindex", iEntity);
 	SetEventInt(hEvent, "id", iEntity);
 	SetEventFloat(hEvent, "lifetime", fLifetime);
 	SetEventString(hEvent, "play_sound", "misc/null.wav");
-	
+
 	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
 	SetEventString(hEvent, "text", sFormattedMessage);
-	
+
 	FireEvent(hEvent);
 }
 
@@ -1365,11 +1367,11 @@ stock void AttachAnnotation(int iEntity, float fLifetime, char[] sMessage, any..
 
 stock void HideAnnotation(int iEntity) {
 	Handle hEvent = CreateEvent("hide_annotation");
-	
+
 	if (hEvent == null) {
 		return;
 	}
-	
+
 	SetEventInt(hEvent, "id", iEntity);
 	FireEvent(hEvent);
 }
@@ -1387,22 +1389,22 @@ stock void HideAnnotation(int iEntity) {
 
 stock void AttachAdvancedAnnotation(int iClient, int iEntity, float fLifetime, char[] sMessage, any...) {
 	Handle hEvent = CreateEvent("show_annotation");
-	
+
 	if (hEvent == null) {
 		return;
 	}
-	
+
 	SetEventInt(hEvent, "follow_entindex", iEntity);
 	SetEventInt(hEvent, "id", iClient * iEntity);
 	SetEventFloat(hEvent, "lifetime", fLifetime);
 	SetEventString(hEvent, "play_sound", "misc/null.wav");
-	
+
 	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 5);
 	SetEventString(hEvent, "text", sFormattedMessage);
-	
+
 	SetEventInt(hEvent, "visibilityBitfield", GetVisibilityBitfield(iClient));
-	
+
 	FireEvent(hEvent);
 }
 
@@ -1416,11 +1418,11 @@ stock void AttachAdvancedAnnotation(int iClient, int iEntity, float fLifetime, c
 
 stock void HideAdvancedAnnotation(int iClient, int iEntity) {
 	Handle hEvent = CreateEvent("hide_annotation");
-	
+
 	if (hEvent == null) {
 		return;
 	}
-	
+
 	SetEventInt(hEvent, "id", iClient * iEntity);
 	FireEvent(hEvent);
 }
@@ -1438,22 +1440,22 @@ stock void HideAdvancedAnnotation(int iClient, int iEntity) {
 
 stock void ShowAnnotation(int iId, float fLocation[3], float fOffsetZ, float fLifetime, char[] sMessage, any...) {
 	Handle hEvent = CreateEvent("show_annotation");
-	
+
 	if (hEvent == null) {
 		return;
 	}
-	
+
 	SetEventFloat(hEvent, "worldPosX", fLocation[0]);
 	SetEventFloat(hEvent, "worldPosY", fLocation[1]);
 	SetEventFloat(hEvent, "worldPosZ", fLocation[2] + fOffsetZ);
 	SetEventInt(hEvent, "id", iId);
 	SetEventFloat(hEvent, "lifetime", fLifetime);
 	SetEventString(hEvent, "play_sound", "misc/null.wav");
-	
+
 	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
 	SetEventString(hEvent, "text", sFormattedMessage);
-	
+
 	FireEvent(hEvent);
 }
 
@@ -1479,7 +1481,7 @@ stock int Abs(int iValue) {
 
 stock void SetPassword(const char[] sPassword, bool bDatabase = true, bool bReloadMap = false) {
 	ServerCommand("sv_password \"%s\"", sPassword);
-	
+
 	if (bDatabase) {
 		Database_SetServerPassword(sPassword, bReloadMap);
 	} else {
@@ -1499,7 +1501,7 @@ stock void CreateDataMap(Handle &hMapHandle) {
 		CloseHandle(hMapHandle);
 		hMapHandle = null;
 	}
-	
+
 	hMapHandle = CreateTrie();
 }
 
@@ -1511,38 +1513,38 @@ stock void CreateDataMap(Handle &hMapHandle) {
 
 stock int GetHealthBar() {
 	int iHealthBar = FindEntityByClassname(-1, "monster_resource");
-	
+
 	if (!IsValidEntity(iHealthBar)) {
 		iHealthBar = CreateEntityByName("monster_resource");
-		
+
 		if (IsValidEntity(iHealthBar)) {
 			DispatchSpawn(iHealthBar);
 		}
 	}
-	
-	SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 0);
-	
-	return iHealthBar;
-} 
 
-stock int GetClosestClient(int iClient)
-{
+	SetEntProp(iHealthBar, Prop_Send, "m_iBossHealthPercentageByte", 0);
+
+	return iHealthBar;
+}
+
+stock int GetClosestClient(int iClient) {
 	float fClientLocation[3];
 	GetClientAbsOrigin(iClient, fClientLocation);
 	float fEntityOrigin[3];
 
-	int iClosestEntity = -1;
+	int	  iClosestEntity   = -1;
 	float fClosestDistance = -1.0;
-	for(int i = 1; i < MaxClients; i++) if(IsValidClient(i)) {
-		if(IsClientConnected(i) && IsClientInGame(i) && GetClientTeam(i) != GetClientTeam(iClient) && i > 0) {
-			GetClientAbsOrigin(i, fEntityOrigin);
-			float fEntityDistance = GetVectorDistance(fClientLocation, fEntityOrigin);
-			if((fEntityDistance < fClosestDistance) || fClosestDistance == -1.0) {
-				fClosestDistance = fEntityDistance;
-				iClosestEntity = i;
+	for (int i = 1; i < MaxClients; i++)
+		if (IsValidClient(i)) {
+			if (IsClientConnected(i) && IsClientInGame(i) && GetClientTeam(i) != GetClientTeam(iClient) && i > 0) {
+				GetClientAbsOrigin(i, fEntityOrigin);
+				float fEntityDistance = GetVectorDistance(fClientLocation, fEntityOrigin);
+				if ((fEntityDistance < fClosestDistance) || fClosestDistance == -1.0) {
+					fClosestDistance = fEntityDistance;
+					iClosestEntity	 = i;
+				}
 			}
 		}
-	}
 	return iClosestEntity;
 }
 

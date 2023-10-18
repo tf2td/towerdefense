@@ -9,7 +9,6 @@
 #endif
 
 public Action Timer_Hints(Handle hTimer) {
-	
 	int iRandom = GetRandomInt(1, 6);
 	if(iRandom  == 1)
 		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "hintBuildInfo");
@@ -31,13 +30,14 @@ public Action Timer_Hints(Handle hTimer) {
 		//PrintToChatAll("\x04[\x03TD\x04]\x03 Dying will make you lose half your metal! ");
 	return Plugin_Continue;
 }
+
 public Action Timer_Reset(Handle hTimer) {
 	SetPassword("", true, true);
 	return Plugin_Continue;
 }
 
 public Action RespawnPlayer(Handle hTimer, any iClient) {
-	if(IsValidClient(iClient)) {
+	if (IsValidClient(iClient)) {
 		TF2_RespawnPlayer(iClient);
 	}
 	return Plugin_Continue;

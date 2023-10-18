@@ -43,14 +43,14 @@ stock void Server_Initialize() {
 		Log(TDLogLevel_Info, "Server has been restarted completely, reloading map for initializing");
 		ReloadMap();
 	} else {
-		Database_CheckServer(); // Calls Database_OnServerChecked() when finished
+		Database_CheckServer();	   // Calls Database_OnServerChecked() when finished
 	}
 }
 
 stock void Database_OnServerChecked() {
 	Log(TDLogLevel_Trace, "Database_OnServerChecked");
 
-	Database_LoadData(); // Calls Database_OnDataLoaded() when finished
+	Database_LoadData();	// Calls Database_OnDataLoaded() when finished
 }
 
 stock void Database_OnDataLoaded() {
@@ -86,48 +86,48 @@ stock void Server_Reset() {
 		return;
 	}
 
-	g_iBuildingLimit[TDBuilding_Sentry] = 1;
-	g_iBuildingLimit[TDBuilding_Dispenser] = 0;
+	g_iBuildingLimit[TDBuilding_Sentry]			 = 1;
+	g_iBuildingLimit[TDBuilding_Dispenser]		 = 0;
 	g_iBuildingLimit[TDBuilding_TeleporterEntry] = 1;
-	g_iBuildingLimit[TDBuilding_TeleporterExit] = 1;
+	g_iBuildingLimit[TDBuilding_TeleporterExit]	 = 1;
 
-	//Reset Hint Timer
+	// Reset Hint Timer
 	if (hHintTimer != null) {
 		CloseHandle(hHintTimer);
 		hHintTimer = null;
 	}
 
 	for (int iClient = 1; iClient <= MaxClients; iClient++) {
-		//Reset carry Towers/Sentry
+		// Reset carry Towers/Sentry
 		if (IsTower(g_iAttachedTower[iClient])) {
 			TF2Attrib_RemoveByName(iClient, "cannot pick up buildings");
 			g_iLastMover[g_iAttachedTower[iClient]] = 0;
-			g_bCarryingObject[iClient] = false;
-			g_iAttachedTower[iClient] = 0;
+			g_bCarryingObject[iClient]				= false;
+			g_iAttachedTower[iClient]				= 0;
 		}
-		//Reset bought Towers
-		if(IsTower(iClient)) {
+		// Reset bought Towers
+		if (IsTower(iClient)) {
 			TDTowerId iTowerId = GetTowerId(iClient);
-			//tf_bot_quota > 0 breaks this here
+			// tf_bot_quota > 0 breaks this here
 			if (iTowerId != TDTower_Invalid) {
 				g_bTowerBought[view_as<int>(iTowerId)] = false;
 			}
 		}
-		if(IsAttacker(iClient) && g_iSlowAttacker[iClient]) {
+		if (IsAttacker(iClient) && g_iSlowAttacker[iClient]) {
 			g_iSlowAttacker[iClient] = false;
 		}
-		if(IsDefender(iClient)) {
+		if (IsDefender(iClient)) {
 			g_bCarryingObject[iClient] = false;
-			//Remove Beam if there is one
+			// Remove Beam if there is one
 			if (g_iHealBeamIndex[iClient][0] != 0) {
-				if(IsValidEdict(g_iHealBeamIndex[iClient][0])) {
+				if (IsValidEdict(g_iHealBeamIndex[iClient][0])) {
 					RemoveEdict(g_iHealBeamIndex[iClient][0]);
 					g_iHealBeamIndex[iClient][0] = 0;
 				}
 			}
 
 			if (g_iHealBeamIndex[iClient][1] != 0) {
-				if(IsValidEdict(g_iHealBeamIndex[iClient][1])) {
+				if (IsValidEdict(g_iHealBeamIndex[iClient][1])) {
 					RemoveEdict(g_iHealBeamIndex[iClient][1]);
 					g_iHealBeamIndex[iClient][1] = 0;
 				}
@@ -135,75 +135,84 @@ stock void Server_Reset() {
 		}
 	}
 
-	//Reset Multipliers
+	// Reset Multipliers
 	for (int i = 1; i <= iMaxMultiplierTypes; i++) {
 		fMultiplier[i] = 0.0;
 	}
-	g_iTime = GetTime();
-	g_iMetalPackCount = 0;
+	g_iTime				 = GetTime();
+	g_iMetalPackCount	 = 0;
 
-	g_bTowersLocked = false;
+	g_bTowersLocked		 = false;
 	g_bAoEEngineerAttack = false;
 
-	g_bStartWaveEarly = false;
-	g_iBotsToSpawn = 0;
-	g_iTotalBotsLeft = 0;
+	g_bStartWaveEarly	 = false;
+	g_iBotsToSpawn		 = 0;
+	g_iTotalBotsLeft	 = 0;
 
-	g_iCurrentWave = 0;
-	g_iNextWaveType = 0;
+	g_iCurrentWave		 = 0;
+	g_iNextWaveType		 = 0;
 
-	iAoEEngineerTimer = 0;
-	iAoEKritzMedicTimer = 0;
+	iAoEEngineerTimer	 = 0;
+	iAoEKritzMedicTimer	 = 0;
 
-	g_iHealthBar = GetHealthBar();
+	g_iHealthBar		 = GetHealthBar();
 
-	g_bLockable = true;
-	g_bCanGetUnlocks = true;
+	g_bLockable			 = true;
+	g_bCanGetUnlocks	 = true;
 
-	//Reset AoE Timer
+	// Reset AoE Timer
 	if (hAoETimer != null) {
 		CloseHandle(hAoETimer);
 		hAoETimer = null;
 	}
 
-	//Get map max clients
+	// Get map max clients
 	g_iMaxClients = PLAYER_LIMIT;
 
 	char sQuery[256];
 	char sCurrentMap[PLATFORM_MAX_PATH];
 	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
 
-	Format(sQuery, sizeof(sQuery), "\
-		SELECT `player_limit` \
-		FROM `map` \
-		WHERE `name` = '%s' \
-		LIMIT 1 \
-	", sCurrentMap);
-	
+	g_hDatabase.Format(sQuery, sizeof(sQuery),
+		"SELECT `player_limit` " ...
+		"FROM `map` " ...
+		"WHERE `name` = '%s' " ...
+		"LIMIT 1",
+		sCurrentMap);
+
 	DBResultSet queryResult = SQL_Query(g_hDatabase, sQuery);
 
-	if (queryResult == null)
-	{
+	if (queryResult == null) {
 		char error[255];
 		SQL_GetError(g_hDatabase, error, sizeof(error));
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to query (error: %s)", error);
-	} 
-	else 
-	{
-		if(queryResult.HasResults && queryResult.FetchRow()) {
-			if (queryResult.FetchInt(0) > 0) {
-				g_iMaxClients = queryResult.FetchInt(0);
-				Log(TDLogLevel_Debug, "Max clients for map %s is %d", sCurrentMap, g_iMaxClients);
-			} 
-		} else {
-				Log(TDLogLevel_Debug, "Couldn't find entry for map '%s'. Setting max clients to default %d", sCurrentMap, g_iMaxClients);
+	} else {
+		if (queryResult.HasResults && queryResult.FetchRow()) {
+			int iResult = queryResult.FetchInt(0);
+			if (iResult > 0) {
+				g_iMaxClients = iResult;
+				LogType(TDLogLevel_Debug, TDLogType_FileAndConsole, "Max clients for map %s is %d", sCurrentMap, g_iMaxClients);
+			} else {
+				LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Max clients for map %s is %d. This isnt supported; Please check the database entries. Setting max clients to default %d", sCurrentMap, iResult, g_iMaxClients);
 			}
+		} else {
+			LogType(TDLogLevel_Debug, TDLogType_FileAndConsole, "Couldn't find entry for map '%s'. Setting max clients to default %d", sCurrentMap, g_iMaxClients);
+		}
 		delete queryResult;
+	}
+
+	int clients = (g_iMaxClients + g_hMaxBotsOnField.IntValue) - MaxClients;
+
+	if (clients > 0) {
+		char cvarName[32];
+		g_hMaxBotsOnField.GetName(cvarName, sizeof(cvarName));
+		LogType(TDLogLevel_Warning, TDLogType_FileAndConsole, "ConVar '%s' value + the allowed max clients '%d' (database) is higher than the server maxplayers '%d'. Shrinking convar value by '%d'", cvarName, g_iMaxClients, MaxClients, clients);
+		g_hMaxBotsOnField.IntValue = g_hMaxBotsOnField.IntValue - clients;
 	}
 
 	Format(g_sPassword, sizeof(g_sPassword), "");
 
-	SetPassword(g_sPassword, false); //Change upon release
+	SetPassword(g_sPassword, false);	// Change upon release
 }
 
 /**
@@ -241,9 +250,9 @@ stock void Server_OnDataSet(int iServerId, const char[] sKey, TDDataType iDataTy
 
 stock void Server_UAddValue(int iServerId, const char[] sKey, int iValue) {
 	char sServerIdKey[128];
-	int iOldValue;
+	int	 iOldValue;
 	Server_UGetValue(iServerId, sKey, iOldValue);
-	if(iOldValue != -1)
+	if (iOldValue != -1)
 		iValue = iValue + iOldValue;
 
 	Format(sServerIdKey, sizeof(sServerIdKey), "%d_%s", iServerId, sKey);
