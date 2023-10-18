@@ -15,12 +15,12 @@
 =            Constants            =
 =================================*/
 
-#define PLUGIN_NAME		"TF2 Tower Defense"
-#define PLUGIN_AUTHOR	"floube, benedevil, hurpdurp, dragonisser"
-#define PLUGIN_DESC		"Stop enemies from crossing a map by buying towers and building up defenses."
-#define PLUGIN_VERSION	"2.1.3"
-#define PLUGIN_URL		"https://github.com/tf2td/towerdefense"
-#define PLUGIN_PREFIX	"[TF2TD]"
+#define PLUGIN_NAME	   "TF2 Tower Defense"
+#define PLUGIN_AUTHOR  "floube, benedevil, hurpdurp, dragonisser"
+#define PLUGIN_DESC	   "Stop enemies from crossing a map by buying towers and building up defenses."
+#define PLUGIN_VERSION "2.1.3"
+#define PLUGIN_URL	   "https://github.com/tf2td/towerdefense"
+#define PLUGIN_PREFIX  "[TF2TD]"
 
 /*==========================================
 =            Plugin Information            =
@@ -114,8 +114,6 @@ public void OnPluginStart() {
 	LoadConVars();
 	SetConVars();
 
-	
-	
 	SetPassword("WaitingForServerToInitialize", false);
 }
 
@@ -200,7 +198,7 @@ public void OnMapEnd() {
 }
 
 public void OnConfigsExecuted() {
-	g_bEnabled = g_hEnabled.BoolValue && g_bTowerDefenseMap && g_bSteamWorks && g_bTF2Attributes;
+	g_bEnabled	  = g_hEnabled.BoolValue && g_bTowerDefenseMap && g_bSteamWorks && g_bTF2Attributes;
 	g_bMapRunning = true;
 
 	UpdateGameDescription();
@@ -212,7 +210,7 @@ public void OnConfigsExecuted() {
 
 			Log(TDLogLevel_Info, "Map \"%s\" is not supported, Tower Defense has been disabled.", sCurrentMap);
 			SetPassword("", false);
-			
+
 		} else {
 			Log(TDLogLevel_Info, "Tower Defense is disabled.");
 		}
@@ -292,7 +290,7 @@ public void OnClientPostAdminCheck(int iClient) {
 
 		char sIp[32];
 		GetClientIP(iClient, sIp, sizeof(sIp));
-		
+
 		Player_Connected(GetClientUserId(iClient), iClient, GetClientNameShort(iClient), sSteamId, sCommunityId, sIp);
 	}
 
@@ -351,8 +349,8 @@ public Action OnPlayerRunCmd(int iClient, int &iButtons, int &iImpulse, float fV
 		if (Tower_GetAttackSecondary(iTowerId)) {
 			iButtons |= IN_ATTACK2;
 		}
-		
-		if(Tower_GetRotate(iTowerId) && g_bTowersLocked) {
+
+		if (Tower_GetRotate(iTowerId) && g_bTowersLocked) {
 			float fClientEyePosition[3];
 			GetClientEyePosition(iClient, fClientEyePosition);
 
@@ -486,7 +484,7 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 	if (IsTower(iClient)) {
 		return Plugin_Handled;
 	}
-	
+
 	if (IsClientInGame(iClient)) {
 		if (!IsValidEdict(iInflictor)) {
 			return Plugin_Continue;
@@ -494,7 +492,7 @@ public Action OnTakeDamage(int iClient, int &iAttacker, int &iInflictor, float &
 		char sAttackerObject[128];
 		GetEdictClassname(iInflictor, sAttackerObject, sizeof(sAttackerObject));
 
-		//Sentry Damage
+		// Sentry Damage
 		if (StrEqual(sAttackerObject, "obj_sentrygun")) {
 			fDamage *= fMultiplier[Multiplier_GetInt("sentry")] + 1.0;
 			// Register Damage For Stats
@@ -1192,12 +1190,12 @@ public bool CanClientBuild(int iClient, TDBuildingType iType) {
  * @noreturn
  */
 
-stock void Forbid(int iClient, bool bPlaySound=true, const char[] sMessage, any...) {
+stock void Forbid(int iClient, bool bPlaySound = true, const char[] sMessage, any...) {
 	char sFormattedMessage[512];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 4);
-	
+
 	CPrintToChat(iClient, "%s", sFormattedMessage);
-	
+
 	if (bPlaySound) {
 		PlaySound("Forbid", iClient);
 	}
@@ -1273,7 +1271,7 @@ stock void PrintToHud(int iClient, const char[] sMessage, any...) {
 	if (!IsValidClient(iClient) || !IsClientInGame(iClient)) {
 		return;
 	}
-	
+
 	char sFormattedMessage[256];
 	VFormat(sFormattedMessage, sizeof(sFormattedMessage), sMessage, 3);
 
@@ -1548,10 +1546,8 @@ stock int GetClosestClient(int iClient) {
 	return iClosestEntity;
 }
 
-
-
 stock char[] GetClientNameShort(int iClient) {
-	//Steam username is limited to 32 chars, sourcemod says 128?
+	// Steam username is limited to 32 chars, sourcemod says 128?
 	char sName[MAX_NAME_LENGTH];
 	GetClientName(iClient, sName, sizeof(sName));
 	return sName;
