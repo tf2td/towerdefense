@@ -3,7 +3,7 @@
   //waves
   "waveStart"
   {
-    "#format" "{1:s},{2:d}"
+    "#format" "{1:N},{2:d}"
     "en"      "{1} started Wave {2}"
   }
   "waveIncomming"
@@ -81,17 +81,17 @@
   //towers
   "towerBuyAttempt"
   {
-    "#format" "{1:s},{2:s},{3:d}"
+    "#format" "{1:N},{2:s},{3:d}"
     "en"      "{1} wants to buy {2} (Total price: {3} metal)"
   }
   "towerBought"
   {
-    "#format" "{1:s},{2:s}"
+    "#format" "{1:N},{2:s}"
     "en"      "{1} bought {2}"
   }
   "towerMoving"
   {
-    "#format" "{1:s}"
+    "#format" "{1:N}"
     "en"      "Moving: {1}"
   }
   "towerPickedUp"
@@ -101,38 +101,38 @@
   }
   "towerUpgradeLevel"
   {
-    "#format" "{1:s},{2:d}"
+    "#format" "{1:N},{2:d}"
     "en"      "{1} reached level {2}"
   }
   "towerUpgradeDamageBonus"
   {
-    "#format" "{1:s},{2:d}"
+    "#format" "{1:N},{2:d}"
     "en"      "{1} gained {2}%% damage bonus"
   }
   "towerUpgradeAttackSpeed"
   {
-    "#format" "{1:s},{2:d}"
+    "#format" "{1:N},{2:d}"
     "en"      "{1} gained {2}%% attackspeed"    
   }
   "towerUpgradeCanRotate"
   {
-    "#format" "{1:s}"
+    "#format" "{1:N}"
     "en"      "{1} can now rotate"   
   }
   "towerUpgradeProgress"
   {
-    "#format" "{1:s},{2:d},{3:d},{4:d}"
+    "#format" "{1:N},{2:d},{3:d},{4:d}"
     "en"      "{1} \n Current Level: {2} \n Upgrade Progress: {3}/{4}"
   }
   "towerUpgradeMaxLevel"
   {
-    "#format" "{1:s},{2:d}"
+    "#format" "{1:N},{2:d}"
     "en"      "{1} \n Current Level: {2} \n Max. Level Reached"
   }
   //buttons
   "towerInsufficientMetal"
   {
-    "#format" "{1:s},{2:d}"
+    "#format" "{1:N},{2:d}"
     "en"      "{1} needs {2} metal"
   }
   "sentryLimitChanged"
@@ -200,7 +200,7 @@
   //events
   "eventPlayerJoined"
   {
-    "#format" "{1:s}"
+    "#format" "{1:N}"
     "en"      "{1} joined the Defenders"   
   }
   "eventGameOver"
@@ -219,7 +219,7 @@
   }
   "cmdMetalStatsPlayer"
   {
-    "#format" "{1:s},{2:d}"
+    "#format" "{1:N},{2:d}"
     "en"      "{1} - {2} metal"   
   }
   "cmdPassword"
@@ -254,7 +254,7 @@
   }
   "cmdBuyTower"
   {
-    "#format" "{1:s},{2:s}"
+    "#format" "{1:N},{2:s}"
     "en"      "{1} bought {2}"
   }
   "cmdSetWave"
@@ -285,12 +285,12 @@
   }
   "cmdTransferMetalReceived"
   {
-    "#format" "{1:d},{2:s}"
+    "#format" "{1:d},{2:N}"
     "en"      "You received {1} metal from {2}."
   }
   "cmdTransferMetalSent"
   {
-    "#format" "{1:s},{2:d}"
+    "#format" "{1:N},{2:d}"
     "en"      "{1} received {2} metal from you."
   }
   //forbid
@@ -336,7 +336,7 @@
   }
   "forbidTowerAlreadyCarried"
   {
-    "#format" "{1:s}"
+    "#format" "{1:N}"
     "en"      "{red}{1} is already being moved by someone!"
   }
   "forbidTowerLockedMidwave"

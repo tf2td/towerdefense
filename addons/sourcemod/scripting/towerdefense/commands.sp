@@ -127,7 +127,7 @@ public Action Command_BuyTower(int iClient, int iArgs) {
 
 		Tower_Spawn(iTowerId);
 
-		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdBuyTower", GetClientNameShort(iClient), sName);
+		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "cmdBuyTower", iClient, sName);
 
 		g_bTowerBought[view_as<int>(iTowerId)] = true;
 		UpdateMaxBotsOnField();
@@ -328,7 +328,7 @@ public Action Command_ShowMetal(int iClient, int iArgs) {
 
 	for (int iPlayer = 1; iPlayer <= MaxClients; iPlayer++) {
 		if (IsDefender(iPlayer)) {
-			CPrintToChatAll("%t", "cmdMetalStatsPlayer", GetClientNameShort(iPlayer), GetClientMetal(iPlayer));
+			CPrintToChatAll("%t", "cmdMetalStatsPlayer", iPlayer, GetClientMetal(iPlayer));
 		}
 	}
 
@@ -389,8 +389,8 @@ public Action Command_TransferMetal(int iClient, int iArgs) {
 		AddClientMetal(iTarget, iMetal);
 		AddClientMetal(iClient, -iMetal);
 
-		CPrintToChat(iTarget, "%s %t", PLUGIN_PREFIX, "cmdTransferMetalReceived", iMetal, GetClientNameShort(iClient));
-		CPrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdTransferMetalSent", GetClientNameShort(iTarget), iMetal);
+		CPrintToChat(iTarget, "%s %t", PLUGIN_PREFIX, "cmdTransferMetalReceived", iMetal, iClient);
+		CPrintToChat(iClient, "%s %t", PLUGIN_PREFIX, "cmdTransferMetalSent", iTarget, iMetal);
 	}
 
 	return Plugin_Continue;
