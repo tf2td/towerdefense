@@ -32,6 +32,7 @@ bool g_bCanGetUnlocks;
 
 ConVar g_hEnabled;
 ConVar g_hTfBotQuota;
+ConVar g_hSvVisibleMaxPlayers;
 ConVar g_hMaxBotsOnField;
 
 /*==========  Handle  ==========*/
