@@ -204,6 +204,8 @@ stock void Server_Reset() {
 
 	UpdateMaxBotsOnField();
 
+	SetConVarInt(g_hSvVisibleMaxPlayers, g_iMaxClients);
+
 	Format(g_sPassword, sizeof(g_sPassword), "");
 
 	SetPassword(g_sPassword, false);	// Change upon release

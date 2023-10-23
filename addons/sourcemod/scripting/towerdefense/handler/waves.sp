@@ -34,10 +34,10 @@ stock void Wave_OnButtonStart(int iWave, int iButton, int iActivator) {
 
 	/*Translation Example
 	* Format: %s	  			%t
-	* Values: PLUGIN_PREFIX		"waveStart" GetClientNameShort(iActivator) (g_iCurrentWave + 1)
-	* Output: [TF2TD] 			[PrWh] Dragonisser started Wave 1
+	* Values: PLUGIN_PREFIX		"waveStart" iActivator (g_iCurrentWave + 1)
+	* Output: [TF2TD] 			Dragonisser started Wave 1
 	*/
-	CPrintToChatAll("%s %t", PLUGIN_PREFIX, "waveStart", GetClientNameShort(iActivator), g_iCurrentWave + 1);
+	CPrintToChatAll("%s %t", PLUGIN_PREFIX, "waveStart", iActivator, g_iCurrentWave + 1);
 	
 	//Wave Health
 	int iWaveHealth;

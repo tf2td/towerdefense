@@ -18,6 +18,7 @@ stock void LoadConVars() {
 	g_hEnabled.AddChangeHook(OnConVarChanged);
 	g_hMaxBotsOnField.AddChangeHook(OnConVarChanged);
 	g_hTfBotQuota = FindConVar("tf_bot_quota");
+	g_hSvVisibleMaxPlayers = FindConVar("sv_visiblemaxplayers");
 	g_hTfBotQuota.AddChangeHook(OnConVarChanged);
 }
 
