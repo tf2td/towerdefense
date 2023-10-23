@@ -103,7 +103,7 @@ public void Database_OnAddPlayer_1(Handle hDriver, Handle hResult, const char[] 
 
 public void Database_OnAddPlayer_2(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == null) {
-		Log(TDLogLevel_Error, "Query failed at Database_AddPlayer > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_AddPlayer1 > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		char sSteamId[32];
 		Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sSteamId, sizeof(sSteamId));
@@ -191,7 +191,7 @@ public void Database_OnUpdatePlayer_1(Handle hDriver, Handle hResult, const char
 
 public void Database_OnUpdatePlayer_2(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == null) {
-		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer1 > Error: %s", sError);
 	} else {
 		char sQuery[128];
 
@@ -216,7 +216,7 @@ public void Database_OnUpdatePlayer_2(Handle hDriver, Handle hResult, const char
 
 public void Database_OnUpdatePlayer_3(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == null) {
-		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer2 > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		char sQuery[128];
 
@@ -238,7 +238,7 @@ public void Database_OnUpdatePlayer_3(Handle hDriver, Handle hResult, const char
 
 public void Database_OnUpdatePlayer_4(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == null) {
-		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayer3 > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		SQL_FetchRow(hResult);
 
@@ -308,7 +308,7 @@ public void Database_OnCheckPlayerBanned_1(Handle hDriver, Handle hResult, const
 
 public void Database_OnCheckPlayerBanned_2(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == null) {
-		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerBanned > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_CheckPlayerBanned1 > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		bool bDontProceed = false;
 
@@ -442,7 +442,7 @@ public void Database_OnUpdatePlayerDisconnect_1(Handle hDriver, Handle hResult, 
 
 public void Database_OnUpdatePlayerDisconnect_2(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == null) {
-		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect1 > Error: %s", sError);
 	} else {
 		char sQuery[128];
 
@@ -464,7 +464,7 @@ public void Database_OnUpdatePlayerDisconnect_2(Handle hDriver, Handle hResult, 
 
 public void Database_OnUpdatePlayerDisconnect_3(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == null) {
-		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect2 > Error: %s", sError);
 	} else {
 		// Get Saved Player Info
 		int iKills, iAssists, iDeaths, iDamage, iObjects_Built, iTowers_Bought, iMetal_Pick, iMetal_Drop, iWaves_Played, iWaves_Reached, iRounds_Played, iRounds_Won, iPlayTime, iPlayerId;
@@ -535,7 +535,7 @@ public void Database_OnUpdatePlayerDisconnect_3(Handle hDriver, Handle hResult, 
 
 public void Database_OnUpdatePlayerDisconnect_4(Handle hDriver, Handle hResult, const char[] sError, any iUserId) {
 	if (hResult == null) {
-		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_UpdatePlayerDisconnect3 > Error: %s", sError);
 	} else {
 		char sSteamId[32];
 		Player_UGetString(iUserId, PLAYER_COMMUNITY_ID, sSteamId, sizeof(sSteamId));
