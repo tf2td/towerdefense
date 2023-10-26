@@ -118,7 +118,7 @@ stock void Database_UpdateServerPlayerCount() {
 
 public void Database_OnUpdateServerPlayerCount(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == null) {
-		Log(TDLogLevel_Error, "Query failed at Database_UpdateServer > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_OnUpdateServerPlayerCount > Error: %s", sError);
 	}
 }
 

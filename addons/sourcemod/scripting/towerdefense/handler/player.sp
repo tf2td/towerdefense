@@ -123,7 +123,7 @@ stock void Player_OnDisconnectPre(int iUserId, int iClient) {
 
 	if (GetRealClientCount(true) <= 1) {	// the disconnected player is counted (thus 1 not 0)
 		Database_ServerStatsUpdate();
-		CreateTimer(10.0, Timer_Reset);	   // Give Queries time to send
+		CreateTimer(60.0, Timer_Reset);	   // Give Queries time to send
 	}
 }
 

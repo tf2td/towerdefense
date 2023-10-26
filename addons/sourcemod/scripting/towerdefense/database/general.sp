@@ -516,7 +516,7 @@ stock void Database_LoadMultipliers() {
  
  public void Database_OnLoadMultipliers(Handle hDriver, Handle hResult, const char[] sError, any iData) {
 	if (hResult == null) {
-		Log(TDLogLevel_Error, "Query failed at Database_LoadMaxWaves > Error: %s", sError);
+		Log(TDLogLevel_Error, "Query failed at Database_OnLoadMultipliers > Error: %s", sError);
 	} else if (SQL_GetRowCount(hResult)) {
 		// multipliertype_id	price	increase 
 		// 1					1000	1000
