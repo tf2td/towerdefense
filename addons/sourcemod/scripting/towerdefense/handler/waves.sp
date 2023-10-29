@@ -358,7 +358,7 @@ stock void Wave_SpawnBots() {
 				g_iBotsToSpawn--;
 				ServerCommand("bot -team red -class %s -name %s%d", sClass, sName, -(g_iBotsToSpawn - iTotalBots));
 			}
-			CreateTimer(1.0, TeleportWaveDelay,g_iMaxBotsOnField, TIMER_FLAG_NO_MAPCHANGE);
+			CreateTimer(1.0, TeleportWaveDelay, g_iMaxBotsOnField, TIMER_FLAG_NO_MAPCHANGE);
 			// If bots alive
 		} else {
 			int iBotsToSpawn = g_iMaxBotsOnField - iAliveBots;

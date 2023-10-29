@@ -102,6 +102,7 @@ stock void Player_Connected(int iUserId, int iClient, const char[] sName, const 
 		TF2_SetPlayerClass(iClient, TFClass_Engineer, false, true);
 
 		UpdateGameDescription();
+		UpdateMaxBotsOnField();
 
 		Log(TDLogLevel_Debug, "Moved player %N to the Defenders team as Engineer", iClient);
 	}
@@ -120,8 +121,10 @@ stock void Player_OnDisconnectPre(int iUserId, int iClient) {
 	int iTime = GetTime() - g_iTime;
 	Player_CSetValue(iClient, PLAYER_PLAYTIME, iTime);
 	Server_UAddValue(g_iServerId, SERVER_PLAYTIME, iTime);
+	UpdateMaxBotsOnField();
 
 	if (GetRealClientCount(true) <= 1) {	// the disconnected player is counted (thus 1 not 0)
+		Log(TDLogLevel_Debug, "All players left. Reloading map in 60 seconds");
 		Database_ServerStatsUpdate();
 		CreateTimer(60.0, Timer_Reset);	   // Give Queries time to send
 	}

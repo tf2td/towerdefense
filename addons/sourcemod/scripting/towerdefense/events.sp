@@ -92,10 +92,13 @@ public Action Event_PlayerChangeTeamPre(Handle hEvent, const char[] sName, bool 
 public Action Event_PlayerConnectPre(Handle hEvent, const char[] sName, bool bDontBroadcast) {
 	if (!g_bEnabled) {
 		return Plugin_Continue;
+	} 
+	
+	if (!GetEventBool(hEvent, "bot")) {
+		Database_UpdateServerPlayerCount();
 	}
-
+		
 	SetEventBroadcast(hEvent, true);	// Block the original chat output (Player ... has joined the game)
-	Database_UpdateServerPlayerCount();
 	return Plugin_Continue;
 }
 
@@ -190,10 +193,12 @@ public Action Event_RoundWin(Handle hEvent, const char[] sName, bool bDontBroadc
 			Player_CSetValue(iClient, PLAYER_PLAYTIME, iTime);
 			Server_UAddValue(g_iServerId, SERVER_PLAYTIME, iTime);
 			Player_CSetValue(iClient, PLAYER_ROUNDS_PLAYED, 1);
+			Log(TDLogLevel_Debug, "Database_UpdatePlayerDisconnect %i", iClient);
 			Database_UpdatePlayerDisconnect(iUserId);
 		}
 	}
 
+	Log(TDLogLevel_Debug, "Database_ServerStatsUpdate");
 	Database_ServerStatsUpdate();
 
 	ServerCommand("bot_kick all");
@@ -202,6 +207,7 @@ public Action Event_RoundWin(Handle hEvent, const char[] sName, bool bDontBroadc
 	if (iTeam == TEAM_ATTACKER) {
 		CPrintToChatAll("%s %t", PLUGIN_PREFIX, "eventGameOver");
 	}
+	Log(TDLogLevel_Debug, "Server_Reset");
 	Server_Reset();
 
 	return Plugin_Handled;

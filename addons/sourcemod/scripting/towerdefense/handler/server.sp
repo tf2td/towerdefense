@@ -189,6 +189,7 @@ stock void Server_Reset() {
 		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Failed to query (error: %s)", error);
 	} else {
 		if (queryResult.HasResults && queryResult.FetchRow()) {
+			
 			int iResult = queryResult.FetchInt(0);
 			if (iResult > 0) {
 				g_iMaxClients = iResult;
@@ -212,15 +213,19 @@ stock void Server_Reset() {
 }
 
 stock void UpdateMaxBotsOnField() {
-	int clients = (g_iMaxClients + GetTowersBought() + g_hMaxBotsOnField.IntValue) - MaxClients;
+	int clients = (GetRealClientCount(true) + GetTowersBought() + g_hMaxBotsOnField.IntValue) - MaxClients;
 
-	if (clients > 0) {
+	if (clients > g_hMaxBotsOnField.IntValue) {
+		LogType(TDLogLevel_Error, TDLogType_FileAndConsole, "Unable to spawn bots. Allowed max clients '%d' (database) is set too high or server maxplayers '%d' is set too low", g_iMaxClients, MaxClients);
+		g_iMaxBotsOnField = 0;
+	} else if (clients > 0) {
 		char cvarName[32];
 		g_hMaxBotsOnField.GetName(cvarName, sizeof(cvarName));
-		LogType(TDLogLevel_Info, TDLogType_FileAndConsole, "ConVar '%s' value '%d' + the allowed max clients '%d' (database) + the towers bought '%d' is higher than the server maxplayers '%d'. Shrinking convar value by '%d'", cvarName, g_hMaxBotsOnField.IntValue, g_iMaxClients, GetTowersBought(), MaxClients, clients);
+		Log(TDLogLevel_Info, "ConVar '%s' value '%d' + the allowed max clients '%d' (database) + the towers bought '%d' is higher than the server maxplayers '%d'. Shrinking convar value by '%d'", cvarName, g_hMaxBotsOnField.IntValue, g_iMaxClients, GetTowersBought(), MaxClients, clients);
 		g_iMaxBotsOnField = g_hMaxBotsOnField.IntValue - clients;
 	} else {
 		g_iMaxBotsOnField = g_hMaxBotsOnField.IntValue;
+		Log(TDLogLevel_Debug, "g_hMaxBotsOnField value '%d' + the allowed max clients '%d' (database) + the towers bought '%d' is lower or equal than/to the server maxplayers '%d'.", g_hMaxBotsOnField.IntValue, g_iMaxClients, GetTowersBought(), MaxClients);
 	}
 }
 

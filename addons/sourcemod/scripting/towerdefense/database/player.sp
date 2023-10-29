@@ -412,6 +412,8 @@ stock void Database_UpdatePlayerDisconnect(int iUserId) {
 		"LIMIT 1",
 		iPlayerId);
 
+	Log(TDLogLevel_Debug, "Database_UpdatePlayerDisconnect Query: %s", sQuery);
+
 	g_hDatabase.Query(Database_OnUpdatePlayerDisconnect_1, sQuery, iUserId);
 }
 

@@ -57,6 +57,8 @@ stock void Tower_OnButtonBuy(TDTowerId iTowerId, int iButton, int iActivator) {
 			
 			g_bTowerBought[view_as<int>(iTowerId)] = true;
 			AcceptEntityInput(iButton, "Break");
+
+			UpdateMaxBotsOnField();
 		}
 	}
 }

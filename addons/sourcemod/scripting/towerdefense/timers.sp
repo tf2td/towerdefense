@@ -26,6 +26,11 @@ public Action Timer_Hints(Handle hTimer) {
 }
 
 public Action Timer_Reset(Handle hTimer) {
+	if (GetRealClientCount(true)) {
+		Log(TDLogLevel_Debug, "Aborting reset. Player joined");
+		return Plugin_Continue;
+	}
+	Log(TDLogLevel_Debug, "Resetting password and Map");
 	SetPassword("", true, true);
 	return Plugin_Continue;
 }
