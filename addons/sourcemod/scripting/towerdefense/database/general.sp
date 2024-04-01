@@ -137,9 +137,10 @@ public void Database_OnLoadTowers(Handle hDriver, Handle hResult, const char[] s
 			
 			// Save tower level rotate
 			Format(sKey, sizeof(sKey), "%d_%d_rotate", iTowerId, iTowerLevel);
-			SetTrieValue(g_hMapTowers, sKey, SQL_FetchInt(hResult, 11));
+			SQL_FetchString(hResult, 11, sBuffer, sizeof(sBuffer));
+			SetTrieValue(g_hMapTowers, sKey, strcmp(sBuffer,"no rotate"));
 			
-			// PrintToServer("%s => %d", sKey, SQL_FetchInt(hResult, 11));
+			// PrintToServer("%s => %s", sKey, sBuffer); // sBuffer shuld be empty or "no ratate"
 			
 			// Save tower level pitch
 			Format(sKey, sizeof(sKey), "%d_%d_pitch", iTowerId, iTowerLevel);
