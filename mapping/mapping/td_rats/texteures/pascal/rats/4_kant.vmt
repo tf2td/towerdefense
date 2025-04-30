@@ -1,0 +1,10 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "pascal/rats/4_kant"
+	"$bumpmap" "pascal/rats/4_kant_ssbump"
+	"$envmapmask" "pascal/rats/4_kant_h"
+	"$normalmap" "pascal/rats/4_kant_h"
+    "$envmap" "env_cubemap"
+
+$ssbump 1
+}

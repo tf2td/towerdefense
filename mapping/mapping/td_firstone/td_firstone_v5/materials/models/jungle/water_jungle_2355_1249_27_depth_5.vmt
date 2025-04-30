@@ -1,0 +1,8 @@
+"patch"
+{
+	"include"		"materials/maps/pl_malaria_b3/water/water_jungle_2355_1249_27.vmt"
+	"insert"
+	{
+		"$waterdepth"		"5"
+	}
+}

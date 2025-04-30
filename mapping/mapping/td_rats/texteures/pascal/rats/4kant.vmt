@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "pascal/rats/4kant"
+	"$bumpmap" "pascal/rats/4kant_N"
+	"$envmapmask" "pascal/rats/4kant_H"
+
+}

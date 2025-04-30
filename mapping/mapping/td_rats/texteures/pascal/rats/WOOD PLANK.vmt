@@ -1,0 +1,8 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "pascal/Rats/wood plank"
+	"$bumpmap" "pascal/Rats/wood plank_N"
+	"$ssbump" "pascal/Rats/wood plank_ssbump"
+
+                "$ssbump" 1
+}

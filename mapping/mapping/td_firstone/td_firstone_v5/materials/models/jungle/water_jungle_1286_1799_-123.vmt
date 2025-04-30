@@ -1,0 +1,11 @@
+"patch"
+{
+	"include"		"materials/WATER/WATER_JUNGLE.vmt"
+	"replace"
+	{
+		"$envmap"		"maps/pl_malaria_b3/c1286_1799_-123"
+		"Proxies"
+		{
+		}
+	}
+}

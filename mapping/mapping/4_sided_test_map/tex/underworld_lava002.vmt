@@ -1,0 +1,16 @@
+"LightmappedGeneric"
+{
+	"$baseTexture" "Nature/underworld_lava001"
+	$selfillum 1
+$selfIllumFresnelMinMaxExp 10 10 10
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" -0.255
+			"texturescrollangle" 15
+		}
+	}
+	"%keywords" "tf"
+}

@@ -1,0 +1,6 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "pascal/Rats/carpet"
+	"$bumpmap" "pascal/Rats/carpet_N"
+	"$dudvmap" "pascal/Rats/carpet_ssbump"
+}

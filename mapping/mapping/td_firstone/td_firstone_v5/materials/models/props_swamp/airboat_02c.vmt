@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture"	"models/props_swamp/airboat_02c"
+	"$model" 1
+	"$nocull" "1"
+}

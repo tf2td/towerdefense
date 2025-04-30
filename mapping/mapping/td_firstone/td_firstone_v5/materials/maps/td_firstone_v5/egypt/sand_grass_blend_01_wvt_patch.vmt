@@ -1,0 +1,6 @@
+"LightmappedGeneric"
+{
+	"$basetexture"		"egypt\sand_floor_05"
+	"$surfaceprop"		"sand"
+	"$ssbump"		"1"
+}

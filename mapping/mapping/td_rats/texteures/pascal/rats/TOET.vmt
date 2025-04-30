@@ -1,0 +1,9 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "pascal/Rats/toet"
+	"$bumpmap" "pascal/Rats/toet_N"
+	"$ssbump" "pascal/Rats/toet_ssbump"
+                "$ssbump" 1
+$reflectivity "[.5 .5 .5]"
+
+}

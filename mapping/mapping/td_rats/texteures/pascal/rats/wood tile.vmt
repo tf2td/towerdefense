@@ -1,0 +1,10 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "pascal/Rats/wood tile"
+	"$bumpmap" "pascal/Rats/wood tile_N"
+	"$ssbump" "pascal/Rats/wood tile_ssbump"
+               "$envmap" "env_cubemap" 
+"$envmapmask" "pascal/rats/wood tile_H"
+                "$ssbump" 1
+
+}

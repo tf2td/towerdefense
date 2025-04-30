@@ -1,0 +1,58 @@
+Changes for Pakrat v0.94 to v0.95:
+
+Added support for HDR texture viewing.
+Added Gamma and Brightness controls when viewing HDR textures.
+Fixed default image scaling for wide images.
+File filter now includes more file types.
+New "-auto" option allows autoscan-and-add from the command line (for future integration with Hammer's expert compile mode).
+Autoscan now handles incorrectly formatted (but working) .vmt files.
+Autoscan now looks for custom prop_detail models.
+Autoscan now looks for submodels and gib models.
+Autoscan now detects DoD:S custom HUD icons.
+Autoscan now looks for custom skybox and soundscape files.
+Autoscan now looks for navigation, map descripton, and map overview, and sound cache files.
+Preferences dialogue can now set which extra files to scan for.
+Can now save multiple files from the pak list at once.
+Viewing model files now shows additional info.
+Viewing model physics (.phy) files shows additional info.
+File list can now be sorted by column via menu or clicking on table header.
+Files can now be viewed as a directory tree (inspired by Nem's "Crafty").
+Added "-save" command-line option to extract a file from the pak.
+Added "-list" command-line option to list all files in the pak.
+Added "-dump" command-line option to dump the pak as a zip file.
+Added check that current file has been saved before quitting.
+
+Changes from Pakrat v0.93 to v0.94:
+
+Saving a bsp now prompts to update any embedded .nav file to match the new bsp.
+(prevents "Navigation mesh was built using a different version of this map" warnings).
+Fixed a bug where the pakfile would grow unnecessarily.
+
+Changes from Pakrat v0.92 to v0.93:
+
+Converted source to the 1.5.0 Java Runtime Environment.
+File copy/save is now much faster.
+Can now handle bsp files where the Pak lump is not the last in the file.
+Fixed a rare file corruption bug.
+Added a progress bar to scan/autoscan.
+
+Changes from Pakrat v0.9 to v0.92:
+
+Renamed "Auto" button to "Scan" button.
+Added "Auto" button that performs a fully-automatic scan and add.
+Renamed "Check" button to "Reference".
+
+Changes from Pakrat v0.8 to v0.9:
+
+Better handling of model files in list and file chooser.
+Added viewing of vtf file bitmaps.
+Now can view hexdump or textdump of unknown file types.
+Current directories for add & load operations now persistantly remembered.
+Added drag-and-drop of files/directories into list.
+Added ability to add whole directories at once (recursive).
+Added auto-scan of all files referenced in map geometry & entites.
+File view and delete buttons now work with multi-selection.
+Added check button to scan window, shows trace of references to file.
+Added keyboard shortcuts.
+Removed "texture" menu item (function now integrated into auto scan).
+Model files now show summary properties when viewed.

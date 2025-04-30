@@ -1,0 +1,8 @@
+"Refract"
+{
+	"$dudvmap" "pascal/Rats/window_ssbump"
+"$normalmap" "pascal/rats/window_N"
+"$envmapmask" "pascal/rats/window_h"
+	$refracttint "[1 1 1]"
+	$refractamount .075
+}

@@ -1,0 +1,8 @@
+"patch"
+{
+	"include"		"materials/TILE/FLOOR_TILEBLUE01.vmt"
+	"replace"
+	{
+		"$envmap"		"maps/td_firstone_v2/c-863_-1092_452"
+	}
+}

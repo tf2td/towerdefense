@@ -1,0 +1,8 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/jungle/planta_hojas"
+	"$surfaceprop" "wood"
+	"%keywords" "tf"
+	"$alphatest" "1"
+	"$nocull" "1"
+}

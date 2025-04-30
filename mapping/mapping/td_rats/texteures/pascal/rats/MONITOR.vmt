@@ -1,0 +1,6 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "pascal/Rats/Monitor"
+	"$translucent" 1
+$reflectivity "[.5 .5 .5]"
+}

@@ -1,0 +1,8 @@
+"patch"
+{
+	"include"		"materials/SWAMP/TILE/FLOOR_TILE_004A_WORN.vmt"
+	"replace"
+	{
+		"$envmap"		"maps/td_firstone_v2/c-820_2831_-695"
+	}
+}

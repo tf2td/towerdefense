@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture"	"Concrete/wall011"
+	"%keywords" "tf"
+"$nocull" "1"
+}

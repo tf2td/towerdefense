@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/jungle/planta_tronco2a"
+	"$surfaceprop" "wood"
+	"%keywords" "tf"
+}

@@ -1,0 +1,884 @@
+
+
+
+materialPath: E:\Steam\SteamApps\common\Team Fortress 2\tf\materials
+Loading d:\maps\td_firstone_v9.vmf
+material "td_firstone5/scatterguntower_256" not found.
+Material not found!: TD_FIRSTONE5/SCATTERGUNTOWER_256
+ConVarRef mat_reduceparticles doesn't point to an existing ConVar
+material "td_firstone5/crossbowtower_256" not found.
+Material not found!: TD_FIRSTONE5/CROSSBOWTOWER_256
+Patching WVT material: maps/td_firstone_v9/egypt/sand_floor_blend_04_with_grass_wvt_patch
+Patching WVT material: maps/td_firstone_v9/egypt/sand_grass_blend_01_wvt_patch
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+Chop Details...done (0)
+Find Visible Detail Sides...
+Merged 138 detail faces...done (0)
+Merging details...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (0)
+writing d:\maps\td_firstone_v9.prt...Building visibility clusters...
+done (1)
+Creating default LDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_island_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Creating default HDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_island_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+Building Physics collision data...
+done (1) (182113 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Compacting texture/material tables...
+Reduced 1014 texinfos to 498
+Reduced 83 texdatas to 76 (2688 bytes to 2356)
+Writing d:\maps\td_firstone_v9.bsp
+3 seconds elapsed
+
+
+
+2 threads
+reading d:\maps\td_firstone_v9.bsp
+reading d:\maps\td_firstone_v9.prt
+ 319 portalclusters
+ 810 numportals
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Optimized: 522 visible clusters (1.45%)
+Total clusters visible: 36049
+Average clusters visible: 113
+Building PAS...
+Average clusters audible: 289
+visdatasize:25630  compressed from 25520
+writing d:\maps\td_firstone_v9.bsp
+1 second elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading d:\maps\td_firstone_v9.bsp
+2978 faces
+4450116 square feet [640816704.00 square inches]
+9 Displacements
+120060 Square Feet [17288770.00 Square Inches]
+2978 patches before subdivision
+52426 patches after subdivision
+3 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 3099673, max 717
+transfer lists:  23.6 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(65773, 47625, 16784)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(214800, 155967, 52058)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(3603, 1778, 297)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(19900, 10735, 1781)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #5 added RGB(334, 125, 10)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #6 added RGB(1903, 762, 63)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #7 added RGB(33, 9, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #8 added RGB(185, 55, 2)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #9 added RGB(3, 1, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #10 added RGB(18, 4, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #11 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0316 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+Computing detail prop lighting : 0...1...2...3...4...5...6...7...8...9...10
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Computing static prop lighting : 00...1...2...3...4...5...6...7...8...9...10
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                 122/1024         5856/49152    (11.9%) 
+brushes                402/8192         4824/98304    ( 4.9%) 
+brushsides            2950/65536       23600/524288   ( 4.5%) 
+planes                2990/65536       59800/1310720  ( 4.6%) 
+vertexes              4316/65536       51792/786432   ( 6.6%) 
+nodes                 1887/65536       60384/2097152  ( 2.9%) 
+texinfos               498/12288       35856/884736   ( 4.1%) 
+texdata                 76/2048         2432/65536    ( 3.7%) 
+dispinfos                9/0            1584/0        ( 0.0%) 
+disp_verts             729/0           14580/0        ( 0.0%) 
+disp_tris             1152/0            2304/0        ( 0.0%) 
+disp_lmsamples      198544/0          198544/0        ( 0.0%) 
+faces                 2978/65536      166768/3670016  ( 4.5%) 
+hdr faces                0/65536           0/3670016  ( 0.0%) 
+origfaces             1448/65536       81088/3670016  ( 2.2%) 
+leaves                2010/65536       64320/2097152  ( 3.1%) 
+leaffaces             3860/65536        7720/131072   ( 5.9%) 
+leafbrushes           1544/65536        3088/131072   ( 2.4%) 
+areas                    3/256            24/2048     ( 1.2%) 
+surfedges            19144/512000      76576/2048000  ( 3.7%) 
+edges                10974/256000      43896/1024000  ( 4.3%) 
+LDR worldlights          3/8192          264/720896   ( 0.0%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            2/32768          24/393216   ( 0.0%) 
+waterstrips            142/32768        1420/327680   ( 0.4%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices          3126/65536        6252/131072   ( 4.8%) 
+cubemapsamples          14/1024          224/16384    ( 1.4%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]     1892448/0        ( 0.0%) 
+HDR lightdata         [variable]           0/0        ( 0.0%) 
+visdata               [variable]       25630/16777216 ( 0.2%) 
+entdata               [variable]       92463/393216   (23.5%) 
+LDR ambient table     2010/65536        8040/262144   ( 3.1%) 
+HDR ambient table     2010/65536        8040/262144   ( 3.1%) 
+LDR leaf ambient      6590/65536      184520/1835008  (10.1%) 
+HDR leaf ambient      2010/65536       56280/1835008  ( 3.1%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/8772     ( 0.0%) 
+dtl prp lght          [variable]           1/219      ( 0.5%) 
+HDR dtl prp lght      [variable]           1/4        (25.0%) 
+static props          [variable]           1/2204     ( 0.0%) 
+pakfile               [variable]     1415214/0        ( 0.0%) 
+physics               [variable]      182113/4194304  ( 4.3%) 
+physics terrain       [variable]        3251/1048576  ( 0.3%) 
+
+Level flags = 1
+
+Total triangle count: 7330
+Writing d:\maps\td_firstone_v9.bsp
+1 minute, 54 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading d:\maps\td_firstone_v9.bsp
+2978 faces
+4450116 square feet [640816704.00 square inches]
+9 Displacements
+120060 Square Feet [17288770.00 Square Inches]
+2978 patches before subdivision
+52426 patches after subdivision
+3 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 3099673, max 717
+transfer lists:  23.6 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(65773, 47625, 16784)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(214800, 155967, 52058)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(3603, 1778, 297)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(19900, 10735, 1781)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #5 added RGB(334, 125, 10)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #6 added RGB(1903, 762, 63)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #7 added RGB(33, 9, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #8 added RGB(185, 55, 2)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #9 added RGB(3, 1, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #10 added RGB(18, 4, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #11 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0524 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+Computing detail prop lighting : 0...1...2...3...4...5...6...7...8...9...10
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Computing static prop lighting : 00...1...2...3...4...5...6...7...8...9...10
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                 122/1024         5856/49152    (11.9%) 
+brushes                402/8192         4824/98304    ( 4.9%) 
+brushsides            2950/65536       23600/524288   ( 4.5%) 
+planes                2990/65536       59800/1310720  ( 4.6%) 
+vertexes              4316/65536       51792/786432   ( 6.6%) 
+nodes                 1887/65536       60384/2097152  ( 2.9%) 
+texinfos               498/12288       35856/884736   ( 4.1%) 
+texdata                 76/2048         2432/65536    ( 3.7%) 
+dispinfos                9/0            1584/0        ( 0.0%) 
+disp_verts             729/0           14580/0        ( 0.0%) 
+disp_tris             1152/0            2304/0        ( 0.0%) 
+disp_lmsamples      198544/0          198544/0        ( 0.0%) 
+faces                 2978/65536      166768/3670016  ( 4.5%) 
+hdr faces             2978/65536      166768/3670016  ( 4.5%) 
+origfaces             1448/65536       81088/3670016  ( 2.2%) 
+leaves                2010/65536       64320/2097152  ( 3.1%) 
+leaffaces             3860/65536        7720/131072   ( 5.9%) 
+leafbrushes           1544/65536        3088/131072   ( 2.4%) 
+areas                    3/256            24/2048     ( 1.2%) 
+surfedges            19144/512000      76576/2048000  ( 3.7%) 
+edges                10974/256000      43896/1024000  ( 4.3%) 
+LDR worldlights          3/8192          264/720896   ( 0.0%) 
+HDR worldlights          3/8192          264/720896   ( 0.0%) 
+leafwaterdata            2/32768          24/393216   ( 0.0%) 
+waterstrips            142/32768        1420/327680   ( 0.4%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices          3126/65536        6252/131072   ( 4.8%) 
+cubemapsamples          14/1024          224/16384    ( 1.4%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]     1892448/0        ( 0.0%) 
+HDR lightdata         [variable]     1892448/0        ( 0.0%) 
+visdata               [variable]       25630/16777216 ( 0.2%) 
+entdata               [variable]       92463/393216   (23.5%) 
+LDR ambient table     2010/65536        8040/262144   ( 3.1%) 
+HDR ambient table     2010/65536        8040/262144   ( 3.1%) 
+LDR leaf ambient      6590/65536      184520/1835008  (10.1%) 
+HDR leaf ambient      6590/65536      184520/1835008  (10.1%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/8772     ( 0.0%) 
+dtl prp lght          [variable]           1/219      ( 0.5%) 
+HDR dtl prp lght      [variable]           1/219      ( 0.5%) 
+static props          [variable]           1/2204     ( 0.0%) 
+pakfile               [variable]     1596536/0        ( 0.0%) 
+physics               [variable]      182113/4194304  ( 4.3%) 
+physics terrain       [variable]        3251/1048576  ( 0.3%) 
+
+Level flags = 3
+
+Total triangle count: 7330
+Writing d:\maps\td_firstone_v9.bsp
+2 minutes, 3 seconds elapsed
+
+
+
+materialPath: E:\Steam\SteamApps\common\Team Fortress 2\tf\materials
+Loading d:\maps\td_firstone_v9.vmf
+material "td_firstone5/scatterguntower_256" not found.
+Material not found!: TD_FIRSTONE5/SCATTERGUNTOWER_256
+ConVarRef mat_reduceparticles doesn't point to an existing ConVar
+material "td_firstone5/crossbowtower_256" not found.
+Material not found!: TD_FIRSTONE5/CROSSBOWTOWER_256
+Patching WVT material: maps/td_firstone_v9/egypt/sand_floor_blend_04_with_grass_wvt_patch
+Patching WVT material: maps/td_firstone_v9/egypt/sand_grass_blend_01_wvt_patch
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+Chop Details...done (0)
+Find Visible Detail Sides...
+Merged 138 detail faces...done (0)
+Merging details...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (0)
+writing d:\maps\td_firstone_v9.prt...Building visibility clusters...
+done (0)
+Creating default LDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_island_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Creating default HDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_island_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+Building Physics collision data...
+done (1) (182113 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Compacting texture/material tables...
+Reduced 1014 texinfos to 498
+Reduced 83 texdatas to 76 (2688 bytes to 2356)
+Writing d:\maps\td_firstone_v9.bsp
+2 seconds elapsed
+
+
+
+materialPath: E:\Steam\SteamApps\common\Team Fortress 2\tf\materials
+Loading d:\maps\td_firstone_v9.vmf
+Patching WVT material: maps/td_firstone_v9/egypt/sand_floor_blend_04_with_grass_wvt_patch
+Patching WVT material: maps/td_firstone_v9/egypt/sand_grass_blend_01_wvt_patch
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+Chop Details...done (0)
+Find Visible Detail Sides...
+Merged 138 detail faces...done (0)
+Merging details...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (0)
+writing d:\maps\td_firstone_v9.prt...Building visibility clusters...
+done (0)
+Creating default LDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_island_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Creating default HDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_island_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+Building Physics collision data...
+done (1) (205102 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Compacting texture/material tables...
+Reduced 1025 texinfos to 495
+Reduced 84 texdatas to 75 (2732 bytes to 2296)
+Writing d:\maps\td_firstone_v9.bsp
+4 seconds elapsed
+
+
+
+2 threads
+reading d:\maps\td_firstone_v9.bsp
+reading d:\maps\td_firstone_v9.prt
+ 395 portalclusters
+1056 numportals
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Optimized: 572 visible clusters (1.17%)
+Total clusters visible: 48885
+Average clusters visible: 123
+Building PAS...
+Average clusters audible: 354
+visdatasize:38542  compressed from 44240
+writing d:\maps\td_firstone_v9.bsp
+1 second elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading d:\maps\td_firstone_v9.bsp
+2978 faces
+4450127 square feet [640818368.00 square inches]
+9 Displacements
+120060 Square Feet [17288770.00 Square Inches]
+2978 patches before subdivision
+52426 patches after subdivision
+3 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 3097141, max 717
+transfer lists:  23.6 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(65776, 47627, 16788)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(214845, 155998, 52068)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(3594, 1773, 296)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(19916, 10744, 1782)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #5 added RGB(333, 124, 10)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #6 added RGB(1906, 763, 63)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #7 added RGB(33, 9, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #8 added RGB(185, 55, 2)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #9 added RGB(3, 1, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #10 added RGB(18, 4, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #11 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0357 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+Computing detail prop lighting : 0...1...2...3...4...5...6...7...8...9...10
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                 122/1024         5856/49152    (11.9%) 
+brushes                404/8192         4848/98304    ( 4.9%) 
+brushsides            3701/65536       29608/524288   ( 5.6%) 
+planes                4526/65536       90520/1310720  ( 6.9%) 
+vertexes              4415/65536       52980/786432   ( 6.7%) 
+nodes                 1963/65536       62816/2097152  ( 3.0%) 
+texinfos               495/12288       35640/884736   ( 4.0%) 
+texdata                 75/2048         2400/65536    ( 3.7%) 
+dispinfos                9/0            1584/0        ( 0.0%) 
+disp_verts             729/0           14580/0        ( 0.0%) 
+disp_tris             1152/0            2304/0        ( 0.0%) 
+disp_lmsamples      198544/0          198544/0        ( 0.0%) 
+faces                 2978/65536      166768/3670016  ( 4.5%) 
+hdr faces                0/65536           0/3670016  ( 0.0%) 
+origfaces             1442/65536       80752/3670016  ( 2.2%) 
+leaves                2086/65536       66752/2097152  ( 3.2%) 
+leaffaces             3872/65536        7744/131072   ( 5.9%) 
+leafbrushes           1711/65536        3422/131072   ( 2.6%) 
+areas                    3/256            24/2048     ( 1.2%) 
+surfedges            19198/512000      76792/2048000  ( 3.7%) 
+edges                11018/256000      44072/1024000  ( 4.3%) 
+LDR worldlights          3/8192          264/720896   ( 0.0%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            3/32768          36/393216   ( 0.0%) 
+waterstrips            142/32768        1420/327680   ( 0.4%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices          3294/65536        6588/131072   ( 5.0%) 
+cubemapsamples          14/1024          224/16384    ( 1.4%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]     1551768/0        ( 0.0%) 
+HDR lightdata         [variable]           0/0        ( 0.0%) 
+visdata               [variable]       38542/16777216 ( 0.2%) 
+entdata               [variable]       93470/393216   (23.8%) 
+LDR ambient table     2086/65536        8344/262144   ( 3.2%) 
+HDR ambient table     2086/65536        8344/262144   ( 3.2%) 
+LDR leaf ambient      7630/65536      213640/1835008  (11.6%) 
+HDR leaf ambient      2086/65536       58408/1835008  ( 3.2%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/8772     ( 0.0%) 
+dtl prp lght          [variable]           1/4        (25.0%) 
+HDR dtl prp lght      [variable]           1/4        (25.0%) 
+static props          [variable]           1/2204     ( 0.0%) 
+pakfile               [variable]     1233765/0        ( 0.0%) 
+physics               [variable]      205102/4194304  ( 4.9%) 
+physics terrain       [variable]        3251/1048576  ( 0.3%) 
+
+Level flags = 0
+
+Total triangle count: 7408
+Writing d:\maps\td_firstone_v9.bsp
+2 minutes, 39 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading d:\maps\td_firstone_v9.bsp
+2978 faces
+4450127 square feet [640818368.00 square inches]
+9 Displacements
+120060 Square Feet [17288770.00 Square Inches]
+2978 patches before subdivision
+52426 patches after subdivision
+3 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 3097141, max 717
+transfer lists:  23.6 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(65776, 47627, 16788)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(214845, 155998, 52068)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(3594, 1773, 296)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(19916, 10744, 1782)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #5 added RGB(333, 124, 10)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #6 added RGB(1906, 763, 63)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #7 added RGB(33, 9, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #8 added RGB(185, 55, 2)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #9 added RGB(3, 1, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #10 added RGB(18, 4, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #11 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0333 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+Computing detail prop lighting : 0...1...2...3...4...5...6...7...8...9...10
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                 122/1024         5856/49152    (11.9%) 
+brushes                404/8192         4848/98304    ( 4.9%) 
+brushsides            3701/65536       29608/524288   ( 5.6%) 
+planes                4526/65536       90520/1310720  ( 6.9%) 
+vertexes              4415/65536       52980/786432   ( 6.7%) 
+nodes                 1963/65536       62816/2097152  ( 3.0%) 
+texinfos               495/12288       35640/884736   ( 4.0%) 
+texdata                 75/2048         2400/65536    ( 3.7%) 
+dispinfos                9/0            1584/0        ( 0.0%) 
+disp_verts             729/0           14580/0        ( 0.0%) 
+disp_tris             1152/0            2304/0        ( 0.0%) 
+disp_lmsamples      198544/0          198544/0        ( 0.0%) 
+faces                 2978/65536      166768/3670016  ( 4.5%) 
+hdr faces             2978/65536      166768/3670016  ( 4.5%) 
+origfaces             1442/65536       80752/3670016  ( 2.2%) 
+leaves                2086/65536       66752/2097152  ( 3.2%) 
+leaffaces             3872/65536        7744/131072   ( 5.9%) 
+leafbrushes           1711/65536        3422/131072   ( 2.6%) 
+areas                    3/256            24/2048     ( 1.2%) 
+surfedges            19198/512000      76792/2048000  ( 3.7%) 
+edges                11018/256000      44072/1024000  ( 4.3%) 
+LDR worldlights          3/8192          264/720896   ( 0.0%) 
+HDR worldlights          3/8192          264/720896   ( 0.0%) 
+leafwaterdata            3/32768          36/393216   ( 0.0%) 
+waterstrips            142/32768        1420/327680   ( 0.4%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices          3294/65536        6588/131072   ( 5.0%) 
+cubemapsamples          14/1024          224/16384    ( 1.4%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]     1551768/0        ( 0.0%) 
+HDR lightdata         [variable]     1551768/0        ( 0.0%) 
+visdata               [variable]       38542/16777216 ( 0.2%) 
+entdata               [variable]       93470/393216   (23.8%) 
+LDR ambient table     2086/65536        8344/262144   ( 3.2%) 
+HDR ambient table     2086/65536        8344/262144   ( 3.2%) 
+LDR leaf ambient      7630/65536      213640/1835008  (11.6%) 
+HDR leaf ambient      7630/65536      213640/1835008  (11.6%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/8772     ( 0.0%) 
+dtl prp lght          [variable]           1/4        (25.0%) 
+HDR dtl prp lght      [variable]           1/4        (25.0%) 
+static props          [variable]           1/2204     ( 0.0%) 
+pakfile               [variable]     1233765/0        ( 0.0%) 
+physics               [variable]      205102/4194304  ( 4.9%) 
+physics terrain       [variable]        3251/1048576  ( 0.3%) 
+
+Level flags = 0
+
+Total triangle count: 7408
+Writing d:\maps\td_firstone_v9.bsp
+2 minutes, 27 seconds elapsed
+
+
+
+materialPath: E:\Steam\SteamApps\common\Team Fortress 2\tf\materials
+Loading d:\maps\td_firstone_v9.vmf
+Patching WVT material: maps/td_firstone_v9/egypt/sand_floor_blend_04_with_grass_wvt_patch
+Patching WVT material: maps/td_firstone_v9/egypt/sand_grass_blend_01_wvt_patch
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+Chop Details...done (0)
+Find Visible Detail Sides...
+Merged 138 detail faces...done (0)
+Merging details...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (1)
+writing d:\maps\td_firstone_v9.prt...Building visibility clusters...
+done (0)
+Creating default LDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_island_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Creating default HDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_island_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+Building Physics collision data...
+done (1) (205102 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Compacting texture/material tables...
+Reduced 1025 texinfos to 495
+Reduced 81 texdatas to 74 (2593 bytes to 2239)
+Writing d:\maps\td_firstone_v9.bsp
+4 seconds elapsed
+
+
+
+2 threads
+reading d:\maps\td_firstone_v9.bsp
+reading d:\maps\td_firstone_v9.prt
+ 395 portalclusters
+1056 numportals
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Optimized: 572 visible clusters (1.17%)
+Total clusters visible: 48885
+Average clusters visible: 123
+Building PAS...
+Average clusters audible: 354
+visdatasize:38542  compressed from 44240
+writing d:\maps\td_firstone_v9.bsp
+1 second elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading d:\maps\td_firstone_v9.bsp
+2978 faces
+4450127 square feet [640818368.00 square inches]
+9 Displacements
+120060 Square Feet [17288770.00 Square Inches]
+2978 patches before subdivision
+52426 patches after subdivision
+3 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 3097141, max 717
+transfer lists:  23.6 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(65776, 47627, 16788)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(214845, 155998, 52068)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(3594, 1773, 296)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(19916, 10744, 1782)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #5 added RGB(333, 124, 10)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #6 added RGB(1906, 763, 63)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #7 added RGB(33, 9, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #8 added RGB(185, 55, 2)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #9 added RGB(3, 1, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #10 added RGB(18, 4, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #11 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0339 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+Computing detail prop lighting : 0...1...2...3...4...5...6...7...8...9...10
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                 122/1024         5856/49152    (11.9%) 
+brushes                404/8192         4848/98304    ( 4.9%) 
+brushsides            3701/65536       29608/524288   ( 5.6%) 
+planes                4526/65536       90520/1310720  ( 6.9%) 
+vertexes              4415/65536       52980/786432   ( 6.7%) 
+nodes                 1963/65536       62816/2097152  ( 3.0%) 
+texinfos               495/12288       35640/884736   ( 4.0%) 
+texdata                 74/2048         2368/65536    ( 3.6%) 
+dispinfos                9/0            1584/0        ( 0.0%) 
+disp_verts             729/0           14580/0        ( 0.0%) 
+disp_tris             1152/0            2304/0        ( 0.0%) 
+disp_lmsamples      198544/0          198544/0        ( 0.0%) 
+faces                 2978/65536      166768/3670016  ( 4.5%) 
+hdr faces                0/65536           0/3670016  ( 0.0%) 
+origfaces             1442/65536       80752/3670016  ( 2.2%) 
+leaves                2086/65536       66752/2097152  ( 3.2%) 
+leaffaces             3872/65536        7744/131072   ( 5.9%) 
+leafbrushes           1711/65536        3422/131072   ( 2.6%) 
+areas                    3/256            24/2048     ( 1.2%) 
+surfedges            19198/512000      76792/2048000  ( 3.7%) 
+edges                11018/256000      44072/1024000  ( 4.3%) 
+LDR worldlights          3/8192          264/720896   ( 0.0%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            3/32768          36/393216   ( 0.0%) 
+waterstrips            142/32768        1420/327680   ( 0.4%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices          3294/65536        6588/131072   ( 5.0%) 
+cubemapsamples          14/1024          224/16384    ( 1.4%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]     1551768/0        ( 0.0%) 
+HDR lightdata         [variable]           0/0        ( 0.0%) 
+visdata               [variable]       38542/16777216 ( 0.2%) 
+entdata               [variable]       93520/393216   (23.8%) 
+LDR ambient table     2086/65536        8344/262144   ( 3.2%) 
+HDR ambient table     2086/65536        8344/262144   ( 3.2%) 
+LDR leaf ambient      7630/65536      213640/1835008  (11.6%) 
+HDR leaf ambient      2086/65536       58408/1835008  ( 3.2%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/8772     ( 0.0%) 
+dtl prp lght          [variable]           1/4        (25.0%) 
+HDR dtl prp lght      [variable]           1/4        (25.0%) 
+static props          [variable]           1/2204     ( 0.0%) 
+pakfile               [variable]     1233316/0        ( 0.0%) 
+physics               [variable]      205102/4194304  ( 4.9%) 
+physics terrain       [variable]        3251/1048576  ( 0.3%) 
+
+Level flags = 0
+
+Total triangle count: 7408
+Writing d:\maps\td_firstone_v9.bsp
+2 minutes, 47 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading d:\maps\td_firstone_v9.bsp
+2978 faces
+4450127 square feet [640818368.00 square inches]
+9 Displacements
+120060 Square Feet [17288770.00 Square Inches]
+2978 patches before subdivision
+52426 patches after subdivision
+3 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 3097141, max 717
+transfer lists:  23.6 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(65776, 47627, 16788)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(214845, 155998, 52068)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(3594, 1773, 296)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(19916, 10744, 1782)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #5 added RGB(333, 124, 10)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #6 added RGB(1906, 763, 63)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #7 added RGB(33, 9, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #8 added RGB(185, 55, 2)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #9 added RGB(3, 1, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #10 added RGB(18, 4, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #11 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0353 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+Computing detail prop lighting : 0...1...2...3...4...5...6...7...8...9...10
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                 122/1024         5856/49152    (11.9%) 
+brushes                404/8192         4848/98304    ( 4.9%) 
+brushsides            3701/65536       29608/524288   ( 5.6%) 
+planes                4526/65536       90520/1310720  ( 6.9%) 
+vertexes              4415/65536       52980/786432   ( 6.7%) 
+nodes                 1963/65536       62816/2097152  ( 3.0%) 
+texinfos               495/12288       35640/884736   ( 4.0%) 
+texdata                 74/2048         2368/65536    ( 3.6%) 
+dispinfos                9/0            1584/0        ( 0.0%) 
+disp_verts             729/0           14580/0        ( 0.0%) 
+disp_tris             1152/0            2304/0        ( 0.0%) 
+disp_lmsamples      198544/0          198544/0        ( 0.0%) 
+faces                 2978/65536      166768/3670016  ( 4.5%) 
+hdr faces             2978/65536      166768/3670016  ( 4.5%) 
+origfaces             1442/65536       80752/3670016  ( 2.2%) 
+leaves                2086/65536       66752/2097152  ( 3.2%) 
+leaffaces             3872/65536        7744/131072   ( 5.9%) 
+leafbrushes           1711/65536        3422/131072   ( 2.6%) 
+areas                    3/256            24/2048     ( 1.2%) 
+surfedges            19198/512000      76792/2048000  ( 3.7%) 
+edges                11018/256000      44072/1024000  ( 4.3%) 
+LDR worldlights          3/8192          264/720896   ( 0.0%) 
+HDR worldlights          3/8192          264/720896   ( 0.0%) 
+leafwaterdata            3/32768          36/393216   ( 0.0%) 
+waterstrips            142/32768        1420/327680   ( 0.4%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices          3294/65536        6588/131072   ( 5.0%) 
+cubemapsamples          14/1024          224/16384    ( 1.4%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]     1551768/0        ( 0.0%) 
+HDR lightdata         [variable]     1551768/0        ( 0.0%) 
+visdata               [variable]       38542/16777216 ( 0.2%) 
+entdata               [variable]       93520/393216   (23.8%) 
+LDR ambient table     2086/65536        8344/262144   ( 3.2%) 
+HDR ambient table     2086/65536        8344/262144   ( 3.2%) 
+LDR leaf ambient      7630/65536      213640/1835008  (11.6%) 
+HDR leaf ambient      7630/65536      213640/1835008  (11.6%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/8772     ( 0.0%) 
+dtl prp lght          [variable]           1/4        (25.0%) 
+HDR dtl prp lght      [variable]           1/4        (25.0%) 
+static props          [variable]           1/2204     ( 0.0%) 
+pakfile               [variable]     1233316/0        ( 0.0%) 
+physics               [variable]      205102/4194304  ( 4.9%) 
+physics terrain       [variable]        3251/1048576  ( 0.3%) 
+
+Level flags = 0
+
+Total triangle count: 7408
+Writing d:\maps\td_firstone_v9.bsp
+2 minutes, 38 seconds elapsed
+
+
+
+materialPath: E:\Steam\steamapps\common\Team Fortress 2\tf\materials
+Loading E:\Dropbox\Coding\vmf\td_firstone\td_firstone_v9\td_firstone_v9.vmf
+Patching WVT material: maps/td_firstone_v9/egypt/sand_floor_blend_04_with_grass_wvt_patch
+Patching WVT material: maps/td_firstone_v9/egypt/sand_grass_blend_01_wvt_patch
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+Chop Details...done (0)
+Find Visible Detail Sides...
+Merged 138 detail faces...done (0)
+Merging details...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (0)
+writing E:\Dropbox\Coding\vmf\td_firstone\td_firstone_v9\td_firstone_v9.prt...Building visibility clusters...
+done (0)
+Creating default LDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_island_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Creating default HDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_island_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+Building Physics collision data...
+done (1) (206202 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Compacting texture/material tables...
+Reduced 1044 texinfos to 503
+Reduced 82 texdatas to 75 (2619 bytes to 2265)
+Writing E:\Dropbox\Coding\vmf\td_firstone\td_firstone_v9\td_firstone_v9.bsp
+1 second elapsed
+
+
+
+8 threads
+reading e:\dropbox\coding\vmf\td_firstone\td_firstone_v9\td_firstone_v9.bsp
+reading e:\dropbox\coding\vmf\td_firstone\td_firstone_v9\td_firstone_v9.prt
+ 395 portalclusters
+1056 numportals
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Optimized: 553 visible clusters (1.13%)
+Total clusters visible: 48866
+Average clusters visible: 123
+Building PAS...
+Average clusters audible: 354
+visdatasize:38542  compressed from 44240
+writing e:\dropbox\coding\vmf\td_firstone\td_firstone_v9\td_firstone_v9.bsp
+0 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading e:\dropbox\coding\vmf\td_firstone\td_firstone_v9\td_firstone_v9.bsp
+2988 faces
+4450153 square feet [640822080.00 square inches]
+9 Displacements
+120060 Square Feet [17288770.00 Square Inches]
+2988 patches before subdivision
+52436 patches after subdivision
+3 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 3099253, max 717
+transfer lists:  23.6 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(65738, 47605, 16791)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(214830, 155988, 52067)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(3585, 1770, 295)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(19913, 10743, 1782)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #5 added RGB(332, 124, 10)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #6 added RGB(1906, 763, 63)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #7 added RGB(33, 9, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #8 added RGB(185, 55, 2)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #9 added RGB(3, 1, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #10 added RGB(18, 4, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #11 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0161 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+Computing detail prop lighting : 0...1...2...3...4...5...6...7...8...9...10
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                 124/1024         5952/49152    (12.1%) 
+brushes                406/8192         4872/98304    ( 5.0%) 
+brushsides            3713/65536       29704/524288   ( 5.7%) 
+planes                4542/65536       90840/1310720  ( 6.9%) 
+vertexes              4431/65536       53172/786432   ( 6.8%) 
+nodes                 1975/65536       63200/2097152  ( 3.0%) 
+texinfos               503/12288       36216/884736   ( 4.1%) 
+texdata                 75/2048         2400/65536    ( 3.7%) 
+dispinfos                9/0            1584/0        ( 0.0%) 
+disp_verts             729/0           14580/0        ( 0.0%) 
+disp_tris             1152/0            2304/0        ( 0.0%) 
+disp_lmsamples      216624/0          216624/0        ( 0.0%) 
+faces                 2988/65536      167328/3670016  ( 4.6%) 
+hdr faces                0/65536           0/3670016  ( 0.0%) 
+origfaces             1452/65536       81312/3670016  ( 2.2%) 
+leaves                2100/65536       67200/2097152  ( 3.2%) 
+leaffaces             3882/65536        7764/131072   ( 5.9%) 
+leafbrushes           1713/65536        3426/131072   ( 2.6%) 
+areas                    3/256            24/2048     ( 1.2%) 
+surfedges            19278/512000      77112/2048000  ( 3.8%) 
+edges                11066/256000      44264/1024000  ( 4.3%) 
+LDR worldlights          3/8192          264/720896   ( 0.0%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            3/32768          36/393216   ( 0.0%) 
+waterstrips            142/32768        1420/327680   ( 0.4%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices          3294/65536        6588/131072   ( 5.0%) 
+cubemapsamples          14/1024          224/16384    ( 1.4%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]     1570480/0        ( 0.0%) 
+HDR lightdata         [variable]           0/0        ( 0.0%) 
+visdata               [variable]       38542/16777216 ( 0.2%) 
+entdata               [variable]       95223/393216   (24.2%) 
+LDR ambient table     2100/65536        8400/262144   ( 3.2%) 
+HDR ambient table     2100/65536        8400/262144   ( 3.2%) 
+LDR leaf ambient      7645/65536      214060/1835008  (11.7%) 
+HDR leaf ambient      2100/65536       58800/1835008  ( 3.2%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/8772     ( 0.0%) 
+dtl prp lght          [variable]           1/4        (25.0%) 
+HDR dtl prp lght      [variable]           1/4        (25.0%) 
+static props          [variable]           1/2204     ( 0.0%) 
+pakfile               [variable]     1233316/0        ( 0.0%) 
+physics               [variable]      206202/4194304  ( 4.9%) 
+physics terrain       [variable]        3251/1048576  ( 0.3%) 
+
+Level flags = 0
+
+Total triangle count: 7428
+Writing e:\dropbox\coding\vmf\td_firstone\td_firstone_v9\td_firstone_v9.bsp
+11 seconds elapsed

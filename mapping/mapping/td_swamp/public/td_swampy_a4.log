@@ -1,0 +1,639 @@
+
+
+
+materialPath: F:\Steam\SteamApps\common\Team Fortress 2\tf\materials
+Loading d:\maps\td_swampy_a4.vmf
+material "pascal/rats/window_ssbump" not found.
+Material not found!: PASCAL/RATS/WINDOW_SSBUMP
+ConVarRef mat_reduceparticles doesn't point to an existing ConVar
+material "td_firstone5/debut" not found.
+Material not found!: TD_FIRSTONE5/DEBUT
+material "td_firstone5/grenade_256" not found.
+Material not found!: TD_FIRSTONE5/GRENADE_256
+material "td_firstone5/teleportdemo_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTDEMO_256
+material "td_firstone5/knockbacktower_256" not found.
+Material not found!: TD_FIRSTONE5/KNOCKBACKTOWER_256
+material "td_firstone5/teleportshotguntower_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTSHOTGUNTOWER_256
+material "td_firstone5/medic" not found.
+Material not found!: TD_FIRSTONE5/MEDIC
+material "td_firstone5/teleport_medic" not found.
+Material not found!: TD_FIRSTONE5/TELEPORT_MEDIC
+material "td_firstone5/autoflaretower" not found.
+Material not found!: TD_FIRSTONE5/AUTOFLARETOWER
+material "td_firstone5/teleportautoflaretower" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTAUTOFLARETOWER
+material "td_firstone5/jarate_256" not found.
+Material not found!: TD_FIRSTONE5/JARATE_256
+material "td_firstone5/teleportjarate" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTJARATE
+material "td_firstone5/sniper__256" not found.
+Material not found!: TD_FIRSTONE5/SNIPER__256
+material "td_firstone5/teleportsniper_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTSNIPER_256
+material "td_firstone5/pyro_tower_256" not found.
+Material not found!: TD_FIRSTONE5/PYRO_TOWER_256
+material "td_firstone5/teleportpyro_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTPYRO_256
+material "td_firstone5/engineer_256" not found.
+Material not found!: TD_FIRSTONE5/ENGINEER_256
+material "td_firstone5/teleportengineer_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTENGINEER_256
+material "td_firstone5/sentry_damage_256" not found.
+Material not found!: TD_FIRSTONE5/SENTRY_DAMAGE_256
+material "td_firstone5/crit_256" not found.
+Material not found!: TD_FIRSTONE5/CRIT_256
+material "td_firstone5/explosion_256" not found.
+Material not found!: TD_FIRSTONE5/EXPLOSION_256
+material "td_firstone5/fire_256" not found.
+Material not found!: TD_FIRSTONE5/FIRE_256
+material "td_firstone5/bullet_256" not found.
+Material not found!: TD_FIRSTONE5/BULLET_256
+material "td_firstone5/sentry_256" not found.
+Material not found!: TD_FIRSTONE5/SENTRY_256
+material "td_rampant/airblaster-256" not found.
+Material not found!: TD_RAMPANT/AIRBLASTER-256
+material "td_firstone5/metal_256" not found.
+Material not found!: TD_FIRSTONE5/METAL_256
+material "td_firstone5/dispenser_256" not found.
+Material not found!: TD_FIRSTONE5/DISPENSER_256
+material "td_firstone5/heavytower_256" not found.
+Material not found!: TD_FIRSTONE5/HEAVYTOWER_256
+material "td_firstone5/teleportminigun_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTMINIGUN_256
+material "td_firstone5/flare_256" not found.
+Material not found!: TD_FIRSTONE5/FLARE_256
+material "td_firstone5/rockettower_256" not found.
+Material not found!: TD_FIRSTONE5/ROCKETTOWER_256
+material "td_firstone5/teleportflare_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTFLARE_256
+material "td_firstone5/teleportrocket_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTROCKET_256
+material "td_textures/aoeengineertower" not found.
+Material not found!: TD_TEXTURES/AOEENGINEERTOWER
+material "td_firstone5/debut2" not found.
+Material not found!: TD_FIRSTONE5/DEBUT2
+material "td_rampant/bushwacka-256" not found.
+Material not found!: TD_RAMPANT/BUSHWACKA-256
+material "td_rampant/homewrecker-256" not found.
+Material not found!: TD_RAMPANT/HOMEWRECKER-256
+Patching WVT material: maps/td_swampy_a4/swamp/nature/blenddirtswampgrass001_nodetail_wvt_patch
+Patching WVT material: maps/td_swampy_a4/swamp/nature/blendkarsttoswampgrass002_wvt_patch
+Patching WVT material: maps/td_swampy_a4/swamp/nature/blendswampdirttograss001_wvt_patch
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+Chop Details...done (0)
+Find Visible Detail Sides...
+Merged 76 detail faces...done (0)
+Merging details...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (0)
+writing d:\maps\td_swampy_a4.prt...Building visibility clusters...
+done (0)
+*** Error: Skybox vtf files for skybox/sky_harvest_01 weren't compiled with the same size texture and/or same flags!
+Can't load skybox file skybox/sky_harvest_01 to build the default cubemap!
+*** Error: Skybox vtf files for skybox/sky_harvest_01 weren't compiled with the same size texture and/or same flags!
+Can't load skybox file skybox/sky_harvest_01 to build the default cubemap!
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+material "pascal/made by pascal" not found.
+Building Physics collision data...
+done (2) (208658 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Water found with no water_lod_control entity, creating a default one.
+Compacting texture/material tables...
+Reduced 1255 texinfos to 629
+Reduced 88 texdatas to 79 (2682 bytes to 2185)
+Writing d:\maps\td_swampy_a4.bsp
+12 seconds elapsed
+
+
+
+2 threads
+reading d:\maps\td_swampy_a4.bsp
+reading d:\maps\td_swampy_a4.prt
+ 312 portalclusters
+1038 numportals
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Optimized: 21 visible clusters (0.04%)
+Total clusters visible: 57889
+Average clusters visible: 185
+Building PAS...
+Average clusters audible: 196
+visdatasize:19387  compressed from 24960
+writing d:\maps\td_swampy_a4.bsp
+2 minutes, 1 second elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading d:\maps\td_swampy_a4.bsp
+2915 faces
+3386767 square feet [487694464.00 square inches]
+167 Displacements
+249357 Square Feet [35907512.00 Square Inches]
+2915 patches before subdivision
+88207 patches after subdivision
+light has _fifty_percent_distance of 600.000000 but _zero_percent_distance of 333.000000
+56 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 15646814, max 666
+transfer lists: 119.4 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(11640, 8326, 4471)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(1585, 913, 400)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(227, 104, 37)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(42, 16, 5)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #5 added RGB(8, 2, 1)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #6 added RGB(2, 0, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #7 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0588 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Computing static prop lighting : 00...1...2...3...4...5...6...7...8...9...10
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                 142/1024         6816/49152    (13.9%) 
+brushes                477/8192         5724/98304    ( 5.8%) 
+brushsides            3902/65536       31216/524288   ( 6.0%) 
+planes                4696/65536       93920/1310720  ( 7.2%) 
+vertexes              4312/65536       51744/786432   ( 6.6%) 
+nodes                 1692/65536       54144/2097152  ( 2.6%) 
+texinfos               629/12288       45288/884736   ( 5.1%) 
+texdata                 79/2048         2528/65536    ( 3.9%) 
+dispinfos              167/0           29392/0        ( 0.0%) 
+disp_verts            5799/0          115980/0        ( 0.0%) 
+disp_tris             8128/0           16256/0        ( 0.0%) 
+disp_lmsamples      753692/0          753692/0        ( 0.0%) 
+faces                 2915/65536      163240/3670016  ( 4.4%) 
+hdr faces                0/65536           0/3670016  ( 0.0%) 
+origfaces             1733/65536       97048/3670016  ( 2.6%) 
+leaves                1835/65536       58720/2097152  ( 2.8%) 
+leaffaces             3237/65536        6474/131072   ( 4.9%) 
+leafbrushes           1085/65536        2170/131072   ( 1.7%) 
+areas                    4/256            32/2048     ( 1.6%) 
+surfedges            19270/512000      77080/2048000  ( 3.8%) 
+edges                10375/256000      41500/1024000  ( 4.1%) 
+LDR worldlights         56/8192         4928/720896   ( 0.7%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            2/32768          24/393216   ( 0.0%) 
+waterstrips             76/32768         760/327680   ( 0.2%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices          1185/65536        2370/131072   ( 1.8%) 
+cubemapsamples           6/1024           96/16384    ( 0.6%) 
+overlays                 9/512          3168/180224   ( 1.8%) 
+LDR lightdata         [variable]     3266080/0        ( 0.0%) 
+HDR lightdata         [variable]           0/0        ( 0.0%) 
+visdata               [variable]       19387/16777216 ( 0.1%) 
+entdata               [variable]      100325/393216   (25.5%) 
+LDR ambient table     1835/65536        7340/262144   ( 2.8%) 
+HDR ambient table     1835/65536        7340/262144   ( 2.8%) 
+LDR leaf ambient      6730/65536      188440/1835008  (10.3%) 
+HDR leaf ambient      1835/65536       51380/1835008  ( 2.8%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/12       ( 8.3%) 
+static props          [variable]           1/20410    ( 0.0%) 
+pakfile               [variable]     1514408/0        ( 0.0%) 
+physics               [variable]      208658/4194304  ( 5.0%) 
+physics terrain       [variable]       38435/1048576  ( 3.7%) 
+
+Level flags = 1
+
+Total triangle count: 6536
+Writing d:\maps\td_swampy_a4.bsp
+2 minutes, 29 seconds elapsed
+
+
+
+materialPath: F:\Steam\SteamApps\common\Team Fortress 2\tf\materials
+Loading d:\maps\td_swampy_a4.vmf
+material "pascal/rats/window_ssbump" not found.
+Material not found!: PASCAL/RATS/WINDOW_SSBUMP
+ConVarRef mat_reduceparticles doesn't point to an existing ConVar
+material "td_firstone5/debut" not found.
+Material not found!: TD_FIRSTONE5/DEBUT
+material "td_firstone5/grenade_256" not found.
+Material not found!: TD_FIRSTONE5/GRENADE_256
+material "td_firstone5/teleportdemo_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTDEMO_256
+material "td_firstone5/knockbacktower_256" not found.
+Material not found!: TD_FIRSTONE5/KNOCKBACKTOWER_256
+material "td_firstone5/teleportshotguntower_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTSHOTGUNTOWER_256
+material "td_firstone5/medic" not found.
+Material not found!: TD_FIRSTONE5/MEDIC
+material "td_firstone5/teleport_medic" not found.
+Material not found!: TD_FIRSTONE5/TELEPORT_MEDIC
+material "td_firstone5/autoflaretower" not found.
+Material not found!: TD_FIRSTONE5/AUTOFLARETOWER
+material "td_firstone5/teleportautoflaretower" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTAUTOFLARETOWER
+material "td_firstone5/jarate_256" not found.
+Material not found!: TD_FIRSTONE5/JARATE_256
+material "td_firstone5/teleportjarate" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTJARATE
+material "td_firstone5/sniper__256" not found.
+Material not found!: TD_FIRSTONE5/SNIPER__256
+material "td_firstone5/teleportsniper_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTSNIPER_256
+material "td_firstone5/pyro_tower_256" not found.
+Material not found!: TD_FIRSTONE5/PYRO_TOWER_256
+material "td_firstone5/teleportpyro_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTPYRO_256
+material "td_firstone5/engineer_256" not found.
+Material not found!: TD_FIRSTONE5/ENGINEER_256
+material "td_firstone5/teleportengineer_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTENGINEER_256
+material "td_firstone5/sentry_damage_256" not found.
+Material not found!: TD_FIRSTONE5/SENTRY_DAMAGE_256
+material "td_firstone5/crit_256" not found.
+Material not found!: TD_FIRSTONE5/CRIT_256
+material "td_firstone5/explosion_256" not found.
+Material not found!: TD_FIRSTONE5/EXPLOSION_256
+material "td_firstone5/fire_256" not found.
+Material not found!: TD_FIRSTONE5/FIRE_256
+material "td_firstone5/bullet_256" not found.
+Material not found!: TD_FIRSTONE5/BULLET_256
+material "td_firstone5/sentry_256" not found.
+Material not found!: TD_FIRSTONE5/SENTRY_256
+material "td_rampant/airblaster-256" not found.
+Material not found!: TD_RAMPANT/AIRBLASTER-256
+material "td_firstone5/metal_256" not found.
+Material not found!: TD_FIRSTONE5/METAL_256
+material "td_firstone5/dispenser_256" not found.
+Material not found!: TD_FIRSTONE5/DISPENSER_256
+material "td_firstone5/heavytower_256" not found.
+Material not found!: TD_FIRSTONE5/HEAVYTOWER_256
+material "td_firstone5/teleportminigun_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTMINIGUN_256
+material "td_firstone5/flare_256" not found.
+Material not found!: TD_FIRSTONE5/FLARE_256
+material "td_firstone5/rockettower_256" not found.
+Material not found!: TD_FIRSTONE5/ROCKETTOWER_256
+material "td_firstone5/teleportflare_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTFLARE_256
+material "td_firstone5/teleportrocket_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTROCKET_256
+material "td_textures/aoeengineertower" not found.
+Material not found!: TD_TEXTURES/AOEENGINEERTOWER
+material "td_firstone5/debut2" not found.
+Material not found!: TD_FIRSTONE5/DEBUT2
+material "td_rampant/bushwacka-256" not found.
+Material not found!: TD_RAMPANT/BUSHWACKA-256
+material "td_rampant/homewrecker-256" not found.
+Material not found!: TD_RAMPANT/HOMEWRECKER-256
+Patching WVT material: maps/td_swampy_a4/swamp/nature/blenddirtswampgrass001_nodetail_wvt_patch
+Patching WVT material: maps/td_swampy_a4/swamp/nature/blendkarsttoswampgrass002_wvt_patch
+Patching WVT material: maps/td_swampy_a4/swamp/nature/blendswampdirttograss001_wvt_patch
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+Chop Details...done (0)
+Find Visible Detail Sides...
+Merged 76 detail faces...done (0)
+Merging details...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (0)
+writing d:\maps\td_swampy_a4.prt...Building visibility clusters...
+done (0)
+*** Error: Skybox vtf files for skybox/sky_harvest_01 weren't compiled with the same size texture and/or same flags!
+Can't load skybox file skybox/sky_harvest_01 to build the default cubemap!
+*** Error: Skybox vtf files for skybox/sky_harvest_01 weren't compiled with the same size texture and/or same flags!
+Can't load skybox file skybox/sky_harvest_01 to build the default cubemap!
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+material "pascal/made by pascal" not found.
+Building Physics collision data...
+done (1) (208658 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Water found with no water_lod_control entity, creating a default one.
+Compacting texture/material tables...
+Reduced 1257 texinfos to 631
+Reduced 88 texdatas to 79 (2682 bytes to 2185)
+Writing d:\maps\td_swampy_a4.bsp
+10 seconds elapsed
+
+
+
+2 threads
+reading d:\maps\td_swampy_a4.bsp
+reading d:\maps\td_swampy_a4.prt
+ 312 portalclusters
+1038 numportals
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Optimized: 21 visible clusters (0.04%)
+Total clusters visible: 57889
+Average clusters visible: 185
+Building PAS...
+Average clusters audible: 196
+visdatasize:19387  compressed from 24960
+writing d:\maps\td_swampy_a4.bsp
+2 minutes, 8 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading d:\maps\td_swampy_a4.bsp
+2905 faces
+3391047 square feet [488310784.00 square inches]
+167 Displacements
+249357 Square Feet [35907512.00 Square Inches]
+2905 patches before subdivision
+88045 patches after subdivision
+light has _fifty_percent_distance of 600.000000 but _zero_percent_distance of 333.000000
+56 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 15636930, max 666
+transfer lists: 119.3 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(11304, 8069, 4289)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(1473, 843, 361)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(208, 94, 33)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(38, 14, 4)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #5 added RGB(7, 2, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #6 added RGB(1, 0, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #7 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0585 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Computing static prop lighting : 00...1...2...3...4...5...6...7...8...9...10
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                 142/1024         6816/49152    (13.9%) 
+brushes                477/8192         5724/98304    ( 5.8%) 
+brushsides            3902/65536       31216/524288   ( 6.0%) 
+planes                4698/65536       93960/1310720  ( 7.2%) 
+vertexes              4291/65536       51492/786432   ( 6.5%) 
+nodes                 1692/65536       54144/2097152  ( 2.6%) 
+texinfos               631/12288       45432/884736   ( 5.1%) 
+texdata                 79/2048         2528/65536    ( 3.9%) 
+dispinfos              167/0           29392/0        ( 0.0%) 
+disp_verts            5799/0          115980/0        ( 0.0%) 
+disp_tris             8128/0           16256/0        ( 0.0%) 
+disp_lmsamples      753692/0          753692/0        ( 0.0%) 
+faces                 2905/65536      162680/3670016  ( 4.4%) 
+hdr faces                0/65536           0/3670016  ( 0.0%) 
+origfaces             1733/65536       97048/3670016  ( 2.6%) 
+leaves                1835/65536       58720/2097152  ( 2.8%) 
+leaffaces             3227/65536        6454/131072   ( 4.9%) 
+leafbrushes           1085/65536        2170/131072   ( 1.7%) 
+areas                    4/256            32/2048     ( 1.6%) 
+surfedges            19212/512000      76848/2048000  ( 3.8%) 
+edges                10346/256000      41384/1024000  ( 4.0%) 
+LDR worldlights         56/8192         4928/720896   ( 0.7%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            2/32768          24/393216   ( 0.0%) 
+waterstrips             70/32768         700/327680   ( 0.2%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices          1068/65536        2136/131072   ( 1.6%) 
+cubemapsamples           6/1024           96/16384    ( 0.6%) 
+overlays                 9/512          3168/180224   ( 1.8%) 
+LDR lightdata         [variable]     3257048/0        ( 0.0%) 
+HDR lightdata         [variable]           0/0        ( 0.0%) 
+visdata               [variable]       19387/16777216 ( 0.1%) 
+entdata               [variable]      100326/393216   (25.5%) 
+LDR ambient table     1835/65536        7340/262144   ( 2.8%) 
+HDR ambient table     1835/65536        7340/262144   ( 2.8%) 
+LDR leaf ambient      6726/65536      188328/1835008  (10.3%) 
+HDR leaf ambient      1835/65536       51380/1835008  ( 2.8%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/12       ( 8.3%) 
+static props          [variable]           1/20410    ( 0.0%) 
+pakfile               [variable]     1514408/0        ( 0.0%) 
+physics               [variable]      208658/4194304  ( 5.0%) 
+physics terrain       [variable]       38435/1048576  ( 3.7%) 
+
+Level flags = 1
+
+Total triangle count: 6498
+Writing d:\maps\td_swampy_a4.bsp
+2 minutes, 31 seconds elapsed
+
+
+
+materialPath: F:\Steam\SteamApps\common\Team Fortress 2\tf\materials
+Loading d:\maps\td_swampy_a4.vmf
+material "pascal/rats/window_ssbump" not found.
+Material not found!: PASCAL/RATS/WINDOW_SSBUMP
+ConVarRef mat_reduceparticles doesn't point to an existing ConVar
+material "td_firstone5/debut" not found.
+Material not found!: TD_FIRSTONE5/DEBUT
+material "td_firstone5/grenade_256" not found.
+Material not found!: TD_FIRSTONE5/GRENADE_256
+material "td_firstone5/teleportdemo_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTDEMO_256
+material "td_firstone5/knockbacktower_256" not found.
+Material not found!: TD_FIRSTONE5/KNOCKBACKTOWER_256
+material "td_firstone5/teleportshotguntower_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTSHOTGUNTOWER_256
+material "td_firstone5/medic" not found.
+Material not found!: TD_FIRSTONE5/MEDIC
+material "td_firstone5/teleport_medic" not found.
+Material not found!: TD_FIRSTONE5/TELEPORT_MEDIC
+material "td_firstone5/autoflaretower" not found.
+Material not found!: TD_FIRSTONE5/AUTOFLARETOWER
+material "td_firstone5/teleportautoflaretower" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTAUTOFLARETOWER
+material "td_firstone5/jarate_256" not found.
+Material not found!: TD_FIRSTONE5/JARATE_256
+material "td_firstone5/teleportjarate" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTJARATE
+material "td_firstone5/sniper__256" not found.
+Material not found!: TD_FIRSTONE5/SNIPER__256
+material "td_firstone5/teleportsniper_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTSNIPER_256
+material "td_firstone5/pyro_tower_256" not found.
+Material not found!: TD_FIRSTONE5/PYRO_TOWER_256
+material "td_firstone5/teleportpyro_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTPYRO_256
+material "td_firstone5/engineer_256" not found.
+Material not found!: TD_FIRSTONE5/ENGINEER_256
+material "td_firstone5/teleportengineer_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTENGINEER_256
+material "td_firstone5/sentry_damage_256" not found.
+Material not found!: TD_FIRSTONE5/SENTRY_DAMAGE_256
+material "td_firstone5/crit_256" not found.
+Material not found!: TD_FIRSTONE5/CRIT_256
+material "td_firstone5/explosion_256" not found.
+Material not found!: TD_FIRSTONE5/EXPLOSION_256
+material "td_firstone5/fire_256" not found.
+Material not found!: TD_FIRSTONE5/FIRE_256
+material "td_firstone5/bullet_256" not found.
+Material not found!: TD_FIRSTONE5/BULLET_256
+material "td_firstone5/sentry_256" not found.
+Material not found!: TD_FIRSTONE5/SENTRY_256
+material "td_rampant/airblaster-256" not found.
+Material not found!: TD_RAMPANT/AIRBLASTER-256
+material "td_firstone5/metal_256" not found.
+Material not found!: TD_FIRSTONE5/METAL_256
+material "td_firstone5/dispenser_256" not found.
+Material not found!: TD_FIRSTONE5/DISPENSER_256
+material "td_firstone5/heavytower_256" not found.
+Material not found!: TD_FIRSTONE5/HEAVYTOWER_256
+material "td_firstone5/teleportminigun_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTMINIGUN_256
+material "td_firstone5/flare_256" not found.
+Material not found!: TD_FIRSTONE5/FLARE_256
+material "td_firstone5/rockettower_256" not found.
+Material not found!: TD_FIRSTONE5/ROCKETTOWER_256
+material "td_firstone5/teleportflare_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTFLARE_256
+material "td_firstone5/teleportrocket_256" not found.
+Material not found!: TD_FIRSTONE5/TELEPORTROCKET_256
+material "td_textures/aoeengineertower" not found.
+Material not found!: TD_TEXTURES/AOEENGINEERTOWER
+material "td_firstone5/debut2" not found.
+Material not found!: TD_FIRSTONE5/DEBUT2
+material "td_rampant/bushwacka-256" not found.
+Material not found!: TD_RAMPANT/BUSHWACKA-256
+material "td_rampant/homewrecker-256" not found.
+Material not found!: TD_RAMPANT/HOMEWRECKER-256
+Patching WVT material: maps/td_swampy_a4/swamp/nature/blenddirtswampgrass001_nodetail_wvt_patch
+Patching WVT material: maps/td_swampy_a4/swamp/nature/blendkarsttoswampgrass002_wvt_patch
+Patching WVT material: maps/td_swampy_a4/swamp/nature/blendswampdirttograss001_wvt_patch
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+Chop Details...done (0)
+Find Visible Detail Sides...
+Merged 76 detail faces...done (0)
+Merging details...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (0)
+writing d:\maps\td_swampy_a4.prt...Building visibility clusters...
+done (0)
+*** Error: Skybox vtf files for skybox/sky_harvest_01 weren't compiled with the same size texture and/or same flags!
+Can't load skybox file skybox/sky_harvest_01 to build the default cubemap!
+*** Error: Skybox vtf files for skybox/sky_harvest_01 weren't compiled with the same size texture and/or same flags!
+Can't load skybox file skybox/sky_harvest_01 to build the default cubemap!
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+material "pascal/made by pascal" not found.
+Building Physics collision data...
+done (2) (208658 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Water found with no water_lod_control entity, creating a default one.
+Compacting texture/material tables...
+Reduced 1258 texinfos to 631
+Reduced 88 texdatas to 79 (2682 bytes to 2185)
+Writing d:\maps\td_swampy_a4.bsp
+11 seconds elapsed
+
+
+
+2 threads
+reading d:\maps\td_swampy_a4.bsp
+reading d:\maps\td_swampy_a4.prt
+ 312 portalclusters
+1038 numportals
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Optimized: 21 visible clusters (0.04%)
+Total clusters visible: 57889
+Average clusters visible: 185
+Building PAS...
+Average clusters audible: 196
+visdatasize:19387  compressed from 24960
+writing d:\maps\td_swampy_a4.bsp
+2 minutes, 0 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading d:\maps\td_swampy_a4.bsp
+2905 faces
+3391047 square feet [488310784.00 square inches]
+167 Displacements
+249357 Square Feet [35907512.00 Square Inches]
+2905 patches before subdivision
+88045 patches after subdivision
+light has _fifty_percent_distance of 600.000000 but _zero_percent_distance of 333.000000
+56 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 15636930, max 666
+transfer lists: 119.3 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(11304, 8069, 4289)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(1473, 843, 361)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(208, 94, 33)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(38, 14, 4)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #5 added RGB(7, 2, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #6 added RGB(1, 0, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #7 added RGB(0, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0609 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Computing static prop lighting : 00...1...2...3...4...5...6...7...8...9...10
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                 142/1024         6816/49152    (13.9%) 
+brushes                477/8192         5724/98304    ( 5.8%) 
+brushsides            3902/65536       31216/524288   ( 6.0%) 
+planes                4698/65536       93960/1310720  ( 7.2%) 
+vertexes              4291/65536       51492/786432   ( 6.5%) 
+nodes                 1692/65536       54144/2097152  ( 2.6%) 
+texinfos               631/12288       45432/884736   ( 5.1%) 
+texdata                 79/2048         2528/65536    ( 3.9%) 
+dispinfos              167/0           29392/0        ( 0.0%) 
+disp_verts            5799/0          115980/0        ( 0.0%) 
+disp_tris             8128/0           16256/0        ( 0.0%) 
+disp_lmsamples      753692/0          753692/0        ( 0.0%) 
+faces                 2905/65536      162680/3670016  ( 4.4%) 
+hdr faces                0/65536           0/3670016  ( 0.0%) 
+origfaces             1733/65536       97048/3670016  ( 2.6%) 
+leaves                1835/65536       58720/2097152  ( 2.8%) 
+leaffaces             3227/65536        6454/131072   ( 4.9%) 
+leafbrushes           1085/65536        2170/131072   ( 1.7%) 
+areas                    4/256            32/2048     ( 1.6%) 
+surfedges            19212/512000      76848/2048000  ( 3.8%) 
+edges                10346/256000      41384/1024000  ( 4.0%) 
+LDR worldlights         56/8192         4928/720896   ( 0.7%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            2/32768          24/393216   ( 0.0%) 
+waterstrips             70/32768         700/327680   ( 0.2%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices          1068/65536        2136/131072   ( 1.6%) 
+cubemapsamples           6/1024           96/16384    ( 0.6%) 
+overlays                 9/512          3168/180224   ( 1.8%) 
+LDR lightdata         [variable]     3257048/0        ( 0.0%) 
+HDR lightdata         [variable]           0/0        ( 0.0%) 
+visdata               [variable]       19387/16777216 ( 0.1%) 
+entdata               [variable]      100326/393216   (25.5%) 
+LDR ambient table     1835/65536        7340/262144   ( 2.8%) 
+HDR ambient table     1835/65536        7340/262144   ( 2.8%) 
+LDR leaf ambient      6726/65536      188328/1835008  (10.3%) 
+HDR leaf ambient      1835/65536       51380/1835008  ( 2.8%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/12       ( 8.3%) 
+static props          [variable]           1/20410    ( 0.0%) 
+pakfile               [variable]     1514408/0        ( 0.0%) 
+physics               [variable]      208658/4194304  ( 5.0%) 
+physics terrain       [variable]       38435/1048576  ( 3.7%) 
+
+Level flags = 1
+
+Total triangle count: 6498
+Writing d:\maps\td_swampy_a4.bsp
+2 minutes, 29 seconds elapsed

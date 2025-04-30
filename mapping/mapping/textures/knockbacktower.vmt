@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+     "$basetexture" "td_textures\knockbacktower"
+     "$surfaceprop" "glass"
+}

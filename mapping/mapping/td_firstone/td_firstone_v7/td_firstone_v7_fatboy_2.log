@@ -1,0 +1,311 @@
+
+
+
+materialPath: E:\Steam\SteamApps\common\Team Fortress 2\tf\materials
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2: File c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2, line 1: No such file or directory.
+
+
+
+2 threads
+reading c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+
+
+materialPath: E:\Steam\SteamApps\common\Team Fortress 2\tf\materials
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2: File c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2, line 1: No such file or directory.
+
+
+
+2 threads
+reading c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+
+
+materialPath: E:\Steam\SteamApps\common\Team Fortress 2\tf\materials
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2: File c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2, line 1: No such file or directory.
+
+
+
+2 threads
+reading c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+
+
+materialPath: E:\Steam\SteamApps\common\Team Fortress 2\tf\materials
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2: File c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2, line 1: No such file or directory.
+
+
+
+2 threads
+reading c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+
+
+materialPath: E:\Steam\SteamApps\common\Team Fortress 2\tf\materials
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2: File c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2, line 1: No such file or directory.
+
+
+
+2 threads
+reading c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+Error opening c:\users\pascal.pascal-pc\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+
+
+materialPath: E:\Steam\steamapps\common\Team Fortress 2\tf\materials
+Loading E:\Dropbox\Dropbox\Coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.vmf
+ConVarRef mat_reduceparticles doesn't point to an existing ConVar
+Patching WVT material: maps/td_firstone_v7_fatboy_2/egypt/sand_floor_blend_04_with_grass_wvt_patch
+Patching WVT material: maps/td_firstone_v7_fatboy_2/egypt/sand_grass_blend_01_wvt_patch
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+Chop Details...done (0)
+Find Visible Detail Sides...
+Merged 134 detail faces...done (0)
+Merging details...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (0)
+writing E:\Dropbox\Dropbox\Coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.prt...Building visibility clusters...
+done (0)
+Creating default LDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_island_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Creating default HDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_island_01*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+Building Physics collision data...
+done (1) (173367 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Compacting texture/material tables...
+Reduced 926 texinfos to 512
+Reduced 88 texdatas to 80 (3025 bytes to 2593)
+Writing E:\Dropbox\Dropbox\Coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+2 seconds elapsed
+
+
+
+4 threads
+reading e:\dropbox\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+reading e:\dropbox\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.prt
+ 323 portalclusters
+ 815 numportals
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Optimized: 521 visible clusters (1.44%)
+Total clusters visible: 36072
+Average clusters visible: 111
+Building PAS...
+Average clusters audible: 285
+visdatasize:26276  compressed from 31008
+writing e:\dropbox\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+0 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading e:\dropbox\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+2982 faces
+4420942 square feet [636615680.00 square inches]
+4 Displacements
+109030 Square Feet [15700342.00 Square Inches]
+2982 patches before subdivision
+52404 patches after subdivision
+6 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 2997180, max 692
+transfer lists:  22.9 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(129828, 105347, 50994)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(411783, 335954, 146809)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(6921, 3733, 841)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(38489, 23340, 5066)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #5 added RGB(615, 251, 27)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #6 added RGB(3709, 1669, 180)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #7 added RGB(60, 18, 1)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #8 added RGB(362, 121, 6)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #9 added RGB(6, 1, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #10 added RGB(36, 9, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #11 added RGB(1, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0271 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                 131/1024         6288/49152    (12.8%) 
+brushes                375/8192         4500/98304    ( 4.6%) 
+brushsides            2718/65536       21744/524288   ( 4.1%) 
+planes                2572/65536       51440/1310720  ( 3.9%) 
+vertexes              4321/65536       51852/786432   ( 6.6%) 
+nodes                 1913/65536       61216/2097152  ( 2.9%) 
+texinfos               512/12288       36864/884736   ( 4.2%) 
+texdata                 80/2048         2560/65536    ( 3.9%) 
+dispinfos                4/0             704/0        ( 0.0%) 
+disp_verts             324/0            6480/0        ( 0.0%) 
+disp_tris              512/0            1024/0        ( 0.0%) 
+disp_lmsamples      160000/0          160000/0        ( 0.0%) 
+faces                 2982/65536      166992/3670016  ( 4.6%) 
+hdr faces                0/65536           0/3670016  ( 0.0%) 
+origfaces             1439/65536       80584/3670016  ( 2.2%) 
+leaves                2045/65536       65440/2097152  ( 3.1%) 
+leaffaces             3924/65536        7848/131072   ( 6.0%) 
+leafbrushes           1577/65536        3154/131072   ( 2.4%) 
+areas                    4/256            32/2048     ( 1.6%) 
+surfedges            19130/512000      76520/2048000  ( 3.7%) 
+edges                10945/256000      43780/1024000  ( 4.3%) 
+LDR worldlights          6/8192          528/720896   ( 0.1%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            2/32768          24/393216   ( 0.0%) 
+waterstrips            145/32768        1450/327680   ( 0.4%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices          3162/65536        6324/131072   ( 4.8%) 
+cubemapsamples          15/1024          240/16384    ( 1.5%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]     1850912/0        ( 0.0%) 
+HDR lightdata         [variable]           0/0        ( 0.0%) 
+visdata               [variable]       26276/16777216 ( 0.2%) 
+entdata               [variable]       69882/393216   (17.8%) 
+LDR ambient table     2045/65536        8180/262144   ( 3.1%) 
+HDR ambient table     2045/65536        8180/262144   ( 3.1%) 
+LDR leaf ambient      6868/65536      192304/1835008  (10.5%) 
+HDR leaf ambient      2045/65536       57260/1835008  ( 3.1%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/12       ( 8.3%) 
+static props          [variable]           1/7250     ( 0.0%) 
+pakfile               [variable]     1317392/0        ( 0.0%) 
+physics               [variable]      173367/4194304  ( 4.1%) 
+physics terrain       [variable]        1404/1048576  ( 0.1%) 
+
+Level flags = 0
+
+Total triangle count: 7330
+Writing e:\dropbox\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+21 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[34 texlights parsed from 'lights.rad']
+
+Loading e:\dropbox\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+2982 faces
+4420942 square feet [636615680.00 square inches]
+4 Displacements
+109030 Square Feet [15700342.00 Square Inches]
+2982 patches before subdivision
+52404 patches after subdivision
+6 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 2997180, max 692
+transfer lists:  22.9 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(129828, 105347, 50994)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(411783, 335954, 146809)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(6921, 3733, 841)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(38489, 23340, 5066)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #5 added RGB(615, 251, 27)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #6 added RGB(3709, 1669, 180)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #7 added RGB(60, 18, 1)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #8 added RGB(362, 121, 6)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #9 added RGB(6, 1, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #10 added RGB(36, 9, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #11 added RGB(1, 0, 0)
+Build Patch/Sample Hash Table(s).....Done<0.0229 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+0 of 0 (0% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                 131/1024         6288/49152    (12.8%) 
+brushes                375/8192         4500/98304    ( 4.6%) 
+brushsides            2718/65536       21744/524288   ( 4.1%) 
+planes                2572/65536       51440/1310720  ( 3.9%) 
+vertexes              4321/65536       51852/786432   ( 6.6%) 
+nodes                 1913/65536       61216/2097152  ( 2.9%) 
+texinfos               512/12288       36864/884736   ( 4.2%) 
+texdata                 80/2048         2560/65536    ( 3.9%) 
+dispinfos                4/0             704/0        ( 0.0%) 
+disp_verts             324/0            6480/0        ( 0.0%) 
+disp_tris              512/0            1024/0        ( 0.0%) 
+disp_lmsamples      160000/0          160000/0        ( 0.0%) 
+faces                 2982/65536      166992/3670016  ( 4.6%) 
+hdr faces             2982/65536      166992/3670016  ( 4.6%) 
+origfaces             1439/65536       80584/3670016  ( 2.2%) 
+leaves                2045/65536       65440/2097152  ( 3.1%) 
+leaffaces             3924/65536        7848/131072   ( 6.0%) 
+leafbrushes           1577/65536        3154/131072   ( 2.4%) 
+areas                    4/256            32/2048     ( 1.6%) 
+surfedges            19130/512000      76520/2048000  ( 3.7%) 
+edges                10945/256000      43780/1024000  ( 4.3%) 
+LDR worldlights          6/8192          528/720896   ( 0.1%) 
+HDR worldlights          6/8192          528/720896   ( 0.1%) 
+leafwaterdata            2/32768          24/393216   ( 0.0%) 
+waterstrips            145/32768        1450/327680   ( 0.4%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices          3162/65536        6324/131072   ( 4.8%) 
+cubemapsamples          15/1024          240/16384    ( 1.5%) 
+overlays                 0/512             0/180224   ( 0.0%) 
+LDR lightdata         [variable]     1850912/0        ( 0.0%) 
+HDR lightdata         [variable]     1850912/0        ( 0.0%) 
+visdata               [variable]       26276/16777216 ( 0.2%) 
+entdata               [variable]       69882/393216   (17.8%) 
+LDR ambient table     2045/65536        8180/262144   ( 3.1%) 
+HDR ambient table     2045/65536        8180/262144   ( 3.1%) 
+LDR leaf ambient      6868/65536      192304/1835008  (10.5%) 
+HDR leaf ambient      6868/65536      192304/1835008  (10.5%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/12       ( 8.3%) 
+static props          [variable]           1/7250     ( 0.0%) 
+pakfile               [variable]     1317392/0        ( 0.0%) 
+physics               [variable]      173367/4194304  ( 4.1%) 
+physics terrain       [variable]        1404/1048576  ( 0.1%) 
+
+Level flags = 0
+
+Total triangle count: 7330
+Writing e:\dropbox\dropbox\coding\vmf\td_firstone\td_firstone_v7\td_firstone_v7_fatboy_2.bsp
+21 seconds elapsed

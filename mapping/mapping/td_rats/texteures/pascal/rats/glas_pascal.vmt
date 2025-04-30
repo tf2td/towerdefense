@@ -1,0 +1,8 @@
+"Refract"
+{
+	"$dudvmap" "pascal/Rats/glas_ssb"
+	"$normalmap" "pascal/rats/glas_pascal"
+	"$envmapmask" "pascal/rats/glas_pascal_h"
+	$refracttint "[1 1 1]"
+	$refractamount .7555
+}

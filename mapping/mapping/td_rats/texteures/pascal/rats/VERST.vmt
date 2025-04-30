@@ -1,0 +1,10 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "pascal/Rats/verst"
+	"$bumpmap" "pascal/Rats/verst_n"
+	"$ssbump" "pascal/Rats/verst_ssbump"
+	"$translucent" 1
+"$selfillummask" "pascal/rats/verst_sel"
+                "$ssbump" 1 
+
+}
