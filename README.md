@@ -8,8 +8,6 @@ TF2 Tower Defense was originally created by [floube](http://steamcommunity.com/p
 
 It was last maintained by [Hurp Durp](http://steamcommunity.com/profiles/76561198014050007).
 
-[Dragonisser](http://steamcommunity.com/profiles/76561198039140852) is currently looking at issues/enhancements/tweaks.
-
 <hr>
 
 Plugin - [floube](http://steamcommunity.com/profiles/76561198051789304/), [Benedevil](http://steamcommunity.com/profiles/76561198056589941), [Hurp Durp](http://steamcommunity.com/profiles/76561198014050007)
@@ -50,3 +48,4 @@ Maps - [mani](http://steamcommunity.com/profiles/76561198002201102/), [fatboy](h
 In case you are using [STAC](https://github.com/sapphonie/StAC-tf2) you need to set "stac_work_with_sv_cheats" to "1" or else STAC will shut itself down. It is recommended to also use [Cheat-Control](#optional-plugins).
 
 ##### Trouble getting it working? Create an issue and provide your server log files and other required information for assistance. #####
+
